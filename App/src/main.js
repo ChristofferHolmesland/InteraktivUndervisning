@@ -19,4 +19,8 @@ app.get('/', function(req, res) {
     res.send('Hello world!');
 });
 
+app.get('/client', function(req, res) {
+    res.render("client/start.njk");
+});
+
 app.listen(80, () => console.log('App started'));
