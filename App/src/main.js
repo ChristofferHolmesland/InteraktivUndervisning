@@ -15,4 +15,8 @@ app.use(express.static(__dirname, + '/static'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.listen(80, () => console.log("App started"));
+app.get('/', function(req, res) {
+    res.send('Hello world!');
+});
+
+app.listen(80, () => console.log('App started'));
