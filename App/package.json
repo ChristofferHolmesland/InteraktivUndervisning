@@ -1,0 +1,23 @@
+{
+  "name": "interaktivundervisning",
+  "version": "1.0.0",
+  "description": "Webapp for interaktiv undervisning i DAT110 og DAT200",
+  "main": "src/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChristofferHolmesland/InteraktivUndervisning.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ChristofferHolmesland/InteraktivUndervisning/issues"
+  },
+  "homepage": "https://github.com/ChristofferHolmesland/InteraktivUndervisning#readme",
+  "dependencies": {
+    "express": "^4.16.4",
+    "nunjucks": "^3.1.6"
+  }
+}
