@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Client chat site</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+    <script src="client.js"></script>
+    <link rel="stylesheet" href="client.css">
+</head>
+    <body>
+        <div id="main_container">
+            <div id="left_container" class="sub_container">
+                <h1>Rooms connected to:</h1>
+                <label for="username">Username: </label>
+                <input type="text" name="username" id="username"><br>
+                <button id="addRoom" onclick="addRoomSheet()">Add room</button>
+                <div>
+                    <ul id="roomlist">
+                        
+                    </ul>
+                </div>
+            </div>
+            <div id="right_container" class="sub_container">
+                <div id="headline">
+
+                </div>
+                <div id="messages">
+
+                </div>
+                <div id="buttons">
+                    
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,46 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+#main_container {
+    width: 800px;
+    height: 400px;
+    margin: 100px auto 0 auto;
+    background-color: red;
+}
+
+.sub_container {
+    width: 350px;
+    height: 350px;
+    padding: 25px;
+    float: left;
+}
+
+#left_container {
+    background-color: grey;
+}
+
+#right_container {
+    background-color: darkgray;
+}
+
+#left_container h1 {
+    width: 350px;
+    height: 50px;
+    text-align: left;
+    line-height: 50px;
+}
+
+#createRoomSheet {
+    width: 100px;
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+}
+
+#roomlist {
+    width: 350px;
+    height: 250px;
+    margin-top: 10px;
+}

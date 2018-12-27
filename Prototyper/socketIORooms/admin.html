@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Admin chat site</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+    <script src="admin.js"></script>
+    <link rel="stylesheet" href="admin.css">
+</head>
+    <body>
+        <div id="main_container">
+            <div id="left_container" class="sub_container">
+                <h1>Rooms:</h1>
+                <button id="createNewRoom" onclick="addCreateSheet()">Create</button>
+                <div>
+                    <ul id="roomlist">
+
+                    </ul>
+                </div>
+            </div>
+            <div id="right_container" class="sub_container">
+            </div>
+        </div>
+    </body>
+</html>
