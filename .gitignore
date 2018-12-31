@@ -106,3 +106,11 @@ tags
 # End of https://www.gitignore.io/api/vim,node,visualstudiocode
 
 package-lock.json
+
+# Latex
+Rapport/**/*.aux
+Rapport/*.fls
+Rapport/*.out
+Rapport/*.toc
+Rapport/*.fdb_latexmk
+Rapport/*.log
