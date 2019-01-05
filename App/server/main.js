@@ -3,11 +3,10 @@ const path = require('path');
 const history = require("connect-history-api-fallback");
 
 const app = express();
-
 const port = process.env.PORT || 3000;
 
-// Tells express to look in the static folder for static resources
-app.use(history());
+// Midleware
+app.use(history()); // IMPORTANT: This line has to come before app.use(express.static())
 app.use(express.static(path.join(__dirname, '/public/')));
 
 // Starts the server and the socket.io websocket
@@ -16,6 +15,7 @@ const io = require('socket.io').listen(server);
 
 // Listens for websocket events
 io.on('connection', function(socket){
+    
     console.log(`Socket connected with socket id: ${socket.id}`);
 
     socket.on("clientStarted", () => {
