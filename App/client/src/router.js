@@ -24,6 +24,12 @@ export default new Router({
       name: "host",
       component: () =>
         import("./views/Host.vue")
+    },
+    {
+      path: "*",
+      name: "404",
+      component: () =>
+        import("./views/404.vue")
     }
   ]
 });

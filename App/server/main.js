@@ -1,16 +1,18 @@
 const express = require('express');
 const path = require('path');
+const history = require("connect-history-api-fallback");
 
 const app = express();
 
 const port = process.env.PORT || 3000;
 
+// Tells express to look in the static folder for static resources
+app.use(history());
+app.use(express.static(path.join(__dirname, '/public/')));
+
 // Starts the server and the socket.io websocket
 const server = app.listen(port, () => console.log(`Server listening on localhost:${ port }! Use ctrl + c to stop the server!`));
 const io = require('socket.io').listen(server);
-
-// Tells express to look in the static folder for static resources
-app.use(express.static(path.join(__dirname, '/public/')));
 
 // Listens for websocket events
 io.on('connection', function(socket){
