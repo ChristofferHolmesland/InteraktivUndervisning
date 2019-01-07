@@ -30,6 +30,7 @@ io.on('connection', function(socket){
 
     socket.on("clientRequest", (msg) => {
         console.log("got this message from client: " + msg);
+        console.log(socket.id);
     });
 
     socket.on("hostRequest", (msg) => {

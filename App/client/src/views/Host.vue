@@ -7,12 +7,14 @@
 
 <script>
 	import io from 'socket.io-client';
+	import { dataBus } from '../main';
+	
 	export default {
 		name: 'Host',
 		data() {
 			return {
 			msg: '',
-			socket: io('localhost:3000')
+			socket: dataBus.socket
 			}
 		},
 		created() {
