@@ -5,15 +5,15 @@
     * [Requirements](#Requirements)
     * [Installation](#Installation)
     * [Start Commands](#Start-Command)
-2. [Developing](#Developing)
+2. [Development](#Development)
     * [Dev Requirements](#Dev-Requirements)
     * [Dev Installation](#Dev-Installation)
     * [Dev Start Commands](#Dev-Start-Commands)
-3. [Confguration](#Configuration)
+3. [Configuration](#Configuration)
 4. [Tests](#Tests)
 5. [Style guide](#Style-guide)
 6. [Database](#Database)
-7. [Licesing](#Licesing)
+7. [Licensing](#Licensing)
 
 ## Installing / Getting Started 
 ### Requirements 
@@ -34,7 +34,7 @@
 
 ### Dev Start Commands
 
-## Confguration
+## Configuration
 
 ## Tests
 
@@ -42,4 +42,4 @@
 
 ## Database
 
-## Licesing
+## Licensing
