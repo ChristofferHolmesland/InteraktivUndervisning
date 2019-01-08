@@ -1,7 +1,7 @@
 # Interaktiv Undervisning
 
 ## Table of Contents
-1. [Installing / Getting Started](#Istalling-/-Getting-Started)
+1. [Installing / Getting Started](#Installing-/-Getting-Started)
     * [Requirements](#Requirements)
     * [Installation](#Installation)
     * [Start Commands](#Start-Command)
