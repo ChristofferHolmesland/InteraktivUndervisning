@@ -4,7 +4,7 @@
 1. [Installing / Getting Started](#Installing-/-Getting-Started)
     * [Requirements](#Requirements)
     * [Installation](#Installation)
-    * [Start Commands](#Start-Command)
+    * [Start Commands](#Start-Commands)
 2. [Development](#Development)
     * [Dev Requirements](#Dev-Requirements)
     * [Dev Installation](#Dev-Installation)
