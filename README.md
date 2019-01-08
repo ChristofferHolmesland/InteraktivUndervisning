@@ -28,11 +28,11 @@
 - ```node server/main.js```
 
 ## Developing
-### Requirements
+### Dev Requirements
 
-### Installation
+### Dev Installation
 
-### Start Commands
+### Dev Start Commands
 
 ## Confguration
 
