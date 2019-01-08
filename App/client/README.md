@@ -6,13 +6,23 @@ npm install
 ```
 
 ### Compiles and hot-reloads for development
+Windows
 ```
 npm run serve
 ```
+Linux
+```
+npm run-script serve
+```
 
 ### Compiles and minifies for production
+Windows
 ```
 npm run build
+```
+Linux
+```
+npm run-script build
 ```
 
 ### Run your tests
