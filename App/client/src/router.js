@@ -26,16 +26,16 @@ export default new Router({
         import("./views/Host.vue")
     },
     {
-      path: "*",
-      name: "404",
-      component: () =>
-        import("./views/404.vue")
-    },
-      {
       path: "/login",
       name: "login",
       component: () =>
         import("./views/Login.vue")
+    },
+    {
+      path: "*",
+      name: "404",
+      component: () =>
+        import("./views/404.vue")
     }
   ]
 });
