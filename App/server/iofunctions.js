@@ -36,6 +36,18 @@ module.exports.listen = function(server) {
             console.log("got this message from host: " + msg);
         });
         
+        socket.on("getTextRequest", (lang) => {
+            socket.emit("getTextResponse", {
+                Buttons: {
+                    anonymousText: "Anonym",
+                    acceptText: "Godkjenn",
+                    loginText: "Logg inn",
+                    feideList: ["Vi bruker cookies", "Vi lagrer bruker data", "Godkjenn!"],
+                    anonymousList: ["Vi bruker ikke cookies", "Vi lagrer ikke data", "linje 3"]
+                }
+            });
+        });
+        
         socket.on('disconnect', function(){
             console.log(`Socket disconnected with socket id: ${socket.id}`);
         });
