@@ -10,5 +10,7 @@ app.use(history()); // IMPORTANT: This line has to come before app.use(express.s
 app.use(express.static(path.join(__dirname, '/public/')));
 
 // Starts the server and the socket.io websocket
-const server = app.listen(port, () => console.log(`Server listening on localhost:${ port }! Use ctrl + c to stop the server!`));
+const server = app.listen(port, function() {
+    console.log(`Server listening on localhost:${ port }! Use ctrl + c to stop the server!`)
+});
 const io = require('./iofunctions').listen(server);
