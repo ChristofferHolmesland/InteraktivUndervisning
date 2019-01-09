@@ -110,3 +110,7 @@ package-lock.json
 Rapport/*.fls
 Rapport/*.fdb_latexmk
 Rapport/*.log
+
+# PyCharm
+.idea
+.idea/
