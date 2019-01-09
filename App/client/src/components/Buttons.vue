@@ -8,12 +8,15 @@
     </ul>
   </div>
   <label v-if="feideLogin"><input type=checkbox @click="termsStateChanged"/>{{text.acceptText}}</label>
-  <button id="loginButton" :disabled="!termsApproved" @click="login">{{text.loginText}}</button>
+  <form action="{{computedAction}}" method="POST">
+    <button id="loginButton" :disabled="!termsApproved" type="submit">{{text.loginText}}</button>
+  </form>
 </div>
 </template>
 
 <script>
 import { dataBus } from "../main";
+import superagent from "superagent"
 export default {
   name: "Buttons",
   data() {
@@ -22,21 +25,20 @@ export default {
       socket: dataBus.socket,
       text: dataBus.text.Buttons,
       termsApproved: true,
-      Login: false
+      Login: false,
+      actionLink: ""
     };
   },
   methods: {
     displayAnonymousText() {
       this.termsApproved = true;
       this.feideLogin = false;
+      this.socket.emit("loginRequest", {loginType: this.feideLogin});
     },
     displayFeideText() {
       this.termsApproved = false;
       this.feideLogin = true;
-    },
-    login() {
-      this.Login = !this.Login; // Delete me
-      this.socket.emit("loginRequest", {loginType: this.feideLogin})
+      this.socket.emit("loginRequest", {loginType: this.feideLogin});
     },
     termsStateChanged() {
       this.termsApproved = !this.termsApproved;
@@ -44,12 +46,17 @@ export default {
   },
   mounted() {
     this.socket.on("loginResponse", function(data){
-
+      console.log(this.actionLink);
+      this.actionLink = data.actionLink;
+      console.log(this.actionLink);
     });
   },
   computed: {
     getLoginTerms: function() {
       return this.feideLogin ? this.text.feideList : this.text.anonymousList;
+    },
+    computedAction: function() {
+      return this.actionLink;
     }
   }
 };
