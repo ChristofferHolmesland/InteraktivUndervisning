@@ -31,7 +31,7 @@ module.exports.listen = function(server) {
         socket.on("hostRequest", function(msg) {
             console.log("got this message from host: " + msg);
         });
-        
+
         socket.on("getTextRequest", function(locale) {
             socket.emit("getTextResponse", {"locale": locales[locale], "localeList": locales.localeList});
         });

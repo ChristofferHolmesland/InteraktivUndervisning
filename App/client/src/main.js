@@ -11,6 +11,7 @@ Vue.use(BootstrapVue);
 Vue.config.productionTip = false;
 
 export const dataBus = new Vue();
+
 dataBus.socket = io("localhost:80");
 dataBus.locale = {};
 dataBus.localeList = [];
