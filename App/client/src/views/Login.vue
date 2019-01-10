@@ -1,9 +1,9 @@
 <template>
-    <Buttons></Buttons>
+    <LoginForm></LoginForm>
 </template>
 
 <script>
-    import Buttons from "@/components/Buttons.vue"
+    import LoginForm from "@/components/LoginForm.vue"
     export default {
         name: "Login",
         data() {
@@ -12,7 +12,7 @@
             }
         },
         components: {
-            Buttons
+            LoginForm
         }
     }
 </script>
