@@ -4,7 +4,8 @@
   "description": "Webapp for interaktiv undervisning i DAT110 og DAT200",
   "main": "src/main.js",
   "scripts": {
-    "nodemon": "echo \"Error: no test specified\" && exit 1"
+    "nodemon": "echo \"Error: no test specified\" && exit 1",
+    "start": "cd client && npm run build && cd .. && NODE_ENV=dev node server/main.js"
   },
   "repository": {
     "type": "git",
