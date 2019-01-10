@@ -1,4 +1,5 @@
-var socketio = require('socket.io');
+const socketio = require('socket.io');
+const localization = (require('./tools/localization.js')).Localization;
 
 module.exports.listen = function(server) {
     io = socketio.listen(server);
@@ -32,15 +33,7 @@ module.exports.listen = function(server) {
         });
         
         socket.on("getTextRequest", function(lang) {
-            socket.emit("getTextResponse", {
-                Buttons: {
-                    anonymousText: "Anonym",
-                    acceptText: "Godkjenn",
-                    loginText: "Logg inn",
-                    feideList: ["Vi bruker cookies", "Vi lagrer bruker data", "Godkjenn!"],
-                    anonymousList: ["Vi bruker ikke cookies", "Vi lagrer ikke data", "linje 3"]
-                }
-            });
+            socket.emit("getTextResponse", localization[lang.lan]);
         });
 
         socket.on("loginRequest", function(data){
