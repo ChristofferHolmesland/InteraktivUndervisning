@@ -5,20 +5,13 @@
 				<b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 				<b-navbar-brand href="#">Interaktiv Undervisning</b-navbar-brand>
 				<b-collapse is-nav id="nav_collapse">
-					<b-navbar-nav>
-						<b-nav-item href="#">Link</b-nav-item>
-						<b-nav-item href="#" disabled>Disabled</b-nav-item>
-					</b-navbar-nav>
-
 					<!-- Right aligned nav items -->
 					<b-navbar-nav class="ml-auto">
-
 						<b-nav-item-dropdown :text="locale.lang" right>
 							<b-dropdown-item-button @click="localeChange" v-model="selectLocale" :id="localeItem" :key="localeItem" v-for="localeItem in localeList"  value="{{localeItem}}">{{localeItem}}</b-dropdown-item>
 						</b-nav-item-dropdown>
 
 						<b-nav-item-dropdown right v-if="loggedIn">
-							<!-- Using button-content slot -->
 							<template slot="button-content">
 								<em>{{locale.user}}</em>
 							</template>
