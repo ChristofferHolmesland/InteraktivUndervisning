@@ -1,15 +1,15 @@
 <template>
-<div id="buttons">
-  <button id="anonymousButton" @click="displayAnonymousText">{{text.anonymousText}}</button>
+<div id="LoginForm">
+  <button id="anonymousButton" @click="displayAnonymousText">{{locale.anonymousButton}}</button>
   <button id="feideButton" @click="displayFeideText">Feide</button>
   <div class="textinformation">
     <ul :key="item" v-for="item in getLoginTerms">
       <li>{{item}}</li>
     </ul>
   </div>
-  <label v-if="feideLogin"><input type=checkbox @click="termsStateChanged"/>{{text.acceptText}}</label>
-  <form action="{{computedAction}}" method="POST">
-    <button id="loginButton" :disabled="!termsApproved" type="submit">{{text.loginText}}</button>
+  <label v-if="feideLogin"><input type=checkbox @click="termsStateChanged"/>{{locale.acceptCheckbox}}</label>
+  <form action="/login/anonymous" ref="submitForm" method="POST">
+    <button id="loginButton" :disabled="!termsApproved" type="submit">{{locale.loginButton}}</button>
   </form>
 </div>
 </template>
@@ -18,15 +18,14 @@
 import { dataBus } from "../main";
 import superagent from "superagent"
 export default {
-  name: "Buttons",
+  name: "LoginForm",
   data() {
     return {
       feideLogin: false,
       socket: dataBus.socket,
-      text: dataBus.text.Buttons,
+      locale: dataBus.locale["LoginForm"],
       termsApproved: true,
       Login: false,
-      actionLink: ""
     };
   },
   methods: {
@@ -45,19 +44,24 @@ export default {
     }
   },
   mounted() {
+    let that = this;
+		dataBus.$on("localeLoaded", function(){
+			that.locale = dataBus.locale["LoginForm"];
+		});
     this.socket.on("loginResponse", function(data){
-      console.log(this.actionLink);
-      this.actionLink = data.actionLink;
-      console.log(this.actionLink);
+      that.$refs.submitForm.action = data.actionLink;
     });
   },
   computed: {
     getLoginTerms: function() {
-      return this.feideLogin ? this.text.feideList : this.text.anonymousList;
-    },
-    computedAction: function() {
-      return this.actionLink;
+      return this.feideLogin ? this.locale.feideList : this.locale.anonymousList;
     }
+  },
+  created() {
+    let that = this;
+		setInterval(function(){
+			console.log(that.locale);
+		}, 1000); 
   }
 };
 </script>

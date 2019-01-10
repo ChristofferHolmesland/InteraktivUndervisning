@@ -1,8 +1,8 @@
 <template>
-  <div class="client">
-    <h1>This is the client page</h1>
-    <p>Connected to the server via socket.io and sent message back. Recieved this message: {{msg}}</p>
-	</div>
+<div class="client">
+	<h1>This is the client page</h1>
+	<p>Connected to the server via socket.io and sent message back. Recieved this message: {{msg}}</p>
+</div>
 </template>
 
 <script>

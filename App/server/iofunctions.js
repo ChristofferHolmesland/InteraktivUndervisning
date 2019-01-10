@@ -1,4 +1,5 @@
 var socketio = require('socket.io');
+const locales = (require("./localization/localeLoader.js")).locales;
 
 module.exports.listen = function(server) {
     io = socketio.listen(server);
@@ -31,16 +32,8 @@ module.exports.listen = function(server) {
             console.log("got this message from host: " + msg);
         });
         
-        socket.on("getTextRequest", function(lang) {
-            socket.emit("getTextResponse", {
-                Buttons: {
-                    anonymousText: "Anonym",
-                    acceptText: "Godkjenn",
-                    loginText: "Logg inn",
-                    feideList: ["Vi bruker cookies", "Vi lagrer bruker data", "Godkjenn!"],
-                    anonymousList: ["Vi bruker ikke cookies", "Vi lagrer ikke data", "linje 3"]
-                }
-            });
+        socket.on("getTextRequest", function(locale) {
+            socket.emit("getTextResponse", {"locale": locales[locale], "localeList": locales.localeList});
         });
 
         socket.on("loginRequest", function(data){

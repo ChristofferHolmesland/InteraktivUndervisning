@@ -7,20 +7,20 @@ const cookieParser = require("cookie-parser");
 
 // Imports and checks environment variables
 const env = require('./tools/environment.js');
-if (!env.load()) { return; };
-if (!env.validate()) { return; };
+if(!env.load()) { return; }
+if(!env.validate()) { return; }
 
 const app = express();
-const port = 3000;
+const port = 80;
 
 // Setup dataporten
 var oic = new OICStrategy({
     "issuerHost": "https://auth.dataporten.no/",
-    "client_id": "e4de58d1-c318-43ec-9ccc-5ad63cdda550",
-    "client_secret": "87370fb0-219c-48e9-b07f-a12d5943be56",
-    "redirect_uri": "http://localhost:3000/login/callback/feide",
+    "client_id": process.env.CLIENTID,
+    "client_secret": process.env.CLIENTSECRET,
+    "redirect_uri": process.env.CALLBACKURL,
     "scope": "longterm openid profile"
- });
+});
 passport.use(oic)
 passport.serializeUser(OICStrategy.serializeUser)
 passport.deserializeUser(OICStrategy.deserializeUser)
