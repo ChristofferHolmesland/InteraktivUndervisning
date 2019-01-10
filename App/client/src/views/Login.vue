@@ -1,24 +1,29 @@
 <template>
-    <div id="LoginForm">
-        <div class="mx-auto" style="min-width: 300px; max-width: 600px;">
-            <div style="display: inline-block; width:50%;" class="text-center">
+    <b-container id="LoginForm">
+        <b-row align-h="center" class="mt-5">
+            <b-col cols="4" class="text-center">
                 <b-button id="anonymousButton" @click="displayAnonymousText">{{locale.anonymousButton}}</b-button>
-            </div>
-            <div style="display: inline-block; width:50%;" class="text-center">
+            </b-col>
+            <b-col cols="4" class="text-center">
                 <b-button id="feideButton" @click="displayFeideText">Feide</b-button>
-            </div>
-        </div>
-
-        <b-list-group class="mx-auto border" style="min-width: 300px; max-width: 600px;">
-            <b-list-group-item class="border-0" :key="item" v-for="item in getLoginTerms">{{item}}</b-list-group-item>
-        </b-list-group>
-        <div class="text-center">
-            <label v-if="feideLogin"><input type=checkbox @click="termsStateChanged"/>{{locale.acceptCheckbox}}</label>
-            <b-form action="/login/anonymous" ref="submitForm" method="POST" class="align-items-center">
-                <b-button id="loginButton" :disabled="!termsApproved" type="submit">{{locale.loginButton}}</b-button>
-            </b-form>
-        </div> 
-    </div>
+            </b-col>
+        </b-row>
+        <b-row align-h="center" class="my-5">
+            <b-col cols="8">
+                <b-list-group class="border">
+                    <b-list-group-item class="border-0" :key="item" v-for="item in getLoginTerms">{{item}}</b-list-group-item>
+                </b-list-group>
+            </b-col>
+        </b-row>
+        <b-row align-h="center">
+            <b-col cols="4" class="text-center">
+                <b-form-checkbox v-if="feideLogin" v-model="termsApproved">{{locale.acceptCheckbox}}</b-form-checkbox>
+                <b-form action="/login/anonymous" ref="submitForm" method="POST" class="align-items-center">
+                    <b-button id="loginButton" :disabled="!termsApproved" type="submit">{{locale.loginButton}}</b-button>
+                </b-form>
+            </b-col>
+        </b-row> 
+    </b-container>
 </template>
 
 <script>
@@ -45,9 +50,6 @@
                 this.termsApproved = false;
                 this.feideLogin = true;
                 this.socket.emit("loginRequest", {loginType: this.feideLogin});
-            },
-            termsStateChanged() {
-                this.termsApproved = !this.termsApproved;
             }
         },
         mounted() {

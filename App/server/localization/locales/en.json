@@ -8,7 +8,7 @@
     },
     "LoginForm": {
         "anonymousButton": "Anonymous",
-        "acceptCheckbox": "Accept",
+        "acceptCheckbox": "I accept these terms and conditions",
         "loginButton": "Sign in",
         "feideList": [
             "This website will use cookies to be able to store your questions.",

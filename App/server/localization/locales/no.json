@@ -8,7 +8,7 @@
     },
     "LoginForm": {
         "anonymousButton": "Anonym",
-        "acceptCheckbox": "Aksepter",
+        "acceptCheckbox": "Jeg aksepterer disse betigelsene",
         "loginButton": "Logg inn",
         "feideList": [
             "Denne nettsiden bruker cookies for å kunne lagre spørsmålene dine.",
