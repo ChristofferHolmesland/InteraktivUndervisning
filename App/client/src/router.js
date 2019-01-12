@@ -20,16 +20,22 @@ export default new Router({
         import("./views/Client.vue")
     },
     {
-      path: "/host",
-      name: "host",
+      path: "/admin",
+      name: "admin",
       component: () =>
-        import("./views/Host.vue")
+        import("./views/Admin.vue")
     },
     {
       path: "/login",
       name: "login",
       component: () =>
         import("./views/Login.vue")
+    },
+    {
+      path: "/401",
+      name: "401",
+      component: () =>
+        import("./views/401.vue")
     },
     {
       path: "*",
