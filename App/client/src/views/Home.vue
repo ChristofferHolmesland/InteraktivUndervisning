@@ -4,8 +4,15 @@
 	</div>
 </template>
 
-<script
+<script>
 export default {
 	name: "home"
 };
 </script>
+
+<style scoped>
+    h1 {
+		margin-top: 5rem;
+		text-align: center;
+	}
+</style>
