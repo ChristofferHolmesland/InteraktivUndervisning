@@ -1,26 +1,27 @@
 <template>
-    <b-container id="LoginForm">
-        <b-row align-h="center" class="mt-5">
-            <b-col cols="4" class="text-center">
-                <b-button id="anonymousButton" @click="displayAnonymousText">{{locale.anonymousButton}}</b-button>
+    <b-container id="LoginForm" class="jumbotron vertical-center">
+        <b-row align-h="center">
+            <b-col cols="12" lg="4" class="text-center mb-5">
+                <b-button size="lg" variant="primary" id="anonymousButton" @click="displayAnonymousText">{{locale.anonymousButton}}</b-button>
             </b-col>
-            <b-col cols="4" class="text-center">
-                <b-button id="feideButton" @click="displayFeideText">Feide</b-button>
+            <b-col cols="12" lg="4" class="text-center mb-5">
+                <b-button size="lg" variant="primary" id="feideButton" @click="displayFeideText">Feide</b-button>
             </b-col>
         </b-row>
-        <b-row align-h="center" class="my-5">
-            <b-col cols="8">
-                <b-list-group class="border">
-                    <b-list-group-item class="border-0" :key="item" v-for="item in getLoginTerms">{{item}}</b-list-group-item>
+        <b-row align-h="center" class="mb-2">
+            <b-col cols="12" lg="9">
+                <b-list-group>
+                    <b-list-group-item class="border-0" :key="item" v-for="item in getLoginTerms"><li>{{item}}</li></b-list-group-item>
                 </b-list-group>
             </b-col>
         </b-row>
         <b-row align-h="center">
-            <b-col cols="4" class="text-center">
+            <b-col cols="12" lg="4" class="text-center">
                 <b-form-checkbox v-if="feideLogin" v-model="termsApproved">{{locale.acceptCheckbox}}</b-form-checkbox>
-                <b-form action="/login/anonymous" ref="submitForm" method="POST" class="align-items-center">
-                    <b-button id="loginButton" :disabled="!termsApproved" type="submit">{{locale.loginButton}}</b-button>
+                <b-form action="/login/anonymous" ref="submitForm" method="POST" class="align-items-center mt-4" v-if="feideLogin">
+                    <b-button size="lg" variant="primary" id="loginButton" :disabled="!termsApproved" type="submit">{{locale.loginButton}}</b-button>
                 </b-form>
+                <b-button size="lg" variant="primary" id="loginButton" type="submit" v-if="!feideLogin" @click="loginAnonymously">{{locale.loginButton}}</b-button>
             </b-col>
         </b-row> 
     </b-container>
@@ -50,6 +51,9 @@
                 this.termsApproved = false;
                 this.feideLogin = true;
                 this.socket.emit("loginRequest", {loginType: this.feideLogin});
+            },
+            loginAnonymously() {
+                this.socket.emit("loginAnonymouslyRequest");
             }
         },
         mounted() {
@@ -58,8 +62,12 @@
                 that.locale = dataBus.locale["LoginForm"];
             });
 
-            this.socket.on("loginResponse", function(data){
+            that.socket.on("loginResponse", function(data){
                 that.$refs.submitForm.action = data.actionLink;
+            });
+
+            that.socket.on("loginAnonymouslyResponse", function(){
+                that.$router.push("/client");
             });
         },
         computed: {
@@ -69,3 +77,9 @@
         }
     };
 </script>
+
+<style scoped>
+    #LoginForm {
+        margin-top: 2rem
+    }
+</style>
