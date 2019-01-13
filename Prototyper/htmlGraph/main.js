@@ -2,7 +2,7 @@ let c = document.getElementById("canvas");
 let ctx = c.getContext("2d");
 
 let R = 25;
-let nodes = []; // { x, y, r }
+let nodes = []; // { x, y, r, v }
 let edges = []; // { n1, n2 }
 
 let mode = "add";
@@ -10,7 +10,8 @@ let modes = {
     "add": addNode,
     "remove": removeNode,
     "join": joinNode,
-    "move": moveNode
+    "move": moveNode,
+    "edit": editNode
 }
 
 let joinState = [];
@@ -54,7 +55,10 @@ function draw() {
 
     for (let i = 0; i < nodes.length; i++) {
         drawCtx.beginPath();
+
         drawCtx.arc(nodes[i].x, nodes[i].y, R, 0, 2 * Math.PI);
+        drawCtx.fillText(nodes[i].v, nodes[i].x, nodes[i].y);
+        
         drawCtx.fillStyle = "white";
         drawCtx.fill();
         drawCtx.stroke();
@@ -75,7 +79,8 @@ function addNode(e) {
     nodes.push({
         x: e.offsetX,
         y: e.offsetY,
-        r: R
+        r: R,
+        v: "Hei"//Math.round(Math.random() * 99) 
     });
 
     dirty = true;
@@ -100,12 +105,7 @@ function removeNode(e) {
 
 function joinNode(e) {
     if (joinState.length == 0) {
-        for (let i = 0; i < nodes.length; i++) {
-            if (pointInNode(e.offsetX, e.offsetY, nodes[i].x, nodes[i].y)) {
-                joinState.push(nodes[i]);
-                return;
-            }
-        }
+        joinState.push(getNodeAtCursor(e));
     } else if (joinState.length == 1) {
         for (let i = 0; i < nodes.length; i++) {
             if (pointInNode(e.offsetX, e.offsetY, nodes[i].x, nodes[i].y)) {
@@ -128,12 +128,7 @@ function joinNode(e) {
 
 function moveNode(e) {
     if (moveState.length == 0) {
-        for (let i = 0; i < nodes.length; i++) {
-            if (pointInNode(e.offsetX, e.offsetY, nodes[i].x, nodes[i].y)) {
-                moveState.push(i);
-                return;
-            }
-        }
+        moveState.push(getNodeAtCursor(e));
     } else if (moveState.length == 1) {
         nodes[moveState[0]].x = e.offsetX;
         nodes[moveState[0]].y = e.offsetY;
@@ -142,10 +137,23 @@ function moveNode(e) {
     }
 }
 
+function editNode(e) {
+    let node = getNodeAtCursor(e);
+
+}
+
 c.onmousedown = function(e) {
     modes[mode](e);
 };
 
 function pointInNode(x, y, nx, ny) {
     return (x - nx) * (x - nx) + (y - ny) * (y - ny) <= R * R;
+}
+
+function getNodeAtCursor(e) {
+    for (let i = 0; i < nodes.length; i++) {
+        if (pointInNode(e.offsetX, e.offsetY, nodes[i].x, nodes[i].y)) {
+            return nodes[i];
+        }
+    }
 }
