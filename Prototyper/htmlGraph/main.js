@@ -14,21 +14,12 @@ let modes = {
     "edit": editNode
 }
 
-let joinState = [];
-let moveState = [];
-
 function setMode(newMode) {
     if (newMode == mode) {
         return;
     }
 
     mode = newMode;
-
-    if (newMode == "join") {
-        joinState.length = 0;
-    } else if (newMode == "move") {
-        moveState.length = 0;
-    }
 }
 
 let drawBuffer = document.createElement("CANVAS")
@@ -130,31 +121,6 @@ function joinNode(e) {
         }
 
         c.onmouseup = undefined;
-    }
-}
-
-function old_joinNode(e) {
-    if (joinState.length == 0) {
-        let node = getNodeAtCursor(e).node;
-        if (node == undefined) return;
-        joinState.push(node);
-    } else if (joinState.length == 1) {
-        for (let i = 0; i < nodes.length; i++) {
-            if (pointInNode(e.offsetX, e.offsetY, nodes[i].x, nodes[i].y)) {
-                if (nodes[i] == joinState[0]) {
-                    continue;
-                }
-
-                edges.push({
-                    n1: joinState[0],
-                    n2: nodes[i]
-                });
-
-                dirty = true;
-                joinState.length = 0;
-                return;
-            }
-        }
     }
 }
 
