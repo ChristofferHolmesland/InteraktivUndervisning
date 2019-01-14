@@ -52,15 +52,23 @@ app.get('/login/callback/feide', passport.authenticate('passport-openid-connect'
 
     // Reads information from the scope request to feide
     let accessToken = req.user.token.access_token;
-    let userRights = 1;
+    let userRights = 2; //TODO write function to checkdatabase to check the userrights
     let userName = req.user.data.name;
     let userId = req.user.token.id_token;
+    let temp = req.user.data["connect-userid_sec"][0];
+    temp = temp.split("@");
+    temp = temp[0].split(":");
+    let idNumber = temp[1];
 
     // Makes a new active user
-    let tempUser = new user(accessToken, userRights, userName, userId);
-    let tempKey = user.generateUserId();
+    let tempKey = user.generateSessionId();
+    let tempUser = new user(userRights, userName, tempKey, {
+        "accessToken": accessToken,
+        "userId": userId,
+        "idNumber": idNumber
+    });
     users.set(tempKey, tempUser);
 
     // Stores a new cooikie with a random generated userid
-    res.cookie("userId", tempKey, {expires: new Date(Date.now + 500/*2678400000*/)}).redirect("/client");
+    res.cookie("sessionId", tempKey, {expires: new Date(Date.now + 500/*2678400000*/)}).redirect("/client");
 });

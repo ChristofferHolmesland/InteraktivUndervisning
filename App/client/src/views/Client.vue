@@ -1,7 +1,13 @@
 <template>
 	<div class="Client">
 		<h1>This is the client page</h1>
-		<JoinRoom/>
+		<b-container>
+			<b-row>
+				<b-col cols="12" lg="4">
+					<JoinRoom></JoinRoom>
+				</b-col>
+			</b-row>
+		</b-container>
 	</div>
 </template>
 
@@ -17,7 +23,7 @@
 			}
 		},
 		components: {
-			"JoinRoom": JoinRoom
+			JoinRoom
 		},
 		created() {
 			this.socket.emit("clientStarted");
