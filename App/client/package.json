@@ -34,7 +34,10 @@
       "@vue/prettier"
     ],
     "rules": {
-      "indent": ["error", "tab"]
+      "indent": [
+        "error",
+        "tab"
+      ]
     },
     "parserOptions": {
       "parser": "babel-eslint"

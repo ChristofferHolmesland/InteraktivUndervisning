@@ -4,21 +4,36 @@
         "user": "Bruker",
         "profile": "Profil",
         "signOut": "Logg ut",
-        "signIn": "Logg inn"
+        "signIn": "Logg inn",
+        "dashboard": "Dashboard"
     },
     "LoginForm": {
         "anonymousButton": "Anonym",
-        "acceptCheckbox": "Aksepter",
+        "acceptCheckbox": "Jeg aksepterer disse betingelsene",
         "loginButton": "Logg inn",
         "feideList": [
             "Denne nettsiden bruker cookies for å kunne lagre spørsmålene dine.",
+            "Quizmaster vil ikke kunne se hvem som har svart hva, men vil kunne se feil svar.",
             "Denne nettsiden lagrer data linket til din bruker for at du skal kunne se på tidligere quizer",
-            "En kan slette all data som er lagret ved å gå inn på profil og trykke på \"Slett data\"",
+            "En kan slette all data som er lagret om deg ved å gå inn på profil og trykke på \"Slett data\"",
             "For å kunne logge inn med Feide så må du akseptere at vi bruker cookies og lagrer data under!"
         ],
         "anonymousList": [
             "Hvis en velger å logge inn anonymt vil vi ikke lagre cookies eller data i etterkant.",
             "Hvis en velger anonym innlogging vil en ikke kunne se tidligere quizer."
         ]
+    },
+    "401": {
+        "unauthorized": "Uautorisert!",
+        "textList": [
+            "Denne siden kan ikke bli autorisert for deg.",
+            "Venligst gå tilbake og logg inn før du prøve å laste inn denne siden."
+        ],
+        "homeButton": "Gå hjem"
+    },
+    "404": {
+        "headline": "404",
+        "text": "Åh nei! Ser ut som noe gikk galt.",
+        "homeButton": "Go home"
     }
 }
