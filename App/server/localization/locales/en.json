@@ -25,7 +25,7 @@
     },
     "401": {
         "unauthorized": "Unauthorized!",
-        "textlist": [
+        "textList": [
             "The page you have requested can't be authorized for you.",
             "Please go back and log in before trying to enter this page."
         ],
