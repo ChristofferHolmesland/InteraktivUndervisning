@@ -1,5 +1,5 @@
 /*
-    
+    Adds graph drawing functionality to a canvas object.
 */
 class GraphDrawer {
     /*
@@ -153,7 +153,7 @@ class GraphDrawer {
     */
     removeNode(e) {
         for (let i = 0; i < this.nodes.length; i++) {
-            if (this.pointInNode(e.offsetX, e.offsetY, this.nodes[i].x, this.nodes[i].y)) {
+            if (this.isPointInNode(e.offsetX, e.offsetY, this.nodes[i].x, this.nodes[i].y)) {
                 for (let j = 0; j < this.edges.length; j++) {
                     if (this.edges[j].n1 == this.nodes[i] || this.edges[j].n2 == this.nodes[i]) {
                         this.edges.splice(j, 1);
