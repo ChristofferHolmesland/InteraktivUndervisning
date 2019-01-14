@@ -55,7 +55,10 @@ app.get('/login/callback/feide', passport.authenticate('passport-openid-connect'
     let userRights = 2; //TODO write function to checkdatabase to check the userrights
     let userName = req.user.data.name;
     let userId = req.user.token.id_token;
-    let idNumber = req.user.token.userId;
+    let temp = req.user.data["connect-userid_sec"][0];
+    temp = temp.split("@");
+    temp = temp[0].split(":");
+    let idNumber = temp[1];
 
     // Makes a new active user
     let tempKey = user.generateSessionId();
