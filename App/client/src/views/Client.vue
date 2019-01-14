@@ -17,7 +17,7 @@
 			}
 		},
 		components: {
-			"JoinRoom": JoinRoom
+			JoinRoom
 		},
 		created() {
 			this.socket.emit("clientStarted");

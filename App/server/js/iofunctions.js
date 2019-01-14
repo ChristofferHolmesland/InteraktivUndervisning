@@ -5,7 +5,9 @@ const anonymousNames = (require("./anonymousName.js")).Animals;
 const cookie = require('cookie');
 
 module.exports.listen = function(server, users) {
-    io = socketio.listen(server);
+    io = socketio.listen(server, {
+        cookie: false
+    });
     io.on("connection", function(socket) {
 
         // On new connection, checks if user has a cookie with userId and verifies the user
@@ -14,9 +16,9 @@ module.exports.listen = function(server, users) {
             let response = {
                 "username": user.userName, 
                 "loggedIn": true,
-                "admin": false
+                "admin": user.userRights
             }
-            if(user.userRights == 3) response.admin = true;
+            if(user.userRights == 4) response.admin = true;
             socket.emit("loginResponse", response)
         }
 
@@ -29,13 +31,11 @@ module.exports.listen = function(server, users) {
         });
 
         socket.on("signOutRequest", function(){
-            if(cookie.parse(socket.handshake.headers.cookie).userId){
-                let userCookie = cookie.parse(socket.handshake.headers.cookie).userId;
-                users.delete(userCookie);
-                socket.emit("deleteCookie", userCookie);
-            }else{
-                users.delete(socket.id);
+            if(user.feide){
+                socket.emit("deleteCookie", user.sessionId);
             }
+
+            users.delete(user.sessionId);
             socket.emit("signOutResponse");
         });
 
@@ -48,8 +48,8 @@ module.exports.listen = function(server, users) {
         //--------------------------------------------//
 
         socket.on("loginAnonymouslyRequest", function(){
-            tempUser = new User("", 1, "Anonymous " + anonymousNames.getRandomAnimal(), "");
             tempKey = socket.id;
+            tempUser = new User(1, "Anonymous " + anonymousNames.getRandomAnimal(), tempKey, undefined);
             users.set(tempKey, tempUser);
             socket.emit("loginAnonymouslyResponse");
 
@@ -57,7 +57,7 @@ module.exports.listen = function(server, users) {
             socket.emit("loginResponse", {
                 "username": user.userName,
                 "loggedIn": true,
-                "admin": false
+                "admin": user.userRights
             });
         });
         
@@ -72,11 +72,21 @@ module.exports.listen = function(server, users) {
         });
 
         //--------------------------------------------//
+        //------------- Student Assistant -------------//
+        //--------------------------------------------//
+
+        socket.on("studAssStarted", function() {
+            if(user && user.userRights == 3) return;
+
+            socket.emit("unauthorizedAccess");
+        });
+
+        //--------------------------------------------//
         //------------- Admin functions -------------//
         //--------------------------------------------//
 
         socket.on("adminStarted", function() {
-            if(user && user.userRights == 3) return;
+            if(user && user.userRights == 4) return;
 
             socket.emit("unauthorizedAccess");
         });

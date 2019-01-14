@@ -10,7 +10,7 @@
 					<b-navbar-nav class="ml-auto" v-if="user.loggedIn">
 						<b-nav-item center @click="clientRedirect">{{locale.dashboard}}</b-nav-item>
 
-						<b-nav-item center v-if="user.admin">Admin</b-nav-item>
+						<b-nav-item center v-if="user.admin == 3 && user.admin.loggedIn">Admin</b-nav-item>
 					</b-navbar-nav>
 
 					<!-- Right aligned nav items -->
@@ -55,7 +55,7 @@
 				user: {
 					username: "", 
 					loggedIn: false,
-					admin: false
+					admin: 0
 				},
 				test: false
 			}
@@ -81,7 +81,7 @@
 			that.socket.on("signOutResponse", function(){
 				that.user.username = "";
 				that.user.loggedIn = false;
-				that.user.admin = false;
+				that.user.admin = 0;
 				that.$router.push("/");
 			});
 
