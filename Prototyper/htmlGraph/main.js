@@ -55,14 +55,22 @@ function draw() {
 
     for (let i = 0; i < nodes.length; i++) {
         drawCtx.beginPath();
-
         drawCtx.arc(nodes[i].x, nodes[i].y, R, 0, 2 * Math.PI);
-        drawCtx.fillText(nodes[i].v, nodes[i].x, nodes[i].y);
-        
         drawCtx.fillStyle = "white";
         drawCtx.fill();
         drawCtx.stroke();
         drawCtx.closePath();
+
+        drawCtx.fillStyle = "black";
+        /*
+            Width is the only property
+            https://developer.mozilla.org/en-US/docs/Web/API/TextMetrics
+        */
+        let textWidth = drawCtx.measureText(nodes[i].v).width;
+        let fontHeight = 10;
+        drawCtx.fillText(nodes[i].v,
+            nodes[i].x - (textWidth / 2),
+            nodes[i].y + (fontHeight / 2));
     }
     
     switchBuffers();
@@ -73,14 +81,14 @@ setInterval(() => {
         draw();
         dirty = false;
     }
-}, 50);
+}, 1000 / 60);
 
 function addNode(e) {
     nodes.push({
         x: e.offsetX,
         y: e.offsetY,
         r: R,
-        v: "Hei"//Math.round(Math.random() * 99) 
+        v: Math.round(Math.random() * 99)
     });
 
     dirty = true;
@@ -104,8 +112,32 @@ function removeNode(e) {
 }
 
 function joinNode(e) {
+    let node = getNodeAtCursor(e).node;
+    if (node == undefined) return;
+
+    c.onmouseup = function(new_e) {
+        let node2 = getNodeAtCursor(new_e).node;
+
+        if (node2 != undefined) {
+            if (node != node2) {
+                edges.push({
+                 n1: node,
+                 n2: node2
+                });
+
+                dirty = true;
+            }
+        }
+
+        c.onmouseup = undefined;
+    }
+}
+
+function old_joinNode(e) {
     if (joinState.length == 0) {
-        joinState.push(getNodeAtCursor(e));
+        let node = getNodeAtCursor(e).node;
+        if (node == undefined) return;
+        joinState.push(node);
     } else if (joinState.length == 1) {
         for (let i = 0; i < nodes.length; i++) {
             if (pointInNode(e.offsetX, e.offsetY, nodes[i].x, nodes[i].y)) {
@@ -127,13 +159,18 @@ function joinNode(e) {
 }
 
 function moveNode(e) {
-    if (moveState.length == 0) {
-        moveState.push(getNodeAtCursor(e));
-    } else if (moveState.length == 1) {
-        nodes[moveState[0]].x = e.offsetX;
-        nodes[moveState[0]].y = e.offsetY;
-        moveState.length = 0;
+    let node = getNodeAtCursor(e).node;
+    if (node == undefined) return;
+
+    c.onmousemove = function(new_e) {
+        node.x = new_e.offsetX;
+        node.y = new_e.offsetY;
         dirty = true;
+    }
+
+    c.onmouseup = function(new_e) {
+        c.onmousemove = undefined;
+        c.onmouseup = undefined;
     }
 }
 
@@ -153,7 +190,15 @@ function pointInNode(x, y, nx, ny) {
 function getNodeAtCursor(e) {
     for (let i = 0; i < nodes.length; i++) {
         if (pointInNode(e.offsetX, e.offsetY, nodes[i].x, nodes[i].y)) {
-            return nodes[i];
+            return { 
+                index: i,
+                node: nodes[i]
+            };
         }
+    }
+
+    return {
+        index: undefined,
+        node: undefined
     }
 }
