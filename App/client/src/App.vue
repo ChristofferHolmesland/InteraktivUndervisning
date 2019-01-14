@@ -16,11 +16,11 @@
 					<!-- Right aligned nav items -->
 					<b-navbar-nav class="ml-auto">
 
-						<b-nav-item-dropdown :text="locale.lang" right>
+						<b-nav-item-dropdown :text="locale.lang" right class="mr-3">
 							<b-dropdown-item-button @click="localeChange" v-model="selectLocale" :id="localeItem" :key="localeItem" v-for="localeItem in localeList"  value="{{localeItem}}">{{localeItem}}</b-dropdown-item-button>
 						</b-nav-item-dropdown>
 						
-						<b-nav-text right v-if="user.loggedIn">{{user.username}}</b-nav-text>
+						<b-nav-text right v-if="user.loggedIn" class="mr-3">{{user.username}}</b-nav-text>
 
 						<b-nav-item-dropdown right v-if="user.loggedIn" :text="locale.user">
 							<b-dropdown-item>{{locale.profile}}</b-dropdown-item>
@@ -95,7 +95,7 @@
 		},
 		methods: {
 			localeChange(event){
-				this.socket.emit("getTextRequest", event.path[0].id);
+				this.socket.emit("getLocaleRequest", event.path[0].id);
 			},
 			signInRedirect(){
 				this.$router.push("/login");
@@ -124,6 +124,6 @@
 
 <style>
 	body {
-		background-color: #b7b7b7/*#1c11ee*/;
+		background-color: #ccc/*#b7b7b7/*#1c11ee*/;
 	}
 </style>

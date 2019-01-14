@@ -1,26 +1,31 @@
-var socketio = require('socket.io');
+const socketio = require('socket.io');
 const locales = (require("../localization/localeLoader.js")).locales;
-var User = (require("./user.js")).User;
-var cookie = require('cookie')
+const User = (require("./user.js")).User;
+const anonymousNames = (require("./anonymousName.js")).Animals;
+const cookie = require('cookie');
 
 module.exports.listen = function(server, users) {
     io = socketio.listen(server);
     io.on("connection", function(socket) {
 
-        if(cookie.parse(socket.handshake.headers.cookie).userId && users.get(cookie.parse(socket.handshake.headers.cookie).userId)){
-            let user = users.get(cookie.parse(socket.handshake.headers.cookie).userId);
-
-            socket.emit("loginResponse", {
+        // On new connection, checks if user has a cookie with userId and verifies the user
+        let user = User.getUser(users, socket);
+        if(user){
+            let response = {
                 "username": user.userName, 
                 "loggedIn": true,
                 "admin": false
-            })
+            }
+            if(user.userRights == 3) response.admin = true;
+            socket.emit("loginResponse", response)
         }
 
-        // Common functions
+        //--------------------------------------------//
+        //------------- Common functions -------------//
+        //--------------------------------------------//
 
         socket.on('disconnect', function(){
-        
+
         });
 
         socket.on("signOutRequest", function(){
@@ -34,27 +39,21 @@ module.exports.listen = function(server, users) {
             socket.emit("signOutResponse");
         });
 
-        socket.on("getTextRequest", function(locale) {
-            socket.emit("getTextResponse", {"locale": locales[locale], "localeList": locales.localeList});
+        socket.on("getLocaleRequest", function(locale) {
+            socket.emit("getLocaleResponse", {"locale": locales[locale], "localeList": locales.localeList});
         });
 
-        socket.on("loginRequest", function(data){
-            if(data.loginType){
-                socket.emit("loginResponse", {actionLink: "/login/feide"});
-            }else{
-                socket.emit("loginResponse", {actionLink: "/login/anonymous"})
-            }
-        });
-
-        // guest functions
+        //--------------------------------------------//
+        //------------- Guest functions --------------//
+        //--------------------------------------------//
 
         socket.on("loginAnonymouslyRequest", function(){
-            tempUser = new User("", 1, "Anonym hund", "");
+            tempUser = new User("", 1, "Anonymous " + anonymousNames.getRandomAnimal(), "");
             tempKey = socket.id;
             users.set(tempKey, tempUser);
             socket.emit("loginAnonymouslyResponse");
 
-            let user = users.get(socket.id);
+            user = users.get(socket.id);
             socket.emit("loginResponse", {
                 "username": user.userName,
                 "loggedIn": true,
@@ -62,31 +61,22 @@ module.exports.listen = function(server, users) {
             });
         });
         
-        // client functions
+        //--------------------------------------------//
+        //------------- Client functions -------------//
+        //--------------------------------------------//
 
         socket.on("clientStarted", function() {
-            console.log(users);
-
-            if(
-                (cookie.parse(socket.handshake.headers.cookie).userId && 
-                users.get(cookie.parse(socket.handshake.headers.cookie).userId) &&
-                users.get(cookie.parse(socket.handshake.headers.cookie).userId).userRights > 0) ||
-                users.get(socket.id)
-            ){
-                return;
-            }
+            if(user && user.userRights > 0) return;
 
             socket.emit("unauthorizedAccess");
         });
 
-        // Admin functions
+        //--------------------------------------------//
+        //------------- Admin functions -------------//
+        //--------------------------------------------//
 
         socket.on("adminStarted", function() {
-            if(cookie.parse(socket.handshake.headers.cookie).userId && users.get(cookie.parse(socket.handshake.headers.cookie).userId)){
-                if(users.get(cookie.parse(socket.handshake.headers.cookie).userId).userRights > 2){
-                    return;
-                }
-            }
+            if(user && user.userRights == 3) return;
 
             socket.emit("unauthorizedAccess");
         });
