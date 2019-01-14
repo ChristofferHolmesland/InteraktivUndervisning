@@ -31,7 +31,7 @@ module.exports.listen = function(server, users) {
         });
 
         socket.on("signOutRequest", function(){
-            if(user.feide){
+            if(user.feide != undefined){
                 socket.emit("deleteCookie", user.sessionId);
             }
 
