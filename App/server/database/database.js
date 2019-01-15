@@ -1,12 +1,12 @@
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
 
-//var currentpath = path.resolve(__dirname, "../dbtest/testdb");
+var currentpath = path.resolve(__dirname, ".interaktivUndervisning.db");
 //console.log(currentpath);
 module.exports.getDB = function setupDatabase() {
 
 	//set up connection with the database
-	let db = new sqlite3.Database("databasetest.db", function (err) {
+	let db = new sqlite3.Database(currentpath, function (err) {
         if (err) {
             console.log(err)
         } else {
