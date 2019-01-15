@@ -22,7 +22,7 @@ export default {
         });
     },
     methods: {
-        homeredirect: function() {
+        homeRedirect() {
             this.$router.push("/");
         }
     }
