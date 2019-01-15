@@ -13,21 +13,23 @@ module.exports.listen = function(server, users) {
         // On new connection, checks if user has a cookie with userId and verifies the user
         let user = User.getUser(users, socket);
         if(user){
-            let response = {
+            socket.emit("loginResponse", {
                 "username": user.userName, 
                 "loggedIn": true,
                 "admin": user.userRights
-            }
-            if(user.userRights == 4) response.admin = true;
-            socket.emit("loginResponse", response)
+            });
         }
+
+        socket.on("test", function(data){
+            console.log(data);
+            socket.emit("testRespone", "test");
+        });
 
         //--------------------------------------------//
         //------------- Common functions -------------//
         //--------------------------------------------//
 
         socket.on('disconnect', function(){
-
         });
 
         socket.on("signOutRequest", function(){
