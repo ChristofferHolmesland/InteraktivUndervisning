@@ -2,11 +2,11 @@
 	<div id="app">
 		<div v-if="localeLoaded">
 			<NavBar>
-        	<router-view/>
 		</div>
     	<div v-else>
 
     	</div>
+		<router-view/>
 	</div>
 </template>
 
@@ -27,7 +27,9 @@
 		mounted() {
 			let that = this;
 			dataBus.$on("localeLoaded", function(){
+				console.log(that.localeLoaded);
 				that.localeLoaded = true;
+				console.log(that.localeLoaded);
 			});
 		}
 	};
