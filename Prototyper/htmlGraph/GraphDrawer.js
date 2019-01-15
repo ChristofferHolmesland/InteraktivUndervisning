@@ -1,5 +1,11 @@
 /*
     Adds graph drawing functionality to a canvas object.
+
+    TODO:
+        Zooming
+        Camera
+        Panning
+        Scaling
 */
 class GraphDrawer {
     /*
@@ -136,15 +142,16 @@ class GraphDrawer {
         Creates a node and adds it to the nodes list.
     */
     addNode(e) {
-        this.nodes.push({
+        let node = {
             x: e.offsetX,
             y: e.offsetY,
             r: this.R,
-            // TODO: Redirect user to temporary input state and
-            // let them enter the value.
-            v: Math.round(Math.random(99))
-        })
-    
+            v: 0
+        }
+
+        this._editNode(node);
+
+        this.nodes.push(node)
         this.dirty = true;
     }
 
@@ -195,7 +202,7 @@ class GraphDrawer {
     }
     
     /*
-        Let's the user drag a node around.
+        Lets the user drag a node around.
     */
     moveNode(e) {
         let node = this.getNodeAtCursor(e).node;
@@ -214,10 +221,24 @@ class GraphDrawer {
     }
     
     /*
-        TODO: Let the user edit the value on a node.
+        Lets the user edit the value on a clicked node.
     */
     editNode(e) {
-        let node = this.getNodeAtCursor(e);
+        let node = this.getNodeAtCursor(e).node;
+        if (node == undefined) return;
+        this._editNode(node);
+    }
+
+    /*
+        Lets the user edit the value on a node.
+    */
+    _editNode(node) {
+        // This is the only way to open a keyboard in mobile browsers.
+        let new_value = prompt("Enter new value:", node.v);
+        if (new_value == undefined) return;
+    
+        node.v = new_value;
+        this.dirty = true;
     }
 
     /*
