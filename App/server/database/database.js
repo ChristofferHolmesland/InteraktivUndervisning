@@ -24,9 +24,6 @@ module.exports.getDB = function setupDatabase() {
             if (err) {
                 console.log("error occurred in Feide table" + err.message);
             }
-            else {
-                console.log("Feide table is operational");
-            }
         });
 
         db.run("CREATE TABLE IF NOT EXISTS \"User\"(\n" +
@@ -38,9 +35,6 @@ module.exports.getDB = function setupDatabase() {
             if (err) {
                 console.log("error occurred in User table" + err.message);
             }
-            else {
-                console.log("User table is operational");
-            }
         });
 
         db.run("CREATE TABLE IF NOT EXISTS \"Course\" (\n" +
@@ -51,9 +45,6 @@ module.exports.getDB = function setupDatabase() {
             ");", function (err) {
             if (err) {
                 console.log("error occurred in Course table" + err.message);
-            }
-            else {
-                console.log("Course table is operational");
             }
         });
 
@@ -70,9 +61,6 @@ module.exports.getDB = function setupDatabase() {
             if (err) {
                 console.log("error occurred in UserRight table");
             }
-            else {
-                console.log("UserRight table is operational");
-            }
         });
 
         db.run("CREATE TABLE IF NOT EXISTS \"Quiz\" (\n" +
@@ -86,9 +74,6 @@ module.exports.getDB = function setupDatabase() {
             if (err) {
                 console.log("error occurred in Quiz table");
             }
-            else {
-                console.log("Quiz table is operational");
-            }
         });
 
         db.run("CREATE TABLE IF NOT EXISTS \"User_has_Quiz\"(\n" +
@@ -101,9 +86,6 @@ module.exports.getDB = function setupDatabase() {
             if (err) {
                 console.log("error occurred in User_has_Quiz table");
             }
-            else {
-                console.log("User_has_Quiz table is operational");
-            }
         });
 
         db.run("CREATE TABLE IF NOT EXISTS Type(\n" +
@@ -112,9 +94,6 @@ module.exports.getDB = function setupDatabase() {
             ");", function (err) {
             if (err) {
                 console.log("error occurred in Type table");
-            }
-            else {
-                console.log("Type table is operational");
             }
         });
 
@@ -129,9 +108,6 @@ module.exports.getDB = function setupDatabase() {
             if (err) {
                 console.log("error occurred in Question table");
             }
-            else {
-                console.log("Question table is operational");
-            }
         });
 
         db.run("CREATE TABLE IF NOT EXISTS Answer(\n" +
@@ -144,9 +120,6 @@ module.exports.getDB = function setupDatabase() {
             ");", function (err) {
             if (err) {
                 console.log("error occurred in Answer");
-            }
-            else {
-                console.log("Answer table is operational");
             }
         });
     });
