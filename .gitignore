@@ -115,8 +115,5 @@ Rapport/*.log
 .idea
 .idea/
 
-# vue
-public/
-
 # Database
 .db
