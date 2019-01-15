@@ -116,4 +116,7 @@ Rapport/*.log
 .idea/
 
 # vue
-App/server/public
+public/
+
+# Database
+.db

@@ -12,6 +12,9 @@ const env = require('./js/environment.js');
 if(!env.load()) { return; }
 if(!env.validate()) { return; }
 
+//Database
+
+
 const app = express();
 const port = 80;
 
