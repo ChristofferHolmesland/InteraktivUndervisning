@@ -13,8 +13,59 @@ class GraphDrawer {
         shouldn't be used.
     */
     constructor(canvas) {
+        // WIP Camera.
+        this.camera = {
+            zoomLevel: 1,
+            centerX: canvas.width / 2,
+            centerY: canvas.height / 2,
+            viewportWidth: canvas.width,
+            viewportHeight: canvas.height,
+            cull: function(object, isNode) {
+                /* Culling rule:
+                    Cull edge if n1 and n2 is culled.
+                    Cull node if a square with side length R centered at (node.x, node.y)
+                        doesn't overlap the viewport.
+                */
+
+                if (isNode) {
+                    return this._cullNode(object);
+                }
+
+                this._cullNode(object.n1);
+                this._cullNode(object.n2);
+                return object.n1.culled && object.n2.culled;
+            },
+            _cullNode : function(node) {
+                if (node.culled != undefined) return node.culled;
+                
+                // RectA and RectB objects can be removed if they're too slow.
+                let RectA = this.getFrustumFront();
+                let RectB = {};
+                RectB.Left = node.x - (node.r / 2);
+                RectB.Right = node.x + (node.r / 2);
+                RectB.Top = node.y - (node.r / 2);
+                RectB.Bottom = node.y + (node.r / 2);
+
+                // ref: (modified for our coordinate system)
+                // https://stackoverflow.com/questions/306316/determine-if-two-rectangles-overlap-each-other
+                node.culled = !(RectA.Left < RectB.Right && RectA.Right > RectB.Left &&
+                    RectA.Top < RectB.Bottom && RectA.Bottom > RectB.Top);
+                return node.culled;
+            },
+            getFrustumFront: function() {
+                let RectA = {};
+                RectA.Left = this.centerX - this.zoomLevel * (this.viewportWidth / 2);
+                RectA.Right = this.centerX + this.zoomLevel * (this.viewportWidth / 2);
+                RectA.Top = this.centerY - this.zoomLevel * (this.viewportHeight / 2);
+                RectA.Bottom = this.centerY + this.zoomLevel * (this.viewportHeight / 2);
+                return RectA;
+            },
+            project: function(x, y) {
+
+            }
+        }
+
         // Radius of nodes.
-        // TODO: This can probably be used for zooming.
         this.R = 25;
         // How often the canvas should be updated.
         this.FPS = 60;
@@ -86,7 +137,8 @@ class GraphDrawer {
     */
     switchBuffers() {
         this.canvasContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.canvasContext.drawImage(this.drawBuffer, 0, 0);
+        let camera = this.camera.getFrustumFront();
+        this.canvasContext.drawImage(this.drawBuffer, camera.Left, camera.Top, camera.Right - camera.Top, camera.Bottom - camera.Top, 0, 0, this.canvas.width, this.canvas.height);
         this.drawContext.clearRect(0, 0, this.drawBuffer.width, this.drawBuffer.height);
     }
 
@@ -96,6 +148,8 @@ class GraphDrawer {
     draw() {
         // Edges.
         for (let i = 0; i < this.edges.length; i++) {
+            if (this.camera.cull(this.edges[i], false)) continue;
+
             this.drawContext.beginPath();
             this.drawContext.moveTo(this.edges[i].n1.x, this.edges[i].n1.y);
             this.drawContext.lineTo(this.edges[i].n2.x, this.edges[i].n2.y);
@@ -105,6 +159,7 @@ class GraphDrawer {
     
         // Nodes.
         for (let i = 0; i < this.nodes.length; i++) {
+            if (this.camera.cull(this.nodes[i], true)) continue;
             // Circle
             this.drawContext.beginPath();
             this.drawContext.arc(this.nodes[i].x, this.nodes[i].y, this.R, 0, 2 * Math.PI);
@@ -125,6 +180,8 @@ class GraphDrawer {
                 this.nodes[i].x - (textWidth / 2),
                 this.nodes[i].y + (fontHeight / 2));
         }
+
+        for (let i = 0; i < this.nodes.length; i++) this.nodes[i].culled = undefined;
     }
 
     /*
