@@ -17,7 +17,7 @@
 					<b-navbar-nav class="ml-auto">
 
 						<b-nav-item-dropdown :text="locale.lang" right class="mr-3">
-							<b-dropdown-item-button @click="localeChange" v-model="selectLocale" :id="localeItem" :key="localeItem" v-for="localeItem in localeList"  value="{{localeItem}}">{{localeItem}}</b-dropdown-item-button>
+							<b-dropdown-item-button @click="localeChange($event)" v-model="selectLocale" :id="localeItem" :key="localeItem" v-for="localeItem in localeList"  value="{{localeItem}}">{{localeItem}}</b-dropdown-item-button>
 						</b-nav-item-dropdown>
 						
 						<b-nav-text right v-if="user.loggedIn" class="mr-3">{{user.username}}</b-nav-text>
@@ -95,7 +95,7 @@
 		},
 		methods: {
 			localeChange(event){
-				this.socket.emit("getLocaleRequest", event.path[0].id);
+				this.socket.emit("getLocaleRequest", event.target.id);
 			},
 			signInRedirect(){
 				this.$router.push("/login");
