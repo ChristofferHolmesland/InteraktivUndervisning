@@ -1,7 +1,7 @@
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
 
-var currentpath = path.resolve(__dirname, ".interaktivUndervisning.db");
+var currentpath = path.resolve(__dirname, "interaktivUndervisning.db");
 //console.log(currentpath);
 module.exports.getDB = function setupDatabase() {
 
