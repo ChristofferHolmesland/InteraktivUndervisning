@@ -17,9 +17,9 @@ dataBus.locale = {};
 dataBus.localeList = [];
 dataBus.localeLoaded = false;
 
-dataBus.socket.emit("getTextRequest", "no");
+dataBus.socket.emit("getLocaleRequest", "no");
 
-dataBus.socket.on("getTextResponse", function(data) {
+dataBus.socket.on("getLocaleResponse", function(data) {
 	dataBus.locale = data.locale;
 	dataBus.localeList = data.localeList;
 	dataBus.localeLoaded = true;
