@@ -1,11 +1,18 @@
 /*
     Adds graph drawing functionality to a canvas object.
 
-    TODO:
-        Zooming
-        Camera
-        Panning
-        Scaling
+    // TODO: 
+            Figure out the best way to let both desktop and mobile 
+            users interact with the camera.
+
+    The GraphDrawer works in three different coordinate spaces:
+        World is where the nodes and edges are defined. This should generally
+            be larger than the other two.
+        Camera space is the interface between the world and the canvas.
+            GraphDrawer assumes that the camera space size is the same
+            as the canvas space size, because this makes zooming functionality
+            a lot simpler.
+        Canvas space is where the user interacts with the world.
 */
 class GraphDrawer {
     /*
@@ -13,58 +20,6 @@ class GraphDrawer {
         shouldn't be used.
     */
     constructor(canvas) {
-        // WIP Camera.
-        this.camera = {
-            zoomLevel: 1,
-            centerX: canvas.width / 2,
-            centerY: canvas.height / 2,
-            viewportWidth: canvas.width,
-            viewportHeight: canvas.height,
-            cull: function(object, isNode) {
-                /* Culling rule:
-                    Cull edge if n1 and n2 is culled.
-                    Cull node if a square with side length R centered at (node.x, node.y)
-                        doesn't overlap the viewport.
-                */
-
-                if (isNode) {
-                    return this._cullNode(object);
-                }
-
-                this._cullNode(object.n1);
-                this._cullNode(object.n2);
-                return object.n1.culled && object.n2.culled;
-            },
-            _cullNode : function(node) {
-                if (node.culled != undefined) return node.culled;
-                
-                // RectA and RectB objects can be removed if they're too slow.
-                let RectA = this.getFrustumFront();
-                let RectB = {};
-                RectB.Left = node.x - (node.r / 2);
-                RectB.Right = node.x + (node.r / 2);
-                RectB.Top = node.y - (node.r / 2);
-                RectB.Bottom = node.y + (node.r / 2);
-
-                // ref: (modified for our coordinate system)
-                // https://stackoverflow.com/questions/306316/determine-if-two-rectangles-overlap-each-other
-                node.culled = !(RectA.Left < RectB.Right && RectA.Right > RectB.Left &&
-                    RectA.Top < RectB.Bottom && RectA.Bottom > RectB.Top);
-                return node.culled;
-            },
-            getFrustumFront: function() {
-                let RectA = {};
-                RectA.Left = this.centerX - this.zoomLevel * (this.viewportWidth / 2);
-                RectA.Right = this.centerX + this.zoomLevel * (this.viewportWidth / 2);
-                RectA.Top = this.centerY - this.zoomLevel * (this.viewportHeight / 2);
-                RectA.Bottom = this.centerY + this.zoomLevel * (this.viewportHeight / 2);
-                return RectA;
-            },
-            project: function(x, y) {
-
-            }
-        }
-
         // Radius of nodes.
         this.R = 25;
         // How often the canvas should be updated.
@@ -72,7 +27,7 @@ class GraphDrawer {
         // Milliseconds between each update.
         this.MS_PER_FRAME = 1000 / this.FPS;
     
-        // Nodes in the graph {x, y, r, v}.
+        // Nodes in the graph {x, y, r, v, culled (can be undefined)}.
         this.nodes = [];
         // Edges between nodes {n1, n2}.
         this.edges = [];
@@ -106,8 +61,8 @@ class GraphDrawer {
 
         // Offscreen canvas used for drawing.
         this.drawBuffer = document.createElement("CANVAS");
-        this.drawBuffer.width = canvas.width;
-        this.drawBuffer.height = canvas.height;
+        this.drawBuffer.width = canvas.width * 3;
+        this.drawBuffer.height = canvas.height * 3;
         this.drawContext = this.drawBuffer.getContext("2d");
 
         // When the mouse is clicked the event handler for the
@@ -120,6 +75,97 @@ class GraphDrawer {
         this.intervalId = setInterval((function() {
             this.update.call(this);
         }).bind(this), this.MS_PER_FRAME);
+
+        this.camera = {
+            canvas: canvas,
+            zoomLevel: 1,
+            // The camera starts centered on the world.
+            centerX: drawBuffer.width / 2,
+            centerY: drawBuffer.height / 2,
+            // This determines the dimensions of the camera view.
+            // For simplicity it should be the same as the canvas
+            // where the world is rendered.
+            viewportWidth: canvas.width,
+            viewportHeight: canvas.height,
+            /* 
+                Determines if an object is inside the camera frustum.
+                Returns true if the object was culled (removed).
+
+                Culling rule:
+                    Cull edge if n1 and n2 is culled.
+                    Cull node if a square with side length R centered at (node.x, node.y)
+                    doesn't overlap the viewport.
+            */
+            cull: function(object, isNode) {
+                if (isNode) {
+                    return this._cullNode(object);
+                }
+
+                this._cullNode(object.n1);
+                this._cullNode(object.n2);
+                return object.n1.culled && object.n2.culled;
+            },
+            /*
+                Determines if a given node is culled.
+            */
+            _cullNode : function(node) {
+                if (node.culled != undefined) return node.culled;
+                
+                // RectA and RectB objects can be removed if they're too slow.
+                let RectA = this.getFrustumFront();
+                let RectB = {};
+                RectB.Left = node.x - (node.r / 2);
+                RectB.Right = node.x + (node.r / 2);
+                RectB.Top = node.y - (node.r / 2);
+                RectB.Bottom = node.y + (node.r / 2);
+
+                // ref: (modified for our coordinate system)
+                // https://stackoverflow.com/questions/306316/determine-if-two-rectangles-overlap-each-other
+                node.culled = !(RectA.Left < RectB.Right && RectA.Right > RectB.Left &&
+                    RectA.Top < RectB.Bottom && RectA.Bottom > RectB.Top);
+                return node.culled;
+            },
+            /*
+                Calculates and returns a rectangle representing the front plane of the camera frustum.
+                Back plane isn't needed because front dimensions == back dimensions, and we're working
+                in 2D space.
+            */
+            getFrustumFront: function() {
+                let RectA = {};
+                RectA.Left = this.centerX - this.zoomLevel * (this.viewportWidth / 2);
+                RectA.Right = this.centerX + this.zoomLevel * (this.viewportWidth / 2);
+                RectA.Top = this.centerY - this.zoomLevel * (this.viewportHeight / 2);
+                RectA.Bottom = this.centerY + this.zoomLevel * (this.viewportHeight / 2);
+                return RectA;
+            },
+            /*
+                Converts screen coordinates to world coordinates.
+            */
+            project: function(x, y) {
+                let frustum = this.getFrustumFront();
+                let worldX = (x / this.canvas.width) * (frustum.Right - frustum.Left) + frustum.Left;
+                let worldY = (y / this.canvas.height) * (frustum.Bottom - frustum.Top) + frustum.Top;
+                return { x: worldX, y: worldY };
+            }
+        }
+    }
+
+    // TODO: Remove this, and implement a better interface
+    set zoomLevel(newZoom) {
+        this.camera.zoomLevel = newZoom;
+        this.dirty = true;
+    }
+
+    // TODO: Remove this, and implement a better interface
+    set centerX(newX) {
+        this.camera.centerX = newX;
+        this.dirty = true;
+    }
+
+    // TODO: Remove this, and implement a better interface
+    set centerY(newY) {
+        this.camera.centerY = newY;
+        this.dirty = true;
     }
 
     /*
@@ -136,9 +182,11 @@ class GraphDrawer {
         ref: https://en.wikipedia.org/wiki/Multiple_buffering
     */
     switchBuffers() {
-        this.canvasContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
         let camera = this.camera.getFrustumFront();
-        this.canvasContext.drawImage(this.drawBuffer, camera.Left, camera.Top, camera.Right - camera.Top, camera.Bottom - camera.Top, 0, 0, this.canvas.width, this.canvas.height);
+        this.canvasContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.canvasContext.drawImage(this.drawBuffer, 
+            camera.Left, camera.Top, camera.Right - camera.Left, camera.Bottom - camera.Top, 
+            0, 0, this.canvas.width, this.canvas.height);
         this.drawContext.clearRect(0, 0, this.drawBuffer.width, this.drawBuffer.height);
     }
 
@@ -146,6 +194,16 @@ class GraphDrawer {
         Draws the nodes and edges to the buffer.
     */
     draw() {
+        // World border
+        this.drawContext.beginPath();
+        this.drawContext.moveTo(0, 0);
+        this.drawContext.lineTo(this.drawBuffer.width, 0);
+        this.drawContext.lineTo(this.drawBuffer.width, this.drawBuffer.height);
+        this.drawContext.lineTo(0, this.drawBuffer.height);
+        this.drawContext.lineTo(0, 0);
+        this.drawContext.stroke();
+        this.drawContext.closePath();
+
         // Edges.
         for (let i = 0; i < this.edges.length; i++) {
             if (this.camera.cull(this.edges[i], false)) continue;
@@ -199,14 +257,16 @@ class GraphDrawer {
         Creates a node and adds it to the nodes list.
     */
     addNode(e) {
+        let p = this.camera.project(e.offsetX, e.offsetY);
+        console.log(p);
         let node = {
-            x: e.offsetX,
-            y: e.offsetY,
+            x: p.x,
+            y: p.y,
             r: this.R,
             v: 0
         }
 
-        this._editNode(node);
+        //this._editNode(node);
 
         this.nodes.push(node)
         this.dirty = true;
@@ -216,8 +276,10 @@ class GraphDrawer {
         Removes the clicked node.
     */
     removeNode(e) {
+        let p = this.camera.project(e.offsetX, e.offsetY);
+
         for (let i = 0; i < this.nodes.length; i++) {
-            if (this.isPointInNode(e.offsetX, e.offsetY, this.nodes[i].x, this.nodes[i].y)) {
+            if (this.isPointInNode(p.x, p.y, this.nodes[i].x, this.nodes[i].y)) {
                 for (let j = 0; j < this.edges.length; j++) {
                     if (this.edges[j].n1 == this.nodes[i] || this.edges[j].n2 == this.nodes[i]) {
                         this.edges.splice(j, 1);
@@ -240,8 +302,8 @@ class GraphDrawer {
         if (node == undefined) return;
     
         // JS Arrow functions won't override the "this" context.
-        this.canvas.onmouseup = (new_e) => {
-            let node2 = this.getNodeAtCursor(new_e).node;
+        this.canvas.onmouseup = (newE) => {
+            let node2 = this.getNodeAtCursor(newE).node;
     
             if (node2 != undefined) {
                 if (node != node2) {
@@ -265,13 +327,14 @@ class GraphDrawer {
         let node = this.getNodeAtCursor(e).node;
         if (node == undefined) return;
     
-        this.canvas.onmousemove = (new_e) => {
-            node.x = new_e.offsetX;
-            node.y = new_e.offsetY;
+        this.canvas.onmousemove = (newE) => {
+            let p = this.camera.project(newE.offsetX, newE.offsetY);
+            node.x = p.x;
+            node.y = p.y;
             this.dirty = true;
         }
     
-        this.canvas.onmouseup = (new_e) => {
+        this.canvas.onmouseup = (newE) => {
             this.canvas.onmousemove = undefined;
             this.canvas.onmouseup = undefined;
         }
@@ -303,8 +366,17 @@ class GraphDrawer {
         index and node are undefined if no node was clicked.
     */
     getNodeAtCursor(e) {
+        let p = this.camera.project(e.offsetX, e.offsetY);
+        return this.getNodeAtPoint(p.x, p.y);
+    }
+
+    /*
+        Returns {index, node} of the node at (x, y),
+        index and node are undefined if no node was found.
+    */
+    getNodeAtPoint(x, y) {
         for (let i = 0; i < this.nodes.length; i++) {
-            if (this.isPointInNode(e.offsetX, e.offsetY, this.nodes[i].x, this.nodes[i].y)) {
+            if (this.isPointInNode(x, y, this.nodes[i].x, this.nodes[i].y)) {
                 return { 
                     index: i,
                     node: this.nodes[i]
