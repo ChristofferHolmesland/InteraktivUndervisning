@@ -114,3 +114,6 @@ Rapport/*.log
 # PyCharm
 .idea
 .idea/
+
+# vue
+App/server/public
