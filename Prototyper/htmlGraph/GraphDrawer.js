@@ -72,33 +72,7 @@ class GraphDrawer {
         this.canvas.addEventListener("mousedown", (function(e) {
             let consumed = this.stateHandlers[this.currentState](e);
             if (consumed) return;
-
-            // Panning gesture detection
-            let currentPosition = this.camera.project(e.offsetX, e.offsetY);
-            
-            let panMoveHandler = function(newE) {
-                let newPosition = this.camera.project(newE.offsetX, newE.offsetY);
-                
-                const velocityFactor = 0.85;
-                const threshold = 2;
-                let dX = velocityFactor * (newPosition.x - currentPosition.x);
-                let dY = velocityFactor * (newPosition.y - currentPosition.y);
-                if (dX > threshold || dX < threshold) this.camera.centerX -= dX;
-                if (dY > threshold || dY < threshold) this.camera.centerY -= dY;
-                this.dirty = true;
-
-                currentPosition = newPosition;
-            }.bind(this);
-
-            let panUpHandler = function(newE) {
-                this.canvas.removeEventListener("mousemove", panMoveHandler);
-                this.canvas.removeEventListener("mouseup", panUpHandler);
-                this.canvas.removeEventListener("mouseleave", panUpHandler);
-            }.bind(this);
-
-            this.canvas.addEventListener("mousemove", panMoveHandler);
-            this.canvas.addEventListener("mouseup", panUpHandler);
-            this.canvas.addEventListener("mouseleave", panUpHandler);
+            this.detectPanGesture(e);
         }).bind(this));
 
         // Updates the GraphDrawer every <MS_PER_FRAME> milliseconds.
@@ -156,9 +130,9 @@ class GraphDrawer {
                 return node.culled;
             },
             /*
-                Calculates and returns a rectangle representing the front plane of the camera frustum.
-                Back plane isn't needed because front dimensions == back dimensions, and we're working
-                in 2D space.
+                Calculates and returns a rectangle representing the front plane
+                off the camera frustum. Back plane isn't needed because
+                front dimensions == back dimensions, and we're working in 2D space.
             */
             getFrustumFront: function() {
                 let RectA = {};
@@ -166,6 +140,8 @@ class GraphDrawer {
                 RectA.Right = this.centerX + this.zoomLevel * (this.viewportWidth / 2);
                 RectA.Top = this.centerY - this.zoomLevel * (this.viewportHeight / 2);
                 RectA.Bottom = this.centerY + this.zoomLevel * (this.viewportHeight / 2);
+                RectA.Width = RectA.Right - RectA.Left;
+                RectA.Height = RectA.Bottom - RectA.Top;
                 return RectA;
             },
             /*
@@ -173,28 +149,34 @@ class GraphDrawer {
             */
             project: function(x, y) {
                 let frustum = this.getFrustumFront();
-                let worldX = (x / this.canvas.width) * (frustum.Right - frustum.Left) + frustum.Left;
-                let worldY = (y / this.canvas.height) * (frustum.Bottom - frustum.Top) + frustum.Top;
+                let worldX = (x / this.canvas.width) * frustum.Width + frustum.Left;
+                let worldY = (y / this.canvas.height) * frustum.Height + frustum.Top;
                 return { x: worldX, y: worldY };
-            }
+            },
+            /*
+                Changes which x coordinate the camera looks at.
+                Bound in range (0, drawBuffer width).
+            */
+            translateX: function(x, min, max) {
+                this.centerX += x;
+                if (this.centerX < min) this.centerX = min;
+                else if (this.centerX > max) this.centerX = max;
+            },
+            /*
+                Changes which y coordinate the camera looks at.
+                Bound in range (0, drawBuffer height).
+            */
+           translateY: function(y, min, max) {
+            this.centerY += y;
+            if (this.centerY < min) this.centerY = min;
+            else if (this.centerY > max) this.centerY = max;
+           }
         }
     }
 
     // TODO: Remove this, and implement a better interface
     set zoomLevel(newZoom) {
         this.camera.zoomLevel = newZoom;
-        this.dirty = true;
-    }
-
-    // TODO: Remove this, and implement a better interface
-    set centerX(newX) {
-        this.camera.centerX = newX;
-        this.dirty = true;
-    }
-
-    // TODO: Remove this, and implement a better interface
-    set centerY(newY) {
-        this.camera.centerY = newY;
         this.dirty = true;
     }
 
@@ -215,7 +197,7 @@ class GraphDrawer {
         let camera = this.camera.getFrustumFront();
         this.canvasContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.canvasContext.drawImage(this.drawBuffer, 
-            camera.Left, camera.Top, camera.Right - camera.Left, camera.Bottom - camera.Top, 
+            camera.Left, camera.Top, camera.Width, camera.Height, 
             0, 0, this.canvas.width, this.canvas.height);
         this.drawContext.clearRect(0, 0, this.drawBuffer.width, this.drawBuffer.height);
     }
@@ -309,9 +291,12 @@ class GraphDrawer {
     removeNode(e) {
         let p = this.camera.project(e.offsetX, e.offsetY);
 
+        // Searches for the clicked node.
         for (let i = 0; i < this.nodes.length; i++) {
             if (this.isPointInNode(p.x, p.y, this.nodes[i].x, this.nodes[i].y)) {
+                // Checks if the node is connected to anything with edges.
                 for (let j = 0; j < this.edges.length; j++) {
+                    // Removes the edges.
                     if (this.edges[j].n1 == this.nodes[i] || this.edges[j].n2 == this.nodes[i]) {
                         this.edges.splice(j, 1);
                         j--;
@@ -399,6 +384,47 @@ class GraphDrawer {
         node.v = new_value;
         this.dirty = true;
     }
+
+    /*
+        Can be called to determine if the event e is the start of a panning gesture.
+        This let's the user move the camera around the world.
+    */
+    detectPanGesture(e) {
+        let currentPosition = this.camera.project(e.offsetX, e.offsetY);
+        
+        // How much the camera moves relative to how far the mouse is dragged.
+        const velocityFactor = 0.85;
+        // How much the mouse must be moved before panning starts.
+        const threshold = 5;
+
+        let panMoveHandler = function(newE) {
+            let newPosition = this.camera.project(newE.offsetX, newE.offsetY);
+            let frustum = this.camera.getFrustumFront();
+
+            // Calculates the difference in position between last frame and this frame.
+            let dX = velocityFactor * (newPosition.x - currentPosition.x);
+            let dY = velocityFactor * (newPosition.y - currentPosition.y);
+            if (dX > threshold || dX < threshold) 
+                // The camera won't put it's center close enough to the world edge,
+                // to render anything outside the world.
+                this.camera.translateX(-dX, frustum.Width / 2, this.drawBuffer.width - frustum.Width / 2);
+            if (dY > threshold || dY < threshold) 
+                this.camera.translateY(-dY, frustum.Height / 2, this.drawBuffer.height - frustum.Height / 2);
+            
+                this.dirty = true;
+            currentPosition = newPosition;
+        }.bind(this);
+
+        let panUpHandler = function(newE) {
+            this.canvas.removeEventListener("mousemove", panMoveHandler);
+            this.canvas.removeEventListener("mouseup", panUpHandler);
+            this.canvas.removeEventListener("mouseleave", panUpHandler);
+        }.bind(this);
+
+        this.canvas.addEventListener("mousemove", panMoveHandler);
+        this.canvas.addEventListener("mouseup", panUpHandler);
+        this.canvas.addEventListener("mouseleave", panUpHandler);
+        }
 
     /*
         Returns {index, node} of the clicked node,
