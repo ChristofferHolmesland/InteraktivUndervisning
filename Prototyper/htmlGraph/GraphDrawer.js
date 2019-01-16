@@ -38,8 +38,9 @@ class GraphDrawer {
         this.currentState = "add";
         
         // Flag which determines if the graph state should
-        // be redrawn.
-        this.dirty = false;
+        // be redrawn. Default value is true, so the UI
+        // is rendered.
+        this.dirty = true;
 
         // Every interaction state and event handler.
         this.stateHandlers = {
@@ -67,18 +68,28 @@ class GraphDrawer {
         this.drawBuffer.height = canvas.height * 3;
         this.drawContext = this.drawBuffer.getContext("2d");
 
-        // When the mouse is clicked the event handler for the
-        // current state is called.
         this.canvas.addEventListener("mousedown", (function(e) {
-            let consumed = this.stateHandlers[this.currentState](e);
+            let consumed;
+            // UI 
+            
+            
+            // Event handler for the current state
+            consumed = this.stateHandlers[this.currentState](e);
             if (consumed) return;
+
+            // Gesture detection
             this.detectPanGesture(e);
+            // TODO: Figure out how to detect two-finger zooming
+            // TODO: Let desktop users zoom
         }).bind(this));
 
         // Updates the GraphDrawer every <MS_PER_FRAME> milliseconds.
         this.intervalId = setInterval((function() {
             this.update.call(this);
         }).bind(this), this.MS_PER_FRAME);
+
+        // The buttons which the user may click on to select interaction state
+        this.buttons = ["Add", "Remove", "Move", "Join", "Edit"];
 
         this.camera = {
             canvas: canvas,
@@ -252,6 +263,41 @@ class GraphDrawer {
         }
 
         for (let i = 0; i < this.nodes.length; i++) this.nodes[i].culled = undefined;
+    
+        this.renderUI();
+    }
+
+    renderUI() {
+        // Buttons
+        let buttonWidth = this.canvas.width / this.buttons.length;
+        let buttonHeight = this.canvas.height / 10;
+        let frustum = this.camera.getFrustumFront();
+
+        this.drawContext.beginPath();
+        for (let i = 0; i < this.buttons.length; i++) {
+            this.drawContext.fillStyle = "white";
+            this.drawContext.fillRect(
+                frustum.Left + i * buttonWidth,
+                frustum.Top + this.canvas.height - buttonHeight,
+                buttonWidth,
+                buttonHeight
+            );
+            this.drawContext.rect(
+                frustum.Left + i * buttonWidth,
+                frustum.Top + this.canvas.height - buttonHeight,
+                buttonWidth,
+                buttonHeight
+            );
+            this.drawContext.fillStyle = "black";
+            let textWidth = this.drawContext.measureText(this.buttons[i]).width;
+            let fontHeight = 10; // TODO: This should depend on font size
+            this.drawContext.fillText(
+                this.buttons[i],
+                frustum.Left + i * buttonWidth - (textWidth / 2) + buttonWidth / 2,
+                frustum.Top + this.canvas.height - buttonHeight / 2 + (fontHeight / 2));
+        }
+        this.drawContext.stroke();
+        this.drawContext.closePath();
     }
 
     /*
