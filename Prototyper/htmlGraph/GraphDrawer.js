@@ -76,10 +76,11 @@ class GraphDrawer {
             let panMoveHandler = function(newE) {
                 let newPosition = this.camera.project(newE.offsetX, newE.offsetY);
                 
-                let dX = newPosition.x - currentPosition.x;
-                let dY = newPosition.y - currentPosition.y;
-                this.camera.centerX += dX;
-                this.camera.centerY += dY;
+                const velocityFactor = 0.75;
+                let dX = velocityFactor * (newPosition.x - currentPosition.x);
+                let dY = velocityFactor * (newPosition.y - currentPosition.y);
+                if (dX > 1 || dX < 1) this.camera.centerX -= dX;
+                if (dY > 1 || dY < 1) this.camera.centerY -= dY;
                 this.dirty = true;
 
                 currentPosition = newPosition;
@@ -88,10 +89,12 @@ class GraphDrawer {
             let panUpHandler = function(newE) {
                 this.canvas.removeEventListener("mousemove", panMoveHandler);
                 this.canvas.removeEventListener("mouseup", panUpHandler);
+                this.canvas.removeEventListener("mouseleave", panUpHandler);
             }.bind(this);
 
             this.canvas.addEventListener("mousemove", panMoveHandler);
             this.canvas.addEventListener("mouseup", panUpHandler);
+            this.canvas.addEventListener("mouseleave", panUpHandler);
         }).bind(this));
 
         // Updates the GraphDrawer every <MS_PER_FRAME> milliseconds.
