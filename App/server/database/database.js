@@ -28,9 +28,8 @@ module.exports.getDB = function setupDatabase() {
 
         db.run("CREATE TABLE IF NOT EXISTS \"User\"(\n" +
             "    userId TEXT PRIMARY KEY,\n" +
-            "    feideId TEXT NOT NULL,\n" +
-            "    FOREIGN KEY  (feideId) REFERENCES Feide (feideId)\n" +
-            "    ON DELETE CASCADE ON UPDATE CASCADE\n" +
+            "    feideId TEXT,\n" +
+            "    FOREIGN KEY  (feideId) REFERENCES Feide (feideId) ON UPDATE CASCADE\n" +
             ");", function (err) {
             if (err) {
                 console.log("error occurred in User table" + err.message);
@@ -103,7 +102,7 @@ module.exports.getDB = function setupDatabase() {
             "    questionObject BLOB,\n" +
             "    questionSolution BLOB NOT NULL,\n" +
             "    questionType INTEGER NOT NULL,\n" +
-            "    FOREIGN KEY (questionType) REFERENCES Type(questionType)\n" +
+            "    FOREIGN KEY (questionType) REFERENCES Type(questionType) ON DELETE CASCADE ON UPDATE CASCADE\n" +
             ");", function (err) {
             if (err) {
                 console.log("error occurred in Question table");
@@ -111,11 +110,11 @@ module.exports.getDB = function setupDatabase() {
         });
 
         db.run("CREATE TABLE IF NOT EXISTS Answer(\n" +
-            "    answerId INTEGER PRIMARY KEY, --AutoIncrement?\n" +
+            "    answerId INTEGER PRIMARY KEY AutoIncrement,\n" +
             "    answerObject BLOB NOT NULL,\n" +
-            "    questionId INTEGER NOT NULL,\n" +
+            "    questionId INTEGER,\n" +
             "    userId TEXT,\n" +
-            "    FOREIGN KEY (questionId) REFERENCES Question(questionId),\n" +
+            "    FOREIGN KEY (questionId) REFERENCES Question(questionId) ON DELETE CASCADE ON UPDATE CASCADE,\n" +
             "    FOREIGN KEY (userId) REFERENCES User(userId)\n" +
             ");", function (err) {
             if (err) {
