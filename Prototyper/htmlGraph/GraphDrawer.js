@@ -79,11 +79,12 @@ class GraphDrawer {
             let panMoveHandler = function(newE) {
                 let newPosition = this.camera.project(newE.offsetX, newE.offsetY);
                 
-                const velocityFactor = 0.75;
+                const velocityFactor = 0.85;
+                const threshold = 2;
                 let dX = velocityFactor * (newPosition.x - currentPosition.x);
                 let dY = velocityFactor * (newPosition.y - currentPosition.y);
-                if (dX > 1 || dX < 1) this.camera.centerX -= dX;
-                if (dY > 1 || dY < 1) this.camera.centerY -= dY;
+                if (dX > threshold || dX < threshold) this.camera.centerX -= dX;
+                if (dY > threshold || dY < threshold) this.camera.centerY -= dY;
                 this.dirty = true;
 
                 currentPosition = newPosition;
