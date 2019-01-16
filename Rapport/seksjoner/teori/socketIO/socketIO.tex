@@ -1,13 +1,2 @@
 \subsection{Socket.IO}
-Socket.IO er den websocketen som er mest brukt til Node.JS. Noe som gjør at det også er den som er 
-mest støttet og den hvor en kan få mest hjelp når en sitter fast. Socket.IO bygger på ENGINE.IO og gjør at en
-kan få en link mellom server og klient i santid, som fungerer begge veier og bygger på en hendelse basert 
-kommunikasjon. I denne web applikasjonen vil flere brukere sende oppdateringer til serveren og serveren 
-vil sende ut oppdateringer til flere klienter samtidig. Dette hadde blitt veldig tungvidt og komplisert
-å få til med å sende AJAX eller HTTP forespørsler. Når en Socket.IO forbinelse har blitt satt opp så
-er det lett å sette opp funksjonene slik at det er kun den informasjonen som klienten skal ha som blir sendt.
-Socket.IO har også en funksjon som heter "room" som gjør at en kan legge en forbindelse inn i et virtuelt rom.
-Da kan serveren legge alle klientene som er med i en quiz inn i et bestemt rom og sende oppdateringer til de 
-som er med i det rommet. Dette gjør at det også er mulig å skalere serveren opp til å håndtere flere quizer til
-å kjøre samtidig. Alle Socket.IO hendelse funksjone er også asynkrone noe som gjør at klienter trenger ikke å
-vente på svar lengre enn det serveren bruker på å finne den informasjonen en trenger.
+Socket.Io is the most commonly used WebSocket for Node.JS, which makes it the most supported and with the most active community of the alternatives. Socket.IO is built using the ENGINE.IO and creates a connection between the server and the client in real time, with bidirectional event-based communication. In this application, multiple users will send updates to the server, and the server will send out various updates to numerous clients at the same time. This would have been very complicated and time-consuming to get right with AJAX or regular HTTP requests. When a Socket.IO function is set up, it's easy for the functions only to send the information that is meant for that client. Socket.IO also have a feature called "rooms" where the server can add a connection to a virtual room. Then when a quiz is running, and the server needs only to update clients connected to that quiz. It will broadcast it's messages to that room, and then only clients connected to that room will get that message. This makes Socket.IO ideal for making the server handling more than one quiz at the time. Also, all the socket.IO functions are asynchronous which makes the wait time for a response a lot shorter.
