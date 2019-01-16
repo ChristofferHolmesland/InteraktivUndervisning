@@ -11,8 +11,8 @@
 \contentsline {subsection}{\numberline {2.9}Passport}{2}{subsection.2.9}% 
 \contentsline {subsection}{\numberline {2.10}Passport Openid Connect}{2}{subsection.2.10}% 
 \contentsline {subsection}{\numberline {2.11}Socket.IO}{2}{subsection.2.11}% 
-\contentsline {subsection}{\numberline {2.12}SQLit3}{2}{subsection.2.12}% 
-\contentsline {subsection}{\numberline {2.13}Vue}{2}{subsection.2.13}% 
+\contentsline {subsection}{\numberline {2.12}SQLit3}{3}{subsection.2.12}% 
+\contentsline {subsection}{\numberline {2.13}Vue}{3}{subsection.2.13}% 
 \contentsline {subsubsection}{\numberline {2.13.1}Vue Cli}{3}{subsubsection.2.13.1}% 
 \contentsline {subsubsection}{\numberline {2.13.2}Vue Router}{3}{subsubsection.2.13.2}% 
 \contentsline {section}{\numberline {3}Referanser}{4}{section.3}% 
