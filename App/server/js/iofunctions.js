@@ -12,18 +12,6 @@ module.exports.listen = function(server, users) {
 
         // On new connection, checks if user has a cookie with userId and verifies the user
         let user = User.getUser(users, socket);
-        if(user){
-            socket.emit("loginResponse", {
-                "username": user.userName, 
-                "loggedIn": true,
-                "admin": user.userRights
-            });
-        }
-
-        socket.on("test", function(data){
-            console.log(data);
-            socket.emit("testRespone", "test");
-        });
 
         //--------------------------------------------//
         //------------- Common functions -------------//
@@ -56,7 +44,7 @@ module.exports.listen = function(server, users) {
             socket.emit("loginAnonymouslyResponse");
 
             user = users.get(socket.id);
-            socket.emit("loginResponse", {
+            socket.emit("clientLoginInfoResponse", {
                 "username": user.userName,
                 "loggedIn": true,
                 "admin": user.userRights
@@ -71,6 +59,16 @@ module.exports.listen = function(server, users) {
             if(user && user.userRights > 0) return;
 
             socket.emit("unauthorizedAccess");
+        });
+
+        socket.on("clientLoginInfoRequest", function() {
+            if(user){
+                socket.emit("clientLoginInfoResponse", {
+                    "username": user.userName, 
+                    "loggedIn": true,
+                    "admin": user.userRights
+                });
+            }
         });
 
         //--------------------------------------------//

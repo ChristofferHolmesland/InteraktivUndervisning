@@ -53,7 +53,7 @@ export default {
 		}
 	},
 	created() {
-		this.socket.emit("test", "test");
+		this.socket.emit("clientLoginInfoRequest");
 	},
 	mounted() {
 		let that = this;
@@ -61,12 +61,8 @@ export default {
 			that.locale = dataBus.locale["Navbar"];
 			that.localeList = dataBus.localeList;
 		});
-
-		this.socket.on("testResponse", function(data){
-			console.log(test);
-		});
 		
-		this.socket.on("loginResponse", function(data){
+		this.socket.on("clientLoginInfoResponse", function(data){
 			if(data.loggedIn){
 				that.user.username = data.username;
 				that.user.loggedIn = data.loggedIn;
