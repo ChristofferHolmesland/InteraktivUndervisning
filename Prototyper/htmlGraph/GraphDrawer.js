@@ -1,9 +1,11 @@
 /*
     Adds graph drawing functionality to a canvas object.
 
-    // TODO: 
-            Figure out the best way to let both desktop and mobile 
-            users interact with the camera.
+    TODO: 
+        Figure out the best way to let both desktop and mobile 
+        users interact with the camera.
+
+        Buttons next to the nodes to add connected nodes
 
     The GraphDrawer works in three different coordinate spaces:
         World is where the nodes and edges are defined. This should generally
@@ -68,7 +70,8 @@ class GraphDrawer {
         // When the mouse is clicked the event handler for the
         // current state is called.
         this.canvas.addEventListener("mousedown", (function(e) {
-            this.stateHandlers[this.currentState](e);
+            let consumed = this.stateHandlers[this.currentState](e);
+            if (consumed) return;
 
             // Panning gesture detection
             let currentPosition = this.camera.project(e.offsetX, e.offsetY);
@@ -296,6 +299,7 @@ class GraphDrawer {
 
         this.nodes.push(node)
         this.dirty = true;
+        return false;
     }
 
     /*
@@ -318,6 +322,8 @@ class GraphDrawer {
                 break;
             }
         }
+
+        return false;
     }
 
     /*
@@ -325,7 +331,7 @@ class GraphDrawer {
     */
     joinNode(e) {
         let node = this.getNodeAtCursor(e).node;
-        if (node == undefined) return;
+        if (node == undefined) return false;
     
         let handler = function(newE) {
             let node2 = this.getNodeAtCursor(newE).node;
@@ -344,6 +350,7 @@ class GraphDrawer {
             this.canvas.removeEventListener("mouseup", handler);
         }.bind(this);
         this.canvas.addEventListener("mouseup", handler);
+        return true;
     }
     
     /*
@@ -351,7 +358,7 @@ class GraphDrawer {
     */
     moveNode(e) {
         let node = this.getNodeAtCursor(e).node;
-        if (node == undefined) return;
+        if (node == undefined) return false;
     
         let moveHandler = function(newE) {
             let p = this.camera.project(newE.offsetX, newE.offsetY);
@@ -367,6 +374,7 @@ class GraphDrawer {
 
         this.canvas.addEventListener("mousemove", moveHandler);
         this.canvas.addEventListener("mouseup", upHandler);
+        return true;
     }
     
     /*
@@ -374,8 +382,9 @@ class GraphDrawer {
     */
     editNode(e) {
         let node = this.getNodeAtCursor(e).node;
-        if (node == undefined) return;
+        if (node == undefined) return false;
         this._editNode(node);
+        return false;
     }
 
     /*
