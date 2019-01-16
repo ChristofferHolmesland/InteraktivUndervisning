@@ -22,7 +22,7 @@
 				<b-nav-text right v-if="user.loggedIn" class="mr-3">{{user.username}}</b-nav-text>
 
 				<b-nav-item-dropdown right v-if="user.loggedIn" :text="locale.user">
-					<b-dropdown-item>{{locale.profile}}</b-dropdown-item>
+					<b-dropdown-item v-if="user.userRights > 1" @click="userProfileRedirect">{{locale.profile}}</b-dropdown-item>
 					<b-dropdown-item @click="signOut">{{locale.signOut}}</b-dropdown-item>
 				</b-nav-item-dropdown>
 
@@ -48,7 +48,7 @@ export default {
 			user: {
 				username: "", 
 				loggedIn: false,
-				admin: 0
+				userRights: 0
 			}
 		}
 	},
@@ -66,7 +66,7 @@ export default {
 			if(data.loggedIn){
 				that.user.username = data.username;
 				that.user.loggedIn = data.loggedIn;
-				that.user.admin = data.admin;
+				that.user.userRights = data.admin;
 			}
 		});
 
@@ -95,6 +95,9 @@ export default {
 		},
 		adminRedirect(){
 			this.$router.push("/admin");
+		},
+		userProfileRedirect(){
+			this.$router.push("/client/user-profile");
 		}
 	}
 };

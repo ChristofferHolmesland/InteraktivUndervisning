@@ -71,6 +71,12 @@ module.exports.listen = function(server, users) {
             }
         });
 
+        socket.on("checkSignedInFeide", function() {
+            if(user && user.userRights > 1) return;
+
+            socket.emit("unauthorizedAccess");
+        });
+
         //--------------------------------------------//
         //------------- Student Assistant -------------//
         //--------------------------------------------//

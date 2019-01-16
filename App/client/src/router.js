@@ -20,6 +20,12 @@ export default new Router({
         import("./views/Client.vue")
     },
     {
+      path: "/client/user-profile",
+      name: "userProfile",
+      component: () =>
+        import("./views/UserProfile.vue")
+    },
+    {
       path: "/admin",
       name: "admin",
       component: () =>
