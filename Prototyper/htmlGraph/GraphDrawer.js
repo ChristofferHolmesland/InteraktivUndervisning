@@ -67,9 +67,9 @@ class GraphDrawer {
 
         // When the mouse is clicked the event handler for the
         // current state is called.
-        this.canvas.onmousedown = (function(e) {
+        this.canvas.addEventListener("mousedown", (function(e) {
             this.stateHandlers[this.currentState](e);
-        }).bind(this)
+        }).bind(this));
 
         // Updates the GraphDrawer every <MS_PER_FRAME> milliseconds.
         this.intervalId = setInterval((function() {
@@ -80,8 +80,8 @@ class GraphDrawer {
             canvas: canvas,
             zoomLevel: 1,
             // The camera starts centered on the world.
-            centerX: drawBuffer.width / 2,
-            centerY: drawBuffer.height / 2,
+            centerX: this.drawBuffer.width / 2,
+            centerY: this.drawBuffer.height / 2,
             // This determines the dimensions of the camera view.
             // For simplicity it should be the same as the canvas
             // where the world is rendered.
@@ -258,7 +258,7 @@ class GraphDrawer {
     */
     addNode(e) {
         let p = this.camera.project(e.offsetX, e.offsetY);
-        console.log(p);
+
         let node = {
             x: p.x,
             y: p.y,
@@ -301,8 +301,7 @@ class GraphDrawer {
         let node = this.getNodeAtCursor(e).node;
         if (node == undefined) return;
     
-        // JS Arrow functions won't override the "this" context.
-        this.canvas.onmouseup = (newE) => {
+        let handler = function(newE) {
             let node2 = this.getNodeAtCursor(newE).node;
     
             if (node2 != undefined) {
@@ -316,8 +315,9 @@ class GraphDrawer {
                 }
             }
     
-            this.canvas.onmouseup = undefined;
-        }
+            this.canvas.removeEventListener("mouseup", handler);
+        }.bind(this);
+        this.canvas.addEventListener("mouseup", handler);
     }
     
     /*
@@ -327,17 +327,20 @@ class GraphDrawer {
         let node = this.getNodeAtCursor(e).node;
         if (node == undefined) return;
     
-        this.canvas.onmousemove = (newE) => {
+        let moveHandler = function(newE) {
             let p = this.camera.project(newE.offsetX, newE.offsetY);
             node.x = p.x;
             node.y = p.y;
             this.dirty = true;
-        }
-    
-        this.canvas.onmouseup = (newE) => {
-            this.canvas.onmousemove = undefined;
-            this.canvas.onmouseup = undefined;
-        }
+        }.bind(this);
+
+        let upHandler = function(newE) {
+            this.canvas.removeEventListener("mousemove", moveHandler);
+            this.canvas.removeEventListener("mouseup", upHandler);
+        }.bind(this);
+
+        this.canvas.addEventListener("mousemove", moveHandler);
+        this.canvas.addEventListener("mouseup", upHandler);
     }
     
     /*
