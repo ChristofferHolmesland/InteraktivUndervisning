@@ -33,7 +33,7 @@ class GraphDrawer {
         this.edges = [];
         
         // Current interaction state.
-        this.currentState = undefined;
+        this.currentState = "add";
         
         // Flag which determines if the graph state should
         // be redrawn.
@@ -69,6 +69,29 @@ class GraphDrawer {
         // current state is called.
         this.canvas.addEventListener("mousedown", (function(e) {
             this.stateHandlers[this.currentState](e);
+
+            // Panning gesture detection
+            let currentPosition = this.camera.project(e.offsetX, e.offsetY);
+            
+            let panMoveHandler = function(newE) {
+                let newPosition = this.camera.project(newE.offsetX, newE.offsetY);
+                
+                let dX = newPosition.x - currentPosition.x;
+                let dY = newPosition.y - currentPosition.y;
+                this.camera.centerX += dX;
+                this.camera.centerY += dY;
+                this.dirty = true;
+
+                currentPosition = newPosition;
+            }.bind(this);
+
+            let panUpHandler = function(newE) {
+                this.canvas.removeEventListener("mousemove", panMoveHandler);
+                this.canvas.removeEventListener("mouseup", panUpHandler);
+            }.bind(this);
+
+            this.canvas.addEventListener("mousemove", panMoveHandler);
+            this.canvas.addEventListener("mouseup", panUpHandler);
         }).bind(this));
 
         // Updates the GraphDrawer every <MS_PER_FRAME> milliseconds.
