@@ -1,2 +1,2 @@
 \subsection{Connect History Api Fallback}
-test
+connect-history-api-fallback is a middleware function which can be used with Express. Normally a HTTP GET request to /login will try to retrieve a HTML file for the URL, however since this project is built as a single page application, there is only one HTML file for the whole site. This results in a 404 error for the user. This middleware function redirects the request through our HTML file and together with HTML 5 History puts the user in the right place.
