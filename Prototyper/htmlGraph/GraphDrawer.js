@@ -30,6 +30,12 @@ class GraphDrawer {
         this.MS_PER_FRAME = 1000 / this.FPS;
         // Size of the font in px. TODO: Make it dynamic
         this.fontHeight = 10;
+        /*
+            Determines how the user can interact with the canvas.
+            0 = Buttons are shown.
+            1 = Simple mode 
+        */
+        this.controlType = 1;
 
         // Nodes in the graph {x, y, r, v, culled (can be undefined)}.
         this.nodes = [];
@@ -37,7 +43,7 @@ class GraphDrawer {
         this.edges = [];
         
         // Current interaction state.
-        this.currentState = "add";
+        this.currentState = "Add";
         
         // Flag which determines if the graph state should
         // be redrawn. Default value is true, so the UI
@@ -81,11 +87,17 @@ class GraphDrawer {
         this.canvas.addEventListener("mousedown", (function(e) {
             let consumed;
             // UI 
-            consumed = this.detectUIInput(e);
+            if (this.controlType == 0) consumed = this.detectUIInput(e);
             if (consumed) return;
 
             // Event handler for the current state
-            consumed = this.stateHandlers[this.currentState](e);
+            if (this.controlType == 0) {
+                consumed = this.stateHandlers[this.currentState](e);
+            }
+            else if (this.controlType == 1) {
+                consumed = this.simpleStateHandler(e);
+                this.dirty = true;
+            }
             if (consumed) return;
 
             // Gesture detection
@@ -167,13 +179,32 @@ class GraphDrawer {
                 return RectA;
             },
             /*
-                Converts screen coordinates to world coordinates.
+                Converts canvas coordinates to world coordinates.
             */
             project: function(x, y) {
                 let frustum = this.getFrustumFront();
                 let worldX = (x / this.canvas.width) * frustum.Width + frustum.Left;
                 let worldY = (y / this.canvas.height) * frustum.Height + frustum.Top;
                 return { x: worldX, y: worldY };
+            },
+            /*
+                Converts world coordinates to canvas coordinates
+            */
+            unproject: function(x, y) {
+                let frustum = this.getFrustumFront();
+                
+                // TODO: Fix this case (it doesn't return the right values)
+                if (this.zoomLevel < 1) {
+                    let canvasX = this.zoomLevel * (x - frustum.Left);
+                    let canvasY = this.zoomLevel * (y - frustum.Top);
+                    return { x: canvasX, y: canvasY };
+                }
+
+                if (this.zoomLevel >= 1) {
+                    let canvasX = (x - frustum.Left) / this.zoomLevel;
+                    let canvasY = (y - frustum.Top) / this.zoomLevel;
+                    return { x: canvasX, y: canvasY };
+                } 
             },
             /*
                 Changes which x coordinate the camera looks at.
@@ -189,13 +220,13 @@ class GraphDrawer {
                 Bound in range (0, drawBuffer height).
             */
            translateY: function(y, min, max) {
-            this.centerY += y;
-            if (this.centerY < min) this.centerY = min;
-            else if (this.centerY > max) this.centerY = max;
+                this.centerY += y;
+                if (this.centerY < min) this.centerY = min;
+                else if (this.centerY > max) this.centerY = max;
            }
         }
 
-        this.drawStatic();
+        if (this.controlType == 0) this.drawStatic();
     }
 
     // TODO: Remove this, and implement a better interface
@@ -322,6 +353,30 @@ class GraphDrawer {
         this.staticContext.closePath();
     }
 
+    drawUIPanel(node) {
+        this.staticContext.clearRect(0, 0, this.staticBuffer.width, this.staticBuffer.height);
+        
+        let nodeOnCanvas = this.camera.unproject(node.x, node.y);
+        let borderX = nodeOnCanvas.x + node.r;
+        let borderY = nodeOnCanvas.y - (1.5 * node.r);
+
+        // Border
+        this.staticContext.rect(borderX, borderY, node.r * 4, node.r * 4);
+        this.staticContext.stroke();
+        // Value input
+        this.staticContext.fillStyle = "black";
+        let textWidth = this.staticContext.measureText(node.v).width;
+        this.staticContext.fillText(
+            node.v,
+            0,
+            0
+        );
+
+        // Add button
+
+        // Remove button
+    }
+
     /*
         Updates the GraphDrawer state.
     */
@@ -331,6 +386,22 @@ class GraphDrawer {
             this.switchBuffers();
             this.dirty = false;
         }
+    }
+
+    simpleStateHandler(e) {
+        if (this.nodes.length == 0) {
+            return this.addNode(e);
+        }
+
+        let node = this.getNodeAtCursor(e).node;
+        if (node == undefined) {
+            this.showUIPanel = false;
+            return false;
+        }
+
+        this.drawUIPanel(node);
+        this.showUIPanel = true;
+        return true;
     }
 
     /*
@@ -350,7 +421,7 @@ class GraphDrawer {
 
         this.nodes.push(node)
         this.dirty = true;
-        return false;
+        return true;
     }
 
     /*
@@ -373,7 +444,7 @@ class GraphDrawer {
     
                 this.nodes.splice(i, 1);
                 this.dirty = true;
-                break;
+                return true;
             }
         }
 
