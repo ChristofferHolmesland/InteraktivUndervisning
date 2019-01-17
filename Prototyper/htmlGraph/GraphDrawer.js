@@ -28,7 +28,9 @@ class GraphDrawer {
         this.FPS = 60;
         // Milliseconds between each update.
         this.MS_PER_FRAME = 1000 / this.FPS;
-    
+        // Size of the font in px. TODO: Make it dynamic
+        this.fontHeight = 10;
+
         // Nodes in the graph {x, y, r, v, culled (can be undefined)}.
         this.nodes = [];
         // Edges between nodes {n1, n2}.
@@ -44,11 +46,11 @@ class GraphDrawer {
 
         // Every interaction state and event handler.
         this.stateHandlers = {
-            "add": this.addNode,
-            "remove": this.removeNode,
-            "join": this.joinNode,
-            "move": this.moveNode,
-            "edit": this.editNode
+            "Add": this.addNode,
+            "Remove": this.removeNode,
+            "Join": this.joinNode,
+            "Move": this.moveNode,
+            "Edit": this.editNode
         }
 
         // Binds the "this" context to the GraphDrawer object.
@@ -62,7 +64,15 @@ class GraphDrawer {
         this.canvas = canvas;
         this.canvasContext = canvas.getContext("2d");
 
-        // Offscreen canvas used for drawing.
+        // Offscreen canvas used for drawing (mostly) static
+        // content like the UI. This draws in canvas space.
+        this.staticBuffer = document.createElement("CANVAS");
+        this.staticBuffer.width = canvas.width;
+        this.staticBuffer.height = canvas.height;
+        this.staticContext = this.staticBuffer.getContext("2d");
+
+        // Offscreen canvas used for drawing. This draws
+        // in world space and the camera converts it to canvas space.
         this.drawBuffer = document.createElement("CANVAS");
         this.drawBuffer.width = canvas.width * 3;
         this.drawBuffer.height = canvas.height * 3;
@@ -71,8 +81,9 @@ class GraphDrawer {
         this.canvas.addEventListener("mousedown", (function(e) {
             let consumed;
             // UI 
-            
-            
+            consumed = this.detectUIInput(e);
+            if (consumed) return;
+
             // Event handler for the current state
             consumed = this.stateHandlers[this.currentState](e);
             if (consumed) return;
@@ -183,6 +194,8 @@ class GraphDrawer {
             else if (this.centerY > max) this.centerY = max;
            }
         }
+
+        this.drawStatic();
     }
 
     // TODO: Remove this, and implement a better interface
@@ -207,16 +220,26 @@ class GraphDrawer {
     switchBuffers() {
         let camera = this.camera.getFrustumFront();
         this.canvasContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.canvasContext.drawImage(this.drawBuffer, 
+        
+        this.canvasContext.drawImage(
+            this.drawBuffer, 
             camera.Left, camera.Top, camera.Width, camera.Height, 
-            0, 0, this.canvas.width, this.canvas.height);
-        this.drawContext.clearRect(0, 0, this.drawBuffer.width, this.drawBuffer.height);
+            0, 0, this.canvas.width, this.canvas.height
+        );
+
+        this.canvasContext.drawImage(
+            this.staticBuffer,
+            0, 0, this.staticBuffer.width, this.staticBuffer.height,
+            0, 0, this.canvas.width, this.canvas.height
+        );
     }
 
     /*
         Draws the nodes and edges to the buffer.
     */
     draw() {
+        this.drawContext.clearRect(0, 0, this.drawBuffer.width, this.drawBuffer.height);
+
         // World border
         this.drawContext.beginPath();
         this.drawContext.moveTo(0, 0);
@@ -256,48 +279,47 @@ class GraphDrawer {
                 https://developer.mozilla.org/en-US/docs/Web/API/TextMetrics
             */
             let textWidth = this.drawContext.measureText(this.nodes[i].v).width;
-            let fontHeight = 10; // TODO: This should depend on font size
             this.drawContext.fillText(this.nodes[i].v,
                 this.nodes[i].x - (textWidth / 2),
-                this.nodes[i].y + (fontHeight / 2));
+                this.nodes[i].y + (this.fontHeight / 2));
         }
 
         for (let i = 0; i < this.nodes.length; i++) this.nodes[i].culled = undefined;
-    
-        this.renderUI();
     }
 
-    renderUI() {
-        // Buttons
-        let buttonWidth = this.canvas.width / this.buttons.length;
-        let buttonHeight = this.canvas.height / 10;
-        let frustum = this.camera.getFrustumFront();
+    /*
+        Draws the UI to the staticBuffer.
+    */
+    drawStatic() {
+        this.staticContext.clearRect(0, 0, this.staticBuffer.width, this.staticBuffer.height);
 
-        this.drawContext.beginPath();
+        let buttonWidth = this.staticBuffer.width / this.buttons.length;
+        let buttonHeight = this.staticBuffer.height / 10;
+
+        this.staticContext.beginPath();
         for (let i = 0; i < this.buttons.length; i++) {
-            this.drawContext.fillStyle = "white";
-            this.drawContext.fillRect(
-                frustum.Left + i * buttonWidth,
-                frustum.Top + this.canvas.height - buttonHeight,
+            this.staticContext.fillStyle = "white";
+            this.staticContext.fillRect(
+                i * buttonWidth,
+                this.staticBuffer.height - buttonHeight,
                 buttonWidth,
                 buttonHeight
             );
-            this.drawContext.rect(
-                frustum.Left + i * buttonWidth,
-                frustum.Top + this.canvas.height - buttonHeight,
+            this.staticContext.rect(
+                i * buttonWidth,
+                this.staticBuffer.height - buttonHeight,
                 buttonWidth,
                 buttonHeight
             );
-            this.drawContext.fillStyle = "black";
-            let textWidth = this.drawContext.measureText(this.buttons[i]).width;
-            let fontHeight = 10; // TODO: This should depend on font size
-            this.drawContext.fillText(
+            this.staticContext.fillStyle = "black";
+            let textWidth = this.staticContext.measureText(this.buttons[i]).width;
+            this.staticContext.fillText(
                 this.buttons[i],
-                frustum.Left + i * buttonWidth - (textWidth / 2) + buttonWidth / 2,
-                frustum.Top + this.canvas.height - buttonHeight / 2 + (fontHeight / 2));
+                i * buttonWidth - (textWidth / 2) + buttonWidth / 2,
+                this.canvas.height - buttonHeight / 2 + (this.fontHeight / 2));
         }
-        this.drawContext.stroke();
-        this.drawContext.closePath();
+        this.staticContext.stroke();
+        this.staticContext.closePath();
     }
 
     /*
@@ -430,6 +452,18 @@ class GraphDrawer {
         node.v = new_value;
         this.dirty = true;
     }
+
+    /*
+        Checks if the event (click) happened on one of the buttons.
+    */
+   detectUIInput(e) {
+        if (e.offsetY < this.canvas.height * 0.9) return false;
+
+        let buttonIndex = Math.floor(e.offsetX / (this.canvas.width / this.buttons.length));
+        this.state = this.buttons[buttonIndex];
+
+        return true;
+   }
 
     /*
         Can be called to determine if the event e is the start of a panning gesture.
