@@ -109,6 +109,18 @@ module.exports.getDB = function setupDatabase() {
             }
         });
 
+        db.run("CREATE TABLE IF NOT EXISTS Quiz_has_Question(\n" +
+            "    quizId INTEGER,\n" +
+            "    questionId INTEGER,\n" +
+            "    PRIMARY KEY(quizId,questionId)\n" +
+            "    FOREIGN KEY (quizId) REFERENCES Quiz(quizId) ON DELETE CASCADE ON UPDATE CASCADE\n" +
+            "    FOREIGN KEY (questionId) REFERENCES Question(questionId) ON DELETE CASCADE ON UPDATE CASCADE\n" +
+            ");", function (err) {
+            if (err) {
+                console.log("error occurred in Quiz_has_Question")
+            }
+        });
+
         db.run("CREATE TABLE IF NOT EXISTS Answer(\n" +
             "    answerId INTEGER PRIMARY KEY AutoIncrement,\n" +
             "    answerObject BLOB NOT NULL,\n" +
