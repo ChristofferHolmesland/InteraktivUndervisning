@@ -1,2 +1,2 @@
 \subsection{Cookie Parser}
-cookie-parser is a Express middleware function which parses the HTTP header for cookies. The cookies are put into the req object of the HTTP requet handler function.
+HTTP doesn't store any state about who the user sending a request is. A problem resulting from this is that it's not possible to check whether the user is logged in or not. To solve this cookies can be included in the header field of the HTTP request. In Express you can access the cookies by parsing the header field of the request. To make this simpler for the developer, a package called cookie-parser can be used instead. cookie-parser is a middleware function which retrieves the cookies from the request and places them in the req object of the request handler. 
