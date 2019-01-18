@@ -47,7 +47,7 @@ module.exports.listen = function(server, users) {
             socket.emit("clientLoginInfoResponse", {
                 "username": user.userName,
                 "loggedIn": true,
-                "admin": user.userRights
+                "userRights": user.userRights
             });
         });
         
@@ -66,7 +66,8 @@ module.exports.listen = function(server, users) {
                 socket.emit("clientLoginInfoResponse", {
                     "username": user.userName, 
                     "loggedIn": true,
-                    "admin": user.userRights
+                    "userRights": user.userRights,
+                    "feideId": user.feide.idNumber
                 });
             }
         });

@@ -29,10 +29,26 @@
 
 ## Developing
 ### Dev Requirements
+- [NodeJS](https://nodejs.org/en/)
+- [nodemon]() If you want to autorefresh the server on changes.
 
 ### Dev Installation
+Use the same installation guide from [here](#Installation)
 
 ### Dev Start Commands
+- ```cd InteraktivUndervisning/App/client```
+- Here you can change the client files.
+- When you are finsihed editing the client file, use the command:
+- ```npm run build```
+- This will build the client project in production mode and output the client to the server/public folder
+- or you can use these two commands:
+- ```npm run buildDev``` This will use the dev environment so that you can use the vue ispect extension
+- ```npm run buildDevWatch``` This will do the same as the one over, but it will also auto build on any changes in the client folder.
+
+- When you want to run the server you will use this command from the server folder:
+- ```node server.js```
+- You can also use the last command on the client in combination with nodemon:
+- ```nodemon server.js```
 
 ## Configuration
 

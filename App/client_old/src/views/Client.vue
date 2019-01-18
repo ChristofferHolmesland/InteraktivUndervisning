@@ -12,15 +12,21 @@
 </template>
 
 <script>
+	import { dataBus } from '../main';
 	import JoinRoom from "../components/JoinRoom.vue";
 
 	export default {
 		name: 'client',
+		data() {
+			return {
+				socket: dataBus.socket
+			}
+		},
 		components: {
 			JoinRoom
 		},
 		created() {
-			this.$socket.emit("clientStarted");
+			this.socket.emit("clientStarted");
 		}
 	}
 </script>
