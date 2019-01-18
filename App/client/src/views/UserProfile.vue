@@ -25,12 +25,9 @@ import { dataBus } from "../main.js";
 export default {
     name: "",
     data() {
-        return {
-            socket: dataBus.socket
-        };
     },
     created() {
-        this.socket.emit("checkSignedInFeide");
+        this.$socket.emit("checkSignedInFeide");
     },
     components: {
         UserInfo,
