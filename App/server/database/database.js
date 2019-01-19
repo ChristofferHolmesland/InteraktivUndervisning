@@ -136,3 +136,12 @@ module.exports.getDB = function setupDatabase() {
     });
     return db;
 };
+
+module.exports.closeDB = function (db) {
+    db.close(function (err) {
+        if(err) {
+            return console.log(err.message);
+        }
+    });
+};
+

@@ -2,6 +2,8 @@
 
 /*Notes
     db.get() will only return 1 row, therefore the ids should be used as the identifier.
+    db.all() will output all of the rows in an array.
+    Each row output will be an object having the same properties as the database table chosen.
 */
 
 module.exports.InsertFeide = function (db,feideId,feideAccess,feideName) {
@@ -151,5 +153,51 @@ module.exports.AddQuestionToQuiz = function (db,quizId,questionId) {
         if (err) {
             console.log(err.message);
         }
+    })
+};
+
+module.exports.GetAmountOffUsersInQuiz = function (db,quizId) {
+    let userAmount = 0;
+    let statement = `SELECT userid FROM User_Has_Quiz WHERE quizid = ${quizId}`;
+    db.all(statement, function (err,rows) {
+        if (err) {
+            console.log(err.message)
+        }else {
+            console.log(rows);
+            userAmount = rows.length;
+        }
+    })
+    return userAmount;
+};
+
+module.exports.GetAllQuestionInQuiz = function (db,quizId) {
+    let statement = `SELECT Q.questionText,Q.questionObject,Q.questionSolution,T.questionType,QQ.quizId
+                     FROM Question AS Q
+                     INNER JOIN Quiz_has_Question AS QQ ON QQ.questionId = Q.questionId
+                     INNER JOIN Type AS T ON T.questionType = Q.questionType
+                     WHERE QQ.quizId = ${quizId};`;
+    db.all(statement,function (err,rows) {
+        if (err) {
+            console.log(err.message)
+        } else {
+            console.log(rows)
+        }
+        return rows
+    });
+};
+
+module.exports.GetAllQuizWithinCourse = function(db,courseCode) {
+    let statement = `SELECT Q.quizId,Q.quizName,C.courseName,C.courseCode,Q.courseSemester
+                     FROM Quiz AS Q
+                     INNER JOIN Course AS C ON Q.courseCode = C.courseCode 
+                     WHERE C.courseCode = '${courseCode}' 
+                     GROUP BY Q.quizId;`;
+    db.all(statement,function (err,rows) {
+        if (err) {
+            console.log(err.message)
+        }else{
+            console.log(rows)
+        }
+        return rows
     })
 };
