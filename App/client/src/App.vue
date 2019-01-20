@@ -10,35 +10,36 @@
 </template>
 
 <script>
-import { dataBus } from "./main";
 import Navbar from "./components/Navbar.vue";
 
 export default {
 	name: "App",
 	data() {
 		return {
-			localeLoaded: false,
-			socket: dataBus.socket
+			localeLoaded: false
 		}
 	},
 	components: {
 		Navbar
 	},
 	created() {
+		this.$socket.emit("getLocaleRequest", "no");
+		this.$socket.emit("clientLoginInfoRequest");
 	},
-	mounted() {
-		let that = this;
-		dataBus.$on("localeLoaded", function(){
-			that.localeLoaded = true;
-		});
-
-		this.socket.on("unauthorizedAccess", function(){
-			that.$router.push("/401");
-		});
-
-		this.socket.on("deleteCookie", function(cookieId){
-			document.cookie = cookieId + "=;expires=Thu, 01 Jan 1970 00:00:01 GMT;";
-		});
+	sockets: {
+		getLocaleResponse(data) {
+			this.$store.commit("localeChange", data);
+			this.localeLoaded = true;
+		},
+		unauthorizedAccess() {
+			this.$router.push("/401");
+		},
+		deleteCookie(cookieId){
+			document.cookie = cookieId + "=;expires=Thu, 01 Jan 1970 00:00:01 GMT;"	
+		},
+		clientLoginInfoResponse(userData){
+			this.$store.commit("userChange", userData);
+		}
 	}
 };
 </script>
