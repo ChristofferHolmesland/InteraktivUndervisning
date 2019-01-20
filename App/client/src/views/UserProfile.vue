@@ -24,8 +24,6 @@ import { dataBus } from "../main.js";
 
 export default {
     name: "",
-    data() {
-    },
     created() {
         this.$socket.emit("checkSignedInFeide");
     },
