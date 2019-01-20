@@ -19,7 +19,7 @@
             <b-col cols="12" lg="4" class="text-center">
                 <b-form-checkbox v-if="feideLogin" v-model="termsApproved">{{getLocale.acceptCheckbox}}</b-form-checkbox>
                 <b-form action="/login/feide" ref="submitForm" method="POST" class="align-items-center mt-4" v-if="feideLogin">
-                    <b-button size="lg" variant="primary" id="loginButton" :disabled="!termsApproved" type="submit">{{getLocale.loginButton}}</b-button>
+                    <b-button size="lg" :variant="getBtnType" id="loginButton" :disabled="!termsApproved" type="submit">{{getLocale.loginButton}}</b-button>
                 </b-form>
                 <b-button size="lg" variant="primary" id="loginButton" type="submit" v-if="!feideLogin" @click="loginAnonymously">{{getLocale.loginButton}}</b-button>
             </b-col>
@@ -64,6 +64,9 @@
                 let locale = this.$store.getters.getLocale("LoginForm");
                 if(locale) return locale;
 			    else return {};
+            },
+            getBtnType() {
+                return this.termsApproved ? "primary" : "secondary";
             }
         }
     };
