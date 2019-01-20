@@ -103,6 +103,26 @@ export default {
 			});
 			return user;
 		}
+	},
+	computed: {
+		getLocale() {
+			let locale = this.$store.getters.getLocale("Navbar");
+			if(locale) return locale;
+			else return {};
+		},
+		getLocaleList() {
+			let list = this.$store.getters.getLocaleList;
+			if(list) return list;
+			else return {};
+		},
+		getUser() {
+			let user = this.$store.getters.getUser({
+				username: true,
+				userRights: true,
+				loggedIn: true,
+			});
+			return user;
+		}
 	}
 };
 </script>
