@@ -41,6 +41,21 @@
             "Ved å trykke ok under så vil du bli logget ut og sendt til hjem skjermen.",
             "Denne handlingen går ikke det ikke ann å angre på i ettertid.",
             "Når dataen er slettet så vil vi ikke kunne få den tilbake."
-        ]
+        ],
+        "title": "Slett all bruker data!",
+        "okTitle": "Slett!"
+    },
+    "UserInfo": {
+        "title": "Bruker informasjon",
+        "deleteBtnTitle": "Slett brukerdata",
+        "userRightsTitle": "Bruker rettigheter",
+        "studentAssistant": "Student Assistent",
+        "admin": "Administrator"
+    },
+    "UserStats": {
+        "title": "Bruker statistikk",
+        "totalQuizzes": "Antall quizer:",
+        "correctAnswers": "Antall rett svar:",
+        "incorrectAnswers": "Antall feil svar:"
     }
 }

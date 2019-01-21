@@ -1,13 +1,14 @@
 <template>
 <b-modal    id="deleteUserInfo" 
-            centered title="Delete all user data!" 
+            centered 
+            :title="getLocale.title" 
             @ok="handleOk"
             ok-variant="danger"
-            ok-title="Delete!">
+            :ok-title="getLocale.okTitle">
     <b-list-group>
-        <b-list-item v-for="text in getLocale.deleteInfoList" :key="text">
+        <b-list-group-item v-for="text in getLocale.deleteInfoList" :key="text">
             <li>{{text}}</li>
-        </b-list-item>
+        </b-list-group-item>
     </b-list-group>
 </b-modal>
 </template>

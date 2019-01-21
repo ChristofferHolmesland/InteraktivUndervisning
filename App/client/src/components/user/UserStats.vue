@@ -2,18 +2,18 @@
 	<b-container class="jumbotron">
 		<b-row>
 			<b-col>
-				<h1>User Stats</h1>
+				<h1>{{getLocale.title}}</h1>
 				<div>
 					<b-row>
-						<b-col cols="8"><h6>Total number of quizzes participated in: </h6></b-col>
+						<b-col cols="8"><h6>{{getLocale.totalQuizzes}}</h6></b-col>
 						<b-col cols="4"><p>{{totalQuizzes}}</p></b-col>
 					</b-row>
 					<b-row>
-						<b-col cols="8"><h6>Correct answers: </h6></b-col>
+						<b-col cols="8"><h6>{{getLocale.correctAnswers}}</h6></b-col>
 						<b-col cols="4"><p>{{totalCorrectAnswers}} %</p></b-col>
 					</b-row>
 					<b-row>
-						<b-col cols="8"><h6>Incorrect answers: </h6></b-col>
+						<b-col cols="8"><h6>{{getLocale.incorrectAnswers}}</h6></b-col>
 						<b-col cols="4"><p>{{totalIncorrectAnswers}} %</p></b-col>
 					</b-row>
 					<b-row>
@@ -53,6 +53,11 @@ export default {
 			this.totalCorrectAnswers = data.totalCorrectAnswers;
 			this.totalIncorrectAnswers = data.totalIncorrectAnswers;
 			this.quizList = data.quizList;
+		}
+	},
+	computed: {
+		getLocale() {
+			return this.$store.getters.getLocale("UserStats");
 		}
 	}
 }

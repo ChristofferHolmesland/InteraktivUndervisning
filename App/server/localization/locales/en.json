@@ -41,6 +41,21 @@
             "By pressing ok under you will be logged out and redirected to the home page.",
             "This action is nonreversible!",
             "Once deleted there is no going back!"
-        ]
+        ],
+        "title": "Delete all user data!",
+        "okTitle": "Delete!"
+    },
+    "UserInfo": {
+        "title": "User info",
+        "deleteBtnTitle": "Delete my data",
+        "userRightsTitle": "User rights",
+        "studentAssistant": "Student assistant",
+        "admin": "Administrator"
+    },
+    "UserStats": {
+        "title": "User stats",
+        "totalQuizzes": "Total number of quizzes:",
+        "correctAnswers": "Correct answers:",
+        "incorrectAnswers": "Incorrect answers:"
     }
 }

@@ -11,8 +11,8 @@ export default new Vuex.Store({
 			userRights: ""
 		},
 		adminSubjects: [
-			{subjectName: "DAT110", userRights: "Admin"},
-			{subjectName: "DAT200", userRights: "Student Assistant"}
+			{subjectName: "DAT110", userRights: 3},
+			{subjectName: "DAT200", userRights: 4}
 		],
 		loggedIn: false,
 		locale: {
