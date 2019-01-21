@@ -193,18 +193,12 @@ class GraphDrawer {
             unproject: function(x, y) {
                 let frustum = this.getFrustumFront();
                 
-                // TODO: Fix this case (it doesn't return the right values)
-                if (this.zoomLevel < 1) {
-                    let canvasX = this.zoomLevel * (x - frustum.Left);
-                    let canvasY = this.zoomLevel * (y - frustum.Top);
-                    return { x: canvasX, y: canvasY };
-                }
-
-                if (this.zoomLevel >= 1) {
-                    let canvasX = (x - frustum.Left) / this.zoomLevel;
-                    let canvasY = (y - frustum.Top) / this.zoomLevel;
-                    return { x: canvasX, y: canvasY };
-                } 
+                let cameraSpaceX = x - frustum.Left;
+                let cameraSpaceY = y - frustum.Top;
+                let canvasX = canvas.width * (cameraSpaceX / frustum.Width);
+                let canvasY = canvas.height * (cameraSpaceY / frustum.Height);
+                
+                return {x: canvasX, y: canvasY};
             },
             /*
                 Changes which x coordinate the camera looks at.
@@ -359,22 +353,33 @@ class GraphDrawer {
         let nodeOnCanvas = this.camera.unproject(node.x, node.y);
         let borderX = nodeOnCanvas.x + node.r;
         let borderY = nodeOnCanvas.y - (1.5 * node.r);
+        // Divide the panel into a 2x3 grid.
+        let borderWidth = node.r * 4;
+        let borderHeight = node.r * 4;
+        let rowHeight = borderHeight / 3;
+        let columnWidth = borderWidth / 2;
 
         // Border
-        this.staticContext.rect(borderX, borderY, node.r * 4, node.r * 4);
+        this.staticContext.rect(borderX, borderY, borderWidth, borderHeight);
         this.staticContext.stroke();
         // Value input
         this.staticContext.fillStyle = "black";
         let textWidth = this.staticContext.measureText(node.v).width;
         this.staticContext.fillText(
             node.v,
-            0,
-            0
+            borderX + borderWidth / 2 - textWidth / 2,
+            borderY + rowHeight / 2 + this.fontHeight
         );
 
         // Add button
 
         // Remove button
+
+        // Join button
+
+        // Move button
+
+        // Return location of buttons
     }
 
     /*
@@ -401,6 +406,9 @@ class GraphDrawer {
 
         this.drawUIPanel(node);
         this.showUIPanel = true;
+
+
+
         return true;
     }
 
