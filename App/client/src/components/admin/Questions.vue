@@ -1,15 +1,51 @@
 <template>
-	<b-container class="jumbotron vertical-center">
+	<b-container class="jumbotron vertical-center" style="margin-top: 2rem;">
 		<b-row>
 			<b-col cols="3"></b-col>
 			<b-col cols="5" class="text-center mb-5">
 				<b-form-input	v-model="questionSearchText" 
 								type="text" 
-								placeholder="Search for a question">
+								:placeholder="getLocale.searchQuestion">
 				</b-form-input>
 			</b-col>
 			<b-col cols="1" class="text-center mb-5">
-				<b-button>+</b-button>
+				<b-button v-b-modal.newQuestionModal>+</b-button>
+				<b-modal id="newQuestionModal" no-close-on-backdrop="true" :title="getLocale.newQuestion" @ok="addNewQuestion" style="text-align: left;">
+					<b-form>
+						<b-form-group 	id="questionTitle"
+										:label="getLocale.newQuestionTitle"
+										label-for="questionTitleInput">
+							<b-form-input 	id="questionTitleInput"
+											type="text"
+											v-model="newQuestion.title">
+							</b-form-input>
+						</b-form-group>
+						<b-form-group 	id="questionText"
+										:label="getLocale.newQuestionText"
+										label-for="questionTextInput">
+							<b-form-input 	id="questionTextInput"
+											type="text"
+											v-model="newQuestion.text">
+							</b-form-input>
+						</b-form-group>
+						<b-form-group 	id="solutionType"
+										:label="getLocale.newQuestionSolutionType"
+										label-for="solutionTypeInput">
+							<b-form-select 	id="solutionTypeInput"
+											:options="getSolutionTypes"
+											v-model="newQuestion.solutionType">
+							</b-form-select>
+						</b-form-group>
+						<b-form-group 	id="solution"
+										:label="getLocale.newQuestionSolution"
+										label-for="solutionInput">
+							<b-form-input 	id="solutionInput"
+											type="text"
+											v-model="newQuestion.solution">
+							</b-form-input>
+						</b-form-group>
+					</b-form>
+				</b-modal>
 			</b-col>
 			<b-col cols="3"></b-col>
 		</b-row>
@@ -36,7 +72,13 @@
 		data() {
 			return {
 				questionSearchText: "",
-				questionList: []
+				questionList: [],
+				newQuestion: {
+					title: "",
+					text: "", // TODO: Make it possible to include graphs and images in the text
+					solutionType: "",
+					solution: "",
+				}
 			}
 		},
 		mounted() {
@@ -63,7 +105,15 @@
 				console.log(locale);
                 if(locale) return locale;
 			    else return {};
-            }
+			},
+			getSolutionTypes: function() {
+				// TODO: Query database for the options
+				return [
+					{ value: "graph", text: "Graph"},
+					{ value: "text", text: "Text"},
+					{ value: "multipleChoice", text: "Multiple choice"}
+				];
+			},
 		},
 		methods: {
 			getQuestionsFromDatabase: function() {
@@ -82,6 +132,14 @@
 					{id: 11, text: "Når vet man at..."},
 					{id: 12, text: "Hvis jeg gjør dette så skjer..."}
 				];
+			},
+			addNewQuestion: function() {
+				// TODO: Add to database instead of dynamic list
+				this.questionList.push({
+					id: this.questionList.length + 1,
+					text: this.newQuestion.text
+				});
+				this.newQuestion = {};
 			}
 		}
 	}

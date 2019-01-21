@@ -1,6 +1,12 @@
 {
     "AdminQuestions": {
-        "emptyQuestionList": "No questions."
+        "emptyQuestionList": "No questions.",
+        "newQuestion": "New question",
+        "searchQuestion": "Search for a question",
+        "newQuestionTitle": "Question title:",
+        "newQuestionText": "Question text:",
+        "newQuestionSolutionType": "Solution type:",
+        "newQuestionSolution": "Solution:"
     },
     "Navbar": {
         "lang": "Language",

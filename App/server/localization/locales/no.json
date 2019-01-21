@@ -1,6 +1,12 @@
 {
     "AdminQuestions": {
-        "emptyQuestionList": "Ingen spørsmål."
+        "emptyQuestionList": "Ingen spørsmål.",
+        "newQuestion": "Nytt spørsmål",
+        "searchQuestion": "Søk etter spørsmål",
+        "newQuestionTitle": "Spørsmål tittel:",
+        "newQuestionText": "Spørsmål tekst:",
+        "newQuestionSolutionType": "Løsnings type:",
+        "newQuestionSolution": "Løsning:"
     },
     "Navbar": {
         "lang": "Språk",
