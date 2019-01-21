@@ -9,43 +9,8 @@
 				</b-form-input>
 			</b-col>
 			<b-col cols="1" class="text-center mb-5">
-				<b-button v-b-modal.newQuestionModal>+</b-button>
-				<b-modal id="newQuestionModal" no-close-on-backdrop="true" :title="getLocale.newQuestion" @ok="addNewQuestion" style="text-align: left;">
-					<b-form>
-						<b-form-group 	id="questionTitle"
-										:label="getLocale.newQuestionTitle"
-										label-for="questionTitleInput">
-							<b-form-input 	id="questionTitleInput"
-											type="text"
-											v-model="newQuestion.title">
-							</b-form-input>
-						</b-form-group>
-						<b-form-group 	id="questionText"
-										:label="getLocale.newQuestionText"
-										label-for="questionTextInput">
-							<b-form-input 	id="questionTextInput"
-											type="text"
-											v-model="newQuestion.text">
-							</b-form-input>
-						</b-form-group>
-						<b-form-group 	id="solutionType"
-										:label="getLocale.newQuestionSolutionType"
-										label-for="solutionTypeInput">
-							<b-form-select 	id="solutionTypeInput"
-											:options="getSolutionTypes"
-											v-model="newQuestion.solutionType">
-							</b-form-select>
-						</b-form-group>
-						<b-form-group 	id="solution"
-										:label="getLocale.newQuestionSolution"
-										label-for="solutionInput">
-							<b-form-input 	id="solutionInput"
-											type="text"
-											v-model="newQuestion.solution">
-							</b-form-input>
-						</b-form-group>
-					</b-form>
-				</b-modal>
+				<b-button v-b-modal.editQuestionModal>+</b-button>
+				<EditQuestion id="editQuestionModal" :okHandler="addNewQuestionHandler"></EditQuestion>
 			</b-col>
 			<b-col cols="3"></b-col>
 		</b-row>
@@ -67,19 +32,18 @@
 </template>
 
 <script>
+	import EditQuestion from "./EditQuestion.vue";
+
 	export default {
 		name: 'Questions',
 		data() {
 			return {
 				questionSearchText: "",
 				questionList: [],
-				newQuestion: {
-					title: "",
-					text: "", // TODO: Make it possible to include graphs and images in the text
-					solutionType: "",
-					solution: "",
-				}
 			}
+		},
+		components: {
+			EditQuestion
 		},
 		mounted() {
 			this.questionList = this.getQuestionsFromDatabase();
@@ -102,7 +66,6 @@
 			},
 			getLocale() {
 				let locale = this.$store.getters.getLocale("AdminQuestions");
-				console.log(locale);
                 if(locale) return locale;
 			    else return {};
 			},
@@ -133,13 +96,12 @@
 					{id: 12, text: "Hvis jeg gjør dette så skjer..."}
 				];
 			},
-			addNewQuestion: function() {
+			addNewQuestionHandler: function(newQuestion) {
 				// TODO: Add to database instead of dynamic list
 				this.questionList.push({
 					id: this.questionList.length + 1,
-					text: this.newQuestion.text
+					text: newQuestion.text
 				});
-				this.newQuestion = {};
 			}
 		}
 	}
