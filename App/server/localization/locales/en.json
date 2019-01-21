@@ -5,7 +5,11 @@
         "profile": "Profile",
         "signOut": "Sign out",
         "signIn": "Sign in",
-        "dashboard": "Dashboard"
+        "dashboard": "Dashboard",
+        "admin": "Admin",
+        "quiz": "Quiz",
+        "questions": "Questions",
+        "sessions": "Sessions"
     },
     "LoginForm": {
         "anonymousButton": "Anonymous",
