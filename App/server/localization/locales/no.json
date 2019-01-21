@@ -1,7 +1,6 @@
 {
     "Navbar": {
         "lang": "Språk",
-        "user": "Bruker",
         "profile": "Profil",
         "signOut": "Logg ut",
         "signIn": "Logg inn",
@@ -35,5 +34,13 @@
         "headline": "404",
         "text": "Åh nei! Ser ut som noe gikk galt.",
         "homeButton": "Go home"
+    },
+    "DeleteUserInfo": {
+        "deleteInfoList": [
+            "Ved å trykke på ok under så vil vi slette all informasjon om deg på server og i databasen.",
+            "Ved å trykke ok under så vil du bli logget ut og sendt til hjem skjermen.",
+            "Denne handlingen går ikke det ikke ann å angre på i ettertid.",
+            "Når dataen er slettet så vil vi ikke kunne få den tilbake."
+        ]
     }
 }

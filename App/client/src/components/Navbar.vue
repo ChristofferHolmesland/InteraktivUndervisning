@@ -18,12 +18,14 @@
 				<b-nav-item-dropdown :text="getLocale.lang" right class="mr-3">
 					<b-dropdown-item-button @click="localeChange($event)" :id="localeItem" :key="localeItem" v-for="localeItem in getLocaleList"  :value="localeItem">{{localeItem}}</b-dropdown-item-button>
 				</b-nav-item-dropdown>
-				
-				<b-nav-text right v-if="getUser.loggedIn" class="mr-3">{{getUser.username}}</b-nav-text>
 
-				<b-nav-item-dropdown right v-if="getUser.loggedIn" :text="getLocale.user">
-					<b-dropdown-item v-if="getUser.userRights > 1" @click="userProfileRedirect">{{getLocale.profile}}</b-dropdown-item>
-					<b-dropdown-item @click="signOut">{{getLocale.signOut}}</b-dropdown-item>
+				<b-nav-item-dropdown right v-if="getUser.loggedIn" :text="getUser.username">
+					<b-dropdown-item v-if="getUser.userRights > 1" @click="userProfileRedirect">
+						{{getLocale.profile}}
+					</b-dropdown-item>
+					<b-dropdown-item @click="signOut">
+						{{getLocale.signOut}}
+					</b-dropdown-item>
 				</b-nav-item-dropdown>
 
 				<b-nav-item v-if="!getUser.loggedIn" @click="signInRedirect">{{getLocale.signIn}}</b-nav-item>

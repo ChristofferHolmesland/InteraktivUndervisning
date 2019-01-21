@@ -1,7 +1,6 @@
 {
     "Navbar": {
         "lang": "Language",
-        "user": "User",
         "profile": "Profile",
         "signOut": "Sign out",
         "signIn": "Sign in",
@@ -35,5 +34,13 @@
         "headline": "404",
         "text": "Uh oh! Look like something broke.",
         "homeButton": "Go home"
+    },
+    "DeleteUserInfo": {
+        "deleteInfoList": [
+            "By pressing ok under we will delete all the information we have on the server and database about you.",
+            "By pressing ok under you will be logged out and redirected to the home page.",
+            "This action is nonreversible!",
+            "Once deleted there is no going back!"
+        ]
     }
 }

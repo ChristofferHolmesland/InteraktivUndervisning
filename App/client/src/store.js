@@ -10,6 +10,10 @@ export default new Vuex.Store({
 			feideId: "",
 			userRights: ""
 		},
+		adminSubjects: [
+			{subjectName: "DAT110", userRights: "Admin"},
+			{subjectName: "DAT200", userRights: "Student Assistant"}
+		],
 		loggedIn: false,
 		locale: {
 			locale: undefined,
@@ -32,6 +36,7 @@ export default new Vuex.Store({
 			if(data.username) state.user.username = data.username;
 			if(data.feideId) state.user.feideId = data.feideId;
 			if(data.userRights) state.user.userRights = data.userRights;
+			if(data.adminSubjects) state.user.adminSubjects = data.adminSubjects
 		}
 	},
 	actions: {
@@ -50,6 +55,11 @@ export default new Vuex.Store({
 			if(data.feideId) response.feideId = state.user.feideId;
 			if(data.userRights) response.userRights = state.user.userRights;
 			if(data.loggedIn) response.loggedIn = state.loggedIn;
+			if(data.adminSubjects) {
+				if(state.user.userRights > 1 && state.adminSubjects.length > 0){
+					response.adminSubjects = state.adminSubjects;
+				}
+			}
 			return response;
 		}
 	}
