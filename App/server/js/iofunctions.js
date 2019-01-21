@@ -89,6 +89,7 @@ module.exports.listen = function(server, users) {
         socket.on("adminStarted", function() {
             if(user && user.userRights == 4) return;
 
+            console.log(user);
             socket.emit("unauthorizedAccess");
         });
             
