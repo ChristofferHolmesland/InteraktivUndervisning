@@ -9,7 +9,13 @@
 			<b-navbar-nav class="ml-auto" v-if="getUser.loggedIn">
 				<b-nav-item center @click="clientRedirect">{{getLocale.dashboard}}</b-nav-item>
 
-				<b-nav-item center v-if="getUser.userRights == 3 && getUser.loggedIn">Admin</b-nav-item>
+				<b-nav-item center @click="adminRedirect" v-if="getUser.userRights == 4 && getUser.loggedIn">{{getLocale.admin}}</b-nav-item>
+
+				<b-nav-item center @click="quizRedirect" v-if="getUser.userRights == 4 && getUser.loggedIn">{{getLocale.quiz}}</b-nav-item>
+
+				<b-nav-item center @click="questionsRedirect" v-if="getUser.userRights == 4 && getUser.loggedIn">{{getLocale.questions}}</b-nav-item>
+
+				<b-nav-item center @click="sessionsRedirect" v-if="getUser.userRights == 4 && getUser.loggedIn">{{getLocale.sessions}}</b-nav-item>
 			</b-navbar-nav>
 
 			<!-- Right aligned nav items -->
@@ -79,6 +85,15 @@ export default {
 		},
 		adminRedirect(){
 			this.$router.push("/admin");
+		},
+		quizRedirect(){
+			this.$router.push("/admin/quiz");
+		},
+		questionsRedirect(){
+			this.$router.push("/admin/questions");
+		},
+		sessionsRedirect(){
+			this.$router.push("/admin/sessions");
 		}
 	},
 	computed: {

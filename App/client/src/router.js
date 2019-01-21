@@ -23,7 +23,8 @@ export default new Router({
       path: "/admin",
       name: "admin",
       component: () =>
-        import("./views/Admin.vue")
+        import("./views/Admin.vue"),
+      alias: ["/admin/quiz", "/admin/questions", "/admin/sessions"]
     },
     {
       path: "/login",
