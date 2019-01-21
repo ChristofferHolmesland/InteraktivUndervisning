@@ -1,4 +1,7 @@
 {
+    "AdminQuestions": {
+        "emptyQuestionList": "No questions."
+    },
     "Navbar": {
         "lang": "Language",
         "user": "User",
