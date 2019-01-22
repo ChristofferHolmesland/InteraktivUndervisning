@@ -46,7 +46,7 @@ module.exports.InsertFeideUser = function (db,userId,feideId) {
 };
 
 module.exports.InsertAnonymousUser = function (db,userId) {
-  let statement = `Insert INTO User(userId) VALUES (${userId})`;
+  let statement = `INSERT INTO User(userId) VALUES (${userId})`;
   db.run(statement, function (err) {
       if (err) {
           console.log(err.message);
@@ -85,7 +85,7 @@ module.exports.InsertQuiz = function (db,quizName,courseSemester,courseCode) {
 };
 
 module.exports.InsertCourse = function (db,courseSemester,courseCode,coursename) {
-    let statement = `INSERT INTO Course(courseSemester,courseCode,courseName) VALUES ('${courseSemester}','${courseCode}','${courseName}'`;
+    let statement = `INSERT INTO Course(courseSemester,courseCode,courseName) VALUES ('${courseSemester}','${courseCode}','${coursename}'`;
     db.run(statement, function (err) {
         if (err) {
             console.log(err.message);
@@ -147,6 +147,10 @@ module.exports.AddUserToQuiz = function (db,userId,quizId) {
     })
 };
 
+module.exports.GetQuizestoUser = function(db,userId) {
+    let statment = ``
+}
+
 module.exports.AddQuestionToQuiz = function (db,quizId,questionId) {
     let statement = `INSERT INTO Quiz_has_Question(quizId,questionId) VALUES(${quizId},${questionId})`;
     db.run(statement, function (err) {
@@ -156,7 +160,7 @@ module.exports.AddQuestionToQuiz = function (db,quizId,questionId) {
     })
 };
 
-module.exports.GetAmountOffUsersInQuiz = function (db,quizId) {
+module.exports.GetAmountOfUsersInQuiz = function (db,quizId) {
     let userAmount = 0;
     let statement = `SELECT userid FROM User_Has_Quiz WHERE quizid = ${quizId}`;
     db.all(statement, function (err,rows) {
@@ -169,6 +173,21 @@ module.exports.GetAmountOffUsersInQuiz = function (db,quizId) {
     })
     return userAmount;
 };
+
+module.exports.GetAmountOfQuizesUserParticipateIn = function (db,userId) {
+    let quizAmount = 0;
+    let statement = `SELECT quizId FROM User_Has_Quiz WHERE userid = ${userId}`;
+
+    db.all(statement, function (err,rows) {
+        if (err) {
+            console.log(err.message);
+        }else {
+            console.log(rows);
+            quizAmount = rows.length
+        }
+    })
+    return quizAmount;
+}
 
 module.exports.GetAllQuestionInQuiz = function (db,quizId) {
     let statement = `SELECT Q.questionText,Q.questionObject,Q.questionSolution,T.questionType,QQ.quizId
@@ -201,3 +220,4 @@ module.exports.GetAllQuizWithinCourse = function(db,courseCode) {
         return rows
     })
 };
+

@@ -97,12 +97,15 @@ module.exports.getDB = function setupDatabase() {
         });
 
         db.run("CREATE TABLE IF NOT EXISTS Question(\n" +
-            "    questionId INTEGER PRIMARY KEY AUTOINCREMENT, -- auto increment?\n" +
+            "    questionId INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
             "    questionText TEXT NOT NULL,\n" +
+            "    questionDescription TEXT,\n" +
             "    questionObject BLOB,\n" +
             "    questionSolution BLOB NOT NULL,\n" +
             "    questionType INTEGER NOT NULL,\n" +
+            "    courseCode TEXT NOT NULL,\n" +
             "    FOREIGN KEY (questionType) REFERENCES Type(questionType) ON DELETE CASCADE ON UPDATE CASCADE\n" +
+            "    FOREIGN KEY (courseCode) REFERENCES Course(courseCode) ON UPDATE CASCADE\n" +
             ");", function (err) {
             if (err) {
                 console.log("error occurred in Question table");
