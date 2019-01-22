@@ -9,8 +9,8 @@
 				</b-form-input>
 			</b-col>
 			<b-col cols="1" class="text-center mb-5">
-				<b-button v-b-modal.editQuestionModal>+</b-button>
-				<EditQuestion id="editQuestionModal" :okHandler="addNewQuestionHandler"></EditQuestion>
+				<b-button v-b-modal.newQuestionModal>+</b-button>
+				<EditQuestion elementId="newQuestionModal" :okHandler="addNewQuestionHandler"></EditQuestion>
 			</b-col>
 			<b-col cols="3"></b-col>
 		</b-row>
@@ -19,7 +19,21 @@
 			<b-col cols="6">
 				<b-list-group style="max-height: 300px; overflow-y:scroll;">
                     <b-list-group-item class="border-0" :key="item" v-for="item in currentQuestions">
-						{{item.id}}. {{item.text}}
+						<b-container>
+							<b-row>
+								<b-col cols="9">
+									{{item.id}}. {{item.text}}
+								</b-col>
+								<b-col cols="1">
+									<b-button @click="showModals.item.id = !showModals.item.id" >+</b-button>
+									<EditQuestion v-model="showModals.item.id" :initialData="item" :elementId="per" :okHandler="editQuestionHandler"></EditQuestion>
+								</b-col>
+								<b-col cols="1">
+								</b-col>	
+								<b-col cols="1">
+								</b-col>
+							</b-row>
+						</b-container>
 					</b-list-group-item>
 					<b-list-group-item class="border-0" v-show="showNoQuestions">
 						{{ getLocale.emptyQuestionList }}
@@ -40,6 +54,9 @@
 			return {
 				questionSearchText: "",
 				questionList: [],
+				showModals: {
+
+				}
 			}
 		},
 		components: {

@@ -1,5 +1,5 @@
 <template>
-    <b-modal id="editQuestionModal" no-close-on-backdrop="true" :title="getLocale.newQuestion" @ok="callOkHandler" style="text-align: left;">
+    <b-modal :id="elementId" no-close-on-backdrop="true" :title="getLocale.newQuestion" @ok="callOkHandler" style="text-align: left;">
         <b-form>
             <b-form-group 	id="questionTitle"
                             :label="getLocale.newQuestionTitle"
@@ -50,12 +50,17 @@
             }
         },
         props: {
+            initialData: Object,
+            elementId: String,
             okHandler: Function
+        },
+        mounted() {
+            if (this.initialData != null) {
+                this.newQuestion.text = this.initialData.text;
+            }
         },
         methods: {
             callOkHandler: function() {
-                console.log(this.newQuestion);
-                console.log(this.okHandler);
                 this.okHandler(this.newQuestion);
             }
         },
