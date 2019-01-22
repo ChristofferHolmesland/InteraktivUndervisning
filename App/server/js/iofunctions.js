@@ -12,22 +12,12 @@ module.exports.listen = function(server, users) {
 
         // On new connection, checks if user has a cookie with userId and verifies the user
         let user = User.getUser(users, socket);
-        if(user){
-            let response = {
-                "username": user.userName, 
-                "loggedIn": true,
-                "admin": user.userRights
-            }
-            if(user.userRights == 4) response.admin = true;
-            socket.emit("loginResponse", response)
-        }
 
         //--------------------------------------------//
         //------------- Common functions -------------//
         //--------------------------------------------//
 
         socket.on('disconnect', function(){
-
         });
 
         socket.on("signOutRequest", function(){
@@ -54,10 +44,10 @@ module.exports.listen = function(server, users) {
             socket.emit("loginAnonymouslyResponse");
 
             user = users.get(socket.id);
-            socket.emit("loginResponse", {
+            socket.emit("clientLoginInfoResponse", {
                 "username": user.userName,
                 "loggedIn": true,
-                "admin": user.userRights
+                "userRights": user.userRights
             });
         });
         
@@ -69,6 +59,17 @@ module.exports.listen = function(server, users) {
             if(user && user.userRights > 0) return;
 
             socket.emit("unauthorizedAccess");
+        });
+
+        socket.on("clientLoginInfoRequest", function() {
+            if(user){
+                socket.emit("clientLoginInfoResponse", {
+                    "username": user.userName, 
+                    "loggedIn": true,
+                    "userRights": user.userRights,
+                    "feideId": user.feide.idNumber
+                });
+            }
         });
 
         //--------------------------------------------//

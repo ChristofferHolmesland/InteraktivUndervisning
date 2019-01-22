@@ -7,9 +7,6 @@ const cookieParser = require("cookie-parser");
 const user = (require("./js/user.js")).User;
 const users = new Map();
 
-// Imports and validate databse
-const database = require("./database/database").getDB();
-
 // Imports and checks environment variables
 const env = require('./js/environment.js');
 if(!env.load()) { return; }
