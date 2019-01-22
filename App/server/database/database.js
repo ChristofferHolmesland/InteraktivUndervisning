@@ -129,6 +129,7 @@ module.exports.getDB = function setupDatabase() {
             "    answerObject BLOB NOT NULL,\n" +
             "    questionId INTEGER,\n" +
             "    userId TEXT,\n" +
+            "    status INT NOT NULL,\n" +
             "    FOREIGN KEY (questionId) REFERENCES Question(questionId) ON DELETE CASCADE ON UPDATE CASCADE,\n" +
             "    FOREIGN KEY (userId) REFERENCES User(userId)\n" +
             ");", function (err) {
