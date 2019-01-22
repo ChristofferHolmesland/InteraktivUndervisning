@@ -1,12 +1,12 @@
 <template>
-    <b-modal :id="elementId" no-close-on-backdrop="true" :title="getLocale.newQuestion" @ok="callOkHandler" style="text-align: left;">
+    <b-modal :id="elementId" :ref="elementRef" :no-close-on-backdrop="true" :title="getLocale.newQuestion" @ok="callOkHandler" style="text-align: left;">
         <b-form>
             <b-form-group 	id="questionTitle"
                             :label="getLocale.newQuestionTitle"
                             label-for="questionTitleInput">
                 <b-form-input 	id="questionTitleInput"
                                 type="text"
-                                v-model="newQuestion.title">
+                                v-model="newQuestion.text">
                 </b-form-input>
             </b-form-group>
             <b-form-group 	id="questionText"
@@ -14,7 +14,7 @@
                             label-for="questionTextInput">
                 <b-form-input 	id="questionTextInput"
                                 type="text"
-                                v-model="newQuestion.text">
+                                v-model="newQuestion.description">
                 </b-form-input>
             </b-form-group>
             <b-form-group 	id="solutionType"
@@ -42,22 +42,19 @@
         data() {
             return {
                 newQuestion: {
-                    title: "",
-					text: "", // TODO: Make it possible to include graphs and images in the text
+                    id: -1,
+                    text: "",
+                    description: "", 
+                    // TODO: Make it possible to include graphs and images in the text
 					solutionType: "",
 					solution: "",
                 }
             }
         },
         props: {
-            initialData: Object,
+            elementRef: String,
             elementId: String,
             okHandler: Function
-        },
-        mounted() {
-            if (this.initialData != null) {
-                this.newQuestion.text = this.initialData.text;
-            }
         },
         methods: {
             callOkHandler: function() {
@@ -69,7 +66,15 @@
 				let locale = this.$store.getters.getLocale("AdminQuestions");
                 if(locale) return locale;
 			    else return {};
-			}
+            },
+            getSolutionTypes: function() {
+				// TODO: Query database for the options
+				return [
+					{ value: "graph", text: "Graph"},
+					{ value: "text", text: "Text"},
+					{ value: "multipleChoice", text: "Multiple choice"}
+				];
+			},
         }
     }
 
