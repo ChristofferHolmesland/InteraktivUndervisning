@@ -148,7 +148,16 @@ module.exports.AddUserToQuiz = function (db,userId,quizId) {
 };
 
 module.exports.GetQuizestoUser = function(db,userId) {
-    let statment = ``
+    let statment = `SELECT Q.quizName, C.courseCode
+                    FROM Quiz AS Q
+                    INNER JOIN User_has_Quiz AS UQ ON UQ.quizId = Q.quizId
+                    INNER JOIN Course AS C ON Q.courseCode = C.courseCode AND Q.courseSemester = C.courseSemester 
+                    WHERE UQ.userId = ${userId}`;
+    db.run(statement, function (err) {
+        if (err) {
+            console.log(err.message);
+        }
+    })
 }
 
 module.exports.AddQuestionToQuiz = function (db,quizId,questionId) {
