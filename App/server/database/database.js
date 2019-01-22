@@ -1,6 +1,6 @@
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
-
+var dbfunctions = require('databasefunctions');
 var currentpath = path.resolve(__dirname, "interaktivUndervisning.db");
 //console.log(currentpath);
 module.exports.getDB = function setupDatabase() {
@@ -127,9 +127,9 @@ module.exports.getDB = function setupDatabase() {
         db.run("CREATE TABLE IF NOT EXISTS Answer(\n" +
             "    answerId INTEGER PRIMARY KEY AutoIncrement,\n" +
             "    answerObject BLOB NOT NULL,\n" +
+            "    status INT NOT NULL,\n" +
             "    questionId INTEGER,\n" +
             "    userId TEXT,\n" +
-            "    status INT NOT NULL,\n" +
             "    FOREIGN KEY (questionId) REFERENCES Question(questionId) ON DELETE CASCADE ON UPDATE CASCADE,\n" +
             "    FOREIGN KEY (userId) REFERENCES User(userId)\n" +
             ");", function (err) {
@@ -138,6 +138,7 @@ module.exports.getDB = function setupDatabase() {
             }
         });
     });
+    dbfunctions.InsertAnonymousUser(db,1);
     return db;
 };
 

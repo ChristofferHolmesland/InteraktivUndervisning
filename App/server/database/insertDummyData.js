@@ -1,15 +1,5 @@
 module.exports.InsertData = function (db) {
 
-    //temporary functions
-    function InsertAnonymousUser(db,userId) {
-        let statement = `INSERT INTO User(userId) VALUES (${userId})`;
-        db.run(statement, function (err) {
-            if (err) {
-                console.log(err.message);
-            }
-        });
-    }
-
     //constant dummy data
     let courses = [
         {courseSemester: "18H", courseCode: "DAT200", courseName: "Algoritmer og Datastrukturer"},
@@ -39,7 +29,6 @@ module.exports.InsertData = function (db) {
     //console.log(sqlInsertFeide);
 
     //Creating User Insert
-    InsertAnonymousUser(db,1);
     var sqlInsertUser = "INSERT INTO USER(userId,feideId) VALUES";
     for (let n=0; n<feideids.length;n++) {
         let userid = n+2;
@@ -87,14 +76,20 @@ module.exports.InsertData = function (db) {
     //console.log(sqlInsertUserRight);
 
     //Create Insert Quiz
-    var sqlInsertQuiz = "Insert INTO Quiz(quizName,courseSemester,courseCode) VALUES";
+    var sqlInsertQuiz = "Insert INTO Quiz(quizName,status,participants,courseSemester,courseCode) VALUES";
     for (let p=0;p<courses.length;p++) {
+        let status = 0;
         for (let q=1;q<=10;q++) {
             let addstring = "";
             if (p===0 && q===1) {
-                addstring = `('QuizName${q}${courses[p].courseCode}','${courses[p].courseSemester}','${courses[p].courseCode}')`;
+                addstring = `('QuizName${q}${courses[p].courseCode}',${status},${10},'${courses[p].courseSemester}','${courses[p].courseCode}')`;
             }else {
-                addstring = `,('QuizName${q}${courses[p].courseCode}','${courses[p].courseSemester}','${courses[p].courseCode}')`;
+                addstring = `,('QuizName${q}${courses[p].courseCode}',${status},${10},'${courses[p].courseSemester}','${courses[p].courseCode}')`;
+            }
+            if(status >= 2) {
+                status = 0;
+            }else {
+                status++
             }
             sqlInsertQuiz += addstring;
         }
@@ -121,7 +116,6 @@ module.exports.InsertData = function (db) {
     //console.log(sqlInsertQuestion);
 
     //Create Insert QuizHasQuestion
-
     var sqlInsertQuizHasQuestion = "INSERT INTO Quiz_has_Question(quizId,questionId) VALUES";
     var quizid = 1;
     var counter = 0;
@@ -147,53 +141,96 @@ module.exports.InsertData = function (db) {
     var sqlInsertUserHasQuiz = "INSERT INTO User_has_Quiz(userid,quizid) VALUES";
     var users = {};
     for (let s=1;s<=20;s++) {   //per quiz
-        let quizusers = [];
+        let quizUsers = [];
         let atest = false;
-        let addstring = "";
+        let userLength = 11;
         for (let u = 1; u <= 10; u++) {  //per user
             let chance = Math.floor(Math.random() * 20 + 1);
-            console.log(chance);
             if (chance < 11) {    //Bruker
-                quizusers.push(chance);
+                let userIndex =  Math.floor(Math.random() * userLength + 1);
+                if (quizUsers.indexOf(userIndex) === -1 && userIndex !== 1) {
+                    quizUsers.push(userIndex);
+                } else {
+                    while (quizUsers.indexOf(userIndex) !== -1 || userIndex === 1) {
+                        userIndex = Math.floor(Math.random() * userLength + 1);
+                    }
+                    quizUsers.push(userIndex);
+                }
             } else { //annonym
-                if (!atest) {
-                    quizusers.push(1);
+                if (atest === false) {
                     atest = true;
+                    quizUsers.push(1);
+
                 }
             }
         }
-
+        users[s] = quizUsers.sort(function (a,b){return b-a})
     }
-    console.log(users);
-    /*
-        if (s === 0) {
-            addstring =`('answerObject${ids[s]}.${ids[s]}',${ids[s]},${ids[s]})`;
-        }else {
-            addstring = `,('answerObject${ids[s]}.${ids[s]}',${ids[s]},${ids[s]})`;
+
+    var count = 0;
+    for (quizid in users) {
+        let participatingusers = users[quizid];
+        for (let i=0;i<participatingusers.length;i++) {
+            let addstring = "";
+            if (i === 0 && count === 0) {
+                addstring = "(\'"+participatingusers[i] + "\'," +quizid +")";
+                count++
+            }else {
+                addstring = ",(\'"+participatingusers[i] + "\'," + quizid + ")";
+            }
+            sqlInsertUserHasQuiz += addstring;
         }
-        sqlInsertUserHasQuiz += addstring;
-    */
+    }
     sqlInsertUserHasQuiz += ";";
     //console.log(sqlInsertUserHasQuiz);
 
-    //Create Insert UserHasQuiz
-    /*var sqlInsertAnswer = "INSERT INTO User_has_Quiz(userid,quizid) VALUES";
-    for (let q = 0; q<quizInfo.length;q++) {
-        let addstring = "";
-        let quizId = q+1;
-        if (q===0) {
-            addstring = "(\'"+ids[q] + "\'," +quizId +")";
-        }else {
-            addstring = ",(\'"+ids[q] + "\'," + quizId + ")";
+    //Create Insert Answer
+    var sqlInsertAnswer = "INSERT INTO Answer(answerObject,result,questionId,userId) VALUES";
+    var questionid = 0;
+    var firsttime = true;
+    for (quizid in users) { //for every quiz
+        let participatingusers = users[quizid];
+        let countedusers = 1;
+
+        for (let p= 0;p<participatingusers.length;p++) {    //for all users in the quiz
+            questionid = ((quizid-1)*10)+1;
+            console.log("countedusers: " +countedusers + " vs length: " + participatingusers.length);
+            if (countedusers === participatingusers.length) {
+                while (countedusers >= participatingusers.length && countedusers<=10) {
+                    questionid = (quizid-1)*10+1;
+                    for (let r=1; r<=10;r++) {  //adding for annomous users
+                        let addstring = "";
+                        let result = Math.floor(Math.random()*2);
+                        addstring = `,('answerObject${1}.${questionid}',${result},${questionid},'${1}')`;
+                        sqlInsertAnswer += addstring;
+                        questionid++
+                    }
+                    countedusers++;
+                }
+            }else {
+                for (let q = 1; q <= 10; q++) {
+                    let addstring = "";
+                    let result = Math.floor(Math.random() * 2);
+
+                    if (firsttime) {
+                        addstring =`('answerObject${participatingusers[p]}.${questionid}',${result},${questionid},'${participatingusers[p]}')`;
+                        firsttime = false;
+                    }else{
+                        addstring = `,('answerObject${participatingusers[p]}.${questionid}',${result},${questionid},'${participatingusers[p]}')`;
+                    }
+                    sqlInsertAnswer += addstring;
+                    questionid++;
+                }
+                countedusers++;
+            }
         }
-        sqlInsertUserHasQuiz += addstring
     }
-    sqlInsertUserHasQuiz += ";";
-    //console.log(sqlInsertUserHasQuiz + "\n");
-    */
+    sqlInsertAnswer += ";";
+
     //Creating Type Insert
     let sqlInsertType = `INSERT INTO Type(questionType,typeName) VALUES (${type.typeid},'${type.typename}')`;
 
+    //Running SQL Statements
     db.serialize(function () {
         db.run(sqlInsertFeide,function (err) {
             if (err) {
@@ -251,7 +288,7 @@ module.exports.InsertData = function (db) {
             }
         });
 
-        /*db.run(sqlInsertUserHasQuiz, function (err) {
+        db.run(sqlInsertUserHasQuiz, function (err) {
             if (err) {
                 console.log(err.message);
             }else {
@@ -265,7 +302,7 @@ module.exports.InsertData = function (db) {
             }else {
                 console.log("Added Answer");
             }
-        });*/
+        });
 
         db.run(sqlInsertType, function (err) {
             if (err) {
@@ -274,6 +311,5 @@ module.exports.InsertData = function (db) {
                 console.log("Added Type data");
             }
         });
-
     });
 };
