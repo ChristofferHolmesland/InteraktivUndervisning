@@ -6,7 +6,10 @@
         "newQuestionTitle": "Spørsmål tittel:",
         "newQuestionText": "Spørsmål tekst:",
         "newQuestionSolutionType": "Løsnings type:",
-        "newQuestionSolution": "Løsning:"
+        "newQuestionSolution": "Løsning:",
+        "addToSession": "Legg til",
+        "solutionText": "Løsning: ",
+        "selectSessionText": "Velg økt: "
     },
     "Navbar": {
         "lang": "Språk",
