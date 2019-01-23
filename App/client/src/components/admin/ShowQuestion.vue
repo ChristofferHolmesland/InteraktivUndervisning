@@ -1,6 +1,7 @@
 <template>
     <b-modal :id="elementId" :ref="elementRef" :title="question.text" style="text-align: left;">
     <p>{{question.description}}</p>
+    <p>Solution:</p>
     <p>{{question.solution}}</p>
     </b-modal>
 </template>
