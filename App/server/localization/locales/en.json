@@ -6,7 +6,10 @@
         "newQuestionTitle": "Question title:",
         "newQuestionText": "Question text:",
         "newQuestionSolutionType": "Solution type:",
-        "newQuestionSolution": "Solution:"
+        "newQuestionSolution": "Solution:",
+        "addToSession": "Add",
+        "solutionText": "Solution: ",
+        "selectSessionText": "Select session: "
     },
     "Navbar": {
         "lang": "Language",

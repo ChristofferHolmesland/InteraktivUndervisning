@@ -1,7 +1,7 @@
 <template>
     <b-modal :id="elementId" :ref="elementRef" :title="question.text" style="text-align: left;">
     <p>{{question.description}}</p>
-    <p>Solution:</p>
+    <p>{{getLocale.solutionText}}</p>
     <p>{{question.solution}}</p>
     </b-modal>
 </template>
@@ -14,8 +14,7 @@
                     id: -1,
                     text: "",
                     description: "", 
-                    // TODO: Make it possible to include graphs and images in the text
-					solutionType: "",
+                	solutionType: "",
 					solution: "",
                 }
             }

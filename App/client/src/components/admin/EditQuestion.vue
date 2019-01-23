@@ -45,8 +45,7 @@
                     id: -1,
                     text: "",
                     description: "", 
-                    // TODO: Make it possible to include graphs and images in the text
-					solutionType: "",
+              		solutionType: "",
 					solution: "",
                 }
             }

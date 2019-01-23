@@ -35,7 +35,7 @@
 									<b-button @click="showEditQuestionModal(item)" >E</b-button>
 								</b-col>	
 								<b-col cols="2">
-									<b-button @click="showAddQuestionToSessionModal(item)">Add</b-button>
+									<b-button @click="showAddQuestionToSessionModal(item)">{{getLocale.addToSession}}</b-button>
 								</b-col>
 							</b-row>
 						</b-container>

@@ -1,7 +1,7 @@
 <template>
     <b-modal @shown="onShown" @ok="okHandler" :id="elementId" :ref="elementRef" :title="question.text" style="text-align: left;">
         <b-form-group 	id="session"
-                    label="Select session:"
+                    :label="getLocale.selectSessionText"
                     label-for="sessionInput">
         <b-form-select 	id="sessionInput"
                         :options="getSessionOptions"
@@ -20,7 +20,7 @@
                     text: "",
                 },
                 selectedSession: -1,
-                sessionOptions: [{value: 1, text: "Graphs"}, {value: 2, text: "Sorting"}]
+                sessionOptions: []
             }
         },
         props: {
@@ -39,7 +39,12 @@
         },
         methods: {
             onShown: function() {
-                // Query database and fill sessionOptions
+                this.$socket.on("sendQuizWithinCourse", function(quizes) {
+                    console.log("recieved from server");
+                    this.sessionOptions = quizes; 
+                });
+                console.log("Sending to server");
+                this.$socket.emit("getQuizWithinCourse", "DAT200");
             },
             okHandler: function() {
                 // Query database and add question to the session list

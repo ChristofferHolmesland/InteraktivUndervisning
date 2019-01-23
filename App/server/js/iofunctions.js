@@ -13,6 +13,11 @@ module.exports.listen = function(server, users) {
         // On new connection, checks if user has a cookie with userId and verifies the user
         let user = User.getUser(users, socket);
 
+        function rights(level, func, ...args) {
+            if(user && user.userRights < level) return;
+            func(...args);
+        }
+
         //--------------------------------------------//
         //------------- Common functions -------------//
         //--------------------------------------------//
@@ -92,6 +97,22 @@ module.exports.listen = function(server, users) {
             console.log(user);
             socket.emit("unauthorizedAccess");
         });
+
+        socket.on("getQuizWithinCourse", (data) => rights(4, function(course) {
+            /*
+                let result = [];
+                let quizes = get.allQuizWithinCourse(db, course);
+                for (let i = 0; i < quizes.length; i++) {
+                    result.push({
+                        value: quizes[i].quizId,
+                        text: quizes[i].quizName
+                    });
+                }
+                socket.emit("sendQuizWithinCourse", result);
+            */
+            console.log("Sending to client");
+            socket.emit("sendQuizWithinCourse", [{value: 1, text: "Grap222hs"}, {value: 2, text: "Sor23523ting"}]);
+        }, data));
             
     });
 
