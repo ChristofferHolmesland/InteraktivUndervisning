@@ -17,7 +17,7 @@
 		<b-row>
 			<b-col cols="3"></b-col>
 			<b-col cols="6">
-				<b-list-group style="max-height: 300px; overflow-y:scroll;">
+				<b-list-group style="min-height: 300px; max-height: 300px; overflow-y:scroll;">
 					<EditQuestion elementRef="innerModal" ref="editQuestionModal" :okHandler="editQuestionHandler"></EditQuestion>
 					<ShowQuestion elementRef="innerModal" ref="showQuestionModal"></ShowQuestion>
 
@@ -28,7 +28,7 @@
 									{{item.id}}. {{item.text}}
 								</b-col>
 								<b-col cols="1">
-									<b-button @click="showQuestionModal(item)" >V</b-button>
+									<b-button @click="showShowQuestionModal(item)" >V</b-button>
 								</b-col>
 								<b-col cols="1">
 									<b-button @click="showEditQuestionModal(item)" >E</b-button>
@@ -50,20 +50,19 @@
 
 <script>
 	import EditQuestion from "./EditQuestion.vue";
+	import ShowQuestion from "./ShowQuestion.vue";
 
 	export default {
 		name: 'Questions',
 		data() {
 			return {
 				questionSearchText: "",
-				questionList: [],
-				showModals: {
-
-				}
+				questionList: []
 			}
 		},
 		components: {
-			EditQuestion
+			EditQuestion,
+			ShowQuestion
 		},
 		mounted() {
 			this.questionList = this.getQuestionsFromDatabase();
@@ -92,11 +91,11 @@
 		},
 		methods: {
 			showEditQuestionModal: function(item) {
-				this.$refs.editQuestionModal._data.newQuestion.id = item.id;
-				this.$refs.editQuestionModal._data.newQuestion.text = item.text;
+				this.$refs.editQuestionModal._data.newQuestion = item;
 				this.$refs.editQuestionModal.$refs.innerModal.show();
 			},
-			showQuestionModal: function(item) {
+			showShowQuestionModal: function(item) {
+				this.$refs.showQuestionModal._data.question = item;
 				this.$refs.showQuestionModal.$refs.innerModal.show();
 			},
 			getQuestionsFromDatabase: function() {
@@ -110,11 +109,11 @@
 						solution: "4"
 					},
 					{
-						id: 1, 
-						text: "Hvordan er 'bøttene' i denne ", 
-						description: "For å løse denne oppgaven må du bruke addisjon.",
+						id: 2, 
+						text: "Hvordan er 'bøttene' i denne hashtabellene laget?", 
+						description: "<bilde>",
 						solutionType: "text",
-						solution: "4"
+						solution: "linkedlist"
 					}
 				];
 			},
