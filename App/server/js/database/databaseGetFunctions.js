@@ -1,7 +1,7 @@
 const get = module.exports =  {
     feideById: function(db, feideId) {
         let statement = `SELECT * FROM Feide WHERE feideId=${feideId};`;
-        db.get(statement, function (err, row) {
+        return db.get(statement, function (err, row) {
             if (err) {
                 console.log(err.message);
             } else {
@@ -60,7 +60,6 @@ const get = module.exports =  {
     amountOfQuizesUserParticipateIn: function (db,userId) {
         let quizAmount = 0;
         let statement = `SELECT quizId FROM User_Has_Quiz WHERE userid = ${userId}`;
-
         db.all(statement, function (err,rows) {
             if (err) {
                 console.log(err.message);

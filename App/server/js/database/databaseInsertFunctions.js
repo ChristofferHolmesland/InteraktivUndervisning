@@ -39,16 +39,16 @@ const insert = module.exports = {
 			}
 		})
 	},
-	questionNoObject: function (db,questionText,questionSolution,Type) {
-	let statement = `INSERT INTO Question(questionText,questionSolution,questiontype) VALUES('${questionText}',${questionSolution},${Type})`;
+	questionNoObject: function (db,questionText,questionDescription,questionSolution,Type,courseCode) {
+	let statement = `INSERT INTO Question(questionText,questionDescription,questionSolution,questiontype,courseCode) VALUES('${questionText}','${questionDescription}',${questionSolution},${Type},${courseCode})`;
 	db.run(statement, function (err) {
 		if (err) {
 			console.log(err.message);
 		}
 	})
 	},
-	questionWithObject: function (db, questionText,questionObject,questionSolution,Type) {
-	let statement = `INSERT INTO Question(questionText,questionObject,questionSolution,questiontype) VALUES('${questionText}',${questionObject},${questionSolution},${Type})`;
+	questionWithObject: function (db, questionText,questionDescription,questionObject,questionSolution,Type,courseCode) {
+	let statement = `INSERT INTO Question(questionText,questionDescription,questionObject,questionSolution,questiontype,courseCode) VALUES('${questionText}',${questionDescription},${questionObject},${questionSolution},${Type},${courseCode})`;
 	db.run(statement, function (err) {
 		if (err) {
 			console.log(err.message);

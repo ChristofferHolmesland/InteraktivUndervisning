@@ -65,6 +65,8 @@ module.exports.getDB = function setupDatabase() {
         db.run("CREATE TABLE IF NOT EXISTS \"Quiz\" (\n" +
             "    quizId INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
             "    quizName TEXT NOT NULL,\n" +
+            "    status INTEGER NOT NULL,\n" +
+            "    participants INTEGER NOT NULL,\n" +
             "    courseSemester TEXT NOT NULL,\n" +
             "    courseCode TEXT NOT NULL,\n" +
             "    FOREIGN KEY (courseSemester) REFERENCES Course (courseSemester) ON DELETE CASCADE ON UPDATE CASCADE,\n" +
@@ -127,8 +129,8 @@ module.exports.getDB = function setupDatabase() {
         db.run("CREATE TABLE IF NOT EXISTS Answer(\n" +
             "    answerId INTEGER PRIMARY KEY AutoIncrement,\n" +
             "    answerObject BLOB NOT NULL,\n" +
-            "    status INT NOT NULL,\n" +
-            "    questionId INTEGER,\n" +
+            "    result INTEGER NOT NULL,\n" +
+            "    questionId INTEGER NOT NULL,\n" +
             "    userId TEXT,\n" +
             "    FOREIGN KEY (questionId) REFERENCES Question(questionId) ON DELETE CASCADE ON UPDATE CASCADE,\n" +
             "    FOREIGN KEY (userId) REFERENCES User(userId)\n" +
