@@ -1,7 +1,7 @@
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
-var dbfunctions = require('databasefunctions');
-var currentpath = path.resolve(__dirname, "interaktivUndervisning.db");
+var dbFunctions = require("databaseFunctions");
+var currentpath = path.resolve(__dirname, "../../database/interaktivUndervisning.db");
 //console.log(currentpath);
 module.exports.getDB = function setupDatabase() {
 
@@ -138,7 +138,7 @@ module.exports.getDB = function setupDatabase() {
             }
         });
     });
-    dbfunctions.InsertAnonymousUser(db,1);
+    dbFunctions.insert.anonymousUser(db,1);
     return db;
 };
 
