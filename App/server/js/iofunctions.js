@@ -100,20 +100,97 @@ module.exports.listen = function(server, users) {
 
         socket.on("getQuizWithinCourse", (data) => rights(4, function(course) {
             /*
-                let result = [];
-                let quizes = get.allQuizWithinCourse(db, course);
-                for (let i = 0; i < quizes.length; i++) {
-                    result.push({
-                        value: quizes[i].quizId,
-                        text: quizes[i].quizName
-                    });
-                }
-                socket.emit("sendQuizWithinCourse", result);
+            let result = [];
+            let quizes = get.allQuizWithinCourse(db, course);
+            for (let i = 0; i < quizes.length; i++) {
+                result.push({
+                    value: quizes[i].quizId,
+                    text: quizes[i].quizName
+                });
+            }
+            socket.emit("sendQuizWithinCourse", result);
             */
-            console.log("Sending to client");
             socket.emit("sendQuizWithinCourse", [{value: 1, text: "Grap222hs"}, {value: 2, text: "Sor23523ting"}]);
         }, data));
-            
+
+        socket.on("addQuestionToQuiz", (data) => rights(4, function(data) {
+            /*
+            insert.addQuestionToQuiz(db, data.quizId, data.questionId);
+            */
+        }, data));
+
+        socket.on("getAllQuestionsWithinCourse", (data) => rights(4, function(course) {
+            /*
+            let result = [];
+            let questions = get.allQuestionsWithinCourse(db, course);
+            for (let i = 0; i < questions.length; i++) {
+                let q = questions[i];
+                results.push({
+                    id: q.questionId,
+                    text: q.questionText,
+                    description: q.QuestionDescription,
+                    solutionType: q.typeName,
+                    solution: q.questionSolution
+                })
+            }
+            socket.emit("sendAllQuestionsWithinCourse", result);
+            */
+
+            socket.emit("sendAllQuestionsWithinCourse",
+            [
+                {
+                    id: 1, 
+                    text: "Hva er 2 + 2?", 
+                    description: "For å løse denne oppgaven må du bruke addisjon.",
+                    solutionType: "text",
+                    solution: "4"
+                },
+                {
+                    id: 2, 
+                    text: "Hvordan er 'bøttene' i denne hashtabellene laget?", 
+                    description: "<bilde>",
+                    solutionType: "text",
+                    solution: "linkedlist"
+                }
+			]);
+        }, data));
+
+        socket.on("addNewQuestion", (data) => rights(4, function(question) {
+            /*
+            if (question.object == undefined) {
+                insert.questionWithNoObject(db, question.text, question.description, question.solution, question.solutionType, question.courseCode);
+            } else {
+                insert.questionWithObject(db, question.text, question.description, question.object, question.solution, question.solutionType, question.courseCode);
+            }
+            */
+        }, data));
+
+        socket.on("updateQuestion", (data) => rights(4, function(question) {
+            /*
+            update.question(db, question.id, question.text, question.description, question.object, question.solution, question.solutionType);
+            */
+        }, data));
+
+        socket.on("getQuestionTypes", () => rights(4, function() {
+            /*
+            let result = [];
+            let types = get.questionTypes(db);
+            for (let i = 0; i < types.length; i++) {
+                result.push({
+                    value: types[i].questionType,
+                    text: types[i].typeName
+                })
+            }
+            socket.emit("sendQuestionTypes", result);
+            */
+
+            socket.emit("sendQuestionTypes", 
+            [
+                { value: "graph", text: "Graph"},
+                { value: "text", text: "Text"},
+                { value: "multipleChoice", text: "Multiple choice"}
+            ]);
+        }));
     });
 
     return io;

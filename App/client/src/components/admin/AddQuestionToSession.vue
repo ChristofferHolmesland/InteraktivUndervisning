@@ -39,15 +39,19 @@
         },
         methods: {
             onShown: function() {
-                this.$socket.on("sendQuizWithinCourse", function(quizes) {
-                    console.log("recieved from server");
-                    this.sessionOptions = quizes; 
-                });
-                console.log("Sending to server");
+                // TODO: Change "DAT200" to depend on the current course
                 this.$socket.emit("getQuizWithinCourse", "DAT200");
             },
             okHandler: function() {
-                // Query database and add question to the session list
+                this.$socket.emit("addQuestionToQuiz", {
+                    questionId: this.question.id,
+                    quizId: this.selectedSession
+                })
+            }
+        },
+        sockets: {
+            sendQuizWithinCourse: function(quizes) {
+                this.sessionOptions = quizes; 
             }
         }
     }

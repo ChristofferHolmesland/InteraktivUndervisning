@@ -69,7 +69,7 @@
 			AddQuestionToSession
 		},
 		mounted() {
-			this.questionList = this.getQuestionsFromDatabase();
+			this.getQuestionsFromDatabase();
 		},
 		computed: {
 			currentQuestions: function() {
@@ -93,6 +93,11 @@
 			    else return {};
 			}
 		},
+		sockets: {
+			sendAllQuestionsWithinCourse: function(questions) {
+				this.questionList = questions;
+			}
+		},
 		methods: {
 			showEditQuestionModal: function(item) {
 				this.$refs.editQuestionModal._data.newQuestion = item;
@@ -108,42 +113,15 @@
 				this.$refs.addQuestionToSessionModal.$refs.innerModal.show();
 			},
 			getQuestionsFromDatabase: function() {
-				// TODO: Query database
-				return [
-					{
-						id: 1, 
-						text: "Hva er 2 + 2?", 
-						description: "For å løse denne oppgaven må du bruke addisjon.",
-						solutionType: "text",
-						solution: "4"
-					},
-					{
-						id: 2, 
-						text: "Hvordan er 'bøttene' i denne hashtabellene laget?", 
-						description: "<bilde>",
-						solutionType: "text",
-						solution: "linkedlist"
-					}
-				];
+				this.$socket.emit("getAllQuestionsWithinCourse", "DAT200");
 			},
 			addNewQuestionHandler: function(newQuestion) {
-				// TODO: Add to database instead of dynamic list
-				this.questionList.push({
-					id: this.questionList.length + 1,
-					text: newQuestion.text,
-					description: newQuestion.description,
-					solutionType: newQuestion.solutionType,
-					solution: newQuestion.solution
-				});
+				this.$socket.emit("addNewQuestion", Object.assign({}, newQuestion, {courseCode: "DAT200"}));
+				this.$socket.emit("getAllQuestionsWithinCourse", "DAT200");
 			},
-			editQuestionHandler: function(newItem) {
-				for (let i = 0; i < this.questionList.length; i++) {
-					let q = this.questionList[i];
-					if (q.id == newItem.id) {
-						q.text = newItem.text;
-						return;
-					}
-				}
+			editQuestionHandler: function(updatedQuestion) {
+				this.$socket.emit("updateQuestion", updatedQuestion);
+				this.$socket.emit("getAllQuestionsWithinCourse", "DAT200");
 			}
 		}
 	}
