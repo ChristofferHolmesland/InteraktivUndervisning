@@ -1,5 +1,6 @@
-module.exports.InsertData = function (db) {
+// This module should ONLY be called once!Otherwise you end up with duplicates in every table that uses autoincremented primary keys.
 
+module.exports.InsertData = function (db) {
     //constant dummy data
     let courses = [
         {courseSemester: "18H", courseCode: "DAT200", courseName: "Algoritmer og Datastrukturer"},
@@ -194,7 +195,6 @@ module.exports.InsertData = function (db) {
 
         for (let p= 0;p<participatingusers.length;p++) {    //for all users in the quiz
             questionid = ((quizid-1)*10)+1;
-            console.log("countedusers: " +countedusers + " vs length: " + participatingusers.length);
             if (countedusers === participatingusers.length) {
                 while (countedusers >= participatingusers.length && countedusers<=10) {
                     questionid = (quizid-1)*10+1;

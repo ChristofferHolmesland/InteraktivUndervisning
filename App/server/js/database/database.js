@@ -1,10 +1,11 @@
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
-var dbFunctions = require("databaseFunctions");
+var dbFunctions = require("./databaseFunctions");
 var currentpath = path.resolve(__dirname, "../../database/interaktivUndervisning.db");
 //console.log(currentpath);
-module.exports.getDB = function setupDatabase() {
+//deleting databases sqlite3.deleteDatabase()
 
+module.exports.getDB = function setupDatabase() {
 	//set up connection with the database
 	let db = new sqlite3.Database(currentpath, function (err) {
         if (err) {
@@ -139,8 +140,8 @@ module.exports.getDB = function setupDatabase() {
                 console.log("error occurred in Answer");
             }
         });
+        dbFunctions.insert.anonymousUser(db,1);
     });
-    dbFunctions.insert.anonymousUser(db,1);
     return db;
 };
 

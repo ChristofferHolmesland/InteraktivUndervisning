@@ -49,7 +49,9 @@ const server = app.listen(port, function() {
     console.log(`Server listening on localhost:${ port }! Use ctrl + c to stop the server!`)
 });
 const io = require('./js/iofunctions').listen(server, users);
-
+const db = require('./js/database/database').getDB();
+const dummydata = require('./tools/insertDummyData');
+dummydata.InsertData(db);
 app.post('/login/feide', passport.authenticate('passport-openid-connect', {"successReturnToOrRedirect": "/client"}))
 app.get('/login/callback/feide', passport.authenticate('passport-openid-connect', {callback: true}), function(req, res) {
 
