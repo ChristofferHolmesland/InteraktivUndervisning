@@ -92,6 +92,19 @@ module.exports.listen = function(server, users) {
             console.log(user);
             socket.emit("unauthorizedAccess");
         });
+
+        socket.on("getSessions", function() {
+            // Todo remove testdata
+            let testData = {
+                quizzes: [
+                    "quiz1", "quiz2", "quiz3", "quiz4"
+                ]
+            }
+
+            // TODO write code to querry data from the databse
+
+            socket.emit("getSessionsResponse", testData);
+        });
             
     });
 
