@@ -144,6 +144,31 @@ const get = module.exports =  {
             }
             return rows
         })
+    },
+    allQuestionsWithinCourse(db, course) {
+        let statement = `SELECT Q.questionId,Q.questionText,Q.questionDescription,questionObject,questionSolution,T.typeName,Q.courseCode
+                         FROM Question AS Q
+                         INNER JOIN Type AS T ON Q.questionType = T.questionType
+                         WHERE Q.courseCode = "${course}";`;
+        return db.all(statement, function (err,rows) {
+           if (err) {
+               console.log(err.message);
+           } else {
+               console.log(rows);
+           }
+           return rows;
+        });
+    },
+    questionTypes(db) {
+        let statement = `SELECT * FROM Type;`;
+        return db.all(statement, function (err,rows) {
+            if (err) {
+                console.log(err.message);
+            }else {
+                console.log(rows);
+            }
+            return rows
+        });
     }
 
 };

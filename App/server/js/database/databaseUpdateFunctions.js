@@ -15,12 +15,26 @@ const update = module.exports = {
 			}
 		})
 	},
-	addQuestionObject: function(db,questionId,questionobject,questiontype) {
-		let statement = `UPDATE Question SET questionObject = ${questionobject}, questionType = ${questiontype} WHERE questionId= ${questionId}`;
+	addQuestionObject: function(db,questionId,questionobject) {
+		let statement = `UPDATE Question SET questionObject = ${questionobject} WHERE questionId= ${questionId}`;
 		db.run(statement, function (err) {
 			if (err) {
 				console.log(err.message);
 			}
 		})
 	},
+	editquestion: function(db, id, questionText, questionDescription, questionObject, questionSolution, questionType) {
+		let statement = `UPDATE question 
+						 SET questionText = '${questionText}', 
+    					 questionDescription = '${questionDescription}', 
+    					 questionObject = ${questionObject}, 
+    					 questionSolution = ${questionSolution}, 
+    					 questionType = ${questionType} 
+						 WHERE questionid = ${id};`;
+		db.run(statement, function (err) {
+			if (err) {
+				console.log(err.message);
+			}
+		})
+	}
 };
