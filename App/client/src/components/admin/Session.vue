@@ -3,18 +3,18 @@
         <b-container>
             <b-row>
                 <b-col lg="4">
-                    <p>{{getLocale.status}}{{getLocale.inactive}} | {{getLocale.active}} | {{getLocale.finished}}</p>
+                    <p>{{getLocale.status}} {{getLocale.inactive}} | {{getLocale.active}} | {{getLocale.finished}}</p>
                 </b-col>
                 <b-col lg="2" style="text-align: right;">
-                    <p>{{getLocale.questionsAsked}}{{getSession.numberOfQuestions}}</p>
+                    <p>{{getLocale.questionsAsked}} {{getSession.numberOfQuestions}}</p>
                 </b-col>
             </b-row>
             <b-row>
                 <b-col lg="3">
-                    <p>{{getLocale.participants}}{{getSession.participants}}</p>
+                    <p>{{getLocale.participants}} {{getSession.participants}}</p>
                 </b-col>
                 <b-col lg="3" style="text-align: right;">
-                    <p>{{getLocale.correctAnswers}}{{getSession.correctAnswers}} %</p>
+                    <p>{{getLocale.correctAnswers}} {{getSession.correctAnswers}} %</p>
                 </b-col>
             </b-row>
             <b-row>
@@ -25,7 +25,7 @@
                                             style="cursor: pointer;" 
                                             :id="index"
                                             @click="changeQuestion($event)">
-                            <p>{{question.text}} | {{question.correctAnswers}} %</p>
+                            {{question.text}} | {{question.correctAnswers}} %
                         </b-list-group-item>
                     </b-list-group>
                 </b-col>
@@ -35,7 +35,7 @@
                         <b-container>
                             <b-row>
                                 <b-col>
-                                    <p>Answer: {{incorrectAnswers[selectedAnswer].answer}}</p>
+                                    <p>Answer: {{getAnswer}}</p>
                                 </b-col>
                             </b-row>
                             <b-row>
@@ -51,17 +51,17 @@
                         <b-container>
                             <b-row>
                                 <b-col>
-                                    <p>Text: {{session.questions[selectedQuestion].text}}</p>
+                                    <p>Text: {{getQuestionInfo.text}}</p>
                                 </b-col>
                             </b-row>
                             <b-row>
                                 <b-col>
-                                    <p>Description: {{session.questions[selectedQuestion].description}}</p>
+                                    <p>Description: {{getQuestionInfo.description}}</p>
                                 </b-col>
                             </b-row>
                             <b-row>
                                 <b-col>
-                                    <p>Correct answers: {{session.questions[selectedQuestion].correctAnswers}} %</p>
+                                    <p>Correct answers: {{getQuestionInfo.correctAnswers}} %</p>
                                 </b-col>
                             </b-row>
                         </b-container>
@@ -73,11 +73,12 @@
                     <b-card-group style="overflow-x: scroll; max-width: 400px;">
                         <!-- Add component to view incorrect answers -->
                         <b-card v-for="(answer, index) in getIncorrectAnswers" 
-                                :key="answer.answer"
+                                :key="index"
                                 style="cursor: pointer; min-width: 100px;"
-                                @click="changeAnswer($event)"
-                                :id="index">
-                            <p>Answer {{index}}</p>
+                                v-on:click="changeAnswer($event)"
+                                :id="index"
+                                no-body>
+                            Answer {{index}}
                         </b-card>
                     </b-card-group>
                 </b-col>
@@ -97,17 +98,23 @@ export default {
             session: undefined,
             selectedQuestion: 0,
             selectedAnswer: 0,
-            incorrectAnswers: undefined,
+            incorrectAnswers: [],
             showAnswer: false
         }
     },
     sockets: {
         getSessionResponse(data) {
             this.session = data;
+            this.selectedQuestion = 0;
+            this.selectedAnswer = 0;
+            this.incorrectAnswers = [];
+            this.showAnswer = false;
         }
     },
     computed: {
         getSession() {
+            if(this.session == undefined) return {};
+            console.log(this.session);
             return this.session;
         },
         getLocale() {
@@ -116,25 +123,22 @@ export default {
 			else return {};
         },
         getIncorrectAnswers() {
-            if(!this.session) return;
+            if(this.session == undefined) return [];
 
             this.incorrectAnswers = [];
 
-            let answers = this.session.questions[this.selectedQuestion].answers;
-
-            for(let x = 0; x < answers.length; x++){
-                if(answers.correct != "1"){
-                    this.incorrectAnswers.push(answers[x]);
-                }
-            }
+            this.incorrectAnswers = this.session.questions[this.selectedQuestion].answers;
 
             return this.incorrectAnswers;
         },
-        getNumberOfEmptyCards(){
-            if(this.incorrectAnswers.length < 10) return 10 - this.incorrectAnswers.length;
-            return 0;
+        getQuestionInfo() {
+            if(this.session == undefined) return {};
+            return this.session.questions[this.selectedQuestion];
+        },
+        getAnswer() {
+            return this.incorrectAnswers[this.selectedAnswer].answer;
         }
-    },
+    }, 
     methods: {
         changeAnswer(event) {
             this.selectedAnswer = event.target.id;
