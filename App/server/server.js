@@ -50,9 +50,14 @@ const server = app.listen(port, function() {
 });
 const io = require('./js/iofunctions').listen(server, users);
 
-const db = require('./js/database/database').getDB();
-const dummydata = require('./tools/insertDummyData');
-dummydata.InsertData(db);
+let db = undefined;
+require('./js/database/database').getDB(async function(value) {
+    db = value;
+    //const dummydata = require('./tools/insertDummyData');
+    //await dummydata.InsertData(db);
+}).catch(function (err) {
+    console.log(err);
+});
 
 app.post('/login/feide', passport.authenticate('passport-openid-connect', {"successReturnToOrRedirect": "/client"}))
 app.get('/login/callback/feide', passport.authenticate('passport-openid-connect', {callback: true}), function(req, res) {
