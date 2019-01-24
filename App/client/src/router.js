@@ -26,6 +26,12 @@ export default new Router({
         import("./views/UserProfile.vue")
     },
     {
+      path: "/client/waitingRoom",
+      name: "clientWaitingRoom",
+      component: () =>
+        import("./views/WaitingRoomClient.vue")
+    },
+    {
       path: "/admin",
       name: "admin",
       component: () =>
@@ -48,6 +54,6 @@ export default new Router({
       name: "404",
       component: () =>
         import("./views/fourZeroFour.vue")
-    }
+    },
   ]
 });

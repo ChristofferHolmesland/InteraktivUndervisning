@@ -78,6 +78,18 @@ module.exports.listen = function(server, users) {
 			socket.emit("unauthorizedAccess");
 		});
 
+		socket.on("quickJoinRoom", function (roomnr) {
+			console.log("quickJoinRoom is called!");
+			let rooms= [1,2,3,4,5,6,7,8,9,10];
+			if (rooms.indexOf(parseInt(roomnr)) !== -1 && roomnr !== "") {
+				console.log("Join room nr "+roomnr);
+				socket.emit("joinRoom",roomnr)
+			}else {
+				console.log("inActive");
+				socket.emit("RoomInActive");
+			}
+		});
+
 		socket.on("getUserStats", function() {
 			if(!user || user.userRights < 2) return;
 			/* response should follow this format:
@@ -144,7 +156,7 @@ module.exports.listen = function(server, users) {
 
 			socket.emit("unauthorizedAccess");
 		});
-			
+
 	});
 
 	return io;
