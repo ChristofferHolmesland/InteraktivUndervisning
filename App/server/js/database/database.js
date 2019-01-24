@@ -1,13 +1,12 @@
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
-var dbFunctions = require("./databaseFunctions");
-var currentpath = path.resolve(__dirname, "../../database/interaktivUndervisning.db");
-//console.log(currentpath);
-//deleting databases sqlite3.deleteDatabase()
+
+const dbFunctions = require("./databaseFunctions");
+const databasePath = path.resolve(__dirname, `../../database/${process.env.NODE_ENV}.db`);
 
 module.exports.getDB = function setupDatabase() {
 	//set up connection with the database
-	let db = new sqlite3.Database(currentpath, function (err) {
+	let db = new sqlite3.Database(databasePath, function (err) {
         if (err) {
             console.log(err)
         } else {
@@ -59,7 +58,7 @@ module.exports.getDB = function setupDatabase() {
             "    FOREIGN KEY (courseCode) REFERENCES Course (courseCode) ON DELETE CASCADE ON UPDATE CASCADE\n" +
             ");", function (err) {
             if (err) {
-                console.log("error occurred in UserRight table");
+                console.log("error occurred in UserRight table " + err.message);
             }
         });
 
@@ -74,7 +73,7 @@ module.exports.getDB = function setupDatabase() {
             "    FOREIGN KEY (courseCode) REFERENCES Course (courseCode) ON DELETE CASCADE ON UPDATE CASCADE\n" +
             ");", function (err) {
             if (err) {
-                console.log("error occurred in Quiz table");
+                console.log("error occurred in Quiz table " + err.message);
             }
         });
 
@@ -86,7 +85,7 @@ module.exports.getDB = function setupDatabase() {
             "    FOREIGN KEY(quizId) REFERENCES Quiz (quizId) ON DELETE CASCADE ON UPDATE CASCADE\n" +
             ");", function (err) {
             if (err) {
-                console.log("error occurred in User_has_Quiz table");
+                console.log("error occurred in User_has_Quiz table " + err.message);
             }
         });
 
@@ -95,7 +94,7 @@ module.exports.getDB = function setupDatabase() {
             "    typeName TEXT NOT NULL\n" +
             ");", function (err) {
             if (err) {
-                console.log("error occurred in Type table");
+                console.log("error occurred in Type table " + err.message);
             }
         });
 
@@ -111,7 +110,7 @@ module.exports.getDB = function setupDatabase() {
             "    FOREIGN KEY (courseCode) REFERENCES Course(courseCode) ON UPDATE CASCADE\n" +
             ");", function (err) {
             if (err) {
-                console.log("error occurred in Question table");
+                console.log("error occurred in Question table " + err.message);
             }
         });
 
@@ -123,7 +122,7 @@ module.exports.getDB = function setupDatabase() {
             "    FOREIGN KEY (questionId) REFERENCES Question(questionId) ON DELETE CASCADE ON UPDATE CASCADE\n" +
             ");", function (err) {
             if (err) {
-                console.log("error occurred in Quiz_has_Question")
+                console.log("error occurred in Quiz_has_Question " + err.message)
             }
         });
 
@@ -137,7 +136,7 @@ module.exports.getDB = function setupDatabase() {
             "    FOREIGN KEY (userId) REFERENCES User(userId)\n" +
             ");", function (err) {
             if (err) {
-                console.log("error occurred in Answer");
+                console.log("error occurred in Answer " + err.message);
             }
         });
         dbFunctions.insert.anonymousUser(db,1);
