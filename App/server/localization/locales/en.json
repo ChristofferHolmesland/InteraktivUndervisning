@@ -48,5 +48,17 @@
         "headline": "404",
         "text": "Uh oh! Look like something broke.",
         "homeButton": "Go home"
+    },
+    "Session": {
+        "status": "Status: ",
+        "active": "Active",
+        "inactive": "Inactive",
+        "finished": "Finished",
+        "questionsAsked": "Question asked: ",
+        "participants": "Participants: ",
+        "correctAnswers": "Corrects answers: "
+    },
+    "Sessions": {
+
     }
 }

@@ -1,33 +1,36 @@
 <template>
-	<div class="admin">
-		<b-container>
-			<b-row>
-				<b-col>
-					<b-container>
-						<b-row>
-							<b-col>
-								<b-form-input placeholder="Search">
-
-								</b-form-input>
-							</b-col>
-						</b-row>
-						<b-row>
-							<b-col>
-								<b-list-group>
-									<b-list-group-item v-for="quiz in quizList" :key="quiz">
-										{{quiz}}
-									</b-list-group-item>
-								</b-list-group>
-							</b-col>
-						</b-row>
-					</b-container>
-				</b-col>
-				<b-col>
-					<Session/>
-				</b-col>
-			</b-row>
-		</b-container>
-	</div>
+	<b-container id="sessions" class="mx-0 mt-3">
+		<b-row>
+			<b-col lg="4">
+				<b-container>
+					<b-row>
+						<b-col lg="10" class="pr-0">
+							<b-form-input placeholder="Search">
+							</b-form-input>
+						</b-col>
+						<b-col lg="2" class="pl-0">
+							<b-button>+</b-button>
+						</b-col>
+					</b-row>
+					<b-row>
+						<b-col>
+							<b-list-group style="max-height:400px">
+								<b-list-group-item v-for="(session, key) in getSessionsList" :key="session"
+								@click="changeSelected($event)"
+								:id="key"
+								style="cursor: pointer;">
+									{{session}}
+								</b-list-group-item>
+							</b-list-group>
+						</b-col>
+					</b-row>
+				</b-container>
+			</b-col>
+			<b-col lg="8">
+				<Session :sessionId="getSelectedSessionId"/>
+			</b-col>
+		</b-row>
+	</b-container>
 </template>
 
 <script>
@@ -36,7 +39,8 @@
 		name: 'Sessions',
 		data() {
 			return {
-				quizList: undefined
+				sessionsList: {},
+				selectedSession: "0"
 			}
 		},
 		created() {
@@ -44,16 +48,30 @@
 		},
 		sockets: {
 			getSessionsResponse(data) {
-				console.log(data);
-				this.quizList = data.quizList;
+				if(data.sessions.length != 0){
+					this.sessionsList = data.sessions;
+					this.selectedSession = Object.keys(data.sessions)[0];
+        			this.$socket.emit("getSession", this.selectedSession)
+				}
 			}
 		},
 		components: {
 			Session
+		},
+		methods: {
+			changeSelected(event) {
+				this.selectedSession = event.target.id;
+        		this.$socket.emit("getSession", this.selectedSession)
+			}
+		},
+		computed: {
+			getSessionsList() {
+				return this.sessionsList;
+			},
+			getSelectedSessionId() {
+				return this.selectedSession;
+			}
 		}
     }
 
 </script>
-
-<style scoped>
-</style>
