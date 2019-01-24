@@ -1,19 +1,21 @@
-\contentsline {section}{\numberline {1}Innledning}{1}{section.1}% 
-\contentsline {section}{\numberline {2}Teori}{2}{section.2}% 
-\contentsline {subsection}{\numberline {2.1}Babel}{2}{subsection.2.1}% 
-\contentsline {subsection}{\numberline {2.2}Bootstrap}{2}{subsection.2.2}% 
-\contentsline {subsection}{\numberline {2.3}Connect History Api Fallback}{2}{subsection.2.3}% 
-\contentsline {subsection}{\numberline {2.4}Cookie Parser}{2}{subsection.2.4}% 
-\contentsline {subsection}{\numberline {2.5}Dotenv}{2}{subsection.2.5}% 
-\contentsline {subsection}{\numberline {2.6}Eslint}{2}{subsection.2.6}% 
-\contentsline {subsection}{\numberline {2.7}ExpressJS}{2}{subsection.2.7}% 
-\contentsline {subsection}{\numberline {2.8}NodeJS}{2}{subsection.2.8}% 
-\contentsline {subsection}{\numberline {2.9}Passport}{2}{subsection.2.9}% 
-\contentsline {subsection}{\numberline {2.10}Passport Openid Connect}{2}{subsection.2.10}% 
-\contentsline {subsection}{\numberline {2.11}Socket.IO}{2}{subsection.2.11}% 
-\contentsline {subsection}{\numberline {2.12}SQLit3}{3}{subsection.2.12}% 
-\contentsline {subsection}{\numberline {2.13}Vue}{3}{subsection.2.13}% 
-\contentsline {subsubsection}{\numberline {2.13.1}Vue Cli}{3}{subsubsection.2.13.1}% 
-\contentsline {subsubsection}{\numberline {2.13.2}Vue Router}{3}{subsubsection.2.13.2}% 
-\contentsline {section}{\numberline {3}Referanser}{4}{section.3}% 
-\contentsline {section}{\numberline {4}Vedlegg}{5}{section.4}% 
+\contentsline {section}{\numberline {1}Introduction}{1}{section.1}
+\contentsline {section}{\numberline {2}Background}{2}{section.2}
+\contentsline {subsection}{\numberline {2.1}Babel}{2}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}Bootstrap}{2}{subsection.2.2}
+\contentsline {subsection}{\numberline {2.3}Canvas}{2}{subsection.2.3}
+\contentsline {subsection}{\numberline {2.4}Connect History Api Fallback}{3}{subsection.2.4}
+\contentsline {subsection}{\numberline {2.5}Cookie Parser}{3}{subsection.2.5}
+\contentsline {subsection}{\numberline {2.6}Dotenv}{3}{subsection.2.6}
+\contentsline {subsection}{\numberline {2.7}ESLint}{3}{subsection.2.7}
+\contentsline {subsection}{\numberline {2.8}ExpressJS}{3}{subsection.2.8}
+\contentsline {subsection}{\numberline {2.9}NodeJS}{4}{subsection.2.9}
+\contentsline {subsection}{\numberline {2.10}PassportJS}{4}{subsection.2.10}
+\contentsline {subsubsection}{\numberline {2.10.1}Oauth 2.0}{4}{subsubsection.2.10.1}
+\contentsline {subsubsection}{\numberline {2.10.2}OpenID Connect}{4}{subsubsection.2.10.2}
+\contentsline {subsection}{\numberline {2.11}Socket.IO}{4}{subsection.2.11}
+\contentsline {subsection}{\numberline {2.12}SQLite3}{5}{subsection.2.12}
+\contentsline {subsection}{\numberline {2.13}Vue}{5}{subsection.2.13}
+\contentsline {subsubsection}{\numberline {2.13.1}Vue Cli}{5}{subsubsection.2.13.1}
+\contentsline {subsubsection}{\numberline {2.13.2}Vue Router}{5}{subsubsection.2.13.2}
+\contentsline {section}{\numberline {3}References}{6}{section.3}
+\contentsline {section}{\numberline {4}Attachments}{7}{section.4}
