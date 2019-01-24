@@ -11,6 +11,13 @@
         "solutionText": "Solution: ",
         "selectSessionText": "Select session: "
     },
+    "AdminSessions": {
+        "newSession": "New session",
+        "newSessionTitle": "Title",
+        "selectCourse": "Select course",
+        "selectQuestions": "Add question",
+        "selectedQuestions": "Questions in session"
+    },
     "Navbar": {
         "lang": "Language",
         "user": "User",
@@ -51,5 +58,17 @@
         "headline": "404",
         "text": "Uh oh! Look like something broke.",
         "homeButton": "Go home"
+    },
+    "Session": {
+        "status": "Status: ",
+        "active": "Active",
+        "inactive": "Inactive",
+        "finished": "Finished",
+        "questionsAsked": "Question asked: ",
+        "participants": "Participants: ",
+        "correctAnswers": "Corrects answers: "
+    },
+    "Sessions": {
+
     }
 }

@@ -1,8 +1,6 @@
 <template>
 	<div class="admin">
-		<b-container>
-			<component :is="shownComponent"></component>
-		</b-container>
+		<component :is="shownComponent"></component>
 	</div>
 </template>
 

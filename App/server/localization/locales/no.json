@@ -11,6 +11,13 @@
         "solutionText": "Løsning: ",
         "selectSessionText": "Velg økt: "
     },
+    "AdminSessions": {
+        "newSession": "Ny økt",
+        "newSessionTitle": "Tittel",
+        "selectCourse": "Velg kurs",
+        "selectQuestions": "Legg til spørsmål",
+        "selectedQuestions": "Spørsmål i økten"
+    },
     "Navbar": {
         "lang": "Språk",
         "user": "Bruker",
@@ -51,5 +58,17 @@
         "headline": "404",
         "text": "Åh nei! Ser ut som noe gikk galt.",
         "homeButton": "Go home"
+    },
+    "Session": {
+        "status": "Status: ",
+        "active": "Aktiv",
+        "inactive": "Inaktiv",
+        "finished": "Ferdig",
+        "questionsAsked": "Spørsmål: ",
+        "participants": "Deltagere: ",
+        "correctAnswers": "Riktige svar: "
+    },
+    "Sessions": {
+        
     }
 }

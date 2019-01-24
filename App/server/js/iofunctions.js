@@ -44,7 +44,8 @@ module.exports.listen = function(server, users) {
 
         socket.on("loginAnonymouslyRequest", function(){
             tempKey = socket.id;
-            tempUser = new User(1, "Anonymous " + anonymousNames.getRandomAnimal(), tempKey, undefined);
+            // TODO change userrights to 1 on the line under
+            tempUser = new User(4, "Anonymous " + anonymousNames.getRandomAnimal(), tempKey, undefined);
             users.set(tempKey, tempUser);
             socket.emit("loginAnonymouslyResponse");
 
@@ -96,6 +97,487 @@ module.exports.listen = function(server, users) {
 
             console.log(user);
             socket.emit("unauthorizedAccess");
+        });
+
+        socket.on("getSessions", function() {
+            if(user && user.userRights != 4) socket.emit("unauthorizesAccess");
+
+            // TODO remove testdata
+            let testData = {
+                sessions: {
+                    "1": "session 1",
+                    "2": "session 2",
+                    "3": "session 3",
+                    "4": "session 4",
+                }
+            }
+
+            // TODO write code to querry data from the databse
+
+            socket.emit("getSessionsResponse", testData);
+        });
+
+        socket.on("addNewSession", function(session) {
+            /*
+            let c = session.course.split(" ");
+            insert.quiz(db, session.title, c[1], c[0]).then(function (id) {
+                for (let i = 0; i < session.questions.length; i++) {
+                    insert.addQuestionToQuiz(db, id, session.questions[i].id);
+                }
+            });
+            socket.emit("addNewSessionDone");
+            */
+        });
+
+        socket.on("getQuestionsInCourse", function(course) {
+            if(user && user.userRights != 4) socket.emit("unauthorizesAccess");
+            /*
+            let result = [];
+            let questions = get.allQuestionsWithinCourse(db, course.code, course.semester);
+            for (let i = 0; i < questions.length; i++) {
+                result.push({
+                    value: questions[i].questionId,
+                    text: questions[i].text 
+                });
+            }
+            socket.emit("sendQuestionsInCourse", result);
+            */
+        });
+
+        socket.on("getCourses", function() {
+            if(user && user.userRights != 4) socket.emit("unauthorizesAccess");
+
+            /*
+            let result = [];
+            let courses = get.allCourses(db);
+            for (let i = 0; i < courses.length; i++) {
+                result.push({
+                    code: courses[i].courseCode,
+                    semester: courses[i].courseSemester
+                });
+            }
+            socket.emit("sendCourses", result);
+            */
+
+            socket.emit("sendCourses", 
+            [
+                {code: "DAT200", semester: "18H"},
+                {code: "DAT110", semester: "18V"}
+            ]);
+        })
+
+        socket.on("getSession", function(sessionId) {
+            if(user && user.userRights != 4) socket.emit("unauthorizesAccess");
+
+            // TODO remove testdata
+            let testdata = {
+                "1": {
+                    questions: [
+                        {
+                            text: "Question text 1 session 1",
+                            description: "Question description 1 session 1",
+                            correctAnswers: 50,
+                            answers: [
+                                {
+                                    answer: "Answer 1 Question 1 Session 1",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 2 Question 1 Session 1",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 3 Question 1 Session 1",
+                                    correct: "0"
+                                }, 
+                                {
+                                    answer: "Answer 4 Question 1 Session 1",
+                                    correct: "-1"
+                                }
+                            ]
+                        },
+                        {
+                            text: "Question text 2 session 1",
+                            description: "Question description 2 session 1",
+                            correctAnswers: 50,
+                            answers: [
+                                {
+                                    answer: "Answer 1 Question 2 Session 1",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 2 Question 2 Session 1",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 3 Question 2 Session 1",
+                                    correct: "0"
+                                }, 
+                                {
+                                    answer: "Answer 4 Question 2 Session 1",
+                                    correct: "-1"
+                                }
+                            ]
+                        },
+                        {
+                            text: "Question text 3 session 1",
+                            description: "Question description 3 session 1",
+                            correctAnswers: 50,
+                            answers: [
+                                {
+                                    answer: "Answer 1 Question 3 Session 1",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 2 Question 3 Session 1",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 3 Question 3 Session 1",
+                                    correct: "0"
+                                }, 
+                                {
+                                    answer: "Answer 4 Question 3 Session 1",
+                                    correct: "-1"
+                                }
+                            ]
+                        },
+                        {
+                            text: "Question text 4 session 1",
+                            description: "Question description 4 session 1",
+                            correctAnswers: 50,
+                            answers: [
+                                {
+                                    answer: "Answer 1 Question 4 Session 1",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 2 Question 4 Session 1",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 3 Question 4 Session 1",
+                                    correct: "0"
+                                }, 
+                                {
+                                    answer: "Answer 4 Question 4 Session 1",
+                                    correct: "-1"
+                                }
+                            ]
+                        }
+                    ],
+                    participants: 4,
+                    correctAnswers: 50,
+                    didntKnow: 25,
+                    numberOfQuestions: 4
+                },
+                "2": {
+                    questions: [
+                        {
+                            text: "Question text 1 session 2",
+                            description: "Question description 1 session 2",
+                            correctAnswers: 50,
+                            answers: [
+                                {
+                                    answer: "Answer 1 Question 1 Session 2",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 2 Question 1 Session 2",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 3 Question 1 Session 2",
+                                    correct: "0"
+                                }, 
+                                {
+                                    answer: "Answer 4 Question 1 Session 2",
+                                    correct: "-1"
+                                }
+                            ]
+                        },
+                        {
+                            text: "Question text 2 session 2",
+                            description: "Question description 2 session 2",
+                            correctAnswers: 50,
+                            answers: [
+                                {
+                                    answer: "Answer 1 Question 2 Session 2",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 2 Question 2 Session 2",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 3 Question 2 Session 2",
+                                    correct: "0"
+                                }, 
+                                {
+                                    answer: "Answer 4 Question 2 Session 2",
+                                    correct: "-1"
+                                }
+                            ]
+                        },
+                        {
+                            text: "Question text 3 session 2",
+                            description: "Question description 3 session 2",
+                            correctAnswers: 50,
+                            answers: [
+                                {
+                                    answer: "Answer 1 Question 3 Session 2",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 2 Question 3 Session 2",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 3 Question 3 Session 2",
+                                    correct: "0"
+                                }, 
+                                {
+                                    answer: "Answer 4 Question 3 Session 2",
+                                    correct: "-1"
+                                }
+                            ]
+                        },
+                        {
+                            text: "Question text 4 session 2",
+                            description: "Question description 4 session 2",
+                            correctAnswers: 50,
+                            answers: [
+                                {
+                                    answer: "Answer 1 Question 4 Session 2",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 2 Question 4 Session 2",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 3 Question 4 Session 2",
+                                    correct: "0"
+                                }, 
+                                {
+                                    answer: "Answer 4 Question 4 Session 2",
+                                    correct: "-1"
+                                }
+                            ]
+                        }
+                    ],
+                    participants: 4,
+                    correctAnswers: 50,
+                    didntKnow: 25,
+                    numberOfQuestions: 4
+                },
+                "3": {
+                    questions: [
+                        {
+                            text: "Question text 1 session 3",
+                            description: "Question description 1 session 3",
+                            correctAnswers: 50,
+                            answers: [
+                                {
+                                    answer: "Answer 1 Question 1 Session 3",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 2 Question 1 Session 3",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 3 Question 1 Session 3",
+                                    correct: "0"
+                                }, 
+                                {
+                                    answer: "Answer 4 Question 1 Session 3",
+                                    correct: "-1"
+                                }
+                            ]
+                        },
+                        {
+                            text: "Question text 2 session 3",
+                            description: "Question description 2 session 3",
+                            correctAnswers: 50,
+                            answers: [
+                                {
+                                    answer: "Answer 1 Question 2 Session 3",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 2 Question 2 Session 3",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 3 Question 2 Session 3",
+                                    correct: "0"
+                                }, 
+                                {
+                                    answer: "Answer 4 Question 2 Session 3",
+                                    correct: "-1"
+                                }
+                            ]
+                        },
+                        {
+                            text: "Question text 3 session 3",
+                            description: "Question description 3 session 3",
+                            correctAnswers: 50,
+                            answers: [
+                                {
+                                    answer: "Answer 1 Question 3 Session 3",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 2 Question 3 Session 3",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 3 Question 3 Session 3",
+                                    correct: "0"
+                                }, 
+                                {
+                                    answer: "Answer 4 Question 3 Session 3",
+                                    correct: "-1"
+                                }
+                            ]
+                        },
+                        {
+                            text: "Question text 4 session 3",
+                            description: "Question description 4 session 3",
+                            correctAnswers: 50,
+                            answers: [
+                                {
+                                    answer: "Answer 1 Question 4 Session 3",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 2 Question 4 Session 3",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 3 Question 4 Session 3",
+                                    correct: "0"
+                                }, 
+                                {
+                                    answer: "Answer 4 Question 4 Session 3",
+                                    correct: "-1"
+                                }
+                            ]
+                        }
+                    ],
+                    participants: 4,
+                    correctAnswers: 50,
+                    didntKnow: 25,
+                    numberOfQuestions: 4
+                },
+                "4": {
+                    questions: [
+                        {
+                            text: "Question text 1 session 4",
+                            description: "Question description 1 session 4",
+                            correctAnswers: 50,
+                            answers: [
+                                {
+                                    answer: "Answer 1 Question 1 Session 4",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 2 Question 1 Session 4",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 3 Question 1 Session 4",
+                                    correct: "0"
+                                }, 
+                                {
+                                    answer: "Answer 4 Question 1 Session 4",
+                                    correct: "-1"
+                                }
+                            ]
+                        },
+                        {
+                            text: "Question text 2 session 4",
+                            description: "Question description 2 session 4",
+                            correctAnswers: 50,
+                            answers: [
+                                {
+                                    answer: "Answer 1 Question 2 Session 4",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 2 Question 2 Session 4",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 3 Question 2 Session 4",
+                                    correct: "0"
+                                }, 
+                                {
+                                    answer: "Answer 4 Question 2 Session 4",
+                                    correct: "-1"
+                                }
+                            ]
+                        },
+                        {
+                            text: "Question text 3 session 4",
+                            description: "Question description 3 session 4",
+                            correctAnswers: 50,
+                            answers: [
+                                {
+                                    answer: "Answer 1 Question 3 Session 4",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 2 Question 3 Session 4",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 3 Question 3 Session 4",
+                                    correct: "0"
+                                }, 
+                                {
+                                    answer: "Answer 4 Question 3 Session 4",
+                                    correct: "-1"
+                                }
+                            ]
+                        },
+                        {
+                            text: "Question text 4 session 4",
+                            description: "Question description 4 session 4",
+                            correctAnswers: 50,
+                            answers: [
+                                {
+                                    answer: "Answer 1 Question 4 Session 4",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 2 Question 4 Session 4",
+                                    correct: "1"
+                                }, 
+                                {
+                                    answer: "Answer 3 Question 4 Session 4",
+                                    correct: "0"
+                                }, 
+                                {
+                                    answer: "Answer 4 Question 4 Session 4",
+                                    correct: "-1"
+                                }
+                            ]
+                        }
+                    ],
+                    participants: 4,
+                    correctAnswers: 50,
+                    didntKnow: 25,
+                    numberOfQuestions: 4
+                }
+            }
+
+            let response = testdata[sessionId];
+
+            // TODO write code to querry data from the database
+
+            socket.emit("getSessionResponse", response);
         });
 
         socket.on("getQuizWithinCourse", (data) => rights(4, function(course) {
