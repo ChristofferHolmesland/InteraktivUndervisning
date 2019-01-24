@@ -1,10 +1,33 @@
 {
+    "AdminQuestions": {
+        "emptyQuestionList": "Ingen spørsmål.",
+        "newQuestion": "Nytt spørsmål",
+        "searchQuestion": "Søk etter spørsmål",
+        "newQuestionTitle": "Spørsmål tittel:",
+        "newQuestionText": "Spørsmål tekst:",
+        "newQuestionSolutionType": "Løsnings type:",
+        "newQuestionSolution": "Løsning:",
+        "addToSession": "Legg til",
+        "solutionText": "Løsning: ",
+        "selectSessionText": "Velg økt: "
+    },
+    "AdminSessions": {
+        "newSession": "Ny økt",
+        "newSessionTitle": "Tittel",
+        "selectCourse": "Velg kurs",
+        "selectQuestions": "Legg til spørsmål",
+        "selectedQuestions": "Spørsmål i økten"
+    },
     "Navbar": {
         "lang": "Språk",
         "profile": "Profil",
         "signOut": "Logg ut",
         "signIn": "Logg inn",
-        "dashboard": "Dashboard"
+        "dashboard": "Dashboard",
+        "admin": "Admin",
+        "quiz": "Quiz",
+        "questions": "Spørsmål",
+        "sessions": "Økter"
     },
     "LoginForm": {
         "anonymousButton": "Anonym",
@@ -35,6 +58,16 @@
         "text": "Åh nei! Ser ut som noe gikk galt.",
         "homeButton": "Go home"
     },
+    "Session": {
+        "status": "Status: ",
+        "active": "Aktiv",
+        "inactive": "Inaktiv",
+        "finished": "Ferdig",
+        "questionsAsked": "Spørsmål: ",
+        "participants": "Deltagere: ",
+        "correctAnswers": "Riktige svar: "
+    },
+    "Sessions": {
     "DeleteUserInfo": {
         "deleteInfoList": [
             "Ved å trykke på ok under så vil vi slette all informasjon om deg på server og i databasen.",

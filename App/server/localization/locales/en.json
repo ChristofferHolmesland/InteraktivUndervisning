@@ -1,10 +1,33 @@
 {
+    "AdminQuestions": {
+        "emptyQuestionList": "No questions.",
+        "newQuestion": "New question",
+        "searchQuestion": "Search for a question",
+        "newQuestionTitle": "Question title:",
+        "newQuestionText": "Question text:",
+        "newQuestionSolutionType": "Solution type:",
+        "newQuestionSolution": "Solution:",
+        "addToSession": "Add",
+        "solutionText": "Solution: ",
+        "selectSessionText": "Select session: "
+    },
+    "AdminSessions": {
+        "newSession": "New session",
+        "newSessionTitle": "Title",
+        "selectCourse": "Select course",
+        "selectQuestions": "Add question",
+        "selectedQuestions": "Questions in session"
+    },
     "Navbar": {
         "lang": "Language",
         "profile": "Profile",
         "signOut": "Sign out",
         "signIn": "Sign in",
-        "dashboard": "Dashboard"
+        "dashboard": "Dashboard",
+        "admin": "Admin",
+        "quiz": "Quiz",
+        "questions": "Questions",
+        "sessions": "Sessions"
     },
     "LoginForm": {
         "anonymousButton": "Anonymous",
@@ -35,6 +58,16 @@
         "text": "Uh oh! Look like something broke.",
         "homeButton": "Go home"
     },
+    "Session": {
+        "status": "Status: ",
+        "active": "Active",
+        "inactive": "Inactive",
+        "finished": "Finished",
+        "questionsAsked": "Question asked: ",
+        "participants": "Participants: ",
+        "correctAnswers": "Corrects answers: "
+    },
+    "Sessions": {
     "DeleteUserInfo": {
         "deleteInfoList": [
             "By pressing ok under we will delete all the information we have on the server and database about you.",
