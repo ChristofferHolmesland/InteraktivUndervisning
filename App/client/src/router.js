@@ -20,10 +20,16 @@ export default new Router({
         import("./views/Client.vue")
     },
     {
-      path: "/host",
-      name: "host",
+      path: "/client/user-profile",
+      name: "userProfile",
       component: () =>
-        import("./views/Host.vue")
+        import("./views/UserProfile.vue")
+    },
+    {
+      path: "/admin",
+      name: "admin",
+      component: () =>
+        import("./views/Admin.vue")
     },
     {
       path: "/login",
@@ -32,10 +38,16 @@ export default new Router({
         import("./views/Login.vue")
     },
     {
+      path: "/401",
+      name: "401",
+      component: () =>
+        import("./views/fourZeroOne.vue")
+    },
+    {
       path: "*",
       name: "404",
       component: () =>
-        import("./views/404.vue")
+        import("./views/fourZeroFour.vue")
     }
   ]
 });
