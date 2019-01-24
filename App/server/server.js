@@ -2,8 +2,10 @@ const express = require('express');
 const path = require('path');
 const history = require("connect-history-api-fallback");
 const passport = require("passport");
+const compression = require("compression");
 const OICStrategy = require("passport-openid-connect").Strategy;
 const cookieParser = require("cookie-parser");
+
 const user = (require("./js/user.js")).User;
 const users = new Map();
 
@@ -39,6 +41,7 @@ app.use(history({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(cookieParser());
+app.use(compression());
 app.use(express.static(path.join(__dirname, '/public/')));
 
 // Starts the server and the socket.io websocket
@@ -47,12 +50,21 @@ const server = app.listen(port, function() {
 });
 const io = require('./js/iofunctions').listen(server, users);
 
+let db = undefined;
+require('./js/database/database').getDB(async function(value) {
+    db = value;
+    //const dummydata = require('./tools/insertDummyData');
+    //await dummydata.InsertData(db);
+}).catch(function (err) {
+    console.log(err);
+});
+
 app.post('/login/feide', passport.authenticate('passport-openid-connect', {"successReturnToOrRedirect": "/client"}))
 app.get('/login/callback/feide', passport.authenticate('passport-openid-connect', {callback: true}), function(req, res) {
 
     // Reads information from the scope request to feide
     let accessToken = req.user.token.access_token;
-    let userRights = 2; //TODO write function to checkdatabase to check the userrights
+    let userRights = 2; //TODO write function to check database for the userRight
     let userName = req.user.data.name;
     let userId = req.user.token.id_token;
 

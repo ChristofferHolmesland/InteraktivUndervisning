@@ -15,25 +15,27 @@
 			<b-col cols="3"></b-col>
 		</b-row>
 		<b-row>
-			<b-col cols="3"></b-col>
-			<b-col cols="6">
-				<b-list-group style="max-height: 300px; overflow-y:scroll;">
+			<b-col cols="0" lg="2"></b-col>
+			<b-col cols="12" lg="8">
+				<b-list-group style="min-height: 300px; max-height: 300px; overflow-y:scroll;">
 					<EditQuestion elementRef="innerModal" ref="editQuestionModal" :okHandler="editQuestionHandler"></EditQuestion>
 					<ShowQuestion elementRef="innerModal" ref="showQuestionModal"></ShowQuestion>
+					<AddQuestionToSession elementRef="innerModal" ref="addQuestionToSessionModal"></AddQuestionToSession>
 
                     <b-list-group-item class="border-0" :key="item.id" v-for="item in currentQuestions">
 						<b-container>
 							<b-row>
-								<b-col cols="9">
+								<b-col cols="8">
 									{{item.id}}. {{item.text}}
 								</b-col>
 								<b-col cols="1">
-									<b-button @click="showQuestionModal(item)" >V</b-button>
+									<b-button @click="showShowQuestionModal(item)" >V</b-button>
 								</b-col>
 								<b-col cols="1">
 									<b-button @click="showEditQuestionModal(item)" >E</b-button>
 								</b-col>	
-								<b-col cols="1">
+								<b-col cols="2">
+									<b-button @click="showAddQuestionToSessionModal(item)">{{getLocale.addToSession}}</b-button>
 								</b-col>
 							</b-row>
 						</b-container>
@@ -43,30 +45,31 @@
 					</b-list-group-item>
                 </b-list-group>
 			</b-col>
-			<b-col cols="3"></b-col>
+			<b-col cols="0" lg="2"></b-col>
 		</b-row>
 	</b-container>
 </template>
 
 <script>
 	import EditQuestion from "./EditQuestion.vue";
+	import ShowQuestion from "./ShowQuestion.vue";
+	import AddQuestionToSession from "./AddQuestionToSession.vue";
 
 	export default {
 		name: 'Questions',
 		data() {
 			return {
 				questionSearchText: "",
-				questionList: [],
-				showModals: {
-
-				}
+				questionList: []
 			}
 		},
 		components: {
-			EditQuestion
+			EditQuestion,
+			ShowQuestion,
+			AddQuestionToSession
 		},
 		mounted() {
-			this.questionList = this.getQuestionsFromDatabase();
+			this.getQuestionsFromDatabase();
 		},
 		computed: {
 			currentQuestions: function() {
@@ -90,52 +93,37 @@
 			    else return {};
 			}
 		},
+
+		sockets: {
+			sendAllQuestionsWithinCourse: function(questions) {
+				this.questionList = questions;
+			}
+		},
 		methods: {
 			showEditQuestionModal: function(item) {
-				this.$refs.editQuestionModal._data.newQuestion.id = item.id;
-				this.$refs.editQuestionModal._data.newQuestion.text = item.text;
+				this.$refs.editQuestionModal._data.newQuestion = item;
 				this.$refs.editQuestionModal.$refs.innerModal.show();
 			},
-			showQuestionModal: function(item) {
+			showShowQuestionModal: function(item) {
+				this.$refs.showQuestionModal._data.question = item;
 				this.$refs.showQuestionModal.$refs.innerModal.show();
 			},
+			showAddQuestionToSessionModal: function(item) {
+				this.$refs.addQuestionToSessionModal._data.question.id = item.id;
+				this.$refs.addQuestionToSessionModal._data.question.text = item.text;
+				this.$refs.addQuestionToSessionModal.$refs.innerModal.show();
+			},
 			getQuestionsFromDatabase: function() {
-				// TODO: Query database
-				return [
-					{
-						id: 1, 
-						text: "Hva er 2 + 2?", 
-						description: "For å løse denne oppgaven må du bruke addisjon.",
-						solutionType: "text",
-						solution: "4"
-					},
-					{
-						id: 1, 
-						text: "Hvordan er 'bøttene' i denne ", 
-						description: "For å løse denne oppgaven må du bruke addisjon.",
-						solutionType: "text",
-						solution: "4"
-					}
-				];
+				this.$socket.emit("getAllQuestionsWithinCourse", "DAT200");
 			},
 			addNewQuestionHandler: function(newQuestion) {
-				// TODO: Add to database instead of dynamic list
-				this.questionList.push({
-					id: this.questionList.length + 1,
-					text: newQuestion.text,
-					description: newQuestion.description,
-					solutionType: newQuestion.solutionType,
-					solution: newQuestion.solution
-				});
+				this.$socket.emit("addNewQuestion", Object.assign({}, newQuestion, {courseCode: "DAT200"}));
+				this.$socket.emit("getAllQuestionsWithinCourse", "DAT200");
 			},
-			editQuestionHandler: function(newItem) {
-				for (let i = 0; i < this.questionList.length; i++) {
-					let q = this.questionList[i];
-					if (q.id == newItem.id) {
-						q.text = newItem.text;
-						return;
-					}
-				}
+			editQuestionHandler: function(updatedQuestion) {
+				this.$socket.emit("updateQuestion", updatedQuestion);
+				this.$socket.emit("getAllQuestionsWithinCourse", "DAT200");
+
 			}
 		}
 	}
