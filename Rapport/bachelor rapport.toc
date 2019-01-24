@@ -10,12 +10,12 @@
 \contentsline {subsection}{\numberline {2.8}ExpressJS}{3}{subsection.2.8}
 \contentsline {subsection}{\numberline {2.9}NodeJS}{4}{subsection.2.9}
 \contentsline {subsection}{\numberline {2.10}PassportJS}{4}{subsection.2.10}
-\contentsline {subsubsection}{\numberline {2.10.1}Oauth 2.0}{4}{subsubsection.2.10.1}
+\contentsline {subsubsection}{\numberline {2.10.1}OAuth 2.0}{4}{subsubsection.2.10.1}
 \contentsline {subsubsection}{\numberline {2.10.2}OpenID Connect}{4}{subsubsection.2.10.2}
-\contentsline {subsection}{\numberline {2.11}Socket.IO}{4}{subsection.2.11}
+\contentsline {subsection}{\numberline {2.11}Socket.IO}{5}{subsection.2.11}
 \contentsline {subsection}{\numberline {2.12}SQLite3}{5}{subsection.2.12}
 \contentsline {subsection}{\numberline {2.13}Vue}{5}{subsection.2.13}
 \contentsline {subsubsection}{\numberline {2.13.1}Vue Cli}{5}{subsubsection.2.13.1}
-\contentsline {subsubsection}{\numberline {2.13.2}Vue Router}{5}{subsubsection.2.13.2}
-\contentsline {section}{\numberline {3}References}{6}{section.3}
-\contentsline {section}{\numberline {4}Attachments}{7}{section.4}
+\contentsline {subsubsection}{\numberline {2.13.2}Vue Router}{6}{subsubsection.2.13.2}
+\contentsline {section}{\numberline {3}References}{7}{section.3}
+\contentsline {section}{\numberline {4}Attachments}{8}{section.4}
