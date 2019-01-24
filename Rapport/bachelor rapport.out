@@ -1,3 +1,19 @@
 \BOOKMARK [1][-]{section.1}{Innledning}{}% 1
-\BOOKMARK [1][-]{section.2}{Referanser}{}% 2
-\BOOKMARK [1][-]{section.3}{Vedlegg}{}% 3
+\BOOKMARK [1][-]{section.2}{Teori}{}% 2
+\BOOKMARK [2][-]{subsection.2.1}{Babel}{section.2}% 3
+\BOOKMARK [2][-]{subsection.2.2}{Bootstrap}{section.2}% 4
+\BOOKMARK [2][-]{subsection.2.3}{Connect History Api Fallback}{section.2}% 5
+\BOOKMARK [2][-]{subsection.2.4}{Cookie Parser}{section.2}% 6
+\BOOKMARK [2][-]{subsection.2.5}{Dotenv}{section.2}% 7
+\BOOKMARK [2][-]{subsection.2.6}{Eslint}{section.2}% 8
+\BOOKMARK [2][-]{subsection.2.7}{ExpressJS}{section.2}% 9
+\BOOKMARK [2][-]{subsection.2.8}{NodeJS}{section.2}% 10
+\BOOKMARK [2][-]{subsection.2.9}{Passport}{section.2}% 11
+\BOOKMARK [2][-]{subsection.2.10}{Passport Openid Connect}{section.2}% 12
+\BOOKMARK [2][-]{subsection.2.11}{Socket.IO}{section.2}% 13
+\BOOKMARK [2][-]{subsection.2.12}{SQLit3}{section.2}% 14
+\BOOKMARK [2][-]{subsection.2.13}{Vue}{section.2}% 15
+\BOOKMARK [3][-]{subsubsection.2.13.1}{Vue Cli}{subsection.2.13}% 16
+\BOOKMARK [3][-]{subsubsection.2.13.2}{Vue Router}{subsection.2.13}% 17
+\BOOKMARK [1][-]{section.3}{Referanser}{}% 18
+\BOOKMARK [1][-]{section.4}{Vedlegg}{}% 19
