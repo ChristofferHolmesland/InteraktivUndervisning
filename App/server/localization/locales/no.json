@@ -8,6 +8,13 @@
         "newQuestionSolutionType": "Løsnings type:",
         "newQuestionSolution": "Løsning:"
     },
+    "AdminSessions": {
+        "newSession": "Ny økt",
+        "newSessionTitle": "Tittel",
+        "selectCourse": "Velg kurs",
+        "selectQuestions": "Legg til spørsmål",
+        "selectedQuestions": "Spørsmål i økten"
+    },
     "Navbar": {
         "lang": "Språk",
         "user": "Bruker",

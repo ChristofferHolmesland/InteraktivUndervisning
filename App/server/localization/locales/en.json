@@ -8,6 +8,13 @@
         "newQuestionSolutionType": "Solution type:",
         "newQuestionSolution": "Solution:"
     },
+    "AdminSessions": {
+        "newSession": "New session",
+        "newSessionTitle": "Title",
+        "selectCourse": "Select course",
+        "selectQuestions": "Add question",
+        "selectedQuestions": "Questions in session"
+    },
     "Navbar": {
         "lang": "Language",
         "user": "User",

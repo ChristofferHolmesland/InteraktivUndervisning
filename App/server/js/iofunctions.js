@@ -112,6 +112,55 @@ module.exports.listen = function(server, users) {
             socket.emit("getSessionsResponse", testData);
         });
 
+        socket.on("addNewSession", function(session) {
+            /*
+            let c = session.course.split(" ");
+            insert.quiz(db, session.title, c[1], c[0]).then(function (id) {
+                for (let i = 0; i < session.questions.length; i++) {
+                    insert.addQuestionToQuiz(db, id, session.questions[i].id);
+                }
+            });
+            socket.emit("addNewSessionDone");
+            */
+        });
+
+        socket.on("getQuestionsInCourse", function(course) {
+            if(user && user.userRights != 4) socket.emit("unauthorizesAccess");
+            /*
+            let result = [];
+            let questions = get.allQuestionsWithinCourse(db, course.code, course.semester);
+            for (let i = 0; i < questions.length; i++) {
+                result.push({
+                    value: questions[i].questionId,
+                    text: questions[i].text 
+                });
+            }
+            socket.emit("sendQuestionsInCourse", result);
+            */
+        });
+
+        socket.on("getCourses", function() {
+            if(user && user.userRights != 4) socket.emit("unauthorizesAccess");
+
+            /*
+            let result = [];
+            let courses = get.allCourses(db);
+            for (let i = 0; i < courses.length; i++) {
+                result.push({
+                    code: courses[i].courseCode,
+                    semester: courses[i].courseSemester
+                });
+            }
+            socket.emit("sendCourses", result);
+            */
+
+            socket.emit("sendCourses", 
+            [
+                {code: "DAT200", semester: "18H"},
+                {code: "DAT110", semester: "18V"}
+            ]);
+        })
+
         socket.on("getSession", function(sessionId) {
             if(user && user.userRights != 4) socket.emit("unauthorizesAccess");
 
