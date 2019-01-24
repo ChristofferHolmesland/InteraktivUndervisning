@@ -119,4 +119,4 @@ Rapport/*.log
 App/server/public
 
 # database
-.db
+*.db
