@@ -13,8 +13,12 @@ module.exports.listen = function(server, users) {
         // On new connection, checks if user has a cookie with userId and verifies the user
         let user = User.getUser(users, socket);
 
+        // Function "decorator" which checks user rights before calling the original function
         function rights(level, func, ...args) {
-            if(user && user.userRights < level) return;
+            if(user && user.userRights < level) {
+                socket.emit("unauthorizesAccess");
+                return;
+            }
             func(...args);
         }
 
@@ -61,11 +65,7 @@ module.exports.listen = function(server, users) {
         //------------- Client functions -------------//
         //--------------------------------------------//
 
-        socket.on("clientStarted", function() {
-            if(user && user.userRights > 0) return;
-
-            socket.emit("unauthorizedAccess");
-        });
+        socket.on("clientStarted", () => rights(1, function() {}))
 
         socket.on("clientLoginInfoRequest", function() {
             if(user){
@@ -82,26 +82,15 @@ module.exports.listen = function(server, users) {
         //------------- Student Assistant -------------//
         //--------------------------------------------//
 
-        socket.on("studAssStarted", function() {
-            if(user && user.userRights == 3) return;
-
-            socket.emit("unauthorizedAccess");
-        });
+        socket.on("studAssStarted", () => rights(3, function() {}));
 
         //--------------------------------------------//
         //------------- Admin functions -------------//
         //--------------------------------------------//
 
-        socket.on("adminStarted", function() {
-            if(user && user.userRights == 4) return;
+        socket.on("adminStarted", () => rights(4, function() {}));
 
-            console.log(user);
-            socket.emit("unauthorizedAccess");
-        });
-
-        socket.on("getSessions", function() {
-            if(user && user.userRights != 4) socket.emit("unauthorizesAccess");
-
+        socket.on("getSessions", () => rights(4, function() {
             // TODO remove testdata
             let testData = {
                 sessions: {
@@ -115,9 +104,9 @@ module.exports.listen = function(server, users) {
             // TODO write code to querry data from the databse
 
             socket.emit("getSessionsResponse", testData);
-        });
+        }));
 
-        socket.on("addNewSession", function(session) {
+        socket.on("addNewSession", (data) => rights(4, function(session) {
             /*
             let c = session.course.split(" ");
             insert.quiz(db, session.title, c[1], c[0]).then(function (id) {
@@ -127,10 +116,9 @@ module.exports.listen = function(server, users) {
             });
             socket.emit("addNewSessionDone");
             */
-        });
+        }, data));
 
-        socket.on("getQuestionsInCourse", function(course) {
-            if(user && user.userRights != 4) socket.emit("unauthorizesAccess");
+        socket.on("getQuestionsInCourse", (data) => rights(4, function(course) {
             /*
             let result = [];
             let questions = get.allQuestionsWithinCourse(db, course.code, course.semester);
@@ -142,11 +130,9 @@ module.exports.listen = function(server, users) {
             }
             socket.emit("sendQuestionsInCourse", result);
             */
-        });
+        }, data));
 
-        socket.on("getCourses", function() {
-            if(user && user.userRights != 4) socket.emit("unauthorizesAccess");
-
+        socket.on("getCourses", () => rights(4, function() {
             /*
             let result = [];
             let courses = get.allCourses(db);
@@ -164,11 +150,9 @@ module.exports.listen = function(server, users) {
                 {code: "DAT200", semester: "18H"},
                 {code: "DAT110", semester: "18V"}
             ]);
-        })
+        }));
 
-        socket.on("getSession", function(sessionId) {
-            if(user && user.userRights != 4) socket.emit("unauthorizesAccess");
-
+        socket.on("getSession", (data) => rights(4, function(sessionId) {
             // TODO remove testdata
             let testdata = {
                 "1": {
@@ -578,9 +562,10 @@ module.exports.listen = function(server, users) {
             // TODO write code to querry data from the database
 
             socket.emit("getSessionResponse", response);
-        });
+        }, data));
 
         socket.on("getQuizWithinCourse", (data) => rights(4, function(course) {
+            
             /*
             let result = [];
             let quizes = get.allQuizWithinCourse(db, course);
