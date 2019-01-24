@@ -9,7 +9,8 @@
 							</b-form-input>
 						</b-col>
 						<b-col lg="2" class="pl-0">
-							<b-button>+</b-button>
+							<b-button v-b-modal.newSessionModal>+</b-button>
+							<EditSession :okHandler="addNewSessionHandler" elementId="newSessionModal" elementRef="innerModal"></EditSession>
 						</b-col>
 					</b-row>
 					<b-row>
@@ -35,6 +36,7 @@
 
 <script>
 	import Session from "./Session.vue";
+	import EditSession from "./EditSession.vue";
 	export default {
 		name: 'Sessions',
 		data() {
@@ -53,15 +55,22 @@
 					this.selectedSession = Object.keys(data.sessions)[0];
         			this.$socket.emit("getSession", this.selectedSession)
 				}
+			},
+			addNewSessionDone() {
+				this.$socket.emit("getSessions");
 			}
 		},
 		components: {
-			Session
+			Session,
+			EditSession
 		},
 		methods: {
 			changeSelected(event) {
 				this.selectedSession = event.target.id;
         		this.$socket.emit("getSession", this.selectedSession)
+			},
+			addNewSessionHandler: function(newSession) {
+				this.$socket.emit("addNewSession", newSession);
 			}
 		},
 		computed: {

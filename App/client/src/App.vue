@@ -41,5 +41,17 @@ export default {
 			this.$store.commit("userChange", userData);
 		}
 	}
-};
+}
 </script>
+
+<style scoped>
+	#app {
+		min-width: 750px;
+	}
+</style>
+
+<style>
+	body {
+		background-color: #ccc/*#b7b7b7/*#1c11ee*/;
+	}
+</style>

@@ -45,16 +45,19 @@
                     id: -1,
                     text: "",
                     description: "", 
-                    // TODO: Make it possible to include graphs and images in the text
-					solutionType: "",
+              		solutionType: "",
 					solution: "",
-                }
+                },
+                solutionTypes: []
             }
         },
         props: {
             elementRef: String,
             elementId: String,
             okHandler: Function
+        },
+        mounted() {
+            this.$socket.emit("getQuestionTypes");
         },
         methods: {
             callOkHandler: function() {
@@ -68,13 +71,13 @@
 			    else return {};
             },
             getSolutionTypes: function() {
-				// TODO: Query database for the options
-				return [
-					{ value: "graph", text: "Graph"},
-					{ value: "text", text: "Text"},
-					{ value: "multipleChoice", text: "Multiple choice"}
-				];
-			},
+                return this.solutionTypes;
+			}
+        },
+        sockets: {
+            sendQuestionTypes: function(types) {
+                this.solutionTypes = types;
+            }
         }
     }
 
