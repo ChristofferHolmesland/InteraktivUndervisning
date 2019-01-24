@@ -525,6 +525,26 @@ module.exports.listen = function(server, users) {
 
             socket.emit("getSessionResponse", response);
         });
+
+        socket.on("initializeQuiz", function(quizId){
+            socket.join("quizId");
+            socket.emit("initializeQuizResponse", quizId);
+        });
+        
+        socket.on("startQuizWaitingRoom", function(quizId) {
+            console.log(quizId);
+            socket.emit("startQuizWaitingRoomResponse");
+        });
+
+        socket.on("startQuiz", function(quizId) {
+            // TODO remove testdata and querry database for correct information
+            let response = {
+                questionText: "Question 1",
+                questionDescription: "Description for question 1. <solution=test>",
+                questionType: "text"
+            }
+            socket.emit("startQuizResponse", response)
+        });
             
     });
 
