@@ -53,8 +53,8 @@ const io = require('./js/iofunctions').listen(server, users);
 let db = undefined;
 require('./js/database/database').getDB(async function(value) {
     db = value;
-    //const dummydata = require('./tools/insertDummyData');
-    //await dummydata.InsertData(db);
+    // const dummydata = require('./tools/insertDummyData');
+    // await dummydata.InsertData(db);
 }).catch(function (err) {
     console.log(err);
 });

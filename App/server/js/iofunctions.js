@@ -562,7 +562,7 @@ module.exports.listen = function(server, users) {
             // TODO write code to querry data from the database
 
             socket.emit("getSessionResponse", response);
-        });
+        }, data));
 
         socket.on("initializeQuiz", function(quizId){
             socket.join("quizId");

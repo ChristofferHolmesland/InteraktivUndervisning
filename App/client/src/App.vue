@@ -44,12 +44,6 @@ export default {
 }
 </script>
 
-<style scoped>
-	#app {
-		min-width: 750px;
-	}
-</style>
-
 <style>
 	body {
 		background-color: #ccc/*#b7b7b7/*#1c11ee*/;
