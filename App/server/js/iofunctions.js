@@ -562,10 +562,29 @@ module.exports.listen = function(server, users) {
             // TODO write code to querry data from the database
 
             socket.emit("getSessionResponse", response);
-        }, data));
+        });
 
-        socket.on("getQuizWithinCourse", (data) => rights(4, function(course) {
-            
+        socket.on("initializeQuiz", function(quizId){
+            socket.join("quizId");
+            socket.emit("initializeQuizResponse", quizId);
+        });
+        
+        socket.on("startQuizWaitingRoom", function(quizId) {
+            console.log(quizId);
+            socket.emit("startQuizWaitingRoomResponse");
+        });
+
+        socket.on("startQuiz", function(quizId) {
+            // TODO remove testdata and querry database for correct information
+            let response = {
+                questionText: "Question 1",
+                questionDescription: "Description for question 1. <solution=test>",
+                questionType: "text"
+            }
+            socket.emit("startQuizResponse", response)
+        });
+
+      socket.on("getQuizWithinCourse", (data) => rights(4, function(course) {            
             /*
             let result = [];
             let quizes = get.allQuizWithinCourse(db, course);

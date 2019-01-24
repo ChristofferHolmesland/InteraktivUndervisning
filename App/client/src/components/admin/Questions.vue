@@ -93,6 +93,7 @@
 			    else return {};
 			}
 		},
+
 		sockets: {
 			sendAllQuestionsWithinCourse: function(questions) {
 				this.questionList = questions;
@@ -122,6 +123,7 @@
 			editQuestionHandler: function(updatedQuestion) {
 				this.$socket.emit("updateQuestion", updatedQuestion);
 				this.$socket.emit("getAllQuestionsWithinCourse", "DAT200");
+
 			}
 		}
 	}
