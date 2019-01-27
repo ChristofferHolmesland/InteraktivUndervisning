@@ -43,10 +43,11 @@ export default {
         }
     },
     sockets: {
-        joinRoom(roomnr){
-            console.log("Join room " + roomnr);
+        joinRoom(room){
+            console.log("Joined: " + room);
             this.response = false;
-            this.$router.push("/client/waitingRoom")   //redirect to waiting room for a room
+            this.$store.commit("changeRoom",room);
+            this.$router.push("/client/waitingRoom")   //redirect to waiting room for clients
         },
         RoomInActive(roomnr){
             console.log("Room inactive");

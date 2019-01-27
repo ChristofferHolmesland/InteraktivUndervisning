@@ -82,8 +82,19 @@ module.exports.listen = function(server, users) {
 			console.log("quickJoinRoom is called!");
 			let rooms= [1,2,3,4,5,6,7,8,9,10];
 			if (rooms.indexOf(parseInt(roomnr)) !== -1 && roomnr !== "") {
-				console.log("Join room nr "+roomnr);
-				socket.emit("joinRoom",roomnr)
+				let room = "room-"+roomnr;
+				socket.join(room);
+				//socket.roomId = roomnr;
+				io.in(room).clients((err , clients) => {	//used to see all socket ids in the room, taken from https://stackoverflow.com/questions/18093638/socket-io-rooms-get-list-of-clients-in-specific-room/25028953
+					console.log(clients);
+				});
+				console.log("Joined "+room);
+				
+				console.log(socket.rooms);
+				console.log("Test");
+				io.in(room).emit("joinRoom",room);	//use io to emit messages to rooms!!!
+				io.in(room).emit('connectedToRoom',"You are really connected to "+room);
+				//socket.emit("joinRoom",room);
 			}else {
 				console.log("inActive");
 				socket.emit("RoomInActive");
@@ -136,6 +147,20 @@ module.exports.listen = function(server, users) {
 			users.delete(user.sessionId);
 			socket.emit("signOutResponse");
 		});
+
+		//--------------------------------------------//
+		//------------------ Rooms -------------------//
+		//--------------------------------------------//
+		//does not work, because socket.roomId is most likely undefined
+		io.in("room-2").emit('connectedToRoom',"You are connected to room "+2);
+		
+
+		socket.on("leaveRoom",function (room) {
+			console.log("Leaving " +room);
+			socket.leave("room-"+room);
+			socket.emit("returnToJoinRoom");
+		});
+
 
 		//--------------------------------------------//
 		//------------- Student Assistant -------------//

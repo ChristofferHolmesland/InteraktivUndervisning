@@ -18,7 +18,8 @@ export default new Vuex.Store({
 		locale: {
 			locale: undefined,
 			localeList: undefined
-		}
+		},
+		roomName: ""
 	},
 	mutations: {
 		localeChange(state, data){
@@ -37,6 +38,9 @@ export default new Vuex.Store({
 			if(data.feideId) state.user.feideId = data.feideId;
 			if(data.userRights) state.user.userRights = data.userRights;
 			if(data.adminSubjects) state.user.adminSubjects = data.adminSubjects
+		},
+		changeRoom(state,room){
+			if (room != undefined) state.roomName = room; 
 		}
 	},
 	actions: {
@@ -61,6 +65,9 @@ export default new Vuex.Store({
 				}
 			}
 			return response;
+		},
+		getCurrentRoom: (state) => {
+			return state.roomName;
 		}
 	}
 });
