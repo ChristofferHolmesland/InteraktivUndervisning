@@ -26,10 +26,11 @@ export default new Router({
         import("./views/UserProfile.vue")
     },
     {
-      path: "/client/waitingRoom",
-      name: "clientWaitingRoom",
+      path: "/client/quiz/:quizId",
+      props: true,
+      name: "clientQuiz",
       component: () =>
-        import("./views/WaitingRoomClient.vue")
+        import("./views/ClientQuiz.vue")
     },
     {
       path: "/admin",

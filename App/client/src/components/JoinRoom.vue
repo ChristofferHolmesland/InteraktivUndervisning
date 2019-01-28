@@ -26,11 +26,13 @@ export default {
     name: "joinRoom",
     data() {
         return{
-            roomId: "",
             responsetext: "",
             response: false
         };
     },
+    props:
+        ["quizId"]
+    ,
     methods: {
         quickJoin() {
             console.log("tried to quickjoin with this room ID: " + this.roomId);
@@ -46,12 +48,13 @@ export default {
         joinRoom(room){
             console.log("Joined: " + room);
             this.response = false;
-            this.$store.commit("changeRoom",room);
-            this.$router.push("/client/waitingRoom")   //redirect to waiting room for clients
+            this.quizId = room;
+            this.$router.push(`/client/quiz/${room}`)   //redirect to waiting room for clients
         },
-        RoomInActive(roomnr){
-            console.log("Room inactive");
-            this.responsetext = "Roomnr " + roomnr + "is inactive!";
+        QuizInActive(quizNr){
+            console.log("QuizInActive");
+            console.log(quizNr);
+            this.responsetext = "Quiz " + quizNr + " is inactive!";
             this.response = true;
         }
     },computed: {

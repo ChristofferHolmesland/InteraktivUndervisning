@@ -78,27 +78,37 @@ module.exports.listen = function(server, users) {
 			socket.emit("unauthorizedAccess");
 		});
 
+		socket.on("startQuiz", function () {
+			socket.emit("startQuizResponse");
+		});
+
 		socket.on("quickJoinRoom", function (roomnr) {
 			console.log("quickJoinRoom is called!");
-			let rooms= [1,2,3,4,5,6,7,8,9,10];
+			let rooms= [1,2,3,4,5,6,7,8,9,10,3334];
 			if (rooms.indexOf(parseInt(roomnr)) !== -1 && roomnr !== "") {
-				let room = "room-"+roomnr;
-				socket.join(room);
-				//socket.roomId = roomnr;
-				io.in(room).clients((err , clients) => {	//used to see all socket ids in the room, taken from https://stackoverflow.com/questions/18093638/socket-io-rooms-get-list-of-clients-in-specific-room/25028953
+				let quizId = `${roomnr}`;
+				socket.join(quizId);
+				io.in(quizId).clients((err , clients) => {	//used to see all socket ids in the room, taken from https://stackoverflow.com/questions/18093638/socket-io-rooms-get-list-of-clients-in-specific-room/25028953
 					console.log(clients);
 				});
-				console.log("Joined "+room);
-				
-				console.log(socket.rooms);
-				console.log("Test");
-				io.in(room).emit("joinRoom",room);	//use io to emit messages to rooms!!!
-				io.in(room).emit('connectedToRoom',"You are really connected to "+room);
-				//socket.emit("joinRoom",room);
+				console.log("Joined "+ quizId);
+				console.log(socket.adapter.rooms);
+				//console.log(socket.rooms);
+				io.in(quizId).emit("joinRoom",quizId);	//use io to emit messages to rooms!!!
 			}else {
 				console.log("inActive");
-				socket.emit("RoomInActive");
+				socket.emit("QuizInActive",roomnr);
 			}
+		});
+
+		socket.on("questionAnswered", function (answer) {
+			console.log("Answered");
+			socket.emit("questionAnsweredResponse", answer)
+		});
+
+		socket.on("questionNotAnswered", function () {
+			console.log("Not answered");
+			socket.emit("questionNotAnsweredResponse");
 		});
 
 		socket.on("getUserStats", function() {
@@ -151,16 +161,13 @@ module.exports.listen = function(server, users) {
 		//--------------------------------------------//
 		//------------------ Rooms -------------------//
 		//--------------------------------------------//
-		//does not work, because socket.roomId is most likely undefined
-		io.in("room-2").emit('connectedToRoom',"You are connected to room "+2);
-		
 
-		socket.on("leaveRoom",function (room) {
-			console.log("Leaving " +room);
-			socket.leave("room-"+room);
+		socket.on("leaveRoom",function (roomId) {
+			console.log("Leaving " +roomId);
+			let quizId = `${roomId}`;
+			socket.leave(quizId);
 			socket.emit("returnToJoinRoom");
 		});
-
 
 		//--------------------------------------------//
 		//------------- Student Assistant -------------//
