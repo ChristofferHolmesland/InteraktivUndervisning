@@ -5,6 +5,7 @@ const passport = require("passport");
 const compression = require("compression");
 const OICStrategy = require("passport-openid-connect").Strategy;
 const cookieParser = require("cookie-parser");
+const deasync = require("deasync");
 
 const user = (require("./js/user.js")).User;
 const users = new Map();
@@ -44,20 +45,24 @@ app.use(cookieParser());
 app.use(compression());
 app.use(express.static(path.join(__dirname, '/public/')));
 
+// Database
+let db = undefined;
+require('./js/database/database').getDB().then(async function(value) {
+    db = value;
+    const dummydata = require('./tools/insertDummyData');
+    await dummydata.InsertData(db);
+}).catch(function (err) {
+    console.log(err);
+});
+deasync.loopWhile(function() {
+    return db != undefined;
+});
+
 // Starts the server and the socket.io websocket
 const server = app.listen(port, function() {
     console.log(`Server listening on localhost:${ port }! Use ctrl + c to stop the server!`)
 });
-const io = require('./js/iofunctions').listen(server, users);
-
-let db = undefined;
-require('./js/database/database').getDB(async function(value) {
-    db = value;
-    // const dummydata = require('./tools/insertDummyData');
-    // await dummydata.InsertData(db);
-}).catch(function (err) {
-    console.log(err);
-});
+require('./js/iofunctions').listen(server, users, db);
 
 app.post('/login/feide', passport.authenticate('passport-openid-connect', {"successReturnToOrRedirect": "/client"}))
 app.get('/login/callback/feide', passport.authenticate('passport-openid-connect', {callback: true}), function(req, res) {

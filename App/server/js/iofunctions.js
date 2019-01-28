@@ -8,7 +8,7 @@ const get = require("./database/databaseFunctions").get;
 const insert = require("./database/databaseFunctions").insert;
 const update = require("./database/databaseFunctions").update;
 
-module.exports.listen = function(server, users) {
+module.exports.listen = function(server, users, db) {
     io = socketio.listen(server, {
         cookie: false
     });
@@ -179,27 +179,28 @@ module.exports.listen = function(server, users) {
                 
                 let questions = await get.allQuestionInQuiz(db, quiz.id);
                 questions.forEach(question => {
-                    let answer = await get.allAnswerToQuestion(db, question.id)
-                    let answers = [];
-                    let correctAnswers = 0;
-
-                    answer.forEach(a => {
-                        if (a.result == 1) {
-                            correctAnswers++;
-                        }
-
-                        answers.push({
-                            "answer": a.object,
-                            "result": a.result
+                    get.allAnswerToQuestion(db, question.id).then(answer => {
+                        let answers = [];
+                        let correctAnswers = 0;
+    
+                        answer.forEach(a => {
+                            if (a.result == 1) {
+                                correctAnswers++;
+                            }
+    
+                            answers.push({
+                                "answer": a.object,
+                                "result": a.result
+                            });
                         });
-                    });
-
-                    result.push({
-                        "text": question.text,
-                        "description": question.description,
-                        "correctAnswers": correctAnswers,
-                        "answers": answers 
-                    });
+    
+                        result.push({
+                            "text": question.text,
+                            "description": question.description,
+                            "correctAnswers": correctAnswers,
+                            "answers": answers 
+                        });
+                    })
                 });
 
                 socket.emit("getSessionResponse", result);
