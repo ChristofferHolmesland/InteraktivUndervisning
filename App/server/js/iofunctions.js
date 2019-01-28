@@ -4,6 +4,10 @@ const User = (require("./user.js")).User;
 const anonymousNames = (require("./anonymousName.js")).Animals;
 const cookie = require('cookie');
 
+const get = require("./database/databaseFunctions").get;
+const insert = require("./database/databaseFunctions").insert;
+const update = require("./database/databaseFunctions").update;
+
 module.exports.listen = function(server, users) {
     io = socketio.listen(server, {
         cookie: false
@@ -90,110 +94,102 @@ module.exports.listen = function(server, users) {
 
         socket.on("adminStarted", () => rights(4, function() {}));
 
-        socket.on("getSessions", () => rights(4, function() {
-            // TODO remove testdata
-            let testData = {
-                sessions: {
-                    "1": "session 1",
-                    "2": "session 2",
-                    "3": "session 3",
-                    "4": "session 4",
-                }
+        socket.on("getSessions", (data) => rights(4, function(course) {
+            get.allQuizWithinCourse(db, course.code, course.semester).then((quizzes) => {
+                let result = [];
+                quizzes.forEach(quiz => {
+                    result.push({
+                        "id": quiz.quizId,
+                        "name": quiz.quizName
+                    });
+                });
+                socket.emit("getSessionsResponse", result);
+            });
+        }, data));
+
+        /* response should follow this format: 
+            {
+                totalCorrectAnswers: float,
+                totalQuizzes: Integer,
+                totalIncorrectAnswers: float,
+                quizList: [
+                    {
+                        quizName = String,
+                        courseCode = String
+                    }, ...
+                ] 	// Should be a list of all quizzes that the user has participated in.
+                    // Should be sorted where the last quiz is first
             }
-
-            // TODO write code to querry data from the databse
-
-            socket.emit("getSessionsResponse", testData);
-        }));
-
-        socket.on("getUserStats", function() {
-			if(!user || user.userRights < 2) return;
-			/* response should follow this format:
-			**	response 
-			**	{
-			**		totalCorrectAnswers: float,
-			**		totalQuizzes: Integer,
-			**		totalIncorrectAnswers: float,
-			**		quizList: [
-			**			{
-			**				quizName = String,
-			**				courseCode = String
-			**			}, ...
-			**		] 	// Should be a list of all quizzes that the user has participated in.
-			**			// Should be sorted where the last quiz is first
-			**	}
-			*/
-			let response = {};
-			
-			// Todo: write code to check database for stats
-
-			// Todo: remove dummy data
-			response = {
-				totalQuizzes: 2,
-				totalCorrectAnswers: 20,
-				totalIncorrectAnswers: 10,
-				quizList: [
-					{
-						quizName: "Grafer",
-						courseCode: "DAT200"
-					},
-					{
-						quizName: "stakk",
-						courseCode: "DAT200"
-					}
-				]
-			}
-			
-			socket.emit("getUserStatsResponse", response);
-		});
+        */
+        socket.on("getUserStats", () => rights(2, function() {	
+            get.quizzesToUser(db, user.feide.id).then(async function(quizzes) {
+                result = {};
+                result.quizList = quizzes;
+                result.totalQuizzes = quizzes.length;
+                
+                let correct = await get.amountCorrectAnswersForUser(db, user.id);
+                let wrong = await get.amountWrongAnswersForUser(db, user.id);
+                result.totalCorrectAnswers = correct;
+                result.totalIncorrectAnswers = wrong;
+                socket.emit("getUserStatsResponse", result);
+            });
+		}));
 
         socket.on("addNewSession", (data) => rights(4, function(session) {
-            /*
             let c = session.course.split(" ");
             insert.quiz(db, session.title, c[1], c[0]).then(function (id) {
                 for (let i = 0; i < session.questions.length; i++) {
                     insert.addQuestionToQuiz(db, id, session.questions[i].id);
                 }
+                socket.emit("addNewSessionDone");
             });
-            socket.emit("addNewSessionDone");
-            */
         }, data));
 
         socket.on("getQuestionsInCourse", (data) => rights(4, function(course) {
-            /*
-            let result = [];
-            let questions = get.allQuestionsWithinCourse(db, course.code, course.semester);
-            for (let i = 0; i < questions.length; i++) {
-                result.push({
-                    value: questions[i].questionId,
-                    text: questions[i].text 
-                });
-            }
-            socket.emit("sendQuestionsInCourse", result);
-            */
+            get.allQuestionsWithinCourse(db, course.code, course.semester).then((questions) => {
+                let result = [];
+                for (let i = 0; i < questions.length; i++) {
+                    result.push({
+                        value: questions[i].questionId,
+                        text: questions[i].text 
+                    });
+                }
+                socket.emit("sendQuestionsInCourse", result);
+            });
         }, data));
 
         socket.on("getCourses", () => rights(4, function() {
-            /*
-            let result = [];
-            let courses = get.allCourses(db);
-            for (let i = 0; i < courses.length; i++) {
-                result.push({
-                    code: courses[i].courseCode,
-                    semester: courses[i].courseSemester
-                });
-            }
-            socket.emit("sendCourses", result);
-            */
-
-            socket.emit("sendCourses", 
-            [
-                {code: "DAT200", semester: "18H"},
-                {code: "DAT110", semester: "18V"}
-            ]);
+            get.allCourses(db).then((courses) => {
+                let result = [];
+                for (let i = 0; i < courses.length; i++) {
+                    result.push({
+                        code: courses[i].courseCode,
+                        semester: courses[i].courseSemester
+                    });
+                }
+                socket.emit("sendCourses", result);
+            });
         }));
 
         socket.on("getSession", (data) => rights(4, function(sessionId) {
+            get.quizById(db, sessionId).then(async function(quiz) {
+                let result = {};
+                result.questions = [];
+                result.participants = quiz.participants;
+                
+                let questions = await get.allQuestionInQuiz(db, quizId);
+                questions.forEach(question => {
+                    let answer = get.allAnswerToQuestion(db, question.questionId)
+                    
+                    result.push({
+                        "text": question.questionText,
+                        "description": question.QuestionDescription,
+                        "correctAnswers": correctAnswers,
+
+                    });
+                });
+            })
+            
             // TODO remove testdata
             let testdata = {
                 "1": {
@@ -602,6 +598,7 @@ module.exports.listen = function(server, users) {
 
             // TODO write code to querry data from the database
 
+
             socket.emit("getSessionResponse", response);
         }, data));
 
@@ -628,11 +625,11 @@ module.exports.listen = function(server, users) {
       socket.on("getQuizWithinCourse", (data) => rights(4, function(course) {            
             /*
             let result = [];
-            let quizes = get.allQuizWithinCourse(db, course);
-            for (let i = 0; i < quizes.length; i++) {
+            let quizzes = get.allQuizWithinCourse(db, course);
+            for (let i = 0; i < quizzes.length; i++) {
                 result.push({
-                    value: quizes[i].quizId,
-                    text: quizes[i].quizName
+                    value: quizzes[i].quizId,
+                    text: quizzes[i].quizName
                 });
             }
             socket.emit("sendQuizWithinCourse", result);

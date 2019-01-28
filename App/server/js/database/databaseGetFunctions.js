@@ -1,6 +1,6 @@
 const get = {
     feideById: function(db, feideId) {
-        let statement = `SELECT * FROM Feide WHERE feideId=${feideId};`;
+        let statement = `SELECT * FROM Feide WHERE id=${feideId};`;
         return new Promise((resolve, reject) => {
             db.get(statement, (err,row) => {
                 if (err) reject(err);
@@ -9,7 +9,7 @@ const get = {
         });
     },
     userById:  function (db,userId) {
-        let statement = `SELECT * FROM User WHERE userId=${userId};`;
+        let statement = `SELECT * FROM User WHERE id=${userId};`;
         return new Promise((resolve, reject) => {
             db.get(statement, (err,row) => {
                 if (err) reject(err);
@@ -26,12 +26,21 @@ const get = {
             });
         });
     },
-    quizesToUser: function(db,feideId) {
-        let statement = `SELECT Q.quizName, C.courseCode
+    quizById: function(db, quizId) {
+        let statement = `SELECT * FROM Quiz WHERE id = ${quizId}`;
+        return new Promise((resolve, reject) => {
+            db.get(statement, (err,row) => {
+                if (err) reject(err);
+                resolve(row);
+            });
+        });
+    },
+    quizzesToUser: function(db,feideId) {
+        let statement = `SELECT Q.name, C.code
                         FROM Quiz AS Q
-                        INNER JOIN User_has_Quiz AS UQ ON UQ.quizId = Q.quizId
-                        INNER JOIN Course AS C ON Q.courseCode = C.courseCode AND Q.courseSemester = C.courseSemester 
-                        WHERE UQ.userId = (SELECT U.userid FROM User AS U WHERE U.feideid= ${feideId} LIMIT 1)`;
+                        INNER JOIN User_has_Quiz AS UQ ON UQ.quizId = Q.id
+                        INNER JOIN Course AS C ON Q.courseCode = C.code AND Q.courseSemester = C.semester 
+                        WHERE UQ.userId = (SELECT U.id FROM User AS U WHERE U.feideid= ${feideId} LIMIT 1)`;
         return new Promise((resolve, reject) => {
             db.all(statement, (err,rows) => {
                 if (err) reject(err);
@@ -40,7 +49,7 @@ const get = {
         });
     },
     amountOfUsersInQuiz: function (db,quizId) {
-        let statement = `SELECT userid FROM User_Has_Quiz WHERE quizid = ${quizId}`;
+        let statement = `SELECT userId FROM User_Has_Quiz WHERE quizId = ${quizId}`;
         return new Promise((resolve, reject) => {
             db.all(statement, (err,rows) => {
                 if (err) reject(err);
@@ -48,8 +57,8 @@ const get = {
             });
         });
     },
-    amountOfQuizesUserParticipateIn: function (db,userId) {
-        let statement = `SELECT quizId FROM User_Has_Quiz WHERE userid = ${userId}`;
+    amountOfquizzesUserParticipateIn: function (db,userId) {
+        let statement = `SELECT quizId FROM User_Has_Quiz WHERE userId = ${userId}`;
         return new Promise((resolve, reject) => {
             db.all(statement, (err,rows) => {
                 if (err) reject(err);
@@ -58,10 +67,10 @@ const get = {
         });
     },
     allQuestionInQuiz: function (db,quizId) {
-        let statement = `SELECT Q.questionText,Q.questionObject,Q.questionSolution,T.questionType,QQ.quizId
+        let statement = `SELECT Q.text,Q.description,Q.object,Q.solution,T.questionType,QQ.quizId
                          FROM Question AS Q
-                         INNER JOIN Quiz_has_Question AS QQ ON QQ.questionId = Q.questionId
-                         INNER JOIN Type AS T ON T.questionType = Q.questionType
+                         INNER JOIN Quiz_has_Question AS QQ ON QQ.questionId = Q.id
+                         INNER JOIN Type AS T ON T.type = Q.questionType
                          WHERE QQ.quizId = ${quizId};`;
         return new Promise((resolve, reject) => {
             db.all(statement, (err,rows) => {
@@ -70,11 +79,20 @@ const get = {
             });
         });
     },
-    allQuizWithinCourse: function(db,courseCode) {
-        let statement = `SELECT Q.quizId,Q.quizName,C.courseName,C.courseCode,Q.courseSemester
+    allAnswerToQuestion: function(db, questionId) {
+        let statement = `SELECT * FROM Answer WHERE questionId = ${questionId}`;
+        return new Promise((resolve, reject) => {
+            db.all(statement, (err,rows) => {
+                if (err) reject(err);
+                resolve(rows);
+            });
+        });
+    },
+    allQuizWithinCourse: function(db, courseCode, courseSemester) {
+        let statement = `SELECT Q.id,Q.name,C.name,C.code,Q.courseSemester
                          FROM Quiz AS Q
-                         INNER JOIN Course AS C ON Q.courseCode = C.courseCode 
-                         WHERE C.courseCode = '${courseCode}' 
+                         INNER JOIN Course AS C ON Q.courseCode = C.code 
+                         WHERE C.code = '${courseCode}' AND C.semester = '${courseSemester}' 
                          GROUP BY Q.quizId;`;
         return new Promise((resolve, reject) => {
             db.all(statement, (err,rows) => {
@@ -84,9 +102,9 @@ const get = {
         });
     },
     amountCorrectAnswersForUser: function (db,userid) {
-        let statement = `SELECT answerid
+        let statement = `SELECT id
                          FROM Answer
-                         WHERE result = 1 AND userid = ${userid};`;
+                         WHERE result = 1 AND userId = ${userid};`;
         return new Promise((resolve, reject) => {
             db.all(statement, (err,rows) => {
                 if (err) reject(err);
@@ -95,9 +113,9 @@ const get = {
         });
     },
     amountWrongAnswersForUser: function (db,userid) {
-        let statement = `SELECT answerid
+        let statement = `SELECT id
                      FROM Answer
-                     WHERE result = 0 AND userid = ${userid};`;
+                     WHERE result = 0 AND userId = ${userid};`;
         return new Promise((resolve, reject) => {
             db.all(statement, (err,rows) => {
                 if (err) reject(err);
@@ -106,9 +124,9 @@ const get = {
         });
     },
     amountAnswersForUser: function (db,userid) {
-        let statement = `SELECT answerid
+        let statement = `SELECT id
                          FROM Answer
-                         WHERE userid = ${userid};`;
+                         WHERE userId = ${userid};`;
         return new Promise((resolve, reject) => {
             db.all(statement, (err,rows) => {
                 if (err) reject(err);
@@ -117,9 +135,9 @@ const get = {
         });
     },
     allQuestionsWithinCourse(db, course) {
-        let statement = `SELECT Q.questionId,Q.questionText,Q.questionDescription,questionObject,questionSolution,T.typeName,Q.courseCode
+        let statement = `SELECT Q.id,Q.text,Q.description,Q.object,Q.solution,T.name,Q.courseCode
                          FROM Question AS Q
-                         INNER JOIN Type AS T ON Q.questionType = T.questionType
+                         INNER JOIN Type AS T ON Q.questionType = T.type
                          WHERE Q.courseCode = "${course}";`;
         return new Promise((resolve, reject) => {
             db.all(statement, (err,rows) => {

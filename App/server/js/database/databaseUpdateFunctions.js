@@ -8,26 +8,26 @@ function createPromise(db, statement) {
 }
 
 const update = {
-	feideInfo: function (db,oldfeideId,feideId,feideAccess,feideName) {
-		let statement = `UPDATE Feide SET feideId=${feideId}, feideAccessToken='${feideAccess}', feideName='${feideName}' WHERE feideId=${oldfeideId};`;
+	feideInfo: function (db, oldFeideId, feideId, feideAccess, feideName) {
+		let statement = `UPDATE Feide SET id=${feideId}, accessToken='${feideAccess}', name='${feideName}' WHERE id=${oldFeideId};`;
 		return createPromise(db, statement);
 	},
 	userInfo: function (db,olduserId,userId,feideId) {
-		let statement = `UPDATE User SET userId=${userId},feideId=${feideId} WHERE userId=${olduserId};`;
+		let statement = `UPDATE User SET id=${userId},feideId=${feideId} WHERE id=${olduserId};`;
 		return createPromise(db, statement);
 	},
 	addQuestionObject: function(db,questionId,questionobject) {
-		let statement = `UPDATE Question SET questionObject = ${questionobject} WHERE questionId= ${questionId}`;
+		let statement = `UPDATE Question SET object = ${questionobject} WHERE id= ${questionId}`;
 		return createPromise(db, statement);
 	},
-	editquestion: function(db, id, questionText, questionDescription, questionObject, questionSolution, questionType) {
+	editQuestion: function(db, id, questionText, questionDescription, questionObject, questionSolution, questionType) {
 		let statement = `UPDATE question 
-						 SET questionText = '${questionText}', 
-    					 questionDescription = '${questionDescription}', 
-    					 questionObject = ${questionObject}, 
-    					 questionSolution = ${questionSolution}, 
+						 SET text = '${questionText}', 
+    					 description = '${questionDescription}', 
+    					 object = ${questionObject}, 
+    					 solution = ${questionSolution}, 
     					 questionType = ${questionType} 
-						 WHERE questionid = ${id};`;
+						 WHERE id = ${id};`;
 		return createPromise(db, statement);
 	}
 };
