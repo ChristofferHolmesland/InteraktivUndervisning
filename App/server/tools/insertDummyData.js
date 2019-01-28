@@ -17,7 +17,7 @@ module.exports.InsertData = function (db) {
         //SQL STATEMENTS
 
         //Creating Feide Insert
-        var sqlInsertFeide = "INSERT INTO Feide(feideId,feideAccessToken,feideName) VALUES";
+        var sqlInsertFeide = "INSERT INTO Feide(id,accessToken,name) VALUES";
         for (let k= 0; k<feideids.length; k++) {
             let addstring = "";
             if (k===0) {
@@ -31,7 +31,7 @@ module.exports.InsertData = function (db) {
         //console.log(sqlInsertFeide);
 
         //Creating User Insert
-        var sqlInsertUser = "INSERT INTO USER(userId,feideId) VALUES";
+        var sqlInsertUser = "INSERT INTO USER(id,feideId) VALUES";
         for (let n=0; n<feideids.length;n++) {
             let userid = n+2;
             let addstring = "";
@@ -46,7 +46,7 @@ module.exports.InsertData = function (db) {
         //console.log(sqlInsertUser);
 
         //Creating Course Insert
-        var sqlInsertCourse = "INSERT INTO Course(courseSemester,courseCode,courseName) VALUES";
+        var sqlInsertCourse = "INSERT INTO Course(semester,code,name) VALUES";
         for (let m= 0; m<courses.length;m++) {
             let addstring = "";
             if (m === 0) {
@@ -78,7 +78,7 @@ module.exports.InsertData = function (db) {
         //console.log(sqlInsertUserRight);
 
         //Create Insert Quiz
-        var sqlInsertQuiz = "Insert INTO Quiz(quizName,status,participants,courseSemester,courseCode) VALUES";
+        var sqlInsertQuiz = "Insert INTO Quiz(name,status,participants,courseSemester,courseCode) VALUES";
         for (let p=0;p<courses.length;p++) {
             let status = 0;
             for (let q=1;q<=10;q++) {
@@ -100,7 +100,7 @@ module.exports.InsertData = function (db) {
         //console.log(sqlInsertQuiz);
 
         //Creating Question Insert
-        var sqlInsertQuestion = "INSERT INTO Question(questionText, questionDescription,questionObject,questionSolution,questionType,courseCode) VALUES";
+        var sqlInsertQuestion = "INSERT INTO Question(text, description,object,solution,questionType,courseCode) VALUES";
         for (let o=1;o<=200;o++) {
             let chosenCode = 0;
             if(o> 100){
@@ -187,7 +187,7 @@ module.exports.InsertData = function (db) {
         //console.log(sqlInsertUserHasQuiz);
 
         //Create Insert Answer
-        var sqlInsertAnswer = "INSERT INTO Answer(answerObject,result,questionId,userId) VALUES";
+        var sqlInsertAnswer = "INSERT INTO Answer(object,result,questionId,userId) VALUES";
         var questionid = 0;
         var firsttime = true;
         for (quizid in users) { //for every quiz
@@ -229,7 +229,7 @@ module.exports.InsertData = function (db) {
         sqlInsertAnswer += ";";
 
         //Creating Type Insert
-        let sqlInsertType = `INSERT INTO Type(questionType,typeName) VALUES (${type.typeid},'${type.typename}')`;
+        let sqlInsertType = `INSERT INTO Type(type,name) VALUES (${type.typeid},'${type.typename}')`;
 
         const rejectErr = (err) => { if (err) { reject(err); return true; } else { return false; }};
         //Running SQL Statements

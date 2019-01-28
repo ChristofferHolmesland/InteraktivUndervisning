@@ -96,14 +96,14 @@ module.exports.listen = function(server, users) {
 
         socket.on("getSessions", (data) => rights(4, function(course) {
             get.allQuizWithinCourse(db, course.code, course.semester).then((quizzes) => {
-                let result = [];
+                /*let result = [];
                 quizzes.forEach(quiz => {
                     result.push({
-                        "id": quiz.quizId,
-                        "name": quiz.quizName
+                        "id": quiz.id,
+                        "name": quiz.name
                     });
-                });
-                socket.emit("getSessionsResponse", result);
+                }); */
+                socket.emit("getSessionsResponse", quizzes);
             });
         }, data));
 
@@ -150,7 +150,7 @@ module.exports.listen = function(server, users) {
                 let result = [];
                 for (let i = 0; i < questions.length; i++) {
                     result.push({
-                        value: questions[i].questionId,
+                        value: questions[i].id,
                         text: questions[i].text 
                     });
                 }
@@ -163,8 +163,8 @@ module.exports.listen = function(server, users) {
                 let result = [];
                 for (let i = 0; i < courses.length; i++) {
                     result.push({
-                        code: courses[i].courseCode,
-                        semester: courses[i].courseSemester
+                        code: courses[i].code,
+                        semester: courses[i].semester
                     });
                 }
                 socket.emit("sendCourses", result);
@@ -177,18 +177,33 @@ module.exports.listen = function(server, users) {
                 result.questions = [];
                 result.participants = quiz.participants;
                 
-                let questions = await get.allQuestionInQuiz(db, quizId);
+                let questions = await get.allQuestionInQuiz(db, quiz.id);
                 questions.forEach(question => {
-                    let answer = get.allAnswerToQuestion(db, question.questionId)
-                    
-                    result.push({
-                        "text": question.questionText,
-                        "description": question.QuestionDescription,
-                        "correctAnswers": correctAnswers,
+                    let answer = await get.allAnswerToQuestion(db, question.id)
+                    let answers = [];
+                    let correctAnswers = 0;
 
+                    answer.forEach(a => {
+                        if (a.result == 1) {
+                            correctAnswers++;
+                        }
+
+                        answers.push({
+                            "answer": a.object,
+                            "result": a.result
+                        });
+                    });
+
+                    result.push({
+                        "text": question.text,
+                        "description": question.description,
+                        "correctAnswers": correctAnswers,
+                        "answers": answers 
                     });
                 });
-            })
+
+                socket.emit("getSessionResponse", result);
+            });
             
             // TODO remove testdata
             let testdata = {
@@ -593,13 +608,6 @@ module.exports.listen = function(server, users) {
                     numberOfQuestions: 4
                 }
             }
-
-            let response = testdata[sessionId];
-
-            // TODO write code to querry data from the database
-
-
-            socket.emit("getSessionResponse", response);
         }, data));
 
         socket.on("initializeQuiz", function(quizId){
@@ -622,98 +630,63 @@ module.exports.listen = function(server, users) {
             socket.emit("startQuizResponse", response)
         });
 
-      socket.on("getQuizWithinCourse", (data) => rights(4, function(course) {            
-            /*
-            let result = [];
-            let quizzes = get.allQuizWithinCourse(db, course);
-            for (let i = 0; i < quizzes.length; i++) {
-                result.push({
-                    value: quizzes[i].quizId,
-                    text: quizzes[i].quizName
-                });
-            }
-            socket.emit("sendQuizWithinCourse", result);
-            */
-            socket.emit("sendQuizWithinCourse", [{value: 1, text: "Grap222hs"}, {value: 2, text: "Sor23523ting"}]);
+      socket.on("getQuizWithinCourse", (data) => rights(4, function(course) {   
+            get.allQuizWithinCourse(db, course).then((quizzes) => {
+                let result = [];
+                for (let i = 0; i < quizzes.length; i++) {
+                    result.push({
+                        value: quizzes[i].id,
+                        text: quizzes[i].name
+                    });
+                }
+                socket.emit("sendQuizWithinCourse", result);
+            });
+            
+            //socket.emit("sendQuizWithinCourse", [{value: 1, text: "Grap222hs"}, {value: 2, text: "Sor23523ting"}]);
         }, data));
 
         socket.on("addQuestionToQuiz", (data) => rights(4, function(data) {
-            /*
             insert.addQuestionToQuiz(db, data.quizId, data.questionId);
-            */
         }, data));
 
         socket.on("getAllQuestionsWithinCourse", (data) => rights(4, function(course) {
-            /*
-            let result = [];
-            let questions = get.allQuestionsWithinCourse(db, course);
-            for (let i = 0; i < questions.length; i++) {
-                let q = questions[i];
-                results.push({
-                    id: q.questionId,
-                    text: q.questionText,
-                    description: q.QuestionDescription,
-                    solutionType: q.typeName,
-                    solution: q.questionSolution
-                })
-            }
-            socket.emit("sendAllQuestionsWithinCourse", result);
-            */
-
-            socket.emit("sendAllQuestionsWithinCourse",
-            [
-                {
-                    id: 1, 
-                    text: "Hva er 2 + 2?", 
-                    description: "For å løse denne oppgaven må du bruke addisjon.",
-                    solutionType: "text",
-                    solution: "4"
-                },
-                {
-                    id: 2, 
-                    text: "Hvordan er 'bøttene' i denne hashtabellene laget?", 
-                    description: "<bilde>",
-                    solutionType: "text",
-                    solution: "linkedlist"
+            get.allQuestionsWithinCourse(db, course).then(questions => {
+                let result = [];
+                for (let i = 0; i < questions.length; i++) {
+                    let q = questions[i];
+                    results.push({
+                        id: q.id,
+                        text: q.text,
+                        description: q.description,
+                        solutionType: q.typeName,
+                        solution: q.solution
+                    })
                 }
-			]);
+                socket.emit("sendAllQuestionsWithinCourse", result);
+            });
         }, data));
 
         socket.on("addNewQuestion", (data) => rights(4, function(question) {
-            /*
-            if (question.object == undefined) {
-                insert.questionWithNoObject(db, question.text, question.description, question.solution, question.solutionType, question.courseCode);
-            } else {
-                insert.questionWithObject(db, question.text, question.description, question.object, question.solution, question.solutionType, question.courseCode);
-            }
-            */
+            insert.question(db, question.text, question.description, question.solution, 
+                question.solutionType, question.courseCode, question.object);
         }, data));
 
         socket.on("updateQuestion", (data) => rights(4, function(question) {
-            /*
-            update.question(db, question.id, question.text, question.description, question.object, question.solution, question.solutionType);
-            */
+            update.question(db, question.id, question.text, question.description, 
+                question.object, question.solution, question.solutionType);
         }, data));
 
         socket.on("getQuestionTypes", () => rights(4, function() {
-            /*
-            let result = [];
-            let types = get.questionTypes(db);
-            for (let i = 0; i < types.length; i++) {
-                result.push({
-                    value: types[i].questionType,
-                    text: types[i].typeName
-                })
-            }
-            socket.emit("sendQuestionTypes", result);
-            */
-
-            socket.emit("sendQuestionTypes", 
-            [
-                { value: "graph", text: "Graph"},
-                { value: "text", text: "Text"},
-                { value: "multipleChoice", text: "Multiple choice"}
-            ]);
+            get.questionTypes(db).then(types => {
+                let result = [];
+                for (let i = 0; i < types.length; i++) {
+                    result.push({
+                        value: types[i].questionType,
+                        text: types[i].typeName
+                    })
+                }
+                socket.emit("sendQuestionTypes", result);    
+            });
         }));
     });
 
