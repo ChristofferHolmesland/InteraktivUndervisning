@@ -120,3 +120,6 @@ App/server/public
 
 # database
 *.db
+
+# Latex
+*.aux
