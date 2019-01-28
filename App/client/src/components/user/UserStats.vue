@@ -10,11 +10,11 @@
 					</b-row>
 					<b-row>
 						<b-col cols="8"><h6>{{getLocale.correctAnswers}}</h6></b-col>
-						<b-col cols="4"><p>{{totalCorrectAnswers}} %</p></b-col>
+						<b-col cols="4"><p>{{totalCorrectAnswers}}</p></b-col>
 					</b-row>
 					<b-row>
 						<b-col cols="8"><h6>{{getLocale.incorrectAnswers}}</h6></b-col>
-						<b-col cols="4"><p>{{totalIncorrectAnswers}} %</p></b-col>
+						<b-col cols="4"><p>{{totalIncorrectAnswers}}</p></b-col>
 					</b-row>
 					<b-row>
 						<b-container>

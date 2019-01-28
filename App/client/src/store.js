@@ -10,6 +10,10 @@ export default new Vuex.Store({
       feideId: "",
       userRights: ""
     },
+		adminSubjects: [
+			{subjectName: "DAT110", userRights: 3},
+			{subjectName: "DAT200", userRights: 4}
+		],
     loggedIn: false,
     locale: {
       locale: undefined,
@@ -42,13 +46,18 @@ export default new Vuex.Store({
     getLocaleList: state => {
       return state.locale.localeList;
     },
-    getUser: state => data => {
-      let response = {};
-      if (data.username) response.username = state.user.username;
-      if (data.feideId) response.feideId = state.user.feideId;
-      if (data.userRights) response.userRights = state.user.userRights;
-      if (data.loggedIn) response.loggedIn = state.loggedIn;
-      return response;
-    }
+		getUser: (state) => (data) => {
+			let response = {};
+			if(data.username) response.username = state.user.username;
+			if(data.feideId) response.feideId = state.user.feideId;
+			if(data.userRights) response.userRights = state.user.userRights;
+			if(data.loggedIn) response.loggedIn = state.loggedIn;
+			if(data.adminSubjects) {
+				if(state.user.userRights > 1 && state.adminSubjects.length > 0){
+					response.adminSubjects = state.adminSubjects;
+				}
+			}
+			return response;
+		}
   }
 });

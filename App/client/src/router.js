@@ -40,6 +40,12 @@ export default new Router({
 				import("./views/Quiz.vue")
 		},
 		{
+			path: "/client/user-profile",
+			name: "userProfile",
+			component: () => 
+				import("./views/UserProfile.vue")
+		},
+		{
 			path: "/401",
 			name: "401",
 			component: () =>

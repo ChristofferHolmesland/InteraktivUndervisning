@@ -106,6 +106,47 @@ module.exports.listen = function(server, users) {
             socket.emit("getSessionsResponse", testData);
         }));
 
+        socket.on("getUserStats", function() {
+			if(!user || user.userRights < 2) return;
+			/* response should follow this format:
+			**	response 
+			**	{
+			**		totalCorrectAnswers: float,
+			**		totalQuizzes: Integer,
+			**		totalIncorrectAnswers: float,
+			**		quizList: [
+			**			{
+			**				quizName = String,
+			**				courseCode = String
+			**			}, ...
+			**		] 	// Should be a list of all quizzes that the user has participated in.
+			**			// Should be sorted where the last quiz is first
+			**	}
+			*/
+			let response = {};
+			
+			// Todo: write code to check database for stats
+
+			// Todo: remove dummy data
+			response = {
+				totalQuizzes: 2,
+				totalCorrectAnswers: 20,
+				totalIncorrectAnswers: 10,
+				quizList: [
+					{
+						quizName: "Grafer",
+						courseCode: "DAT200"
+					},
+					{
+						quizName: "stakk",
+						courseCode: "DAT200"
+					}
+				]
+			}
+			
+			socket.emit("getUserStatsResponse", response);
+		});
+
         socket.on("addNewSession", (data) => rights(4, function(session) {
             /*
             let c = session.course.split(" ");
