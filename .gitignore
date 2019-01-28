@@ -125,5 +125,5 @@ App/server/public
 *.aux
 *.out
 *.pdf
-*.sunctex.gz
+*.gz
 *.toc
