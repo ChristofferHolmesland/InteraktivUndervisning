@@ -5,6 +5,8 @@ const insert = require("./databaseFunctions").insert;
 const get = require("./databaseFunctions").get;
 const databasePath = path.resolve(__dirname, `../../database/${process.env.NODE_ENV}.db`);
 
+const fs = require("fs");
+
 module.exports.getDB = function setupDatabase() {
     return new Promise(function(resolve, reject) {
         //set up connection with the database
@@ -109,3 +111,7 @@ module.exports.getDB = function setupDatabase() {
         });
     });
 };
+
+module.exports.deleteDB = function deleteDatabase(){
+    fs.unlinkSync(databasePath);
+}

@@ -47,22 +47,35 @@ app.use(express.static(path.join(__dirname, '/public/')));
 
 // Database
 let db = undefined;
-require('./js/database/database').getDB().then(async function(value) {
+
+if (process.env.NODE_ENV === "dev") {
+    require('./js/database/database').deleteDB();
+}
+
+require('./js/database/database').getDB().then(function(value) {
     db = value;
-    const dummydata = require('./tools/insertDummyData');
-    await dummydata.InsertData(db);
+
+    if (process.env.NODE_ENV === "dev"){
+        const dummydata = require('./tools/insertDummyData');
+        dummydata.InsertData(db).catch(function(err) {
+            console.log(err);
+            console.log("2")
+            process.exit(1);
+        });
+    }
+    // Starts the server and the socket.io websocket
+    const server = app.listen(port, function() {
+        console.log(`Server listening on localhost:${ port }! Use ctrl + c to stop the server!`)
+    });
+    require('./js/iofunctions').listen(server, users, db);
 }).catch(function (err) {
     console.log(err);
+    console.log("1")
+    process.exit(1);
 });
 deasync.loopWhile(function() {
     return db != undefined;
 });
-
-// Starts the server and the socket.io websocket
-const server = app.listen(port, function() {
-    console.log(`Server listening on localhost:${ port }! Use ctrl + c to stop the server!`)
-});
-require('./js/iofunctions').listen(server, users, db);
 
 app.post('/login/feide', passport.authenticate('passport-openid-connect', {"successReturnToOrRedirect": "/client"}))
 app.get('/login/callback/feide', passport.authenticate('passport-openid-connect', {callback: true}), function(req, res) {

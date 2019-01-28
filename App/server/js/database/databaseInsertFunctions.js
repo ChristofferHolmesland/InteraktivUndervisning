@@ -30,17 +30,17 @@ const insert = {
 	},
 	question: function(db, questionText,questionDescription,questionSolution,Type,courseCode, questionObject) {
 		if (questionObject === undefined) {
-			return _questionNoObject(db, questionText, questionDescription, questionSolution, Type, courseCode);
+			return this._questionNoObject(db, questionText, questionDescription, questionSolution, Type, courseCode);
 		}
 
-		return _questionWithObject(db, questionText,questionDescription,questionObject,questionSolution,Type,courseCode);
+		return this._questionWithObject(db, questionText,questionDescription,questionObject,questionSolution,Type,courseCode);
 	},
 	_questionNoObject: function (db,questionText,questionDescription,questionSolution,Type,	courseCode) {
-		let statement = `INSERT INTO Question(text,description,solution,questionType,courseCode) VALUES('${questionText}','${questionDescription}',${questionSolution},${Type},${courseCode})`;
+		let statement = `INSERT INTO Question(text,description,solution,questionType,courseCode) VALUES('${questionText}','${questionDescription}','${questionSolution}',${Type},'${courseCode}')`;
 		return createPromise(db, statement);
 	},
 	_questionWithObject: function (db, questionText,questionDescription,questionObject,questionSolution,Type,courseCode) {
-		let statement = `INSERT INTO Question(text,description,object,solution,questionType,courseCode) VALUES('${questionText}',${questionDescription},${questionObject},${questionSolution},${Type},${courseCode})`;
+		let statement = `INSERT INTO Question(text,description,object,solution,questionType,courseCode) VALUES('${questionText}','${questionDescription}','${questionObject}','${questionSolution}',${Type},'${courseCode}')`;
 		return createPromise(db, statement);
 	},
 	_storeAnswerWithoutUser: function (db,answerObject,questionId) {
@@ -49,7 +49,7 @@ const insert = {
 	},
 	storeAnswer: function (db, answerObject, questionId, userId) {
 		if (userId === undefined) {
-			return _storeAnswerWithoutUser(db, answerObject, questionId);
+			return this._storeAnswerWithoutUser(db, answerObject, questionId);
 		}
 		let statement = `INSERT INTO Answer(object,questionId,userId) VALUES(${answerObject},${questionId},${userId})`;
 		return createPromise(db, statement);

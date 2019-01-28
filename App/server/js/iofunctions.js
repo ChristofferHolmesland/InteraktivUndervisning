@@ -655,7 +655,7 @@ module.exports.listen = function(server, users, db) {
                 let result = [];
                 for (let i = 0; i < questions.length; i++) {
                     let q = questions[i];
-                    results.push({
+                    result.push({
                         id: q.id,
                         text: q.text,
                         description: q.description,
@@ -682,8 +682,8 @@ module.exports.listen = function(server, users, db) {
                 let result = [];
                 for (let i = 0; i < types.length; i++) {
                     result.push({
-                        value: types[i].questionType,
-                        text: types[i].typeName
+                        value: types[i].type,
+                        text: types[i].name
                     })
                 }
                 socket.emit("sendQuestionTypes", result);    
