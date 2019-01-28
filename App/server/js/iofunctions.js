@@ -671,9 +671,8 @@ module.exports.listen = function(server, users, db) {
             insert.question(db, question.text, question.description, question.solution, 
                 question.solutionType, question.courseCode, question.object);
         }, data));
-
         socket.on("updateQuestion", (data) => rights(4, function(question) {
-            update.question(db, question.id, question.text, question.description, 
+            update.editQuestion(db, question.id, question.text, question.description, 
                 question.object, question.solution, question.solutionType);
         }, data));
 

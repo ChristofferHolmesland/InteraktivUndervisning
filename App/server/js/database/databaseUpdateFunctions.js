@@ -24,8 +24,8 @@ const update = {
 		let statement = `UPDATE question 
 						 SET text = '${questionText}', 
     					 description = '${questionDescription}', 
-    					 object = ${questionObject}, 
-    					 solution = ${questionSolution}, 
+    					 object = '${questionObject}', 
+    					 solution = '${questionSolution}', 
     					 questionType = ${questionType} 
 						 WHERE id = ${id};`;
 		return createPromise(db, statement);

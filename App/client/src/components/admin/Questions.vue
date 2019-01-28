@@ -26,7 +26,7 @@
 						<b-container>
 							<b-row>
 								<b-col cols="8">
-									{{item.id}}. {{item.text}}
+									{{item.text}}
 								</b-col>
 								<b-col cols="1">
 									<b-button @click="showShowQuestionModal(item)" >V</b-button>
