@@ -7,7 +7,7 @@ function createPromise(db, statement) {
 	});
 }
 
-const insert = module.exports = {
+const insert = {
 	feide: function (db,feideId,feideAccess,feideName) {
 		let statement = `INSERT INTO Feide(feideId,feideAccessToken,feideName) VALUES(${feideId},'${feideAccess}','${feideName}');`;
 		return createPromise(db, statement);
@@ -53,3 +53,5 @@ const insert = module.exports = {
 		return createPromise(db, statement);
 	},
 };
+
+module.exports.insert = insert;

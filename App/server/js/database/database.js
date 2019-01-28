@@ -1,7 +1,8 @@
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
 
-const dbFunctions = require("./databaseFunctions");
+const insert = require("./databaseFunctions").insert;
+const get = require("./databaseFunctions").get;
 const databasePath = path.resolve(__dirname, `../../database/${process.env.NODE_ENV}.db`);
 
 module.exports.getDB = function setupDatabase() {
@@ -94,9 +95,17 @@ module.exports.getDB = function setupDatabase() {
                 "    FOREIGN KEY (userId) REFERENCES User(userId)\n" +
                 ");", (err) => { if (err) reject(err) });
 
-            dbFunctions.insert.anonymousUser(db, 1)
-                .then(() => resolve(db))
-                .catch((err) => { reject(err); });
+            get.userById(db, 1).then((row) => {
+                if (row === undefined) {
+                    insert.anonymousUser(db, 1)
+                    .then(() => resolve(db))
+                    .catch((err) => reject(err));
+                } else {
+                    resolve(db);
+                }
+            }).catch((err) => {
+                reject(err);
+            })
         });
     });
 };

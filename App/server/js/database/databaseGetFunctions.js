@@ -1,4 +1,4 @@
-const get = module.exports =  {
+const get = {
     feideById: function(db, feideId) {
         let statement = `SELECT * FROM Feide WHERE feideId=${feideId};`;
         return new Promise((resolve, reject) => {
@@ -27,7 +27,7 @@ const get = module.exports =  {
         });
     },
     quizesToUser: function(db,feideId) {
-        let statment = `SELECT Q.quizName, C.courseCode
+        let statement = `SELECT Q.quizName, C.courseCode
                         FROM Quiz AS Q
                         INNER JOIN User_has_Quiz AS UQ ON UQ.quizId = Q.quizId
                         INNER JOIN Course AS C ON Q.courseCode = C.courseCode AND Q.courseSemester = C.courseSemester 
@@ -138,3 +138,5 @@ const get = module.exports =  {
         });
     }
 };
+
+module.exports.get = get;

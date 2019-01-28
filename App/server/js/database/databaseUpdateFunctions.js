@@ -7,7 +7,7 @@ function createPromise(db, statement) {
 	});
 }
 
-const update = module.exports = {
+const update = {
 	feideInfo: function (db,oldfeideId,feideId,feideAccess,feideName) {
 		let statement = `UPDATE Feide SET feideId=${feideId}, feideAccessToken='${feideAccess}', feideName='${feideName}' WHERE feideId=${oldfeideId};`;
 		return createPromise(db, statement);
@@ -31,3 +31,5 @@ const update = module.exports = {
 		return createPromise(db, statement);
 	}
 };
+
+module.exports.update = update;
