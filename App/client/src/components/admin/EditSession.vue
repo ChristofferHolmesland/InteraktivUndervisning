@@ -15,7 +15,7 @@
                 <b-form-select 	id="courseSelect"
                                 :options="getCourseOptions"
                                 v-model="newSession.course"
-                                @change="selectedCourseChanged">
+                                @change="selectedCourseChanged($event)">
                 </b-form-select>
             </b-form-group>
             <b-form-group 	id="questions"
@@ -24,13 +24,13 @@
                 <b-form-select 	id="questionsSelect"
                                 :options="getPossibleQuestions"
                                 v-model="selectedQuestion"
-                                @change="selectedQuestionChanged">
+                                @change="selectedQuestionChanged($event)">
                 </b-form-select>
             </b-form-group>
             <b-form-group>
                 {{ getLocale.selectedQuestions }}
                 <b-list-group-item class="border-0" :key="item.value" v-for="item in getCurrentQuestions">
-                   {{ item.value }}. {{ item.text }}
+                    {{ item.text }}
                 </b-list-group-item>
             </b-form-group>
         </b-form>
@@ -64,23 +64,23 @@
             callOkHandler: function() {
                 this.okHandler(this.newSession);
             },
-            selectedQuestionChanged: function() {
+            selectedQuestionChanged: function(event) {
                 let selectedQuestionText = "";
                 for (let i = 0; i < this.possibleQuestions.length; i++) {
                     let pq = this.possibleQuestions[i];
-                    if (pq.value == this.selectedQuestion) {
+                    if (pq.value == event) {
                         selectedQuestionText = pq.text;
                         break;
                     }
                 }
 
                 this.newSession.questions.push({
-                    id: this.selectedQuestion,
+                    id: event,
                     text: selectedQuestionText
                 });
             },
-            selectedCourseChanged: function() {
-                let c = this.newSession.course.split(" ");
+            selectedCourseChanged: function(event) {
+                let c = event.split(" ");
                 this.$socket.emit("getQuestionsInCourse", {code: c[0], semester: c[1]});
             }
         },

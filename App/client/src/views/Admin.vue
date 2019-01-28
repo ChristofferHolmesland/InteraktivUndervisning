@@ -1,5 +1,5 @@
 <template>
-	<div class="admin">
+	<div class="admin" fluid>
 		<component :is="shownComponent"></component>
 	</div>
 </template>

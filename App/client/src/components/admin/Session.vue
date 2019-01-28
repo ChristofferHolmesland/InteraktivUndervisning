@@ -1,90 +1,100 @@
 <template>
-    <div id="session">
-        <b-container>
-            <b-row>
-                <b-col lg="4">
-                    <p>{{getLocale.status}} {{getLocale.inactive}} | {{getLocale.active}} | {{getLocale.finished}}</p>
-                </b-col>
-                <b-col lg="2" style="text-align: right;">
-                    <p>{{getLocale.questionsAsked}} {{getSession.numberOfQuestions}}</p>
-                </b-col>
-            </b-row>
-            <b-row>
-                <b-col lg="3">
-                    <p>{{getLocale.participants}} {{getSession.participants}}</p>
-                </b-col>
-                <b-col lg="3" style="text-align: right;">
-                    <p>{{getLocale.correctAnswers}} {{getSession.correctAnswers}} %</p>
-                </b-col>
-            </b-row>
-            <b-row>
-                <b-col lg="6">
-                    <b-list-group>
-                        <b-list-group-item  v-for="(question, index) in getSession.questions" 
-                                            :key="question.text" 
-                                            style="cursor: pointer;" 
-                                            :id="index"
-                                            @click="changeQuestion($event)">
-                            {{question.text}} | {{question.correctAnswers}} %
-                        </b-list-group-item>
-                    </b-list-group>
-                </b-col>
-                <b-col lg="6">
-                    <!-- Add component to view question information. Need to be able to switch between information and incorrect answers -->
-                    <div v-if="showAnswer">
-                        <b-container>
-                            <b-row>
-                                <b-col>
-                                    <p>Answer: {{getAnswer}}</p>
-                                </b-col>
-                            </b-row>
-                            <b-row>
-                                <b-col>
-                                    <p v-if="incorrectAnswers[selectedAnswer].correct == 1"> Correct</p>
-                                    <p v-else-if="incorrectAnswers[selectedAnswer].correct == 0"> Incorrect</p>
-                                    <p v-else>User didn't know</p>
-                                </b-col>
-                            </b-row>
-                        </b-container>
-                    </div>
-                    <div v-else>
-                        <b-container>
-                            <b-row>
-                                <b-col>
-                                    <p>Text: {{getQuestionInfo.text}}</p>
-                                </b-col>
-                            </b-row>
-                            <b-row>
-                                <b-col>
-                                    <p>Description: {{getQuestionInfo.description}}</p>
-                                </b-col>
-                            </b-row>
-                            <b-row>
-                                <b-col>
-                                    <p>Correct answers: {{getQuestionInfo.correctAnswers}} %</p>
-                                </b-col>
-                            </b-row>
-                        </b-container>
-                    </div>
-                </b-col>
-            </b-row>
-            <b-row class="mt-3">
-                <b-col lg="12">
-                    <b-card-group style="overflow-x: scroll; max-width: 400px;">
-                        <!-- Add component to view incorrect answers -->
-                        <b-card v-for="(answer, index) in getIncorrectAnswers" 
-                                :key="index"
-                                style="cursor: pointer; min-width: 100px;"
-                                v-on:click="changeAnswer($event)"
-                                :id="index"
-                                no-body>
-                            Answer {{index}}
-                        </b-card>
-                    </b-card-group>
-                </b-col>
-            </b-row>
-        </b-container>
-    </div>
+    <b-container fluid>
+        <b-row>
+            <b-col lg="4" class="px-0">
+                <b-container>
+                    <b-row>
+                        <b-col lg="8">
+                            <p>{{getLocale.status}} {{getLocale.inactive}} | {{getLocale.active}} | {{getLocale.finished}}</p>
+                        </b-col>
+                        <b-col lg="4" style="text-align: right;">
+                            <p>{{getLocale.questionsAsked}} {{getSession.numberOfQuestions}}</p>
+                        </b-col>
+                    </b-row>
+                </b-container>
+            </b-col>
+        </b-row>
+        <b-row>
+            <b-col lg="2">
+                <p>{{getLocale.participants}} {{getSession.participants}}</p>
+            </b-col>
+            <b-col lg="2" style="text-align: right;">
+                <p>{{getLocale.correctAnswers}} {{getSession.correctAnswers}} %</p>
+            </b-col>
+        </b-row>
+        <b-row>
+            <b-col lg="4">
+                <b-list-group>
+                    <b-list-group-item  v-for="(question, index) in getSession.questions" 
+                                        :key="question.text" 
+                                        style="cursor: pointer;" 
+                                        :id="index"
+                                        @click="changeQuestion($event)">
+                        {{question.text}} | {{question.correctAnswers}} %
+                    </b-list-group-item>
+                </b-list-group>
+            </b-col>
+            <b-col lg="6">
+                <!-- Add component to view question information. Need to be able to switch between information and incorrect answers -->
+                <div v-if="showAnswer">
+                    <b-container>
+                        <b-row>
+                            <b-col>
+                                <p>Answer: {{getAnswer}}</p>
+                            </b-col>
+                        </b-row>
+                        <b-row>
+                            <b-col>
+                                <p v-if="incorrectAnswers[selectedAnswer].correct == 1"> Correct</p>
+                                <p v-else-if="incorrectAnswers[selectedAnswer].correct == 0"> Incorrect</p>
+                                <p v-else>User didn't know</p>
+                            </b-col>
+                        </b-row>
+                    </b-container>
+                </div>
+                <div v-else>
+                    <b-container>
+                        <b-row>
+                            <b-col>
+                                <p>Text: {{getQuestionInfo.text}}</p>
+                            </b-col>
+                        </b-row>
+                        <b-row>
+                            <b-col>
+                                <p>Description: {{getQuestionInfo.description}}</p>
+                            </b-col>
+                        </b-row>
+                        <b-row>
+                            <b-col>
+                                <p>Correct answers: {{getQuestionInfo.correctAnswers}} %</p>
+                            </b-col>
+                        </b-row>
+                    </b-container>
+                </div>
+            </b-col>
+        </b-row>
+        <b-row class="mt-3">
+            <b-col lg="12">
+                <div style="overflow-x: scroll; max-width: 100%; white-space: nowrap;">
+                    <!-- Add component to view incorrect answers -->
+                    <ul class="list-inline">                        
+                        <li v-for="(answer, index) in getIncorrectAnswers" 
+                            :key="index"
+                            class="list-inline-item"
+                            >
+                            <b-card 
+                                    style="cursor: pointer; min-width: 100px; min-height: 100px;"
+                                    v-on:click="changeAnswer($event)"
+                                    :id="index"
+                                    no-body>
+                                Answer {{index}}
+                            </b-card>
+                        </li>
+                    </ul>
+                </div>
+            </b-col>
+        </b-row>
+    </b-container>
 </template>
 
 <script>
@@ -114,7 +124,6 @@ export default {
     computed: {
         getSession() {
             if(this.session == undefined) return {};
-            console.log(this.session);
             return this.session;
         },
         getLocale() {

@@ -1,7 +1,7 @@
 <template>
-	<b-container id="sessions" class="mx-0 mt-3">
+	<b-container id="sessions" class="mx-0 mt-3" fluid>
 		<b-row>
-			<b-col lg="4">
+			<b-col lg="3">
 				<b-container>
 					<b-row>
 						<b-col lg="10" class="pr-0">
@@ -16,11 +16,11 @@
 					<b-row>
 						<b-col>
 							<b-list-group style="max-height:400px">
-								<b-list-group-item v-for="(session, key) in getSessionsList" :key="session"
+								<b-list-group-item v-for="session in getSessionsList" :key="session.id"
 								@click="changeSelected($event)"
-								:id="key"
+								:id="session.id"
 								style="cursor: pointer;">
-									{{session}}
+									{{session.quizName}}
 								</b-list-group-item>
 							</b-list-group>
 						</b-col>
@@ -46,18 +46,18 @@
 			}
 		},
 		created() {
-			this.$socket.emit("getSessions");
+			this.$socket.emit("getSessions", {code:"DAT200", semester:"18H"});
 		},
 		sockets: {
 			getSessionsResponse(data) {
-				if(data.sessions.length != 0){
-					this.sessionsList = data.sessions;
-					this.selectedSession = Object.keys(data.sessions)[0];
-        			this.$socket.emit("getSession", this.selectedSession)
+				if(data.length != 0){
+					this.sessionsList = data;
+					this.selectedSession = data[0];
+        			this.$socket.emit("getSession", this.getSelectedSessionId)
 				}
 			},
 			addNewSessionDone() {
-				this.$socket.emit("getSessions");
+				this.$socket.emit("getSessions", {code:"DAT200", semester:"18H"});
 			}
 		},
 		components: {
@@ -78,7 +78,7 @@
 				return this.sessionsList;
 			},
 			getSelectedSessionId() {
-				return this.selectedSession;
+				return this.selectedSession.id;
 			}
 		}
     }
