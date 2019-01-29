@@ -8,9 +8,7 @@ const quiz = require("../quiz.js").Quiz;
 const question = require("../quiz.js").Question;
 const answer = require("../quiz.js").Answer;
 
-let quizzes = new Map();
-
-module.exports.admin = function(socket, db) {
+module.exports.admin = function(socket, db, quizzes) {
     socket.on("adminStarted", function() {
             
     });
@@ -39,35 +37,6 @@ module.exports.admin = function(socket, db) {
                 });
             }); */
             socket.emit("getSessionsResponse", quizzes);
-        });
-    });
-
-    socket.on("getUserStats", function() {
-        /* 
-        response should follow this format: 
-        {
-            totalCorrectAnswers: float,
-            totalQuizzes: Integer,
-            totalIncorrectAnswers: float,
-            quizList: [
-                {
-                    quizName = String,
-                    courseCode = String
-                }, ...
-            ] 	// Should be a list of all quizzes that the user has participated in.
-                // Should be sorted where the last quiz is first
-        }
-        */
-        get.quizzesToUser(db, user.feide.id).then(async function(quizzes) {
-            result = {};
-            result.quizList = quizzes;
-            result.totalQuizzes = quizzes.length;
-            
-            let correct = await get.amountCorrectAnswersForUser(db, user.id);
-            let wrong = await get.amountWrongAnswersForUser(db, user.id);
-            result.totalCorrectAnswers = correct;
-            result.totalIncorrectAnswers = wrong;
-            socket.emit("getUserStatsResponse", result);
         });
     });
 
@@ -151,8 +120,8 @@ module.exports.admin = function(socket, db) {
     });
 
     socket.on("initializeQuiz", function(quizId){
-        socket.join("quizId");
-        let quizId = generalFunctions.calculateQuizCode(quizzes);
+        let quizCode = generalFunctions.calculateQuizCode(quizzes);
+        socket.join(quizCode);
         let tempQuiz = new quiz();
         socket.emit("initializeQuizResponse", quizId);
     });
@@ -168,7 +137,6 @@ module.exports.admin = function(socket, db) {
             questionDescription: "Description for question 1. <solution=test>",
             questionType: "text"
         }
-        socket.emit("startQuizResponse", response)
     });
 
     socket.on("getQuizWithinCourse", function(course) {   

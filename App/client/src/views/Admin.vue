@@ -23,7 +23,7 @@
 			"sessions": Sessions
 		},
 		created() {
-			this.$socket.emit("adminStarted");
+			this.$socket.emit("verifyUserLevel", 4);
 			let componentName = this.getLastPathEntry(this.$route.path);
 			this.shownComponent = componentName;
 		},

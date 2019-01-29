@@ -17,6 +17,7 @@ export default {
         }
     },
     created() {
+        this.$socket.emit("verifyUserLevel", 3);
         this.$socket.emit("startQuizWaitingRoom", this.quizId);
     },
     sockets: {

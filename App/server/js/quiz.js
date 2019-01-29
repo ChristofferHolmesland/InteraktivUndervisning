@@ -34,7 +34,7 @@ class Question {
     questionType
     courseCode
     */
-    constructor(questionId, questionText, questionDescription, questionObject, questionSolution, questionType, courseCode) {
+    constructor(questionId, questionText, questionDescription, questionObject, questionSolution, questionType, courseCode, time) {
         this.questionId = questionId;
         this.questionText = questionText;
         this.questionDescription = questionDescription;
@@ -42,6 +42,7 @@ class Question {
         this.questionSolution = questionSolution;
         this.questionType = questionType;
         this.courseCode = courseCode;
+        this.time = time;
     }
 }
 

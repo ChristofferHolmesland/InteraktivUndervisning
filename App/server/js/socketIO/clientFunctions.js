@@ -1,14 +1,6 @@
-module.exports.admin = function(socket, db) {
-    socket.on("clientStarted", () => rights(1, function() {}))
+module.exports.client = function(socket, db, quizzes) {
 
-    socket.on("clientLoginInfoRequest", function() {
-        if(user){
-            socket.emit("clientLoginInfoResponse", {
-                "username": user.userName, 
-                "loggedIn": true,
-                "userRights": user.userRights,
-                "feideId": user.feide.idNumber
-            });
-        }
+    socket.on("clientAnswered", function() {
     });
+
 }

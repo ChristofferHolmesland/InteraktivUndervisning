@@ -1,9 +1,13 @@
+const customReject = function(err, func){
+    return new Error(`\n\nError in function: ${func} \n\n ${err}`)
+}
+
 const get = {
     feideById: function(db, feideId) {
         let statement = `SELECT * FROM Feide WHERE id=${feideId};`;
         return new Promise((resolve, reject) => {
             db.get(statement, (err,row) => {
-                if (err) reject(err);
+                if (err) reject(customReject(err, "feideById"));
                 resolve(row);
             });
         });
@@ -12,7 +16,7 @@ const get = {
         let statement = `SELECT * FROM User WHERE id=${userId};`;
         return new Promise((resolve, reject) => {
             db.get(statement, (err,row) => {
-                if (err) reject(err);
+                if (err) reject(customReject(err, "userById"));
                 resolve(row);
             });
         });
@@ -21,7 +25,7 @@ const get = {
         let statement = `SELECT userid FROM User WHERE feideId = ${feideId} LIMIT 1`;
         return new Promise((resolve, reject) => {
             db.get(statement, (err,row) => {
-                if (err) reject(err);
+                if (err) reject(customReject(err, "useridByFeideId"));
                 resolve(row);
             });
         });
@@ -30,7 +34,7 @@ const get = {
         let statement = `SELECT * FROM Quiz WHERE id = ${quizId}`;
         return new Promise((resolve, reject) => {
             db.get(statement, (err,row) => {
-                if (err) reject(err);
+                if (err) reject(customReject(err, "quizById"));
                 resolve(row);
             });
         });
@@ -43,7 +47,7 @@ const get = {
                         WHERE UQ.userId = (SELECT U.id FROM User AS U WHERE U.feideid= ${feideId} LIMIT 1)`;
         return new Promise((resolve, reject) => {
             db.all(statement, (err,rows) => {
-                if (err) reject(err);
+                if (err) reject(customReject(err, "quizzesToUser"));
                 resolve(rows);
             });
         });
@@ -52,7 +56,7 @@ const get = {
         let statement = `SELECT userId FROM User_Has_Quiz WHERE quizId = ${quizId}`;
         return new Promise((resolve, reject) => {
             db.all(statement, (err,rows) => {
-                if (err) reject(err);
+                if (err) reject(customReject(err, "amountOfUsersInQuiz"));
                 resolve(rows.length);
             });
         });
@@ -61,7 +65,7 @@ const get = {
         let statement = `SELECT quizId FROM User_Has_Quiz WHERE userId = ${userId}`;
         return new Promise((resolve, reject) => {
             db.all(statement, (err,rows) => {
-                if (err) reject(err);
+                if (err) reject(customReject(err, "amountOfquizzesUserParticipateIn"));
                 resolve(rows.length);
             });
         });
@@ -74,7 +78,7 @@ const get = {
                          WHERE QQ.quizId = ${quizId};`;
         return new Promise((resolve, reject) => {
             db.all(statement, (err,rows) => {
-                if (err) reject(err);
+                if (err) reject(customReject(err, "allQuestionInQuiz"));
                 resolve(rows);
             });
         });
@@ -83,7 +87,7 @@ const get = {
         let statement = `SELECT * FROM Answer WHERE quizHasQuestionId = ${quizHasQuestionId}`;
         return new Promise((resolve, reject) => {
             db.all(statement, (err,rows) => {
-                if (err) reject(err);
+                if (err) reject(customReject(err, "allAnswerToQuestion"));
                 resolve(rows);
             });
         });
@@ -96,7 +100,7 @@ const get = {
                          GROUP BY Q.id;`;
         return new Promise((resolve, reject) => {
             db.all(statement, (err,rows) => {
-                if (err) reject(err);
+                if (err) reject(customReject(err, "allQuizWithinCourse"));
                 resolve(rows);
             });
         });
@@ -107,7 +111,7 @@ const get = {
                          WHERE result = 1 AND userId = ${userid};`;
         return new Promise((resolve, reject) => {
             db.all(statement, (err,rows) => {
-                if (err) reject(err);
+                if (err) reject(customReject(err, "amountCorrectAnswersForUser"));
                 resolve(rows.length);
             });
         });
@@ -118,7 +122,7 @@ const get = {
                      WHERE result = 0 AND userId = ${userid};`;
         return new Promise((resolve, reject) => {
             db.all(statement, (err,rows) => {
-                if (err) reject(err);
+                if (err) reject(customReject(err, "amountWrongAnswersForUser"));
                 resolve(rows.length);
             });
         });
@@ -129,7 +133,7 @@ const get = {
                          WHERE userId = ${userid};`;
         return new Promise((resolve, reject) => {
             db.all(statement, (err,rows) => {
-                if (err) reject(err);
+                if (err) reject(customReject(err, "amountAnswerForUser"));
                 resolve(rows.length);
             });
         });
@@ -141,7 +145,7 @@ const get = {
                          WHERE Q.courseCode = "${course}";`;
         return new Promise((resolve, reject) => {
             db.all(statement, (err,rows) => {
-                if (err) reject(err);
+                if (err) reject(customReject(err, "allQuestionsWithinCourse"));
                 resolve(rows);
             });
         });
@@ -150,7 +154,7 @@ const get = {
         let statement = `SELECT * FROM Type;`;
         return new Promise((resolve, reject) => {
             db.all(statement, (err,rows) => {
-                if (err) reject(err);
+                if (err) reject(customReject(err, "questionTypes"));
                 resolve(rows);
             });
         });
@@ -159,7 +163,7 @@ const get = {
         let statement = `SELECT * FROM Course`;
         return new Promise((resolve, reject) => {
             db.all(statement, (err,rows) => {
-                if (err) reject(err);
+                if (err) reject(customReject(err, "allCourses"));
                 resolve(rows);
             });
         });
@@ -168,7 +172,7 @@ const get = {
         let statement = `SELECT courseSemester AS semester, courseCode AS code FROM UserRight WHERE feideId = ${feideId}`;
         return new Promise((resolve, reject) => {
             db.all(statement, (err,rows) => {
-                if (err) reject(err);
+                if (err) reject(customReject(err, "userCourses"));
                 resolve(rows);
             });
         });

@@ -20,7 +20,7 @@
 			JoinRoom
 		},
 		created() {
-			this.$socket.emit("clientStarted");
+			this.$socket.emit("verifyUserLevel", 1);
 		}
 	}
 </script>

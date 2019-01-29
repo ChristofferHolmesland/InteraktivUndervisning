@@ -1,4 +1,4 @@
-module.exports.admin = function(socket, db) {
+module.exports.studentAssistant = function(socket, db) {
     socket.on("studAssStarted", function() {
         
     });
