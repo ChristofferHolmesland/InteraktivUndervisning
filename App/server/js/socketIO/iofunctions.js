@@ -1,12 +1,20 @@
 const socketio = require('socket.io');
-const locales = (require("../localization/localeLoader.js")).locales;
-const User = (require("./user.js")).User;
-const anonymousNames = (require("./anonymousName.js")).Animals;
+const locales = (require("../../localization/localeLoader.js")).locales;
+const User = (require("../user.js")).User;
+const anonymousNames = (require("../anonymousName.js")).Animals;
 const cookie = require('cookie');
 
-const get = require("./database/databaseFunctions").get;
-const insert = require("./database/databaseFunctions").insert;
-const update = require("./database/databaseFunctions").update;
+const get = require("../database/databaseFunctions").get;
+const insert = require("../database/databaseFunctions").insert;
+const update = require("../database/databaseFunctions").update;
+
+const generalFunctions =  require("../generalFunctions.js").functions;
+
+const quiz = require("../quiz.js").Quiz;
+const question = require("../quiz.js").Question;
+const answer = require("../quiz.js").Answer;
+
+let quizzes = new Map();
 
 module.exports.listen = function(server, users, db) {
     io = socketio.listen(server, {
@@ -31,6 +39,7 @@ module.exports.listen = function(server, users, db) {
         //--------------------------------------------//
 
         socket.on('disconnect', function(){
+			// TODO handle socket disconnect
         });
 
         socket.on("signOutRequest", function(){
@@ -231,7 +240,9 @@ module.exports.listen = function(server, users, db) {
         }, data));
 
         socket.on("initializeQuiz", function(quizId){
-            socket.join("quizId");
+			socket.join("quizId");
+			let quizId = generalFunctions.calculateQuizCode(quizzes);
+			let tempQuiz = new quiz();
             socket.emit("initializeQuizResponse", quizId);
         });
         
@@ -249,7 +260,7 @@ module.exports.listen = function(server, users, db) {
             socket.emit("startQuizResponse", response)
         });
 
-      socket.on("getQuizWithinCourse", (data) => rights(4, function(course) {   
+      	socket.on("getQuizWithinCourse", (data) => rights(4, function(course) {   
             get.allQuizWithinCourse(db, course.code, course.semester).then((quizzes) => {
                 let result = [];
                 for (let i = 0; i < quizzes.length; i++) {

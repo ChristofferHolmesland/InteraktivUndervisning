@@ -67,7 +67,7 @@ require('./js/database/database').getDB().then(function(value) {
     const server = app.listen(port, function() {
         console.log(`Server listening on localhost:${ port }! Use ctrl + c to stop the server!`)
     });
-    require('./js/iofunctions').listen(server, users, db);
+    require('./js/socketIO/iofunctions').listen(server, users, db);
 }).catch(function (err) {
     console.log(err);
     console.log("1")

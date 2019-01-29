@@ -7,7 +7,7 @@ class Quiz {
     courseSemester
     courseName
     */
-    constructor(quizId, quizName, status, userList, courseSemester, courseName, questionList) {
+    constructor(quizId, quizName, status, userList, courseSemester, courseName, questionList, quizCode) {
         this.quizId = quizId;
         this.quizName = quizName;
         this.status = status;
@@ -15,6 +15,7 @@ class Quiz {
         this.courseSemester = courseSemester;
         this.courseName = courseName;
         this.questionList = questionList;
+        this.quizCode = quizCode;
     }
 
     addUser(user) {
