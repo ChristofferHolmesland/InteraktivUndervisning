@@ -72,6 +72,7 @@ module.exports.getDB = function setupDatabase() {
                 "    text TEXT NOT NULL,\n" +
                 "    description TEXT,\n" +
                 "    object BLOB,\n" +
+                "    time INT,\n" +
                 "    solution BLOB NOT NULL,\n" +
                 "    questionType INTEGER NOT NULL,\n" +
                 "    courseCode TEXT NOT NULL,\n" +
@@ -91,9 +92,9 @@ module.exports.getDB = function setupDatabase() {
                 "    id INTEGER PRIMARY KEY AutoIncrement,\n" +
                 "    object BLOB NOT NULL,\n" +
                 "    result INTEGER NOT NULL,\n" +
-                "    questionId INTEGER NOT NULL,\n" +
+                "    quizHasQuestionId INTEGER NOT NULL,\n" +
                 "    userId TEXT,\n" +
-                "    FOREIGN KEY (questionId) REFERENCES Question(id) ON DELETE CASCADE ON UPDATE CASCADE,\n" +
+                "    FOREIGN KEY (quizHasQuestionId) REFERENCES Quiz_has_Question(id),\n" +
                 "    FOREIGN KEY (userId) REFERENCES User(id)\n" +
                 ");", (err) => { if (err) reject(err) });
 
