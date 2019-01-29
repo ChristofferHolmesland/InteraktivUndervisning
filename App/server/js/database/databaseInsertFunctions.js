@@ -28,30 +28,30 @@ const insert = {
 		let statement = `INSERT INTO Course(semester,code,name) VALUES ('${courseSemester}','${courseCode}','${courseName}'`;
 		return createPromise(db, statement);
 	},
-	question: function(db, questionText,questionDescription,questionSolution,Type,courseCode, questionObject) {
+	question: function(db, questionText,questionDescription,questionSolution, time, Type, courseCode, questionObject) {
 		if (questionObject === undefined) {
-			return this._questionNoObject(db, questionText, questionDescription, questionSolution, Type, courseCode);
+			return this._questionNoObject(db, questionText, questionDescription, questionSolution, time, Type, courseCode);
 		}
 
-		return this._questionWithObject(db, questionText,questionDescription,questionObject,questionSolution,Type,courseCode);
+		return this._questionWithObject(db, questionText,questionDescription,questionObject,questionSolution, time, Type, courseCode);
 	},
-	_questionNoObject: function (db,questionText,questionDescription,questionSolution,Type,	courseCode) {
-		let statement = `INSERT INTO Question(text,description,solution,questionType,courseCode) VALUES('${questionText}','${questionDescription}','${questionSolution}',${Type},'${courseCode}')`;
+	_questionNoObject: function (db,questionText,questionDescription,questionSolution, time, Type, courseCode) {
+		let statement = `INSERT INTO Question(text,description,solution,time,questionType,courseCode) VALUES('${questionText}','${questionDescription}','${questionSolution}',${time},${Type},'${courseCode}')`;
 		return createPromise(db, statement);
 	},
-	_questionWithObject: function (db, questionText,questionDescription,questionObject,questionSolution,Type,courseCode) {
-		let statement = `INSERT INTO Question(text,description,object,solution,questionType,courseCode) VALUES('${questionText}','${questionDescription}','${questionObject}','${questionSolution}',${Type},'${courseCode}')`;
+	_questionWithObject: function (db, questionText,questionDescription,questionObject,questionSolution, time, Type, courseCode) {
+		let statement = `INSERT INTO Question(text,description,object,solution,time,questionType,courseCode) VALUES('${questionText}','${questionDescription}','${questionObject}','${questionSolution}',${time},${Type},'${courseCode}')`;
 		return createPromise(db, statement);
-	},
+	},	//ask Christoffer
 	_storeAnswerWithoutUser: function (db,answerObject,quizHasQuestionId) {
-		let statement = `INSERT INTO Answer(object,quizHasQuestionId) VALUES(${answerObject},${quizHasQuestionId})`;
+		let statement = `INSERT INTO Answer(object,result,quizHasQuestionId) VALUES(${answerObject},${quizHasQuestionId})`;
 		return createPromise(db, statement);
 	},
-	storeAnswer: function (db, answerObject, quizHasQuestionId, userId) {
+	storeAnswer: function (db, answerObject,result, quizHasQuestionId, userId) {
 		if (userId === undefined) {
-			return this._storeAnswerWithoutUser(db, answerObject, questionId);
+			return this._storeAnswerWithoutUser(db, answerObject, quizHasQuestionId);
 		}
-		let statement = `INSERT INTO Answer(object,quizHasQuestionId,userId) VALUES(${answerObject},${quizHasQuestionId},${userId})`;
+		let statement = `INSERT INTO Answer(object,result,quizHasQuestionId,userId) VALUES(${answerObject},${quizHasQuestionId},${userId})`;
 		return createPromise(db, statement);
 	},
 	addUserToQuiz: function (db,userId,quizId) {

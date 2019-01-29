@@ -20,12 +20,13 @@ const update = {
 		let statement = `UPDATE Question SET object = ${questionobject} WHERE id= ${questionId}`;
 		return createPromise(db, statement);
 	},
-	editQuestion: function(db, id, questionText, questionDescription, questionObject, questionSolution, questionType) {
+	editQuestion: function(db, id, questionText, questionDescription, questionObject, questionSolution, questionType,time) {
 		let statement = `UPDATE question 
 						 SET text = '${questionText}', 
     					 description = '${questionDescription}', 
     					 object = '${questionObject}', 
-    					 solution = '${questionSolution}', 
+    					 solution = '${questionSolution}',
+    					 time = ${time}, 
     					 questionType = ${questionType} 
 						 WHERE id = ${id};`;
 		return createPromise(db, statement);
