@@ -3,7 +3,7 @@
 		<b-row>
 			<b-col lg="3">
 				<b-container>
-					<b-row>
+					<b-row class="mb-3">
 						<b-col lg="10" class="pr-0">
 							<b-form-input placeholder="Search">
 							</b-form-input>
@@ -15,12 +15,12 @@
 					</b-row>
 					<b-row>
 						<b-col>
-							<b-list-group style="max-height:400px">
+							<b-list-group style="overflow-y: scroll; max-height: 750px;">
 								<b-list-group-item v-for="session in getSessionsList" :key="session.id"
 								@click="changeSelected($event)"
 								:id="session.id"
 								style="cursor: pointer;">
-									{{session.quizName}}
+									{{session.name}}
 								</b-list-group-item>
 							</b-list-group>
 						</b-col>

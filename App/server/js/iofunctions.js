@@ -182,7 +182,6 @@ module.exports.listen = function(server, users, db) {
                 let questions = await get.allQuestionInQuiz(db, quiz.id);
                 for (let i = 0; i < questions.length; i++) {
                     let question = questions[i];
-                    console.log(question)
                     let answer = await get.allAnswerToQuestion(db, question.id);
                     let answers = [];
                     let correctAnswers = 0;
@@ -202,6 +201,7 @@ module.exports.listen = function(server, users, db) {
                     });
 
                     result.questions.push({
+                        "qqId": question.qqId, 
                         "text": question.text,
                         "description": question.description,
                         "correctAnswers": Math.round(correctAnswers / quiz.participants * 100),
@@ -234,7 +234,7 @@ module.exports.listen = function(server, users, db) {
         });
 
       socket.on("getQuizWithinCourse", (data) => rights(4, function(course) {   
-            get.allQuizWithinCourse(db, course).then((quizzes) => {
+            get.allQuizWithinCourse(db, course.code, course.semester).then((quizzes) => {
                 let result = [];
                 for (let i = 0; i < quizzes.length; i++) {
                     result.push({
@@ -245,7 +245,6 @@ module.exports.listen = function(server, users, db) {
                 socket.emit("sendQuizWithinCourse", result);
             });
             
-            //socket.emit("sendQuizWithinCourse", [{value: 1, text: "Grap222hs"}, {value: 2, text: "Sor23523ting"}]);
         }, data));
 
         socket.on("addQuestionToQuiz", (data) => rights(4, function(data) {
@@ -261,7 +260,7 @@ module.exports.listen = function(server, users, db) {
                         id: q.id,
                         text: q.text,
                         description: q.description,
-                        solutionType: q.typeName,
+                        solutionType: q.type,
                         solution: q.solution
                     })
                 }
@@ -275,7 +274,7 @@ module.exports.listen = function(server, users, db) {
         }, data));
 
         socket.on("updateQuestion", (data) => rights(4, function(question) {
-            update.question(db, question.id, question.text, question.description, 
+            update.editQuestion(db, question.id, question.text, question.description, 
                 question.object, question.solution, question.solutionType);
         }, data));
 

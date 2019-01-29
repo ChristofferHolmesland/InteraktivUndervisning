@@ -80,9 +80,9 @@ module.exports.getDB = function setupDatabase() {
                 ");", (err) => { if (err) reject(err) });
 
             db.run("CREATE TABLE IF NOT EXISTS Quiz_has_Question(\n" +
+                "    id INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
                 "    quizId INTEGER,\n" +
                 "    questionId INTEGER,\n" +
-                "    PRIMARY KEY(quizId,questionId)\n" +
                 "    FOREIGN KEY (quizId) REFERENCES Quiz(id) ON DELETE CASCADE ON UPDATE CASCADE\n" +
                 "    FOREIGN KEY (questionId) REFERENCES Question(id) ON DELETE CASCADE ON UPDATE CASCADE\n" +
                 ");", (err) => { if (err) reject(err) });

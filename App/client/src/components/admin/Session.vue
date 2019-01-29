@@ -1,37 +1,40 @@
 <template>
     <b-container fluid>
-        <b-row>
-            <b-col lg="4" class="px-0">
-                <b-container>
+        <b-row class="border-bottom mb-3">
+            <b-col cols="4">
+                <p>{{getLocale.status}} {{getLocale.inactive}} | {{getLocale.active}} | {{getLocale.finished}}</p>
+            </b-col>
+            <b-col cols="8">
+                <b-container class="px-0">
                     <b-row>
-                        <b-col lg="8">
-                            <p>{{getLocale.status}} {{getLocale.inactive}} | {{getLocale.active}} | {{getLocale.finished}}</p>
-                        </b-col>
-                        <b-col lg="4" style="text-align: right;">
+                        <b-col>
                             <p>{{getLocale.questionsAsked}} {{getSession.numberOfQuestions}}</p>
+                        </b-col>
+                        <b-col>
+                            <p>{{getLocale.participants}} {{getSession.participants}}</p>
+                        </b-col>
+                        <b-col>
+                            <p>{{getLocale.correctAnswers}} {{getSession.correctAnswers}} %</p>
                         </b-col>
                     </b-row>
                 </b-container>
             </b-col>
         </b-row>
         <b-row>
-            <b-col lg="2">
-                <p>{{getLocale.participants}} {{getSession.participants}}</p>
-            </b-col>
-            <b-col lg="2" style="text-align: right;">
-                <p>{{getLocale.correctAnswers}} {{getSession.correctAnswers}} %</p>
-            </b-col>
-        </b-row>
-        <b-row>
             <b-col lg="4">
-                <b-list-group>
+                <b-list-group style="overflow-y: scroll; min-height: 600px; height: 650px; max-height: 650px;">
                     <b-list-group-item  v-for="(question, index) in getSession.questions" 
-                                        :key="question.text" 
+                                        :key="question.qqId" 
                                         style="cursor: pointer;" 
                                         :id="index"
                                         @click="changeQuestion($event)">
                         {{question.text}} | {{question.correctAnswers}} %
                     </b-list-group-item>
+                    <div v-if="getSession.questions.length < 15">
+                        <b-list-group-item v-for="index in 20" :key="index + getSession.questions.length">
+                            <p> </p>
+                        </b-list-group-item>
+                    </div>
                 </b-list-group>
             </b-col>
             <b-col lg="6">

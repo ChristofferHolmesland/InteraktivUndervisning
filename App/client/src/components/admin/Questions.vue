@@ -68,8 +68,8 @@
 			ShowQuestion,
 			AddQuestionToSession
 		},
-		mounted() {
-			this.getQuestionsFromDatabase();
+		created() {
+			this.$socket.emit("getAllQuestionsWithinCourse", "DAT200");
 		},
 		computed: {
 			currentQuestions: function() {

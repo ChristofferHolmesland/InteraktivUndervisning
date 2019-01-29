@@ -40,7 +40,7 @@
         methods: {
             onShown: function() {
                 // TODO: Change "DAT200" to depend on the current course
-                this.$socket.emit("getQuizWithinCourse", "DAT200");
+                this.$socket.emit("getQuizWithinCourse", {code: "DAT200", semester:"18H"});
             },
             okHandler: function() {
                 this.$socket.emit("addQuestionToQuiz", {

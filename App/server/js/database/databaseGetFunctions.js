@@ -67,7 +67,7 @@ const get = {
         });
     },
     allQuestionInQuiz: function (db,quizId) {
-        let statement = `SELECT Q.id, Q.text,Q.description,Q.object,Q.solution,T.type,QQ.quizId
+        let statement = `SELECT Q.id, Q.text,Q.description,Q.object,Q.solution,T.type,QQ.id AS qqID
                          FROM Question AS Q
                          INNER JOIN Quiz_has_Question AS QQ ON QQ.questionId = Q.id
                          INNER JOIN Type AS T ON T.type = Q.questionType
@@ -89,7 +89,7 @@ const get = {
         });
     },
     allQuizWithinCourse: function(db, courseCode, courseSemester) {
-        let statement = `SELECT Q.id, C.name AS courseName, Q.name AS quizName, C.code, Q.courseSemester
+        let statement = `SELECT Q.id, C.name AS courseName, Q.name AS name, C.code, Q.courseSemester
                          FROM Quiz AS Q
                          INNER JOIN Course AS C ON Q.courseCode = C.code 
                          WHERE C.code = '${courseCode}' AND C.semester = '${courseSemester}' 
@@ -135,7 +135,7 @@ const get = {
         });
     },
     allQuestionsWithinCourse(db, course) {
-        let statement = `SELECT Q.id,Q.text,Q.description,Q.object,Q.solution,T.name,Q.courseCode
+        let statement = `SELECT Q.id,Q.text,Q.description,Q.object,Q.solution,T.type,Q.courseCode
                          FROM Question AS Q
                          INNER JOIN Type AS T ON Q.questionType = T.type
                          WHERE Q.courseCode = "${course}";`;
