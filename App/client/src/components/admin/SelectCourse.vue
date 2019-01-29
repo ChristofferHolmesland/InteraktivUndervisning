@@ -14,12 +14,16 @@
                 selectedCourse: ""
             }
         },
+        props: {
+            changeHandler: Function
+        },
         created() {
             this.selectedCourse = this.$store.getters.getSelectedCourse;
         },
         methods: {
             selectedCourseChanged(event) {
                 this.$store.commit("setSelectedCourse", event);
+                this.changeHandler(event);
             }
         },
         computed: {

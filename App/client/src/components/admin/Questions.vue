@@ -78,7 +78,7 @@
 					let q = this.questionList[i];
 					if (q.id == this.questionSearchText) {
 						questions.push(q);
-					} else if (q.text.includes(this.questionSearchText)) {
+					} else if (q.text.toLowerCase().includes(this.questionSearchText.toLowerCase())) {
 						questions.push(q);
 					}
 				}

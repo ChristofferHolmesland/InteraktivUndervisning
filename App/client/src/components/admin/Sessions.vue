@@ -5,11 +5,11 @@
 				<b-container>
 					<b-row class="mb-3">
 						<b-col lg="6" class="pr-0">
-							<b-form-input placeholder="Search">
+							<b-form-input v-model="searchText" type="text" placeholder="Search">
 							</b-form-input>
 						</b-col>
 						<b-col lg="4" class="px-0">
-							<SelectCourse />
+							<SelectCourse :changeHandler="courseChanged"/>
 						</b-col>
 						<b-col lg="2" class="pl-0">
 							<b-button v-b-modal.newSessionModal>+</b-button>
@@ -24,6 +24,9 @@
 								:id="session.id"
 								style="cursor: pointer;">
 									{{session.name}}
+								</b-list-group-item>
+								<b-list-group-item class="border-0" v-show="showNoSessions">
+									No sessions
 								</b-list-group-item>
 							</b-list-group>
 						</b-col>
@@ -46,7 +49,9 @@
 		data() {
 			return {
 				sessionsList: {},
-				selectedSession: "0"
+				selectedSession: "0",
+				searchText: "",
+				sessionsListLength: 0
 			}
 		},
 		created() {
@@ -76,11 +81,31 @@
 			},
 			addNewSessionHandler: function(newSession) {
 				this.$socket.emit("addNewSession", newSession);
+			},
+			courseChanged: function(newCourse) {
+				let c = newCourse.split(" ");
+				this.$socket.emit("getSessions", {code: c[0], semester: c[1]});
 			}
 		},
 		computed: {
 			getSessionsList() {
-				return this.sessionsList;
+				if (this.searchText == "") {
+					this.sessionsListLength = this.sessionsList.length;
+					return this.sessionsList;
+				}
+
+				let result = [];
+				for (let i = 0; i < this.sessionsList.length; i++) {
+					if (this.sessionsList[i].name.toLowerCase().includes(this.searchText.toLowerCase())) {
+						result.push(this.sessionsList[i]);
+					}
+				}
+
+				this.sessionsListLength = result.length;
+				return result;
+			},
+			showNoSessions() {
+				return this.sessionsListLength == 0;
 			},
 			getSelectedSessionId() {
 				return this.selectedSession.id;
