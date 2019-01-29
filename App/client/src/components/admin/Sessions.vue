@@ -4,9 +4,12 @@
 			<b-col lg="3">
 				<b-container>
 					<b-row class="mb-3">
-						<b-col lg="10" class="pr-0">
+						<b-col lg="6" class="pr-0">
 							<b-form-input placeholder="Search">
 							</b-form-input>
+						</b-col>
+						<b-col lg="4" class="px-0">
+							<SelectCourse />
 						</b-col>
 						<b-col lg="2" class="pl-0">
 							<b-button v-b-modal.newSessionModal>+</b-button>
@@ -37,6 +40,7 @@
 <script>
 	import Session from "./Session.vue";
 	import EditSession from "./EditSession.vue";
+	import SelectCourse from "./SelectCourse.vue";
 	export default {
 		name: 'Sessions',
 		data() {
@@ -62,7 +66,8 @@
 		},
 		components: {
 			Session,
-			EditSession
+			EditSession,
+			SelectCourse
 		},
 		methods: {
 			changeSelected(event) {

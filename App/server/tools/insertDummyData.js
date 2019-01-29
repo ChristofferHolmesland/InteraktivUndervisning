@@ -72,7 +72,7 @@ module.exports.InsertData = function (db) {
                 addstring = `,('${feideids[adminid]}','${courses[t].courseSemester}','${courses[t].courseCode}',4)`;
             }
             sqlInsertUserRight += addstring;
-            adminid++;
+           // adminid++;
         }
         sqlInsertUserRight += ";";
         //console.log(sqlInsertUserRight);

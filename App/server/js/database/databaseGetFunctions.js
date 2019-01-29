@@ -163,6 +163,15 @@ const get = {
                 resolve(rows);
             });
         });
+    },
+    userCourses(db, feideId) {
+        let statement = `SELECT courseSemester AS semester, courseCode AS code FROM UserRight WHERE feideId = ${feideId}`;
+        return new Promise((resolve, reject) => {
+            db.all(statement, (err,rows) => {
+                if (err) reject(err);
+                resolve(rows);
+            });
+        });
     }
 };
 

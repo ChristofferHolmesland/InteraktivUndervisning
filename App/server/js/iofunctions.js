@@ -94,6 +94,20 @@ module.exports.listen = function(server, users, db) {
 
         socket.on("adminStarted", () => rights(4, function() {}));
 
+        socket.on("courseListRequest", (data) => rights(4, function(feideId) {
+            get.userCourses(db, feideId).then((courses) => {
+                let result = [];
+                for (let i = 0; i < courses.length; i++) {
+                    let courseString = courses[i].code + " " + courses[i].semester;
+                    result.push({
+                        "value": courseString,
+                        "text": courseString
+                    });
+                }
+                socket.emit("courseListResponse", result);
+            })
+        }, data));
+
         socket.on("getSessions", (data) => rights(4, function(course) {
             get.allQuizWithinCourse(db, course.code, course.semester).then((quizzes) => {
                 /*let result = [];

@@ -126,7 +126,9 @@ export default {
     },
     computed: {
         getSession() {
-            if(this.session == undefined) return {};
+            if(this.session == undefined) return {
+                questions: []
+            };
             return this.session;
         },
         getLocale() {
