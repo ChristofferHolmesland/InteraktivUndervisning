@@ -7,17 +7,17 @@ module.exports.InsertData = function (db) {
             {courseSemester: "18H", courseCode: "DAT200", courseName: "Algoritmer og Datastrukturer"},
             {courseSemester: "18V", courseCode: "DAT100", courseName: "Objektorientert programmering"}
         ];
-
         let feideids = [
             "222221","222222","222223","222224","222225","222226","222227","222228","222229","222220","2222221","2222222"
         ];
-
         let type = {typeid:1,typename:"Text"};
+
 
         //SQL STATEMENTS
 
         //Creating Feide Insert
         var sqlInsertFeide = "INSERT INTO Feide(id,accessToken,name) VALUES";
+
         for (let k= 0; k<feideids.length; k++) {
             let addstring = "";
             if (k===0) {
@@ -32,6 +32,7 @@ module.exports.InsertData = function (db) {
 
         //Creating User Insert
         var sqlInsertUser = "INSERT INTO USER(id,feideId) VALUES";
+
         for (let n=0; n<feideids.length;n++) {
             let userid = n+2;
             let addstring = "";
@@ -42,11 +43,12 @@ module.exports.InsertData = function (db) {
             }
             sqlInsertUser += addstring;
         }
+
         sqlInsertUser += ";";
-        //console.log(sqlInsertUser);
 
         //Creating Course Insert
         var sqlInsertCourse = "INSERT INTO Course(semester,code,name) VALUES";
+
         for (let m= 0; m<courses.length;m++) {
             let addstring = "";
             if (m === 0) {
@@ -62,8 +64,8 @@ module.exports.InsertData = function (db) {
         //Create Insert UserRight   3 & 4 3 is student assistant & 4 is admin
         var sqlInsertUserRight = "INSERT INTO UserRight(feideId,courseSemester,courseCode,level) VALUES";
         var adminid = 10;
-        for (let t=0;t<courses.length;t++) {
 
+        for (let t=0;t<courses.length;t++) {
             let addstring = "";
             if (t===0) {
                 addstring = `('${feideids[adminid]}','${courses[t].courseSemester}','${courses[t].courseCode}',4)`;
@@ -72,7 +74,6 @@ module.exports.InsertData = function (db) {
                 addstring = `,('${feideids[adminid]}','${courses[t].courseSemester}','${courses[t].courseCode}',4)`;
             }
             sqlInsertUserRight += addstring;
-           // adminid++;
         }
         sqlInsertUserRight += ";";
         //console.log(sqlInsertUserRight);
@@ -81,6 +82,7 @@ module.exports.InsertData = function (db) {
         var sqlInsertQuiz = "Insert INTO Quiz(name,status,participants,courseSemester,courseCode) VALUES";
         for (let p=0;p<courses.length;p++) {
             let status = 0;
+
             for (let q=1;q<=10;q++) {
                 let addstring = "";
                 if (p===0 && q===1) {
@@ -100,7 +102,8 @@ module.exports.InsertData = function (db) {
         //console.log(sqlInsertQuiz);
 
         //Creating Question Insert
-        var sqlInsertQuestion = "INSERT INTO Question(text, description,object,solution,questionType,courseCode) VALUES";
+        var sqlInsertQuestion = "INSERT INTO Question(text, description,object,solution,time,questionType,courseCode) VALUES";
+
         for (let o=1;o<=200;o++) {
             let chosenCode = 0;
             if(o> 100){
@@ -108,9 +111,9 @@ module.exports.InsertData = function (db) {
             }
             let addstring = "";
             if (o===1) {
-                addstring = "('"+"QuestionText"+ o + "','" + "QuestionDescription" + o + "','" + "QuestionObject"+ o + "','" + "QuestionSolution"+ o + "'," + 1 + ",'"+ courses[chosenCode].courseCode + "')";
+                addstring = "('"+"QuestionText"+ o + "','" + "QuestionDescription" + o + "','" + "QuestionObject"+ o + "','" + "QuestionSolution"+ o + "',"+ 60 + "," + 1 + ",'"+ courses[chosenCode].courseCode + "')";
             }else {
-                addstring = ",('"+"QuestionText"+ o + "','" + "QuestionDescription" + o + "','" + "QuestionObject"+ o + "','" + "QuestionSolution"+ o + "'," + 1 + ",'" + courses[chosenCode].courseCode + "')";
+                addstring = ",('"+"QuestionText"+ o + "','" + "QuestionDescription" + o + "','" + "QuestionObject"+ o + "','" + "QuestionSolution"+ o + "'," + 60 + "," + 1 + ",'" + courses[chosenCode].courseCode + "')";
             }
             sqlInsertQuestion += addstring;
         }
@@ -121,13 +124,13 @@ module.exports.InsertData = function (db) {
         var sqlInsertQuizHasQuestion = "INSERT INTO Quiz_has_Question(quizId,questionId) VALUES";
         var quizid = 1;
         var counter = 0;
+
         for(let w = 1; w<=200;w++) {
             let addstring = "";
             if(counter >= 10) {
                 quizid++;
                 counter = 0;
             }
-
             if (w === 1) {
                 addstring = `(${quizid},${w})`
             } else {
@@ -146,6 +149,7 @@ module.exports.InsertData = function (db) {
             let quizUsers = [];
             let atest = false;
             let userLength = 11;
+
             for (let u = 1; u <= 10; u++) {  //per user
                 let chance = Math.floor(Math.random() * 20 + 1);
                 if (chance < 11) {    //Bruker
@@ -162,7 +166,6 @@ module.exports.InsertData = function (db) {
                     if (atest === false) {
                         atest = true;
                         quizUsers.push(1);
-
                     }
                 }
             }
@@ -172,6 +175,7 @@ module.exports.InsertData = function (db) {
         var count = 0;
         for (quizid in users) {
             let participatingusers = users[quizid];
+
             for (let i=0;i<participatingusers.length;i++) {
                 let addstring = "";
                 if (i === 0 && count === 0) {
@@ -186,10 +190,11 @@ module.exports.InsertData = function (db) {
         sqlInsertUserHasQuiz += ";";
         //console.log(sqlInsertUserHasQuiz);
 
-        //Create Insert Answer
-        var sqlInsertAnswer = "INSERT INTO Answer(object,result,questionId,userId) VALUES";
-        var questionid = 0;
+        //Creating Answer Insert
+        var sqlInsertAnswer = "INSERT INTO Answer(object,result,quizHasQuestionId,userId) VALUES";
+        var questionid = 0;		//questionHasQuestionId will alltid = questionid med dummy dataen som er lagt tidligere.
         var firsttime = true;
+
         for (quizid in users) { //for every quiz
             let participatingusers = users[quizid];
             let countedusers = 1;
@@ -199,12 +204,13 @@ module.exports.InsertData = function (db) {
                 if (countedusers === participatingusers.length) {
                     while (countedusers >= participatingusers.length && countedusers<=10) {
                         questionid = (quizid-1)*10+1;
+
                         for (let r=1; r<=10;r++) {  //adding for annomous users
                             let addstring = "";
                             let result = Math.floor(Math.random()*2);
-                            addstring = `,('answerObject${1}.${questionid}',${result},${questionid},'${1}')`;
+                            addstring = `,('answerObject${1}.${quizid}.${questionid}',${result},${questionid},'${1}')`;
                             sqlInsertAnswer += addstring;
-                            questionid++
+                            questionid++;
                         }
                         countedusers++;
                     }
@@ -212,12 +218,11 @@ module.exports.InsertData = function (db) {
                     for (let q = 1; q <= 10; q++) {
                         let addstring = "";
                         let result = Math.floor(Math.random() * 2);
-
                         if (firsttime) {
-                            addstring =`('answerObject${participatingusers[p]}.${questionid}',${result},${questionid},'${participatingusers[p]}')`;
+                            addstring =`('answerObject${participatingusers[p]}.${quizid}.${questionid}',${result},${questionid},'${participatingusers[p]}')`;
                             firsttime = false;
                         }else{
-                            addstring = `,('answerObject${participatingusers[p]}.${questionid}',${result},${questionid},'${participatingusers[p]}')`;
+                            addstring = `,('answerObject${participatingusers[p]}.${quizid}.${questionid}',${result},${questionid},'${participatingusers[p]}')`;
                         }
                         sqlInsertAnswer += addstring;
                         questionid++;
@@ -226,6 +231,7 @@ module.exports.InsertData = function (db) {
                 }
             }
         }
+
         sqlInsertAnswer += ";";
 
         //Creating Type Insert
