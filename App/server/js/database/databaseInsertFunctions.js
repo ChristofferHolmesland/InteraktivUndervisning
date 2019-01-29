@@ -1,8 +1,8 @@
 function createPromise(db, statement) {
 	return new Promise((resolve, reject) => {
 		db.run(statement, (err) => {
-			if (err) reject(err);
-			resolve();
+			if (err) reject(new Error(`${err} \n\n ${statement}`));
+			resolve(this.lastID);
 		});
 	});
 }
@@ -21,7 +21,7 @@ const insert = {
 		return createPromise(db, statement);
 	},
 	quiz: function (db,quizName,courseSemester,courseCode) {
-		let statement = `INSERT INTO Quiz(name,courseSemester,courseCode) VALUES ('${quizName}','${courseSemester}','${courseCode}');`;
+		let statement = `INSERT INTO Quiz(name, courseSemester, courseCode, status, participants) VALUES ('${quizName}','${courseSemester}','${courseCode}', 0, 0);`;
 		return createPromise(db, statement);
 	},
 	course: function (db,courseSemester,courseCode,courseName) {

@@ -67,7 +67,7 @@ const get = {
         });
     },
     allQuestionInQuiz: function (db,quizId) {
-        let statement = `SELECT Q.text,Q.description,Q.object,Q.solution,T.questionType,QQ.quizId
+        let statement = `SELECT Q.id, Q.text,Q.description,Q.object,Q.solution,T.type,QQ.quizId
                          FROM Question AS Q
                          INNER JOIN Quiz_has_Question AS QQ ON QQ.questionId = Q.id
                          INNER JOIN Type AS T ON T.type = Q.questionType
@@ -89,11 +89,11 @@ const get = {
         });
     },
     allQuizWithinCourse: function(db, courseCode, courseSemester) {
-        let statement = `SELECT Q.id,Q.name,C.name,C.code,Q.courseSemester
+        let statement = `SELECT Q.id, C.name AS courseName, Q.name AS quizName, C.code, Q.courseSemester
                          FROM Quiz AS Q
                          INNER JOIN Course AS C ON Q.courseCode = C.code 
                          WHERE C.code = '${courseCode}' AND C.semester = '${courseSemester}' 
-                         GROUP BY Q.quizId;`;
+                         GROUP BY Q.id;`;
         return new Promise((resolve, reject) => {
             db.all(statement, (err,rows) => {
                 if (err) reject(err);
@@ -148,6 +148,15 @@ const get = {
     },
     questionTypes(db) {
         let statement = `SELECT * FROM Type;`;
+        return new Promise((resolve, reject) => {
+            db.all(statement, (err,rows) => {
+                if (err) reject(err);
+                resolve(rows);
+            });
+        });
+    },
+    allCourses(db) {
+        let statement = `SELECT * FROM Course`;
         return new Promise((resolve, reject) => {
             db.all(statement, (err,rows) => {
                 if (err) reject(err);
