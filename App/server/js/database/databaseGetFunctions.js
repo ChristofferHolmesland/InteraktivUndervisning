@@ -79,8 +79,8 @@ const get = {
             });
         });
     },
-    allAnswerToQuestion: function(db, questionId) {
-        let statement = `SELECT * FROM Answer WHERE questionId = ${questionId}`;
+    allAnswerToQuestion: function(db, quizHasQuestionId) {
+        let statement = `SELECT * FROM Answer WHERE quizHasQuestionId = ${quizHasQuestionId}`;
         return new Promise((resolve, reject) => {
             db.all(statement, (err,rows) => {
                 if (err) reject(err);

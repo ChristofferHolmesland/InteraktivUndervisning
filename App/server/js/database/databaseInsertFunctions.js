@@ -43,15 +43,15 @@ const insert = {
 		let statement = `INSERT INTO Question(text,description,object,solution,questionType,courseCode) VALUES('${questionText}','${questionDescription}','${questionObject}','${questionSolution}',${Type},'${courseCode}')`;
 		return createPromise(db, statement);
 	},
-	_storeAnswerWithoutUser: function (db,answerObject,questionId) {
-		let statement = `INSERT INTO Answer(object,questionId) VALUES(${answerObject},${questionId})`;
+	_storeAnswerWithoutUser: function (db,answerObject,quizHasQuestionId) {
+		let statement = `INSERT INTO Answer(object,quizHasQuestionId) VALUES(${answerObject},${quizHasQuestionId})`;
 		return createPromise(db, statement);
 	},
-	storeAnswer: function (db, answerObject, questionId, userId) {
+	storeAnswer: function (db, answerObject, quizHasQuestionId, userId) {
 		if (userId === undefined) {
 			return this._storeAnswerWithoutUser(db, answerObject, questionId);
 		}
-		let statement = `INSERT INTO Answer(object,questionId,userId) VALUES(${answerObject},${questionId},${userId})`;
+		let statement = `INSERT INTO Answer(object,quizHasQuestionId,userId) VALUES(${answerObject},${quizHasQuestionId},${userId})`;
 		return createPromise(db, statement);
 	},
 	addUserToQuiz: function (db,userId,quizId) {
