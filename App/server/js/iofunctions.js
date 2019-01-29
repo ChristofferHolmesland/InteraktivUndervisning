@@ -19,8 +19,8 @@ module.exports.listen = function(server, users, db) {
 
         // Function "decorator" which checks user rights before calling the original function
         function rights(level, func, ...args) {
-            if(user && user.userRights < level) {
-                socket.emit("unauthorizesAccess");
+            if(user === undefined || user.userRights < level) {
+                socket.emit("unauthorizedAccess");
                 return;
             }
             func(...args);
@@ -92,7 +92,9 @@ module.exports.listen = function(server, users, db) {
         //------------- Admin functions -------------//
         //--------------------------------------------//
 
-        socket.on("adminStarted", () => rights(4, function() {}));
+        socket.on("adminStarted", () => rights(4, function() {
+            
+        }));
 
         socket.on("courseListRequest", (data) => rights(4, function(feideId) {
             get.userCourses(db, feideId).then((courses) => {
