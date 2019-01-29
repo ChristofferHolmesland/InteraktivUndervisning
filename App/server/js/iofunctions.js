@@ -198,7 +198,7 @@ module.exports.listen = function(server, users, db) {
                 let questions = await get.allQuestionInQuiz(db, quiz.id);
                 for (let i = 0; i < questions.length; i++) {
                     let question = questions[i];
-                    let answer = await get.allAnswerToQuestion(db, question.id);
+                    let answer = await get.allAnswerToQuestion(db, question.qqId);
                     let answers = [];
                     let correctAnswers = 0;
 
