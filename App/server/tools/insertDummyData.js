@@ -244,6 +244,5 @@ module.exports.InsertData = function (db) {
             
             strings.forEach((s, i) => i != strings.length - 1 ? db.run(s, (err) => rejectErr(err)) : db.run(s, (err) => rejectErr(err) ? "" : resolve()));
         });
-
     });
 };

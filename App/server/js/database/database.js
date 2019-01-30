@@ -1,6 +1,5 @@
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
-
 const insert = require("./databaseFunctions").insert;
 const get = require("./databaseFunctions").get;
 const databasePath = path.resolve(__dirname, `../../database/${process.env.NODE_ENV}.db`);
@@ -116,3 +115,4 @@ module.exports.getDB = function setupDatabase() {
 module.exports.deleteDB = function deleteDatabase(){
     if (fs.existsSync(databasePath)) fs.unlinkSync(databasePath);
 }
+

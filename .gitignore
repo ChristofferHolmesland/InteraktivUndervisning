@@ -123,3 +123,7 @@ App/server/public
 
 # Latex
 *.aux
+*.out
+*.pdf
+*.gz
+*.toc
