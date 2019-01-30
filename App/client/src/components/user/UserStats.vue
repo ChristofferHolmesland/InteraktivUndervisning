@@ -5,23 +5,23 @@
 				<h1>{{getLocale.title}}</h1>
 				<div>
 					<b-row>
-						<b-col cols="8"><h6>{{getLocale.totalQuizzes}}</h6></b-col>
-						<b-col cols="4"><p>{{totalQuizzes}}</p></b-col>
+						<b-col cols="8"><h6>{{getLocale.totalSessions}}</h6></b-col>
+						<b-col cols="4"><p>{{totalSessions}}</p></b-col>
 					</b-row>
 					<b-row>
 						<b-col cols="8"><h6>{{getLocale.correctAnswers}}</h6></b-col>
-						<b-col cols="4"><p>{{totalCorrectAnswers}} %</p></b-col>
+						<b-col cols="4"><p>{{totalCorrectAnswers}}</p></b-col>
 					</b-row>
 					<b-row>
 						<b-col cols="8"><h6>{{getLocale.incorrectAnswers}}</h6></b-col>
-						<b-col cols="4"><p>{{totalIncorrectAnswers}} %</p></b-col>
+						<b-col cols="4"><p>{{totalIncorrectAnswers}}</p></b-col>
 					</b-row>
 					<b-row>
 						<b-container>
 							<b-list-group style="overflow-y: scroll; heght: 300px">
-								<b-list-group-item 	v-for="item in quizList" 
-													:key="item.quizName">
-									{{item.courseCode}} : {{item.quizName}}
+								<b-list-group-item 	v-for="item in sessionList" 
+													:key="item.sessionName">
+									{{item.courseCode}} : {{item.sessionName}}
 								</b-list-group-item>
 							</b-list-group>
 						</b-container>
@@ -37,10 +37,10 @@ export default {
 	name: "userStats",
 	data() {
 		return {
-			totalQuizzes: 0,
+			totalSessions: 0,
 			totalCorrectAnswers: 0,
 			totalIncorrectAnswers: 0,
-			quizList: [] 
+			sessionList: [] 
 		}
 	},
 	created() {
@@ -49,10 +49,10 @@ export default {
 	},
 	sockets: {
 		getUserStatsResponse(data) {
-			this.totalQuizzes = data.totalQuizzes;
+			this.totalSessions = data.totalSessions;
 			this.totalCorrectAnswers = data.totalCorrectAnswers;
 			this.totalIncorrectAnswers = data.totalIncorrectAnswers;
-			this.quizList = data.quizList;
+			this.sessionList = data.sessionList;
 		}
 	},
 	computed: {

@@ -1,174 +1,183 @@
-const get = module.exports =  {
+const customReject = function(err, func){
+    return new Error(`Error in get function: ${func} \n\n ${err}`)
+}
+
+const get = {
     feideById: function(db, feideId) {
-        let statement = `SELECT * FROM Feide WHERE feideId=${feideId};`;
-        return db.get(statement, function (err, row) {
-            if (err) {
-                console.log(err.message);
-            } else {
-                console.log(row)
-            }
-            return row
-        })
+        return new Promise((resolve, reject) => {         
+            let statement = `SELECT * FROM Feide WHERE id=${feideId};`;
+            db.get(statement, (err,row) => {
+                if (err) reject(customReject(err, "feideById"));
+                resolve(row);
+            });
+        });
     },
     userById:  function (db,userId) {
-        let statement = `SELECT * FROM User WHERE userId=${userId};`;
-        return db.get(statement, function (err,row) {
-            if (err) {
-                console.log(err);
-            }else {
-                console.log(row);
-            }
-            return row;
-        })
-    },
-    useridByFeideId: function (db,feideId) {
-        let statement = `SELECT userid FROM User WHERE feideId = ${feideId} LIMIT 1`;
-        return db.get(statement, function (err,row) {
-            if (err) {
-                console.log(err)
-            }else {
-                console.log(row)
-            }
-            return row;
-        })
-    },
-    quizesToUser: function(db,feideId) {
-        let statment = `SELECT Q.quizName, C.courseCode
-                        FROM Quiz AS Q
-                        INNER JOIN User_has_Quiz AS UQ ON UQ.quizId = Q.quizId
-                        INNER JOIN Course AS C ON Q.courseCode = C.courseCode AND Q.courseSemester = C.courseSemester 
-                        WHERE UQ.userId = (SELECT U.userid FROM User AS U WHERE U.feideid= ${feideId} LIMIT 1)`;
-        db.run(statement, function (err) {
-            if (err) {
-                console.log(err.message);
-            }
-        })
-    },
-    amountOfUsersInQuiz: function (db,quizId) {
-        let userAmount = 0;
-        let statement = `SELECT userid FROM User_Has_Quiz WHERE quizid = ${quizId}`;
-        db.all(statement, function (err,rows) {
-            if (err) {
-                console.log(err.message)
-            }else {
-                console.log(rows);
-                userAmount = rows.length;
-            }
-        });
-        return userAmount;
-    },
-    amountOfQuizesUserParticipateIn: function (db,userId) {
-        let quizAmount = 0;
-        let statement = `SELECT quizId FROM User_Has_Quiz WHERE userid = ${userId}`;
-        db.all(statement, function (err,rows) {
-            if (err) {
-                console.log(err.message);
-            }else {
-                console.log(rows);
-                quizAmount = rows.length
-            }
-        });
-        return quizAmount;
-    },
-    allQuestionInQuiz: function (db,quizId) {
-        let statement = `SELECT Q.questionText,Q.questionObject,Q.questionSolution,T.questionType,QQ.quizId
-                         FROM Question AS Q
-                         INNER JOIN Quiz_has_Question AS QQ ON QQ.questionId = Q.questionId
-                         INNER JOIN Type AS T ON T.questionType = Q.questionType
-                         WHERE QQ.quizId = ${quizId};`;
-        return db.all(statement,function (err,rows) {
-            if (err) {
-                console.log(err.message)
-            } else {
-                console.log(rows)
-            }
-            return rows
+        return new Promise((resolve, reject) => {
+            let statement = `SELECT * FROM User WHERE id=${userId};`;
+            db.get(statement, (err,row) => {
+                if (err) reject(customReject(err, "userById"));
+                resolve(row);
+            });
         });
     },
-    allQuizWithinCourse: function(db,courseCode) {
-        let statement = `SELECT Q.quizId,Q.quizName,C.courseName,C.courseCode,Q.courseSemester
-                         FROM Quiz AS Q
-                         INNER JOIN Course AS C ON Q.courseCode = C.courseCode 
-                         WHERE C.courseCode = '${courseCode}' 
-                         GROUP BY Q.quizId;`;
-        return db.all(statement,function (err,rows) {
-            if (err) {
-                console.log(err.message);
-            }else{
-                console.log(rows);
-            }
-            return rows
-        })
+    userIdByFeideId: function (db,feideId) {
+        let statement = `SELECT id FROM User WHERE feideId = ${feideId} LIMIT 1`;
+        return new Promise((resolve, reject) => {
+            db.get(statement, (err,row) => {
+                if (err) reject(customReject(err, "useridByFeideId"));
+                resolve(row);
+            });
+        });
     },
-    amountCorrectAnswersForUser: function (db,userid) {
-        let quizAmount = 0;
-        let statement = `SELECT answerid
-                         FROM Answer
-                         WHERE result = 1 AND userid = ${userid};`;
-        return db.all(statement,function (err,rows) {
-            if (err) {
-                console.log(err.message);
-            }else {
-                console.log(rows);
-                quizAmount = rows.length;
-            }
-            return rows
-        })
+    sessionById: function(db, sessionId) {
+        return new Promise((resolve, reject) => {
+            let statement = `SELECT * FROM Session WHERE id = ${sessionId}`;
+            db.get(statement, (err,row) => {
+                if (err) reject(customReject(err, "sessionById"));
+                resolve(row);
+            });
+        });
     },
-    amountWrongAnswersForUser: function (db,userid) {
-    let quizAmount = 0;
-    let statement = `SELECT answerid
-                     FROM Answer
-                     WHERE result = 0 AND userid = ${userid};`;
-    db.all(statement, function (err,rows) {
-        if (err) {
-            console.log(err.message);
-        }else {
-            console.log(rows);
-            quizAmount = rows.length;
+    sessionsToUser: function(db, userInfo) {
+        return new Promise(async (resolve, reject) => {
+            let userId = await this.userId(db, userInfo).catch((err) => {
+                reject(customReject(err), "sessionsToUser");
+            });
+            let statement = `SELECT Q.name, C.code
+                            FROM Session AS Q
+                            INNER JOIN User_has_Session AS UQ ON UQ.sessionId = Q.id
+                            INNER JOIN Course AS C ON Q.courseCode = C.code AND Q.courseSemester = C.semester 
+                            WHERE UQ.userId = (
+                                SELECT U.id 
+                                FROM User AS U 
+                                WHERE U.feideid= ${userId}
+                            LIMIT 1)`;
+            db.all(statement, (err,rows) => {
+                if (err) reject(customReject(err, "sessionsToUser"));
+                resolve(rows);
+            });
+        });
+    },
+    allQuestionInSession: function (db, sessionId) {
+        return new Promise((resolve, reject) => {
+            let statement = `SELECT Q.id, Q.text,Q.description,Q.object,Q.solution,T.type,SQ.id AS sqId
+                             FROM Question AS Q
+                             INNER JOIN Session_has_Question AS SQ ON SQ.questionId = Q.id
+                             INNER JOIN Type AS T ON T.type = Q.questionType
+                             WHERE SQ.sessionId = ${sessionId};`;
+            db.all(statement, (err,rows) => {
+                if (err) reject(customReject(err, "allQuestionInSession"));
+                resolve(rows);
+            });
+        });
+    },
+    allAnswerToQuestion: function(db, sessionHasQuestionId) {
+        return new Promise((resolve, reject) => {
+            let statement = `SELECT * FROM Answer WHERE sessionHasQuestionId = ${sessionHasQuestionId}`;
+            db.all(statement, (err,rows) => {
+                if (err) reject(customReject(err, "allAnswerToQuestion"));
+                resolve(rows);
+            });
+        });
+    },
+    allSessionWithinCourse: function(db, courseCode, courseSemester) {
+        return new Promise((resolve, reject) => {
+            let statement = `SELECT Q.id, C.name AS courseName, Q.name AS name, C.code, Q.courseSemester
+                             FROM Session AS Q
+                             INNER JOIN Course AS C ON Q.courseCode = C.code 
+                             WHERE C.code = '${courseCode}' AND C.semester = '${courseSemester}' 
+                             GROUP BY Q.id;`;
+            db.all(statement, (err,rows) => {
+                if (err) reject(customReject(err, "allSessionWithinCourse"));
+                resolve(rows);
+            });
+        });
+    },
+    amountAnswersForUserByResult: function (db, userInfo, resultValue) {
+        return new Promise(async (resolve, reject) => {
+            let userId = await this.userId(db, userInfo).catch((err) => {
+                reject(customReject(err), "amountAnswersForUserByResult");
+            });
+            let statement = `SELECT id
+                            FROM Answer
+                            WHERE result = ${resultValue} 
+                            AND userId = ${userId}`;
+            db.all(statement, (err,rows) => {
+                if (err) reject(customReject(err, "amountAnswersForUserByResult"));
+                resolve(rows.length);
+            });
+        });
+    },
+    amountAnswersForUser: function (db, userInfo) {
+        return new Promise(async (resolve, reject) => {
+            let userId = await this.userId(db, userInfo).catch((err) => {
+                reject(customReject(err), "amountAnswersForUser");
+            });
+            let statement = `SELECT id
+                             FROM Answer
+                             WHERE userId = ${userId}`;
+            db.all(statement, (err,rows) => {
+                if (err) reject(customReject(err, "amountAnswerForUser"));
+                resolve(rows.length);
+            });
+        });
+    },
+    allQuestionsWithinCourse: function(db, course) {
+        return new Promise((resolve, reject) => {
+            let statement = `SELECT Q.id,Q.text,Q.description,Q.object,Q.solution,T.type,Q.courseCode
+                             FROM Question AS Q
+                             INNER JOIN Type AS T ON Q.questionType = T.type
+                             WHERE Q.courseCode = "${course}";`;
+            db.all(statement, (err,rows) => {
+                if (err) reject(customReject(err, "allQuestionsWithinCourse"));
+                resolve(rows);
+            });
+        });
+    },
+    questionTypes: function(db) {
+        return new Promise((resolve, reject) => {
+            let statement = `SELECT * FROM Type;`;
+            db.all(statement, (err,rows) => {
+                if (err) reject(customReject(err, "questionTypes"));
+                resolve(rows);
+            });
+        });
+    },
+    allCourses: function(db) {
+        return new Promise((resolve, reject) => {
+            let statement = `SELECT * FROM Course`;
+            db.all(statement, (err,rows) => {
+                if (err) reject(customReject(err, "allCourses"));
+                resolve(rows);
+            });
+        });
+    },
+    userCourses: function(db, feideId) {
+        return new Promise(async (resolve, reject) => {
+            let statement = `SELECT courseSemester AS semester, courseCode AS code
+                            FROM UserRight
+                            WHERE feideId = ${feideId}`;
+            db.all(statement, (err,rows) => {
+                if (err) reject(customReject(err, "userCourses"));
+                resolve(rows);
+            });
+        });
+    },
+    userId: function(db, userInfo) {
+        switch (userInfo.type) {
+            case "feide":
+                return this.userIdByFeideId(db, userInfo.id);
+            default:
+                return new Promise((resolve, rejcet) => {
+                    if(userInfo === undefined)
+                        reject(new customReject(new Error(`userInfo is undefined`), "userId"))
+                    if(userInfo.type === undefined) 
+                        reject(new customReject(new Error(`userInfo.Type is undefined`), "userId"))
+                    reject(new customReject(new Error(`userInfo.Type does not exist: ${userInfo.type}`), "userId"))
+                })
         }
-    });
-    return quizAmount;
-    },
-    amountAnswersForUser: function (db,userid) {
-        let quizAmount = 0;
-        let statement = `SELECT answerid
-                         FROM Answer
-                         WHERE userid = ${userid};`;
-        return db.all(statement, function (err,rows) {
-            if (err) {
-                console.log(err.message);
-            }else {
-                console.log(rows);
-                quizAmount = rows.length
-            }
-            return rows
-        })
-    },
-    allQuestionsWithinCourse(db, course) {
-        let statement = `SELECT Q.questionId,Q.questionText,Q.questionDescription,questionObject,questionSolution,T.typeName,Q.courseCode
-                         FROM Question AS Q
-                         INNER JOIN Type AS T ON Q.questionType = T.questionType
-                         WHERE Q.courseCode = "${course}";`;
-        return db.all(statement, function (err,rows) {
-           if (err) {
-               console.log(err.message);
-           } else {
-               console.log(rows);
-           }
-           return rows;
-        });
-    },
-    questionTypes(db) {
-        let statement = `SELECT * FROM Type;`;
-        return db.all(statement, function (err,rows) {
-            if (err) {
-                console.log(err.message);
-            }else {
-                console.log(rows);
-            }
-            return rows
-        });
     }
-
 };
+
+module.exports.get = get;

@@ -39,16 +39,17 @@ export default {
 		},
 		clientLoginInfoResponse(userData){
 			this.$store.commit("userChange", userData);
+
+			if (userData.userRights > 2) {
+				this.$socket.emit("courseListRequest");
+			}
+		},
+		courseListResponse(courseList) {
+			this.$store.commit("setCourseList", courseList);
 		}
 	}
 }
 </script>
-
-<style scoped>
-	#app {
-		min-width: 750px;
-	}
-</style>
 
 <style>
 	body {
