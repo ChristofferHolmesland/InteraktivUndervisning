@@ -8,7 +8,7 @@
 	import Quiz from "../components/admin/Quiz.vue";
 	import Dashboard from "../components/admin/Dashboard.vue";
 	import Questions from "../components/admin/Questions.vue";
-	import Sessions from "../components/admin/Sessions.vue";
+	import Sessions from "../components/admin/sessions/Sessions.vue";
 
 	export default {
 		data() {
