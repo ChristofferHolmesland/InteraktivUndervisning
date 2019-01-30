@@ -1,5 +1,5 @@
 const customReject = function(err, func){
-    return new Error(`in get function: ${func} \n\n ${err}`)
+    return new Error(`Error in get function: ${func} \n\n ${err}`)
 }
 
 const get = {
@@ -22,7 +22,7 @@ const get = {
         });
     },
     useridByFeideId: function (db,feideId) {
-        let statement = `SELECT userid FROM User WHERE feideId = ${feideId} LIMIT 1`;
+        let statement = `SELECT id FROM User WHERE feideId = ${feideId} LIMIT 1`;
         return new Promise((resolve, reject) => {
             db.get(statement, (err,row) => {
                 if (err) reject(customReject(err, "useridByFeideId"));
