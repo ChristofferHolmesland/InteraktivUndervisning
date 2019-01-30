@@ -4,9 +4,9 @@ const update = require("../database/databaseFunctions").update;
 
 const generalFunctions =  require("../generalFunctions.js").functions;
 
-const quiz = require("../quiz.js").Quiz;
-const question = require("../quiz.js").Question;
-const answer = require("../quiz.js").Answer;
+const quiz = require("../session.js").Quiz;
+const question = require("../session.js").Question;
+const answer = require("../session.js").Answer;
 
 module.exports.admin = function(socket, db, quizzes) {
     socket.on("adminStarted", function() {
