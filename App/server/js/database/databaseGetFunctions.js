@@ -39,9 +39,11 @@ const get = {
                             WHERE UQ.userId = (
                                 SELECT U.id 
                                 FROM User AS U 
-                                WHERE U.feideid= ${await this.userId(userInfo).catch((err) => {
-                                    reject(customReject(err), "sessionsToUser")
-                                })}
+                                WHERE U.feideid= ${async () => {
+                                    await this.userId(userInfo).catch((err) => {
+                                        reject(customReject(err), "sessionsToUser");
+                                    });
+                                }}
                             LIMIT 1)`;
             db.all(statement, (err,rows) => {
                 if (err) reject(customReject(err, "sessionsToUser"));
@@ -89,9 +91,11 @@ const get = {
             let statement = `SELECT id
                             FROM Answer
                             WHERE result = ${resultValue} 
-                            AND userId = ${await this.userId(userInfo).catch((err) => {
-                                reject(customReject(err), "amountAnswersForUserByResult")
-                            })}`;
+                            AND userId = ${async () => {
+                                await this.userId(userInfo).catch((err) => {
+                                    reject(customReject(err), "amountAnswersForUserByResult");
+                                });
+                            }}`;
             db.all(statement, (err,rows) => {
                 if (err) reject(customReject(err, "amountAnswersForUserByResult"));
                 resolve(rows.length);
@@ -102,9 +106,11 @@ const get = {
         return new Promise((resolve, reject) => {
             let statement = `SELECT id
                              FROM Answer
-                             WHERE userId = ${await this.userId(userInfo).catch((err) => {
-                                reject(customReject(err), "amountAnswersForUser")
-                             })}`;
+                             WHERE userId = ${async () => {
+                                await this.userId(userInfo).catch((err) => {
+                                    reject(customReject(err), "amountAnswersForUser");
+                                });
+                            }}`;
             db.all(statement, (err,rows) => {
                 if (err) reject(customReject(err, "amountAnswerForUser"));
                 resolve(rows.length);
@@ -145,9 +151,11 @@ const get = {
         return new Promise((resolve, reject) => {
             let statement = `SELECT courseSemester AS semester, courseCode AS code
                             FROM UserRight
-                            WHERE feideId = ${await this.userId(userInfo).catch((err) => {
-                                reject(customReject(err), "userCourses")
-                            })}`;
+                            WHERE feideId = ${async () => {
+                                await this.userId(userInfo).catch((err) => {
+                                    reject(customReject(err), "userCourses");
+                                });
+                            }}`;
             db.all(statement, (err,rows) => {
                 if (err) reject(customReject(err, "userCourses"));
                 resolve(rows);
