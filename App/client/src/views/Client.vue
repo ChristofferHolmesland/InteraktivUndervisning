@@ -12,7 +12,7 @@
 </template>
 
 <script>
-	import JoinRoom from "../components/JoinRoom.vue";
+	import JoinRoom from "../components/user/JoinRoom.vue";
 
 	export default {
 		name: 'client',
@@ -20,7 +20,7 @@
 			JoinRoom
 		},
 		created() {
-			this.$socket.emit("clientStarted");
+			this.$socket.emit("verifyUserLevel", 1);
 		}
 	}
 </script>

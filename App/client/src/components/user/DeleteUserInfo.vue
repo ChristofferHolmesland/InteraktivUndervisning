@@ -4,7 +4,8 @@
             :title="getLocale.title" 
             @ok="handleOk"
             ok-variant="danger"
-            :ok-title="getLocale.okTitle">
+            :ok-title="getLocale.okTitle"
+            :cancel-title="getLocale.cancelTitle">
     <b-list-group>
         <b-list-group-item v-for="text in getLocale.deleteInfoList" :key="text">
             <li>{{text}}</li>

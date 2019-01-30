@@ -44,11 +44,32 @@ app.use(cookieParser());
 app.use(compression());
 app.use(express.static(path.join(__dirname, '/public/')));
 
-// Starts the server and the socket.io websocket
-const server = app.listen(port, function() {
-    console.log(`Server listening on localhost:${ port }! Use ctrl + c to stop the server!`)
+// Database
+let db = undefined;
+
+if (process.env.NODE_ENV === "dev") {
+    require('./js/database/database').deleteDB();
+}
+
+require('./js/database/database').getDB().then(function(value) {
+    db = value;
+
+    if (process.env.NODE_ENV === "dev"){
+        const dummydata = require('./tools/insertDummyData');
+        dummydata.InsertData(db).catch(function(err) {
+            console.log(err);
+            process.exit(1);
+        });
+    }
+    // Starts the server and the socket.io websocket
+    const server = app.listen(port, function() {
+        console.log(`Server listening on localhost:${ port }! Use ctrl + c to stop the server!`)
+    });
+    require('./js/socketIO/generalFunctions').listen(server, users, db);
+}).catch(function (err) {
+    console.log(err);
+    process.exit(1);
 });
-const io = require('./js/iofunctions').listen(server, users);
 
 app.post('/login/feide', passport.authenticate('passport-openid-connect', {"successReturnToOrRedirect": "/client"}))
 app.get('/login/callback/feide', passport.authenticate('passport-openid-connect', {callback: true}), function(req, res) {
@@ -58,10 +79,16 @@ app.get('/login/callback/feide', passport.authenticate('passport-openid-connect'
     let userRights = 2; //TODO write function to check database for the userRight
     let userName = req.user.data.name;
     let userId = req.user.token.id_token;
+
     let temp = req.user.data["connect-userid_sec"][0];
     temp = temp.split("@");
     temp = temp[0].split(":");
     let idNumber = temp[1];
+
+    // Add Christoffer as admin
+    if (idNumber == "239416" || idNumber == "228288") {
+        userRights = 4;
+    } 
 
     // Makes a new active user
     let tempKey = user.generateSessionId();

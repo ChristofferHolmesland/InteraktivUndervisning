@@ -1,10 +1,33 @@
 {
+    "AdminQuestions": {
+        "emptyQuestionList": "No questions.",
+        "newQuestion": "New question",
+        "searchQuestion": "Search for a question",
+        "newQuestionTitle": "Question title:",
+        "newQuestionText": "Question text:",
+        "newQuestionSolutionType": "Solution type:",
+        "newQuestionSolution": "Solution:",
+        "addToSession": "Add",
+        "solutionText": "Solution: ",
+        "selectSessionText": "Select session: "
+    },
+    "AdminSessions": {
+        "newSession": "New session",
+        "newSessionTitle": "Title",
+        "selectCourse": "Select course",
+        "selectQuestions": "Add question",
+        "selectedQuestions": "Questions in session"
+    },
     "Navbar": {
         "lang": "Language",
         "profile": "Profile",
         "signOut": "Sign out",
         "signIn": "Sign in",
-        "dashboard": "Dashboard"
+        "dashboard": "Dashboard",
+        "admin": "Admin",
+        "startSession": "Start session",
+        "questions": "Questions",
+        "sessions": "Sessions"
     },
     "LoginForm": {
         "anonymousButton": "Anonymous",
@@ -13,13 +36,13 @@
         "feideList": [
             "This website will use cookies to be able to store your questions.",
             "The quizmaster will not be able to see who answered what, but will be able to see incorrect answers.",
-            "This website will store date linked to your user for you to be able to see previous quizzes.",
+            "This website will store date linked to your user for you to be able to see previous sessions.",
             "You will be able to delete all data stored about you by going in to profile and pressing \"Delete data\".",
             "To be able to sign in with Feide, you will have to accept that we use cookies and store information about you below!"
         ],
         "anonymousList": [
             "If you chose to sign in anonymously we will not store cookies or save any data about you.",
-            "If you chose to sign in anonymously you will not be able to see previously attended quizzes."
+            "If you chose to sign in anonymously you will not be able to see previously attended sessions."
         ]
     },
     "401": {
@@ -35,6 +58,18 @@
         "text": "Uh oh! Look like something broke.",
         "homeButton": "Go home"
     },
+    "Session": {
+        "status": "Status: ",
+        "active": "Active",
+        "inactive": "Inactive",
+        "finished": "Finished",
+        "questionsAsked": "Question asked: ",
+        "participants": "Participants: ",
+        "correctAnswers": "Corrects answers: "
+    },
+    "Sessions": {
+
+    },
     "DeleteUserInfo": {
         "deleteInfoList": [
             "By pressing ok under we will delete all the information we have on the server and database about you.",
@@ -43,7 +78,8 @@
             "Once deleted there is no going back!"
         ],
         "title": "Delete all user data!",
-        "okTitle": "Delete!"
+        "okTitle": "Delete!",
+        "cancelTitle": "Cancel"
     },
     "UserInfo": {
         "title": "User info",
@@ -54,7 +90,7 @@
     },
     "UserStats": {
         "title": "User stats",
-        "totalQuizzes": "Total number of quizzes:",
+        "totalSessions": "Total number of sessions:",
         "correctAnswers": "Correct answers:",
         "incorrectAnswers": "Incorrect answers:"
     }

@@ -39,7 +39,20 @@ export default {
 		},
 		clientLoginInfoResponse(userData){
 			this.$store.commit("userChange", userData);
+
+			if (userData.userRights > 2) {
+				this.$socket.emit("courseListRequest");
+			}
+		},
+		courseListResponse(courseList) {
+			this.$store.commit("setCourseList", courseList);
 		}
 	}
-};
+}
 </script>
+
+<style>
+	body {
+		background-color: #ccc/*#b7b7b7/*#1c11ee*/;
+	}
+</style>
