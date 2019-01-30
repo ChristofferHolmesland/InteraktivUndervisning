@@ -43,7 +43,7 @@ module.exports.getDB = function setupDatabase() {
                 "    FOREIGN KEY (courseCode) REFERENCES Course (code) ON DELETE CASCADE ON UPDATE CASCADE\n" +
                 ");", (err) => { if (err) reject(err) });
 
-            db.run("CREATE TABLE IF NOT EXISTS \"Quiz\" (\n" +
+            db.run("CREATE TABLE IF NOT EXISTS \"Session\" (\n" +
                 "    id INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
                 "    name TEXT NOT NULL,\n" +
                 "    status INTEGER NOT NULL,\n" +
@@ -54,12 +54,12 @@ module.exports.getDB = function setupDatabase() {
                 "    FOREIGN KEY (courseCode) REFERENCES Course (code) ON DELETE CASCADE ON UPDATE CASCADE\n" +
                 ");", (err) => { if (err) reject(err) });
 
-            db.run("CREATE TABLE IF NOT EXISTS \"User_has_Quiz\"(\n" +
+            db.run("CREATE TABLE IF NOT EXISTS \"User_has_Session\"(\n" +
                 "    userId TEXT,\n" +
-                "    quizId INTEGER,\n" +
-                "    PRIMARY KEY(userId,quizId),\n" +
+                "    sessionId INTEGER,\n" +
+                "    PRIMARY KEY(userId,sessionId),\n" +
                 "    FOREIGN KEY(userId) REFERENCES User (id) ON DELETE CASCADE ON UPDATE CASCADE,\n" +
-                "    FOREIGN KEY(quizId) REFERENCES Quiz (id) ON DELETE CASCADE ON UPDATE CASCADE\n" +
+                "    FOREIGN KEY(sessionId) REFERENCES Session (id) ON DELETE CASCADE ON UPDATE CASCADE\n" +
                 ");", (err) => { if (err) reject(err) });
 
             db.run("CREATE TABLE IF NOT EXISTS Type(\n" +
@@ -80,21 +80,21 @@ module.exports.getDB = function setupDatabase() {
                 "    FOREIGN KEY (courseCode) REFERENCES Course(code) ON UPDATE CASCADE\n" +
                 ");", (err) => { if (err) reject(err) });
 
-            db.run("CREATE TABLE IF NOT EXISTS Quiz_has_Question(\n" +
+            db.run("CREATE TABLE IF NOT EXISTS Session_has_Question(\n" +
                 "    id INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
-                "    quizId INTEGER,\n" +
+                "    sessionId INTEGER,\n" +
                 "    questionId INTEGER,\n" +
-                "    FOREIGN KEY (quizId) REFERENCES Quiz(id) ON DELETE CASCADE ON UPDATE CASCADE\n" +
+                "    FOREIGN KEY (sessionId) REFERENCES Session(id) ON DELETE CASCADE ON UPDATE CASCADE\n" +
                 "    FOREIGN KEY (questionId) REFERENCES Question(id) ON DELETE CASCADE ON UPDATE CASCADE\n" +
                 ");", (err) => { if (err) reject(err) });
 
             db.run("CREATE TABLE IF NOT EXISTS Answer(\n" +
-                "    id INTEGER PRIMARY KEY AutoIncrement,\n" +
+                "    id INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
                 "    object BLOB NOT NULL,\n" +
                 "    result INTEGER NOT NULL,\n" +
-                "    quizHasQuestionId INTEGER NOT NULL,\n" +
+                "    sessionHasQuestionId INTEGER NOT NULL,\n" +
                 "    userId TEXT,\n" +
-                "    FOREIGN KEY (quizHasQuestionId) REFERENCES Quiz_has_Question(id),\n" +
+                "    FOREIGN KEY (sessionHasQuestionId) REFERENCES Session_has_Question(id),\n" +
                 "    FOREIGN KEY (userId) REFERENCES User(id)\n" +
                 ");", (err) => { if (err) reject(err) });
 

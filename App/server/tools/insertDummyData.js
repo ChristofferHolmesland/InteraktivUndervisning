@@ -78,28 +78,28 @@ module.exports.InsertData = function (db) {
         sqlInsertUserRight += ";";
         //console.log(sqlInsertUserRight);
 
-        //Create Insert Quiz
-        var sqlInsertQuiz = "Insert INTO Quiz(name,status,participants,courseSemester,courseCode) VALUES";
+        //Create Insert Session
+        var sqlInsertSession = "Insert INTO Session(name,status,participants,courseSemester,courseCode) VALUES";
         for (let p=0;p<courses.length;p++) {
             let status = 0;
 
             for (let q=1;q<=10;q++) {
                 let addstring = "";
                 if (p===0 && q===1) {
-                    addstring = `('QuizName${q}${courses[p].courseCode}',${status},${10},'${courses[p].courseSemester}','${courses[p].courseCode}')`;
+                    addstring = `('SessionName${q}${courses[p].courseCode}',${status},${10},'${courses[p].courseSemester}','${courses[p].courseCode}')`;
                 }else {
-                    addstring = `,('QuizName${q}${courses[p].courseCode}',${status},${10},'${courses[p].courseSemester}','${courses[p].courseCode}')`;
+                    addstring = `,('SessionName${q}${courses[p].courseCode}',${status},${10},'${courses[p].courseSemester}','${courses[p].courseCode}')`;
                 }
                 if(status >= 2) {
                     status = 0;
                 }else {
                     status++
                 }
-                sqlInsertQuiz += addstring;
+                sqlInsertSession += addstring;
             }
         }
-        sqlInsertQuiz += ";";
-        //console.log(sqlInsertQuiz);
+        sqlInsertSession += ";";
+        //console.log(sqlInsertSession);
 
         //Creating Question Insert
         var sqlInsertQuestion = "INSERT INTO Question(text, description,object,solution,time,questionType,courseCode) VALUES";
@@ -120,33 +120,33 @@ module.exports.InsertData = function (db) {
         sqlInsertQuestion += ";";
         //console.log(sqlInsertQuestion);
 
-        //Create Insert QuizHasQuestion
-        var sqlInsertQuizHasQuestion = "INSERT INTO Quiz_has_Question(quizId,questionId) VALUES";
-        var quizid = 1;
+        //Create Insert SessionHasQuestion
+        var sqlInsertSessionHasQuestion = "INSERT INTO Session_has_Question(sessionId,questionId) VALUES";
+        var sessionId = 1;
         var counter = 0;
 
         for(let w = 1; w<=200;w++) {
             let addstring = "";
             if(counter >= 10) {
-                quizid++;
+                sessionId++;
                 counter = 0;
             }
             if (w === 1) {
-                addstring = `(${quizid},${w})`
+                addstring = `(${sessionId},${w})`
             } else {
-                addstring = `,(${quizid},${w})`
+                addstring = `,(${sessionId},${w})`
             }
-            sqlInsertQuizHasQuestion += addstring;
+            sqlInsertSessionHasQuestion += addstring;
             counter++;
         }
-        sqlInsertQuizHasQuestion += ";";
-        //console.log(sqlInsertQuizHasQuestion);
+        sqlInsertSessionHasQuestion += ";";
+        //console.log(sqlInsertSessionHasQuestion);
 
-        //Create Insert UserHasQuiz
-        var sqlInsertUserHasQuiz = "INSERT INTO User_has_Quiz(userid,quizid) VALUES";
+        //Create Insert UserHasSession
+        var sqlInsertUserHasSession = "INSERT INTO User_has_Session(userid,sessionId) VALUES";
         var users = {};
-        for (let s=1;s<=20;s++) {   //per quiz
-            let quizUsers = [];
+        for (let s=1;s<=20;s++) {   //per session
+            let sessionUsers = [];
             let atest = false;
             let userLength = 11;
 
@@ -154,61 +154,61 @@ module.exports.InsertData = function (db) {
                 let chance = Math.floor(Math.random() * 20 + 1);
                 if (chance < 11) {    //Bruker
                     let userIndex =  Math.floor(Math.random() * userLength + 1);
-                    if (quizUsers.indexOf(userIndex) === -1 && userIndex !== 1) {
-                        quizUsers.push(userIndex);
+                    if (sessionUsers.indexOf(userIndex) === -1 && userIndex !== 1) {
+                        sessionUsers.push(userIndex);
                     } else {
-                        while (quizUsers.indexOf(userIndex) !== -1 || userIndex === 1) {
+                        while (sessionUsers.indexOf(userIndex) !== -1 || userIndex === 1) {
                             userIndex = Math.floor(Math.random() * userLength + 1);
                         }
-                        quizUsers.push(userIndex);
+                        sessionUsers.push(userIndex);
                     }
                 } else { //annonym
                     if (atest === false) {
                         atest = true;
-                        quizUsers.push(1);
+                        sessionUsers.push(1);
                     }
                 }
             }
-            users[s] = quizUsers.sort(function (a,b){return b-a})
+            users[s] = sessionUsers.sort(function (a,b){return b-a})
         }
 
         var count = 0;
-        for (quizid in users) {
-            let participatingusers = users[quizid];
+        for (sessionId in users) {
+            let participatingusers = users[sessionId];
 
             for (let i=0;i<participatingusers.length;i++) {
                 let addstring = "";
                 if (i === 0 && count === 0) {
-                    addstring = "(\'"+participatingusers[i] + "\'," +quizid +")";
+                    addstring = "(\'"+participatingusers[i] + "\'," +sessionId +")";
                     count++
                 }else {
-                    addstring = ",(\'"+participatingusers[i] + "\'," + quizid + ")";
+                    addstring = ",(\'"+participatingusers[i] + "\'," + sessionId + ")";
                 }
-                sqlInsertUserHasQuiz += addstring;
+                sqlInsertUserHasSession += addstring;
             }
         }
-        sqlInsertUserHasQuiz += ";";
-        //console.log(sqlInsertUserHasQuiz);
+        sqlInsertUserHasSession += ";";
+        //console.log(sqlInsertUserHasSession);
 
         //Creating Answer Insert
-        var sqlInsertAnswer = "INSERT INTO Answer(object,result,quizHasQuestionId,userId) VALUES";
+        var sqlInsertAnswer = "INSERT INTO Answer(object,result,sessionHasQuestionId,userId) VALUES";
         var questionid = 0;		//questionHasQuestionId will alltid = questionid med dummy dataen som er lagt tidligere.
         var firsttime = true;
 
-        for (quizid in users) { //for every quiz
-            let participatingusers = users[quizid];
+        for (sessionId in users) { //for every session
+            let participatingusers = users[sessionId];
             let countedusers = 1;
 
-            for (let p= 0;p<participatingusers.length;p++) {    //for all users in the quiz
-                questionid = ((quizid-1)*10)+1;
+            for (let p= 0;p<participatingusers.length;p++) {    //for all users in the session
+                questionid = ((sessionId-1)*10)+1;
                 if (countedusers === participatingusers.length) {
                     while (countedusers >= participatingusers.length && countedusers<=10) {
-                        questionid = (quizid-1)*10+1;
+                        questionid = (sessionId-1)*10+1;
 
                         for (let r=1; r<=10;r++) {  //adding for annomous users
                             let addstring = "";
                             let result = Math.floor(Math.random()*2);
-                            addstring = `,('answerObject${1}.${quizid}.${questionid}',${result},${questionid},'${1}')`;
+                            addstring = `,('answerObject${1}.${sessionId}.${questionid}',${result},${questionid},'${1}')`;
                             sqlInsertAnswer += addstring;
                             questionid++;
                         }
@@ -219,10 +219,10 @@ module.exports.InsertData = function (db) {
                         let addstring = "";
                         let result = Math.floor(Math.random() * 2);
                         if (firsttime) {
-                            addstring =`('answerObject${participatingusers[p]}.${quizid}.${questionid}',${result},${questionid},'${participatingusers[p]}')`;
+                            addstring =`('answerObject${participatingusers[p]}.${sessionId}.${questionid}',${result},${questionid},'${participatingusers[p]}')`;
                             firsttime = false;
                         }else{
-                            addstring = `,('answerObject${participatingusers[p]}.${quizid}.${questionid}',${result},${questionid},'${participatingusers[p]}')`;
+                            addstring = `,('answerObject${participatingusers[p]}.${sessionId}.${questionid}',${result},${questionid},'${participatingusers[p]}')`;
                         }
                         sqlInsertAnswer += addstring;
                         questionid++;
@@ -240,7 +240,7 @@ module.exports.InsertData = function (db) {
         const rejectErr = (err) => { if (err) { reject(err); return true; } else { return false; }};
         //Running SQL Statements
         db.serialize(function () {   
-            const strings = [sqlInsertFeide, sqlInsertUser, sqlInsertCourse, sqlInsertUserRight, sqlInsertQuiz, sqlInsertQuestion, sqlInsertQuizHasQuestion, sqlInsertUserHasQuiz, sqlInsertAnswer, sqlInsertType];
+            const strings = [sqlInsertFeide, sqlInsertUser, sqlInsertCourse, sqlInsertUserRight, sqlInsertSession, sqlInsertQuestion, sqlInsertSessionHasQuestion, sqlInsertUserHasSession, sqlInsertAnswer, sqlInsertType];
             
             strings.forEach((s, i) => i != strings.length - 1 ? db.run(s, (err) => rejectErr(err)) : db.run(s, (err) => rejectErr(err) ? "" : resolve()));
         });
