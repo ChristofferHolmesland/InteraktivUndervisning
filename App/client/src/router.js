@@ -24,7 +24,7 @@ export default new Router({
 			name: "admin",
 			component: () =>
 				import("./views/Admin.vue"),
-			alias: ["/admin/quiz", "/admin/questions", "/admin/sessions"]
+			alias: ["/admin/session", "/admin/questions", "/admin/sessions"]
 		},
 		{
 			path: "/login",
@@ -33,11 +33,11 @@ export default new Router({
 				import("./views/Login.vue")
 		},
 		{
-			path: '/admin/quiz/:quizId',
-			name: 'quiz',
+			path: '/admin/session/:sessionId',
+			name: 'session',
 			props: true,
 			component: () =>
-				import("./views/Quiz.vue")
+				import("./views/Session.vue")
 		},
 		{
 			path: "/client/user-profile",

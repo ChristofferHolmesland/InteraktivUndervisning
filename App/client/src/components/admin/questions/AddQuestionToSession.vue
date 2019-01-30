@@ -40,18 +40,18 @@
         methods: {
             onShown: function() {
                 // TODO: Change "DAT200" to depend on the current course
-                this.$socket.emit("getQuizWithinCourse", {code: "DAT200", semester:"18H"});
+                this.$socket.emit("getSessionWithinCourse", {code: "DAT200", semester:"18H"});
             },
             okHandler: function() {
-                this.$socket.emit("addQuestionToQuiz", {
+                this.$socket.emit("addQuestionToSession", {
                     questionId: this.question.id,
-                    quizId: this.selectedSession
+                    sessionId: this.selectedSession
                 })
             }
         },
         sockets: {
-            sendQuizWithinCourse: function(quizes) {
-                this.sessionOptions = quizes; 
+            sendSessionWithinCourse: function(sessions) {
+                this.sessionOptions = sessions; 
             }
         }
     }
