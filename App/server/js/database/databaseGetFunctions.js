@@ -1,5 +1,5 @@
 const customReject = function(err, func){
-    return new Error(`\n\nError in function: ${func} \n\n ${err}`)
+    return new Error(`in get function: ${func} \n\n ${err}`)
 }
 
 const get = {

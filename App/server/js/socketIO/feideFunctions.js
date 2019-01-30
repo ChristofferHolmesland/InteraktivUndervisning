@@ -1,3 +1,7 @@
+const get = require("../database/databaseFunctions").get;
+const insert = require("../database/databaseFunctions").insert;
+const update = require("../database/databaseFunctions").update;
+
 module.exports.feide = function(socket, db, user){
     socket.on("clientLoginInfoRequest", function() {
         socket.emit("clientLoginInfoResponse", {
@@ -34,6 +38,8 @@ module.exports.feide = function(socket, db, user){
             result.totalCorrectAnswers = correct;
             result.totalIncorrectAnswers = wrong;
             socket.emit("getUserStatsResponse", result);
+        }).catch((err) => {
+            console.log(err);
         });
     });
 }
