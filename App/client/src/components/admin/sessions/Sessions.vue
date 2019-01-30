@@ -43,7 +43,7 @@
 <script>
 	import Session from "./Session.vue";
 	import EditSession from "./EditSession.vue";
-	import SelectCourse from "./SelectCourse.vue";
+	import SelectCourse from "../SelectCourse.vue";
 	export default {
 		name: 'Sessions',
 		data() {

@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import AdminWaitingRoom from "../components/admin/AdminWaitingRoom.vue";
+import AdminWaitingRoom from "../components/admin/startSession/AdminWaitingRoom.vue";
 export default {
     name: "session",
     props: [
