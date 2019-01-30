@@ -1,7 +1,7 @@
 <template>
     <div id="clientQuiz">
     <b-container>
-        <ClientQuizQuestion v-if="getQuizActive" :quizCode="quizCode" :questioninfo="questioninfo"></ClientQuizQuestion>
+        <ClientQuizQuestion v-if="getQuizState == 1" :quizCode="quizCode" :questioninfo="questioninfo"></ClientQuizQuestion>
         <ClientWaitingRoom v-else :quizCode="quizCode"></ClientWaitingRoom>
     </b-container>
     </div>
@@ -15,7 +15,7 @@
 		name: "ClientQuiz",
 		data() {
 			return{
-				quizActive: false,
+				sessionState: 0,
 				questioninfo: {
 					text: "",
 					hasDescription: false,
@@ -36,8 +36,9 @@
 		methods: {
 
         },computed: {
-            getQuizActive() {
-            	return this.quizActive;
+            getQuizState() {
+
+            	return this.sessionState;
             }
         },
         sockets: {
@@ -54,7 +55,7 @@
 				this.questioninfo.type = questioninfo.type;
 				console.log("HasDescription" + this.questioninfo.hasDescription);
                 console.log("ClientDesc: " + this.questioninfo.description);
-				this.quizActive = true;
+				this.sessionState = 1;
 			},
             AnswerResponse(ans) {
 				console.log("The question was answered! Answer given:\n ");
