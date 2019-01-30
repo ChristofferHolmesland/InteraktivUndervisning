@@ -94,6 +94,19 @@ const get = {
             });
         });
     },
+    allSessionWithinCourseForSessionOverview: function(db, courseCode, courseSemester) {
+        return new Promise((resolve, reject) => {
+            let statement = `SELECT Q.id, Q.name
+                             FROM Session AS Q
+                             INNER JOIN Course AS C ON Q.courseCode = C.code 
+                             WHERE C.code = '${courseCode}' AND C.semester = '${courseSemester}' 
+                             GROUP BY Q.id;`;
+            db.all(statement, (err,rows) => {
+                if (err) reject(customReject(err, "allSessionWithinCourse"));
+                resolve(rows);
+            });
+        });
+    },
     amountAnswersForUserByResult: function (db, userInfo, resultValue) {
         return new Promise(async (resolve, reject) => {
             let userId = await this.userId(db, userInfo).catch((err) => {

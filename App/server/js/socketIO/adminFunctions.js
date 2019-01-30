@@ -8,10 +8,9 @@ const session = require("../session.js").Session;
 const question = require("../session.js").Question;
 const answer = require("../session.js").Answer;
 
+var currentSession = undefined;
+
 module.exports.admin = function(socket, db, user, sessions) {
-    socket.on("adminStarted", function() {
-            
-    });
 
     socket.on("courseListRequest", function() {
         let userInfo = "2222221" // TODO Change this to user feide id
@@ -109,11 +108,35 @@ module.exports.admin = function(socket, db, user, sessions) {
     });
 
     socket.on("initializeSession", function(sessionId){
-        let sessionCode = generalFunctions.calculateSessionCode(sessions);
-        socket.join(sessionCode);
-        let tempSession = new session();
-        socket.emit("initializeSessionResponse", sessionId);
+        if(currentSession != undefined) socket.emit("initializeSessionErrorResponse", "error1")
+        get.sessionById(db, sessionId).then(async (sessionInformation) => {
+            let sessionCode = generalFunctions.calculateSessionCode(sessions);
+            socket.join(sessionCode);
+            
+            let questions = await get.allQuestionInSession(db, sessionInformation.id);
+            let questionList = [];
+
+            currentSession = new session(sessionInformation.id, sessionInformation.name,
+                                            sessionInformation.status, [], sessionInformation.courseSemester,
+                                            sessionInformation.courseName, questionList, sessionCode);
+
+            sessions.set(sessionCode, currentSession);
+            
+            socket.emit("initializeSessionResponse", sessionCode);
+        }).catch((err) => {
+            console.log(err);
+            socket.emit("initializeSessionErrorResponse", "error2");
+        });
     });
+
+    socket.on("sessionOverviewRequest", function(course) {
+        get.allSessionWithinCourseForSessionOverview(db, course.code, course.semester).then((sessionList) => {
+            socket.emit("sessionOverviewResponse", sessionList)
+        }).catch((err) => {
+            console.log(err);
+            socket.emit("sessionOverviewErrorResponse")
+        });
+    })
     
     socket.on("startSessionWaitingRoom", function(sessionId) {
         socket.emit("startSessionWaitingRoomResponse");

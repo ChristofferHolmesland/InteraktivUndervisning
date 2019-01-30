@@ -33,6 +33,9 @@ export default {
     },
     components: {
         AdminWaitingRoom
-    }
+    },
+    beforeDestroy() {
+      // TODO add logic if the admin goes to another path before the sessions ends  
+    },
 }
 </script>
