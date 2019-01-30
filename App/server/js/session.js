@@ -16,6 +16,7 @@ class Session {
         this.courseName = courseName;
         this.questionList = questionList;
         this.sessionCode = sessionCode;
+        this.currentQuestion = 0;
     }
 
     addUser(user) {
@@ -34,14 +35,13 @@ class Question {
     questionType
     courseCode
     */
-    constructor(questionId, questionText, questionDescription, questionObject, questionSolution, questionType, courseCode, time) {
+    constructor(questionId, questionText, questionDescription, questionObject, questionSolution, questionType, time) {
         this.questionId = questionId;
         this.questionText = questionText;
         this.questionDescription = questionDescription;
         this.questionObject = questionObject;
         this.questionSolution = questionSolution;
         this.questionType = questionType;
-        this.courseCode = courseCode;
         this.time = time;
     }
 }

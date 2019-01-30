@@ -116,10 +116,11 @@ module.exports.admin = function(socket, db, user, sessions) {
             let questions = await get.allQuestionInSession(db, sessionInformation.id);
             let questionList = [];
 
-            currentSession = new session(sessionInformation.id, sessionInformation.name,
+            currentSession = {session: new session(sessionInformation.id, sessionInformation.name,
                                             sessionInformation.status, [], sessionInformation.courseSemester,
-                                            sessionInformation.courseName, questionList, sessionCode);
-
+                                            sessionInformation.courseName, questionList, sessionCode),
+                                adminSocket: socket}
+            
             sessions.set(sessionCode, currentSession);
             
             socket.emit("initializeSessionResponse", sessionCode);
@@ -142,13 +143,14 @@ module.exports.admin = function(socket, db, user, sessions) {
         socket.emit("startSessionWaitingRoomResponse");
     });
 
-    socket.on("startSession", function(sessionId) {
-        // TODO remove testdata and querry database for correct information
-        let response = {
-            questionText: "Question 1",
-            questionDescription: "Description for question 1. <solution=test>",
-            questionType: "text"
-        }
+    socket.on("startSession", function(sessionCode) {
+        let firstQuestionForClient = currentSession.questionList[1];
+        let firstQuestionForAdmin = firstQuestionForClient;
+        delete firstQuestionForClient.solution;
+        delete firstQuestionForClient.questionId;
+
+        socket.emit("startSessionResponse", firstQuestionForAdmin)
+        socket.broadcast.to("sessionCode").emit("startFirstQuestion", firstQuestionForClient);
     });
 
     socket.on("getSessionWithinCourse", function(course) {   
