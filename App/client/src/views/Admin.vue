@@ -5,7 +5,7 @@
 </template>
 
 <script>
-	import Quiz from "../components/admin/Quiz.vue";
+	import Session from "../components/admin/Session.vue";
 	import Dashboard from "../components/admin/Dashboard.vue";
 	import Questions from "../components/admin/Questions.vue";
 	import Sessions from "../components/admin/sessions/Sessions.vue";
@@ -17,7 +17,7 @@
 			};
 		},
 		components: {
-			"quiz": Quiz,
+			"session": Session,
 			"admin": Dashboard,
 			"questions": Questions,
 			"sessions": Sessions

@@ -1,10 +1,10 @@
 <template>
-	<div class="quiz">
+	<div class="session">
 		<b-list-group>
 			<b-list-group-item 	v-for="session in sessionList"
 								:key="session.id">
 				{{session.title}} 	<b-button :id="session.id" 
-											@click="initializeQuiz($event)">
+											@click="initializeSession($event)">
 										Start
 									</b-button>
 			</b-list-group-item>
@@ -14,22 +14,22 @@
 
 <script>
 	export default {
-		name: 'quiz',
+		name: 'session',
 		data() {
 			return {
-				sessionList: [{id: "3434", title: "quiz 1"}]
+				sessionList: [{id: "3434", title: "session 1"}]
 			}
 		},
 		sockets: {
-			initializeQuizResponse(quizId) {
-				console.log(quizId)
-				this.$router.push(`/admin/quiz/${quizId}`);
+			initializeSessionResponse(sessionId) {
+				console.log(sessionId)
+				this.$router.push(`/admin/session/${sessionId}`);
 			}
 		},
 		methods: {
-			initializeQuiz(event){
+			initializeSession(event){
 				console.log(event.target.id)
-				this.$socket.emit("initializeQuiz", event.target.id);
+				this.$socket.emit("initializeSession", event.target.id);
 			}
 		},
     }
