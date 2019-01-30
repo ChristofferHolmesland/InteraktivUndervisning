@@ -50,9 +50,3 @@ export default {
 	}
 }
 </script>
-
-<style>
-	body {
-		background-color: #ccc/*#b7b7b7/*#1c11ee*/;
-	}
-</style>
