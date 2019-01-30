@@ -1,5 +1,10 @@
 module.exports.client = function(socket, db, sessions) {
 
+    setInterval(function(){
+        console.log(socket.id);
+        console.log(sessions);
+    }, 5000);
+
     socket.on("clientAnswered", function() {
     });
 
@@ -8,18 +13,16 @@ module.exports.client = function(socket, db, sessions) {
         socket.emit("startQuizResponse",question);  //TODO change emit to socket.in(quizCode)
     });
 
-    socket.on("quickJoinRoom", function (roomnr) {
-        console.log("quickJoinRoom is called!");
+    socket.on("quickJoinRoom", function (sessionCode) {
         let rooms= [1,2,3,4,5,6,7,8,9,10,3334];
-        if (rooms.indexOf(parseInt(roomnr)) !== -1 && roomnr !== "") {
-            let quizCode = `${roomnr}`;
-            socket.join(quizCode);
-            console.log("Joined "+ quizCode);
+        if(sessions.get(sessionCode) || rooms.indexOf(parseInt(sessionCode)) != -1){
+            socket.join(sessionCode);
+            console.log("Joined "+ sessionCode);
             console.log(socket.adapter.rooms);
-            socket.emit("joinRoom",quizCode);	//use io to emit messages to rooms!!!
+            socket.emit("joinRoom",sessionCode);
         }else {
             console.log("inActive");
-            socket.emit("QuizInActive",roomnr);
+            socket.emit("QuizInActive", sessionCode);
         }
     });
 

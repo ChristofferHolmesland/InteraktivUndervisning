@@ -8,7 +8,7 @@ const get = require("../database/databaseFunctions").get;
 const insert = require("../database/databaseFunctions").insert;
 const update = require("../database/databaseFunctions").update;
 
-let sessions = new Map();
+var sessions = new Map();
 
 module.exports.listen = function(server, users, db) {
     io = socketio.listen(server, {
@@ -70,8 +70,8 @@ module.exports.listen = function(server, users, db) {
                 "userRights": user.userRights
             });
             
-            require("./anonymousFunctions.js").anonymous(socket, db);
-            require("./clientFunctions.js").client(socket, db)
+            require("./anonymousFunctions.js").anonymous(socket, db, sessions);
+            require("./clientFunctions.js").client(socket, db, sessions)
             require("./feideFunctions.js").feide(socket, db);//TODO remove
             require("./studentAssistantFunctions.js").studentAssistant(socket, db);//TODO remove
             require("./adminFunctions.js").admin(socket, db, user, sessions);//TODO remove
