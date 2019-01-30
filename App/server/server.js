@@ -5,7 +5,6 @@ const passport = require("passport");
 const compression = require("compression");
 const OICStrategy = require("passport-openid-connect").Strategy;
 const cookieParser = require("cookie-parser");
-const deasync = require("deasync");
 
 const user = (require("./js/user.js")).User;
 const users = new Map();
@@ -59,7 +58,6 @@ require('./js/database/database').getDB().then(function(value) {
         const dummydata = require('./tools/insertDummyData');
         dummydata.InsertData(db).catch(function(err) {
             console.log(err);
-            console.log("2")
             process.exit(1);
         });
     }
@@ -67,14 +65,10 @@ require('./js/database/database').getDB().then(function(value) {
     const server = app.listen(port, function() {
         console.log(`Server listening on localhost:${ port }! Use ctrl + c to stop the server!`)
     });
-    require('./js/iofunctions').listen(server, users, db);
+    require('./js/socketIO/generalFunctions').listen(server, users, db);
 }).catch(function (err) {
     console.log(err);
-    console.log("1")
     process.exit(1);
-});
-deasync.loopWhile(function() {
-    return db != undefined;
 });
 
 app.post('/login/feide', passport.authenticate('passport-openid-connect', {"successReturnToOrRedirect": "/client"}))

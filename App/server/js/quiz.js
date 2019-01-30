@@ -7,7 +7,7 @@ class Quiz {
     courseSemester
     courseName
     */
-    constructor(quizId, quizName, status, userList, courseSemester, courseName, questionList) {
+    constructor(quizId, quizName, status, userList, courseSemester, courseName, questionList, quizCode) {
         this.quizId = quizId;
         this.quizName = quizName;
         this.status = status;
@@ -15,6 +15,7 @@ class Quiz {
         this.courseSemester = courseSemester;
         this.courseName = courseName;
         this.questionList = questionList;
+        this.quizCode = quizCode;
     }
 
     addUser(user) {
@@ -33,7 +34,7 @@ class Question {
     questionType
     courseCode
     */
-    constructor(questionId, questionText, questionDescription, questionObject, questionSolution, questionType, courseCode) {
+    constructor(questionId, questionText, questionDescription, questionObject, questionSolution, questionType, courseCode, time) {
         this.questionId = questionId;
         this.questionText = questionText;
         this.questionDescription = questionDescription;
@@ -41,6 +42,7 @@ class Question {
         this.questionSolution = questionSolution;
         this.questionType = questionType;
         this.courseCode = courseCode;
+        this.time = time;
     }
 }
 
