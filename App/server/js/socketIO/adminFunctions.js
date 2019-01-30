@@ -4,11 +4,11 @@ const update = require("../database/databaseFunctions").update;
 
 const generalFunctions =  require("../generalFunctions.js").functions;
 
-const quiz = require("../session.js").Quiz;
+const session = require("../session.js").Session;
 const question = require("../session.js").Question;
 const answer = require("../session.js").Answer;
 
-module.exports.admin = function(socket, db, quizzes) {
+module.exports.admin = function(socket, db, sessions) {
     socket.on("adminStarted", function() {
             
     });
@@ -28,23 +28,23 @@ module.exports.admin = function(socket, db, quizzes) {
     });
 
     socket.on("getSessions", function(course) {
-        get.allQuizWithinCourse(db, course.code, course.semester).then((quizzes) => {
+        get.allSessionWithinCourse(db, course.code, course.semester).then((sessions) => {
             /*let result = [];
-            quizzes.forEach(quiz => {
+            sessions.forEach(session => {
                 result.push({
-                    "id": quiz.id,
-                    "name": quiz.name
+                    "id": session.id,
+                    "name": session.name
                 });
             }); */
-            socket.emit("getSessionsResponse", quizzes);
+            socket.emit("getSessionsResponse", sessions);
         });
     });
 
     socket.on("addNewSession", function(session) {
         let c = session.course.split(" ");
-        insert.quiz(db, session.title, c[1], c[0]).then(function (id) {
+        insert.session(db, session.title, c[1], c[0]).then(function (id) {
             for (let i = 0; i < session.questions.length; i++) {
-                insert.addQuestionToQuiz(db, id, session.questions[i].id);
+                insert.addQuestionToSession(db, id, session.questions[i].id);
             }
             socket.emit("addNewSessionDone");
         });
@@ -77,14 +77,14 @@ module.exports.admin = function(socket, db, quizzes) {
     });
 
     socket.on("getSession", function(sessionId) {
-        get.quizById(db, sessionId).then(async function(quiz) {
+        get.sessionById(db, sessionId).then(async function(session) {
             let result = {};
             result.questions = [];
-            result.participants = quiz.participants;
+            result.participants = session.participants;
 
             let totalCorrectAnswers = 0;
             
-            let questions = await get.allQuestionInQuiz(db, quiz.id);
+            let questions = await get.allQuestionInSession(db, session.id);
             for (let i = 0; i < questions.length; i++) {
                 let question = questions[i];
                 let answer = await get.allAnswerToQuestion(db, question.qqId);
@@ -109,7 +109,7 @@ module.exports.admin = function(socket, db, quizzes) {
                     "qqId": question.qqId, 
                     "text": question.text,
                     "description": question.description,
-                    "correctAnswers": Math.round(correctAnswers / quiz.participants * 100),
+                    "correctAnswers": Math.round(correctAnswers / session.participants * 100),
                     "answers": answers 
                 });
             }
@@ -119,18 +119,18 @@ module.exports.admin = function(socket, db, quizzes) {
         });
     });
 
-    socket.on("initializeQuiz", function(quizId){
-        let quizCode = generalFunctions.calculateQuizCode(quizzes);
-        socket.join(quizCode);
-        let tempQuiz = new quiz();
-        socket.emit("initializeQuizResponse", quizId);
+    socket.on("initializeSession", function(sessionId){
+        let sessionCode = generalFunctions.calculateSessionCode(sessions);
+        socket.join(sessionCode);
+        let tempSession = new session();
+        socket.emit("initializeSessionResponse", sessionId);
     });
     
-    socket.on("startQuizWaitingRoom", function(quizId) {
-        socket.emit("startQuizWaitingRoomResponse");
+    socket.on("startSessionWaitingRoom", function(sessionId) {
+        socket.emit("startSessionWaitingRoomResponse");
     });
 
-    socket.on("startQuiz", function(quizId) {
+    socket.on("startSession", function(sessionId) {
         // TODO remove testdata and querry database for correct information
         let response = {
             questionText: "Question 1",
@@ -139,22 +139,22 @@ module.exports.admin = function(socket, db, quizzes) {
         }
     });
 
-    socket.on("getQuizWithinCourse", function(course) {   
-        get.allQuizWithinCourse(db, course.code, course.semester).then((quizzes) => {
+    socket.on("getSessionWithinCourse", function(course) {   
+        get.allSessionWithinCourse(db, course.code, course.semester).then((sessions) => {
             let result = [];
-            for (let i = 0; i < quizzes.length; i++) {
+            for (let i = 0; i < sessions.length; i++) {
                 result.push({
-                    value: quizzes[i].id,
-                    text: quizzes[i].name
+                    value: sessions[i].id,
+                    text: sessions[i].name
                 });
             }
-            socket.emit("sendQuizWithinCourse", result);
+            socket.emit("sendSessionWithinCourse", result);
         });
         
     });
 
-    socket.on("addQuestionToQuiz", function(data) {
-        insert.addQuestionToQuiz(db, data.quizId, data.questionId);
+    socket.on("addQuestionToSession", function(data) {
+        insert.addQuestionToSession(db, data.sessionId, data.questionId);
     });
 
     socket.on("getAllQuestionsWithinCourse", function(course) {

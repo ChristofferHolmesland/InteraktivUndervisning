@@ -1,21 +1,21 @@
-class Quiz {
+class Session {
     /*
-    quizid
-    quizname
+    sessionid
+    sessionname
     status
     participants
     courseSemester
     courseName
     */
-    constructor(quizId, quizName, status, userList, courseSemester, courseName, questionList, quizCode) {
-        this.quizId = quizId;
-        this.quizName = quizName;
+    constructor(sessionId, sessionName, status, userList, courseSemester, courseName, questionList, sessionCode) {
+        this.sessionId = sessionId;
+        this.sessionName = sessionName;
         this.status = status;
         this.userList = userList;
         this.courseSemester = courseSemester;
         this.courseName = courseName;
         this.questionList = questionList;
-        this.quizCode = quizCode;
+        this.sessionCode = sessionCode;
     }
 
     addUser(user) {
@@ -63,6 +63,6 @@ class Answer {
     }
 }
 
-module.exports.Quiz = Quiz;
+module.exports.Session = Session;
 module.exports.Question = Question;
 module.exports.Answer = Answer;

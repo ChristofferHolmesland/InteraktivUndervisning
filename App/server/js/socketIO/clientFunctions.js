@@ -1,4 +1,4 @@
-module.exports.client = function(socket, db, quizzes) {
+module.exports.client = function(socket, db, sessions) {
 
     socket.on("clientAnswered", function() {
     });

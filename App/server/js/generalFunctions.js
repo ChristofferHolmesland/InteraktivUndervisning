@@ -1,6 +1,6 @@
 const functions = {
-    calculateQuizCode: function(quizzes) {
-        let keys = Array.from(quizzes.keys());
+    calculateSessionCode: function(sessions) {
+        let keys = Array.from(sessions.keys());
         let possibleCodes = [];
         for(let i = 0; i < 10000; i++){
             if (!keys.includes(i)) {

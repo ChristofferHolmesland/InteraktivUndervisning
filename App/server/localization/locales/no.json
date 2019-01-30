@@ -25,7 +25,7 @@
         "signIn": "Logg inn",
         "dashboard": "Dashboard",
         "admin": "Admin",
-        "quiz": "Quiz",
+        "startSession": "Start økt",
         "questions": "Spørsmål",
         "sessions": "Økter"
     },
@@ -36,13 +36,13 @@
         "feideList": [
             "Denne nettsiden bruker cookies for å kunne lagre spørsmålene dine.",
             "Quizmaster vil ikke kunne se hvem som har svart hva, men vil kunne se feil svar.",
-            "Denne nettsiden lagrer data linket til din bruker for at du skal kunne se på tidligere quizer",
+            "Denne nettsiden lagrer data linket til din bruker for at du skal kunne se på tidligere økter",
             "En kan slette all data som er lagret om deg ved å gå inn på profil og trykke på \"Slett data\"",
             "For å kunne logge inn med Feide så må du akseptere at vi bruker cookies og lagrer data under!"
         ],
         "anonymousList": [
             "Hvis en velger å logge inn anonymt vil vi ikke lagre cookies eller data i etterkant.",
-            "Hvis en velger anonym innlogging vil en ikke kunne se tidligere quizer."
+            "Hvis en velger anonym innlogging vil en ikke kunne se tidligere økter."
         ]
     },
     "401": {
@@ -68,29 +68,6 @@
         "correctAnswers": "Riktige svar: "
     },
     "Sessions": {
-    "DeleteUserInfo": {
-        "deleteInfoList": [
-            "Ved å trykke på ok under så vil vi slette all informasjon om deg på server og i databasen.",
-            "Ved å trykke ok under så vil du bli logget ut og sendt til hjem skjermen.",
-            "Denne handlingen går ikke det ikke ann å angre på i ettertid.",
-            "Når dataen er slettet så vil vi ikke kunne få den tilbake."
-        ],
-        "title": "Slett all bruker data!",
-        "okTitle": "Slett!"
-    },
-    "UserInfo": {
-        "title": "Bruker informasjon",
-        "deleteBtnTitle": "Slett brukerdata",
-        "userRightsTitle": "Bruker rettigheter",
-        "studentAssistant": "Student Assistent",
-        "admin": "Administrator"
-    },
-    "UserStats": {
-        "title": "Bruker statistikk",
-        "totalQuizzes": "Antall quizer:",
-        "correctAnswers": "Antall rett svar:",
-        "incorrectAnswers": "Antall feil svar:"
-    }
     },
     "DeleteUserInfo": {
         "deleteInfoList": [
@@ -112,7 +89,7 @@
     },
     "UserStats": {
         "title": "Bruker statistikk",
-        "totalQuizzes": "Antall quizer:",
+        "totalSessions": "Antall økter:",
         "correctAnswers": "Antall rett svar:",
         "incorrectAnswers": "Antall feil svar:"
     }

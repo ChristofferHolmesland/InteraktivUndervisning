@@ -25,7 +25,7 @@
         "signIn": "Sign in",
         "dashboard": "Dashboard",
         "admin": "Admin",
-        "quiz": "Quiz",
+        "startSession": "Start session",
         "questions": "Questions",
         "sessions": "Sessions"
     },
@@ -36,13 +36,13 @@
         "feideList": [
             "This website will use cookies to be able to store your questions.",
             "The quizmaster will not be able to see who answered what, but will be able to see incorrect answers.",
-            "This website will store date linked to your user for you to be able to see previous quizzes.",
+            "This website will store date linked to your user for you to be able to see previous sessions.",
             "You will be able to delete all data stored about you by going in to profile and pressing \"Delete data\".",
             "To be able to sign in with Feide, you will have to accept that we use cookies and store information about you below!"
         ],
         "anonymousList": [
             "If you chose to sign in anonymously we will not store cookies or save any data about you.",
-            "If you chose to sign in anonymously you will not be able to see previously attended quizzes."
+            "If you chose to sign in anonymously you will not be able to see previously attended sessions."
         ]
     },
     "401": {
@@ -68,29 +68,7 @@
         "correctAnswers": "Corrects answers: "
     },
     "Sessions": {
-    "DeleteUserInfo": {
-        "deleteInfoList": [
-            "By pressing ok under we will delete all the information we have on the server and database about you.",
-            "By pressing ok under you will be logged out and redirected to the home page.",
-            "This action is nonreversible!",
-            "Once deleted there is no going back!"
-        ],
-        "title": "Delete all user data!",
-        "okTitle": "Delete!"
-    },
-    "UserInfo": {
-        "title": "User info",
-        "deleteBtnTitle": "Delete my data",
-        "userRightsTitle": "User rights",
-        "studentAssistant": "Student assistant",
-        "admin": "Administrator"
-    },
-    "UserStats": {
-        "title": "User stats",
-        "totalQuizzes": "Total number of quizzes:",
-        "correctAnswers": "Correct answers:",
-        "incorrectAnswers": "Incorrect answers:"
-    }
+
     },
     "DeleteUserInfo": {
         "deleteInfoList": [
@@ -112,7 +90,7 @@
     },
     "UserStats": {
         "title": "User stats",
-        "totalQuizzes": "Total number of quizzes:",
+        "totalSessions": "Total number of sessions:",
         "correctAnswers": "Correct answers:",
         "incorrectAnswers": "Incorrect answers:"
     }
