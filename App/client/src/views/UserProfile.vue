@@ -18,7 +18,7 @@ import UserStats from "../components/user/UserStats.vue";
 export default {
 	name: "userProfile",
 	created() {
-		this.$socket.emit("checkSignedInFeide");
+		this.$socket.emit("verifyUserLevel", 2);
 	},
 	components: {
 		UserInfo,

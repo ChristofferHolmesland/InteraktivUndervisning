@@ -6,10 +6,7 @@ import "./registerServiceWorker";
 import BootstrapVue from "bootstrap-vue";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
-//import socketio from 'socket.io-client';
 import VueSocketIO from 'vue-socket.io';
-
-//export const SocketInstance = socketio("http://localhost:80");
 
 Vue.use(BootstrapVue);
 Vue.use(new VueSocketIO({

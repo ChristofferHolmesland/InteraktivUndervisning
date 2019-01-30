@@ -117,3 +117,13 @@ Rapport/*.log
 
 # vue
 App/server/public
+
+# database
+*.db
+
+# Latex
+*.aux
+*.out
+*.pdf
+*.gz
+*.toc
