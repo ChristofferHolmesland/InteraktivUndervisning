@@ -74,7 +74,7 @@ module.exports.listen = function(server, users, db) {
             require("./clientFunctions.js").client(socket, db)
             require("./feideFunctions.js").feide(socket, db);//TODO remove
             require("./studentAssistantFunctions.js").studentAssistant(socket, db);//TODO remove
-            require("./adminFunctions.js").admin(socket, db);//TODO remove
+            require("./adminFunctions.js").admin(socket, db, user, sessions);//TODO remove
         });
     });
 }

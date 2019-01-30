@@ -41,8 +41,7 @@ export default {
 			this.$store.commit("userChange", userData);
 
 			if (userData.userRights > 2) {
-				// TODO Remove dummy data feideid
-				this.$socket.emit("courseListRequest", "2222221");
+				this.$socket.emit("courseListRequest");
 			}
 		},
 		courseListResponse(courseList) {

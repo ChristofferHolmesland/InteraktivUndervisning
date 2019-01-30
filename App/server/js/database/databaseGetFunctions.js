@@ -21,6 +21,15 @@ const get = {
             });
         });
     },
+    userIdByFeideId: function (db,feideId) {
+        let statement = `SELECT id FROM User WHERE feideId = ${feideId} LIMIT 1`;
+        return new Promise((resolve, reject) => {
+            db.get(statement, (err,row) => {
+                if (err) reject(customReject(err, "useridByFeideId"));
+                resolve(row);
+            });
+        });
+    },
     sessionById: function(db, sessionId) {
         return new Promise((resolve, reject) => {
             let statement = `SELECT * FROM Session WHERE id = ${sessionId}`;
@@ -31,7 +40,10 @@ const get = {
         });
     },
     sessionsToUser: function(db, userInfo) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
+            let userId = await this.userId(db, userInfo).catch((err) => {
+                reject(customReject(err), "sessionsToUser");
+            });
             let statement = `SELECT Q.name, C.code
                             FROM Session AS Q
                             INNER JOIN User_has_Session AS UQ ON UQ.sessionId = Q.id
@@ -39,11 +51,7 @@ const get = {
                             WHERE UQ.userId = (
                                 SELECT U.id 
                                 FROM User AS U 
-                                WHERE U.feideid= ${async () => {
-                                    await this.userId(userInfo).catch((err) => {
-                                        reject(customReject(err), "sessionsToUser");
-                                    });
-                                }}
+                                WHERE U.feideid= ${userId}
                             LIMIT 1)`;
             db.all(statement, (err,rows) => {
                 if (err) reject(customReject(err, "sessionsToUser"));
@@ -53,11 +61,11 @@ const get = {
     },
     allQuestionInSession: function (db, sessionId) {
         return new Promise((resolve, reject) => {
-            let statement = `SELECT Q.id, Q.text,Q.description,Q.object,Q.solution,T.type,QQ.id AS qqID
+            let statement = `SELECT Q.id, Q.text,Q.description,Q.object,Q.solution,T.type,SQ.id AS sqId
                              FROM Question AS Q
-                             INNER JOIN Session_has_Question AS QQ ON QQ.questionId = Q.id
+                             INNER JOIN Session_has_Question AS SQ ON SQ.questionId = Q.id
                              INNER JOIN Type AS T ON T.type = Q.questionType
-                             WHERE QQ.sessionId = ${sessionId};`;
+                             WHERE SQ.sessionId = ${sessionId};`;
             db.all(statement, (err,rows) => {
                 if (err) reject(customReject(err, "allQuestionInSession"));
                 resolve(rows);
@@ -86,38 +94,36 @@ const get = {
             });
         });
     },
-    amountAnswersForUserByResult: async function (db, userInfo, resultValue) {
-        return new Promise((resolve, reject) => {
+    amountAnswersForUserByResult: function (db, userInfo, resultValue) {
+        return new Promise(async (resolve, reject) => {
+            let userId = await this.userId(db, userInfo).catch((err) => {
+                reject(customReject(err), "amountAnswersForUserByResult");
+            });
             let statement = `SELECT id
                             FROM Answer
                             WHERE result = ${resultValue} 
-                            AND userId = ${async () => {
-                                await this.userId(userInfo).catch((err) => {
-                                    reject(customReject(err), "amountAnswersForUserByResult");
-                                });
-                            }}`;
+                            AND userId = ${userId}`;
             db.all(statement, (err,rows) => {
                 if (err) reject(customReject(err, "amountAnswersForUserByResult"));
                 resolve(rows.length);
             });
         });
     },
-    amountAnswersForUser: async function (db, userInfo) {
-        return new Promise((resolve, reject) => {
+    amountAnswersForUser: function (db, userInfo) {
+        return new Promise(async (resolve, reject) => {
+            let userId = await this.userId(db, userInfo).catch((err) => {
+                reject(customReject(err), "amountAnswersForUser");
+            });
             let statement = `SELECT id
                              FROM Answer
-                             WHERE userId = ${async () => {
-                                await this.userId(userInfo).catch((err) => {
-                                    reject(customReject(err), "amountAnswersForUser");
-                                });
-                            }}`;
+                             WHERE userId = ${userId}`;
             db.all(statement, (err,rows) => {
                 if (err) reject(customReject(err, "amountAnswerForUser"));
                 resolve(rows.length);
             });
         });
     },
-    allQuestionsWithinCourse(db, course) {
+    allQuestionsWithinCourse: function(db, course) {
         return new Promise((resolve, reject) => {
             let statement = `SELECT Q.id,Q.text,Q.description,Q.object,Q.solution,T.type,Q.courseCode
                              FROM Question AS Q
@@ -129,7 +135,7 @@ const get = {
             });
         });
     },
-    questionTypes(db) {
+    questionTypes: function(db) {
         return new Promise((resolve, reject) => {
             let statement = `SELECT * FROM Type;`;
             db.all(statement, (err,rows) => {
@@ -138,7 +144,7 @@ const get = {
             });
         });
     },
-    allCourses(db) {
+    allCourses: function(db) {
         return new Promise((resolve, reject) => {
             let statement = `SELECT * FROM Course`;
             db.all(statement, (err,rows) => {
@@ -147,15 +153,11 @@ const get = {
             });
         });
     },
-    userCourses(db, userInfo) {
-        return new Promise((resolve, reject) => {
+    userCourses: function(db, feideId) {
+        return new Promise(async (resolve, reject) => {
             let statement = `SELECT courseSemester AS semester, courseCode AS code
                             FROM UserRight
-                            WHERE feideId = ${async () => {
-                                await this.userId(userInfo).catch((err) => {
-                                    reject(customReject(err), "userCourses");
-                                });
-                            }}`;
+                            WHERE feideId = ${feideId}`;
             db.all(statement, (err,rows) => {
                 if (err) reject(customReject(err, "userCourses"));
                 resolve(rows);

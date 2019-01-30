@@ -9,6 +9,17 @@ class User {
         if(feide) this.feide = new FeideUser(feide.accessToken, feide.idNumber, feide.userId);
     }
 
+    getUserTypeAndId() {
+        if (this.feide) {
+            return {
+                type: "feide",
+                id: this.feide.idNumber
+            }
+        }
+
+        return undefined;
+    }
+
     static generateSessionId() { // returns string
         return crypto.randomBytes(64).toString("hex");
     }

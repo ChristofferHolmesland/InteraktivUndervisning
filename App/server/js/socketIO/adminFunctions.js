@@ -8,13 +8,15 @@ const session = require("../session.js").Session;
 const question = require("../session.js").Question;
 const answer = require("../session.js").Answer;
 
-module.exports.admin = function(socket, db, sessions) {
+module.exports.admin = function(socket, db, user, sessions) {
     socket.on("adminStarted", function() {
             
     });
 
-    socket.on("courseListRequest", function(feideId) {
-        get.userCourses(db, feideId).then((courses) => {
+    socket.on("courseListRequest", function() {
+        let userInfo = "2222221" // TODO Change this to user feide id
+
+        get.userCourses(db, userInfo).then((courses) => {
             let result = [];
             for (let i = 0; i < courses.length; i++) {
                 let courseString = courses[i].code + " " + courses[i].semester;
@@ -63,19 +65,6 @@ module.exports.admin = function(socket, db, sessions) {
         });
     });
 
-    socket.on("getCourses", function() {
-        get.allCourses(db).then((courses) => {
-            let result = [];
-            for (let i = 0; i < courses.length; i++) {
-                result.push({
-                    code: courses[i].code,
-                    semester: courses[i].semester
-                });
-            }
-            socket.emit("sendCourses", result);
-        });
-    });
-
     socket.on("getSession", function(sessionId) {
         get.sessionById(db, sessionId).then(async function(session) {
             let result = {};
@@ -87,7 +76,7 @@ module.exports.admin = function(socket, db, sessions) {
             let questions = await get.allQuestionInSession(db, session.id);
             for (let i = 0; i < questions.length; i++) {
                 let question = questions[i];
-                let answer = await get.allAnswerToQuestion(db, question.qqId);
+                let answer = await get.allAnswerToQuestion(db, question.sqId);
                 let answers = [];
                 let correctAnswers = 0;
 
@@ -106,7 +95,7 @@ module.exports.admin = function(socket, db, sessions) {
                 });
 
                 result.questions.push({
-                    "qqId": question.qqId, 
+                    "sqId": question.sqId, 
                     "text": question.text,
                     "description": question.description,
                     "correctAnswers": Math.round(correctAnswers / session.participants * 100),
@@ -175,13 +164,14 @@ module.exports.admin = function(socket, db, sessions) {
     });
 
     socket.on("addNewQuestion", function(question) {
-        insert.question(db, question.text, question.description, question.solution, 
+        insert.question(db, question.text, question.description, question.solution, 60, // TODO ADD TIME
             question.solutionType, question.courseCode, question.object);
     });
 
     socket.on("updateQuestion", function(question) {
-        update.editQuestion(db, question.id, question.text, question.description, 
-            question.object, question.solution, question.solutionType);
+        console.log(question);
+        update.question(db, question.id, question.text, question.description,
+            "TODO ADD ME", question.solution, question.solutionType, 60); // TODO ADD TIME
     });
 
     socket.on("getQuestionTypes", function() {

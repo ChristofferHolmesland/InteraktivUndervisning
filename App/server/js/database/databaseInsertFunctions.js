@@ -1,6 +1,6 @@
 function createPromise(db, statement, funcName) {
 	return new Promise((resolve, reject) => {
-		db.run(statement, (err) => {
+		db.run(statement, function(err){
 			if (err) reject(new Error(`Error in insert function: ${funcName} \n\n ${err}`));
 			resolve(this.lastID);
 		});
@@ -43,6 +43,7 @@ const insert = {
 	_questionNoObject: function (db, questionText, questionDescription, questionSolution, time, Type, courseCode) {
 		let statement = `INSERT INTO Question(text,description,solution,time,questionType,courseCode)
 						VALUES('${questionText}','${questionDescription}','${questionSolution}',${time},${Type},'${courseCode}')`;
+		console.log(statement);
 		return createPromise(db, statement, "questionNoObject");
 	},
 	_questionWithObject: function (db, questionText, questionDescription, questionObject, questionSolution, time, Type, courseCode) {

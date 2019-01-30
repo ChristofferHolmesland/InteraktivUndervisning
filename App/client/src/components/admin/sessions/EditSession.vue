@@ -57,9 +57,6 @@
             elementId: String,
             okHandler: Function
         },
-        mounted() {
-            this.$socket.emit("getCourses");
-        },
         methods: {
             callOkHandler: function() {
                 this.okHandler(this.newSession);
@@ -91,7 +88,7 @@
 			    else return {};
             },
             getCourseOptions: function() {
-                return this.courseOptions;
+                return this.$store.getters.getCourseOptions;
             },
             getPossibleQuestions: function() {
                 return this.possibleQuestions;
@@ -101,17 +98,6 @@
             }
         },
         sockets: {
-            sendCourses: function(courses) {
-                let courseOptions = [];
-                for (let i = 0; i < courses.length; i++) {
-                    let course = courses[i].code + " " + courses[i].semester;
-                    courseOptions.push({
-                        value: course,
-                        text: course
-                    });
-                }
-                this.courseOptions = courseOptions;
-            },
             sendQuestionsInCourse: function(questions) {
                 this.possibleQuestions = questions;
             }
