@@ -6,7 +6,7 @@
                     <h1>Waiting Room</h1>
                 </b-col>
                 <b-col sm="12" offset-sm="5" lg="12" class="ml-2 mr-2" offset-lg="5">
-                    <p>You have joined {{quizCode}}. <!--<br />Waiting for the admin to start the quiz.--></p>
+                    <p>You have joined {{quizCode}}. <br />The quiz will start as soon...</p> <!--TODO add fancy ... animation-->
                 </b-col>
                 <b-col sm="12" offset-sm="5" lg="3" offset-lg="1">
                     <b-button variant="danger" @click="leaveRoom">Leave Room</b-button>
@@ -35,7 +35,7 @@
 		    },
 		    startQuiz() {
 			    console.log("Starting quiz");
-			    this.$socket.emit("startQuiz");
+			    this.$socket.emit("startQuiz",this.quizCode);
 		    }
 		},
 	}

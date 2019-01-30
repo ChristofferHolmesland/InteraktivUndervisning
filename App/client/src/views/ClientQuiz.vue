@@ -1,7 +1,7 @@
 <template>
     <div id="clientQuiz">
     <b-container>
-        <ClientQuizQuestion v-if="getQuizActive" :quizCode="quizCode"></ClientQuizQuestion>
+        <ClientQuizQuestion v-if="getQuizActive" :quizCode="quizCode" :questioninfo="questioninfo"></ClientQuizQuestion>
         <ClientWaitingRoom v-else :quizCode="quizCode"></ClientWaitingRoom>
     </b-container>
     </div>
@@ -15,7 +15,15 @@
 		name: "ClientQuiz",
 		data() {
 			return{
-                quizActive: false
+				quizActive: false,
+				questioninfo: {
+					text: "",
+					hasDescription: false,
+					description: "",
+					time: -1,
+					useObject: false,
+					object: ""
+				}
 			};
 		},
 		created() {
@@ -23,7 +31,7 @@
 			//this.$socket.emit("startQuiz");
 		},
         props: [
-        	"quizCode",
+		"quizCode",
         ],
 		methods: {
 
@@ -33,8 +41,19 @@
             }
         },
         sockets: {
-			startQuizResponse() {
-				console.log("getQuizActive is in ClientQuiz and is true!");
+			startQuizResponse(questioninfo) {
+				console.log(questioninfo);
+				if (questioninfo.description !== "") {
+					this.questioninfo.hasDescription = true;
+                } else{
+					this.questioninfo.hasDescription = false;
+                }
+				this.questioninfo.text = questioninfo.text;
+				this.questioninfo.description = questioninfo.description;
+				this.questioninfo.time = questioninfo.time;
+				this.questioninfo.type = questioninfo.type;
+				console.log("HasDescription" + this.questioninfo.hasDescription);
+                console.log("ClientDesc: " + this.questioninfo.description);
 				this.quizActive = true;
 			},
             AnswerResponse(ans) {

@@ -6,7 +6,7 @@
                     <b-tabs>
                         <b-tab title="Spørsmål" active>
                             <b-card :title="getText" >
-                                <p v-if="useDescription">
+                                <p v-if="questioninfo.hasDescription">
                                     {{getDescription}}
                                 </p>
                             </b-card>
@@ -15,7 +15,7 @@
                             <ClientQuizQuestionText :requestAnswer="requestAnswer" @getTextResponse="getTextValue" v-if="getType===1"></ClientQuizQuestionText>
                             <ClientQuizQuestionMultiChoice v-if="getType===2"></ClientQuizQuestionMultiChoice>
                         </b-tab>
-                        <b-tab :title="updateTimer" disabled></b-tab>
+                        <b-tab :title="updateTimer" v-if="useTimer" disabled></b-tab>
                     </b-tabs>
                 </b-col>
             </b-row>
@@ -44,20 +44,16 @@
         },
 		data() {
 			return {
-                interval: "",
-                type: 1,
-                questionText: "What does pot of greed do?",
-                useDescription: true,
-                useObject: false,
-                questionDescription: "This is a message from lord Nergal! I await you at the Dread Islands!",
-                questionObject: "",
-				timer: 61,
+                interval: undefined,
                 requestAnswer: false
 			};
         },
+        props: [
+        	"questioninfo",
+        ],
 		methods: {
 			setTimer() {
-                this.timer--;
+                this.questioninfo.time--;
             },
             questionAnswered() {
                 console.log("Answered clicked");
@@ -81,29 +77,38 @@
         },
 		computed: {
 			updateTimer() {
-				let minutes = Math.floor(this.timer / 60);
-				let seconds = this.timer % 60;
 				let counter = "";
-				if (seconds < 10){
-                    counter = `${minutes}:0${seconds}`;
-                }
-				else if(minutes === 0 && seconds === 0){
-                    clearInterval(this.interval); //todo emit not answered if time runs out.
-				}else{
-					counter = `${minutes}:${seconds}`;
-                }
-				return counter;
+				if (this.questioninfo.time < 0)
+                {
+                	counter = "0:00";
+                }else {
+					let minutes = Math.floor(this.questioninfo.time / 60);
+					let seconds = this.questioninfo.time % 60;
+					if (seconds < 10) {
+						counter = `${minutes}:0${seconds}`;
+					} else if (minutes === 0 && seconds === 0) {
+						clearInterval(this.interval); //TODO emit not answered if time runs out.
+					} else {
+						counter = `${minutes}:${seconds}`;
+					}
+				}
+					return counter;
 			},
             getType() {
-				return this.type;
+				return this.questioninfo.type;
             },
             getText() {
-				return this.questionText
+				return this.questioninfo.text;
             },
             getDescription() {
-				return this.questionDescription
+				return this.questioninfo.questionDescription
+            },
+            useTimer() {
+				if (this.questioninfo.time < 0) {
+					return false
+                }
+				return true
             }
-
 		},
 	}
 </script>

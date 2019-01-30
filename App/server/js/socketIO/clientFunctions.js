@@ -3,9 +3,9 @@ module.exports.client = function(socket, db, sessions) {
     socket.on("clientAnswered", function() {
     });
 
-    socket.on("startQuiz", function () {
-        let question = {"Text":"I like Cake!","Description":"This is a message from lord Nergal! I await you at the dread islands",type:1,time:61};
-        socket.emit("startQuizResponse",question);
+    socket.on("startQuiz", function (quizCode) {
+        let question = {text:"I like Cake!",description:"This is a message from lord Nergal! I await you at the dread islands",type:1,time:61};
+        socket.emit("startQuizResponse",question);  //TODO change emit to socket.in(quizCode)
     });
 
     socket.on("quickJoinRoom", function (roomnr) {
@@ -14,12 +14,8 @@ module.exports.client = function(socket, db, sessions) {
         if (rooms.indexOf(parseInt(roomnr)) !== -1 && roomnr !== "") {
             let quizCode = `${roomnr}`;
             socket.join(quizCode);
-            io.in(quizCode).clients((err , clients) => {	//used to see all socket ids in the room, taken from https://stackoverflow.com/questions/18093638/socket-io-rooms-get-list-of-clients-in-specific-room/25028953
-                console.log(clients);
-            });
             console.log("Joined "+ quizCode);
             console.log(socket.adapter.rooms);
-            //console.log(socket.rooms);
             socket.emit("joinRoom",quizCode);	//use io to emit messages to rooms!!!
         }else {
             console.log("inActive");
