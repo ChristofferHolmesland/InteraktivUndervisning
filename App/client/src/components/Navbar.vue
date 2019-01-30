@@ -11,7 +11,7 @@
 
 					<b-nav-item center @click="adminRedirect" v-if="getUser.userRights == 4 && getUser.loggedIn">{{getLocale.admin}}</b-nav-item>
 
-					<b-nav-item center @click="quizRedirect" v-if="getUser.userRights == 4 && getUser.loggedIn">{{getLocale.quiz}}</b-nav-item>
+					<b-nav-item center @click="sessionRedirect" v-if="getUser.userRights == 4 && getUser.loggedIn">{{getLocale.session}}</b-nav-item>
 
 					<b-nav-item center @click="questionsRedirect" v-if="getUser.userRights == 4 && getUser.loggedIn">{{getLocale.questions}}</b-nav-item>
 
@@ -87,8 +87,8 @@
 			adminRedirect(){
 				this.$router.push("/admin");
 			},
-			quizRedirect(){
-				this.$router.push("/admin/quiz");
+			sessionRedirect(){
+				this.$router.push("/admin/session");
 			},
 			questionsRedirect(){
 				this.$router.push("/admin/questions");

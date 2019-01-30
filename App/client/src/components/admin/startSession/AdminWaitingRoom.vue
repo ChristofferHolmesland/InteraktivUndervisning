@@ -3,7 +3,7 @@
         <b-container vertical-center>
             <b-row align-h="center">
                 <b-col lg="8">
-                    <h1>Code: {{getQuizId}}</h1>
+                    <h1>Code: {{getSessionId}}</h1>
                 </b-col>
             </b-row>
             <b-row align-h="center">
@@ -18,7 +18,7 @@
             </b-row>
             <b-row align-h="center">
                 <b-col lg="8">
-                    <b-button size="lg" @click="startQuiz">Start</b-button>
+                    <b-button size="lg" @click="startSession">Start</b-button>
                 </b-col>
             </b-row>
         </b-container>
@@ -29,7 +29,7 @@
 export default {
     name: "adminWaitingRoom",
     props: [
-        "quizId"
+        "sessionId"
     ],
     data() {
         return {
@@ -57,16 +57,16 @@ export default {
         }
     },
     methods: {
-        startQuiz() {
-            this.$socket.emit("startQuiz", this.quizId);
+        startSession() {
+            this.$socket.emit("startSession", this.sessionId);
         }
     },
     computed: {
         getNumberOfUsersConnected() {
             return this.numberOfUsersConnected;
         },
-        getQuizId() {
-            return this.quizId;
+        getSessionId() {
+            return this.sessionId;
         }
     }
 }
