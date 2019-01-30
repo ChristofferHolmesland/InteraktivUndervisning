@@ -26,7 +26,7 @@ export default new Router({
         import("./views/UserProfile.vue")
     },
     {
-      path: "/client/quiz/:quizId",
+      path: "/client/quiz/:quizCode",
       props: true,
       name: "clientQuiz",
       component: () =>

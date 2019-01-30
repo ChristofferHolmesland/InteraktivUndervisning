@@ -27,11 +27,12 @@ export default {
     data() {
         return{
             responsetext: "",
-            response: false
+            response: false,
+            roomId: ""
         };
     },
     props:
-        ["quizId"]
+        ["quizCode"]
     ,
     methods: {
         quickJoin() {
@@ -39,16 +40,12 @@ export default {
             //console.log(this.$socket);
             this.$socket.emit("quickJoinRoom",this.roomId);
         },
-        quickJoinResponse() {
-        	console.log("response");
-
-        }
     },
     sockets: {
         joinRoom(room){
             console.log("Joined: " + room);
             this.response = false;
-            this.quizId = room;
+            console.log("Mutated?");
             this.$router.push(`/client/quiz/${room}`)   //redirect to waiting room for clients
         },
         QuizInActive(quizNr){

@@ -1,20 +1,21 @@
 <template>
     <div id="clientQuiz">
     <b-container>
-        <ClientQuizTextQuestion v-if="getQuizActive" :quizId ="quizId" :quizActive="quizActive"></ClientQuizTextQuestion>
-        <ClientWaitingRoom v-else :quizId ="quizId" :quizActive="quizActive"></ClientWaitingRoom>
+        <ClientQuizQuestion v-if="getQuizActive" :quizCode="quizCode"></ClientQuizQuestion>
+        <ClientWaitingRoom v-else :quizCode="quizCode"></ClientWaitingRoom>
     </b-container>
     </div>
 </template>
 
 <script>
     import ClientWaitingRoom from "../components/ClientWaitingRoom.vue";
-    import ClientQuizTextQuestion from "../components/ClientQuizTextQuestion.vue";
+    import ClientQuizQuestion from "../components/ClientQuizQuestion.vue";
 
 	export default {
 		name: "ClientQuiz",
 		data() {
 			return{
+                quizActive: false
 			};
 		},
 		created() {
@@ -22,8 +23,7 @@
 			//this.$socket.emit("startQuiz");
 		},
         props: [
-        	"quizId",
-            "quizActive"
+        	"quizCode",
         ],
 		methods: {
 
@@ -37,8 +37,9 @@
 				console.log("getQuizActive is in ClientQuiz and is true!");
 				this.quizActive = true;
 			},
-            questionAnsweredResponse(ans) {
-				console.log("The question was answered! Answer given: " + ans);
+            AnswerResponse(ans) {
+				console.log("The question was answered! Answer given:\n ");
+				console.log(ans);
 			},
 			questionNotAnsweredResponse() {
 				console.log("The question was not answered");
@@ -46,7 +47,7 @@
 		},
 		components: {
 			ClientWaitingRoom,
-			ClientQuizTextQuestion
+			ClientQuizQuestion
 		},
 	}
 </script>

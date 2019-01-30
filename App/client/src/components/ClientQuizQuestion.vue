@@ -5,13 +5,15 @@
                 <b-col>
                     <b-tabs>
                         <b-tab title="Spørsmål" active>
-                            Spørsmål
+                            <b-card :title="getText" >
+                                <p v-if="useDescription">
+                                    {{getDescription}}
+                                </p>
+                            </b-card>
                         </b-tab>
                         <b-tab title="Svar">
-                            Svar
-                            <b-form-input v-model="inputText" type="text" placeholder="Skriv inn svar">
-
-                            </b-form-input>
+                            <ClientQuizQuestionText :requestAnswer="requestAnswer" @getTextResponse="getTextValue" v-if="getType===1"></ClientQuizQuestionText>
+                            <ClientQuizQuestionMultiChoice v-if="getType===2"></ClientQuizQuestionMultiChoice>
                         </b-tab>
                         <b-tab :title="updateTimer" disabled></b-tab>
                     </b-tabs>
@@ -29,33 +31,45 @@
 </template>
 
 <script>
+	import ClientQuizQuestionText from "./ClientQuizQuestionText";
+	import ClientQuizQuestionMultiChoice from "./ClientQuizQuestionMultiChoice";
 	export default {
-		name: "ClientQuizTextQuestion",
-		props: [
-			"quizId",
-			"quizActive"
-		],
+		name: "ClientQuizQuestion",
+		components: {
+			ClientQuizQuestionText,
+			ClientQuizQuestionMultiChoice
+        },
         created() {
 			this.interval = setInterval(this.setTimer,1000);
         },
 		data() {
 			return {
-				timer: 61,
                 interval: "",
-                inputText: ""
+                type: 1,
+                questionText: "What does pot of greed do?",
+                useDescription: true,
+                useObject: false,
+                questionDescription: "This is a message from lord Nergal! I await you at the Dread Islands!",
+                questionObject: "",
+				timer: 61,
+                requestAnswer: false
 			};
-		},
+        },
 		methods: {
 			setTimer() {
                 this.timer--;
             },
             questionAnswered() {
-				console.log("Answered clicked");
-				this.$socket.emit("questionAnswered",this.inputText);
+                console.log("Answered clicked");
+                this.requestAnswer = !this.requestAnswer;
             },
             questionNotAnswered() {
 				console.log("Answered not clicked");
 				this.$socket.emit("questionNotAnswered");
+            },
+            getTextValue(inputText) {
+				console.log("Got text from child component");
+				this.$socket.emit("questionAnswered",inputText);
             }
 	    },sockets: {
 			/*questionAnsweredResponse(ans) {
@@ -80,6 +94,15 @@
                 }
 				return counter;
 			},
+            getType() {
+				return this.type;
+            },
+            getText() {
+				return this.questionText
+            },
+            getDescription() {
+				return this.questionDescription
+            }
 
 		},
 	}

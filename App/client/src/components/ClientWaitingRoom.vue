@@ -6,7 +6,7 @@
                     <h1>Waiting Room</h1>
                 </b-col>
                 <b-col sm="12" offset-sm="5" lg="12" class="ml-2 mr-2" offset-lg="5">
-                    <p>You have joined {{getQuizId}}. <!--<br />Waiting for the admin to start the quiz.--></p>
+                    <p>You have joined {{quizCode}}. <!--<br />Waiting for the admin to start the quiz.--></p>
                 </b-col>
                 <b-col sm="12" offset-sm="5" lg="3" offset-lg="1">
                     <b-button variant="danger" @click="leaveRoom">Leave Room</b-button>
@@ -21,8 +21,7 @@
 	export default {
 		name: "ClientWaitingRoom",
         props: [
-        	"quizId",
-            "quizActive"
+        	"quizCode",
         ],
 		sockets: {
 			returnToJoinRoom() {
@@ -31,7 +30,7 @@
 			},
 		},methods: {
 			leaveRoom(){
-			    this.$socket.emit("leaveRoom",this.quizId);
+			    this.$socket.emit("leaveRoom",this.quizCode);
 			    console.log("Leaving Room!");
 		    },
 		    startQuiz() {
@@ -39,14 +38,6 @@
 			    this.$socket.emit("startQuiz");
 		    }
 		},
-        computed: {
-            getQuizId() {
-                return this.quizId;
-            },
-			getQuizActive() {
-				return this.quizActive;
-			}
-        },
 	}
 </script>
 
