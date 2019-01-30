@@ -41,8 +41,8 @@ const get = {
                                 FROM User AS U 
                                 WHERE U.feideid= ${await this.userId(userInfo).catch((err) => {
                                     reject(customReject(err), "sessionsToUser")
-                                })} LIMIT 1
-                            )`;
+                                })}
+                            LIMIT 1)`;
             db.all(statement, (err,rows) => {
                 if (err) reject(customReject(err, "sessionsToUser"));
                 resolve(rows);
