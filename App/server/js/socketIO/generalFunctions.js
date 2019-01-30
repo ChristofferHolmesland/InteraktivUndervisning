@@ -8,7 +8,7 @@ const get = require("../database/databaseFunctions").get;
 const insert = require("../database/databaseFunctions").insert;
 const update = require("../database/databaseFunctions").update;
 
-let quizzes = new Map();
+let sessions = new Map();
 
 module.exports.listen = function(server, users, db) {
     io = socketio.listen(server, {
@@ -20,11 +20,11 @@ module.exports.listen = function(server, users, db) {
         let user = User.getUser(users, socket);
 
         if(user != undefined){
-            if (user.userRights > 0) require("./clientFunctions.js").client(socket, db, quizzes);
+            if (user.userRights > 0) require("./clientFunctions.js").client(socket, db, sessions);
             if (user.userRights === 1) require("./anonymousFunctions.js").anonymous(socket, db);
             if (user.userRights > 1) require("./feideFunctions.js").feide(socket, db, user);
-            if (user.userRights > 2) require("./studentAssistantFunctions.js").studentAssistant(socket, db, user, quizzes);
-            if (user.userRights === 4) require("./adminFunctions.js").admin(socket, db, user, quizzes);
+            if (user.userRights > 2) require("./studentAssistantFunctions.js").studentAssistant(socket, db, user, sessions);
+            if (user.userRights === 4) require("./adminFunctions.js").admin(socket, db, user, sessions);
         }
 
         //--------------------------------------------//
