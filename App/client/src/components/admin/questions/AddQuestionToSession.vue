@@ -39,8 +39,8 @@
         },
         methods: {
             onShown: function() {
-                // TODO: Change "DAT200" to depend on the current course
-                this.$socket.emit("getSessionWithinCourse", {code: "DAT200", semester:"18H"});
+                let c = this.$store.getters.getSelectedCourse.split(" ");
+                this.$socket.emit("getSessionWithinCourse", {code: c[0], semester: c[1]});
             },
             okHandler: function() {
                 this.$socket.emit("addQuestionToSession", {

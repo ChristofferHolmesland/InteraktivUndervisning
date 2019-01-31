@@ -55,7 +55,8 @@
 			}
 		},
 		created() {
-			this.$socket.emit("getSessions", {code:"DAT200", semester:"18H"});
+			let c = this.$store.getters.getSelectedCourse.split(" ");
+			this.$socket.emit("getSessions", {code: c[0], semester: c[1]});
 		},
 		sockets: {
 			getSessionsResponse(data) {
@@ -66,7 +67,8 @@
 				}
 			},
 			addNewSessionDone() {
-				this.$socket.emit("getSessions", {code:"DAT200", semester:"18H"});
+				let c = this.$store.getters.getSelectedCourse.split(" ");
+				this.$socket.emit("getSessions", {code: c[0], semester: c[1]});
 			}
 		},
 		components: {

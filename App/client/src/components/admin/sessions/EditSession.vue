@@ -1,5 +1,5 @@
 <template>
-    <b-modal :id="elementId" :ref="elementRef" :no-close-on-backdrop="true" :title="getLocale.newSession" @ok="callOkHandler" style="text-align: left;">
+    <b-modal @show="show" :id="elementId" :ref="elementRef" :no-close-on-backdrop="true" :title="getLocale.newSession" @ok="callOkHandler" style="text-align: left;">
         <b-form>
             <b-form-group 	id="sessionTitle"
                             :label="getLocale.newSessionTitle"
@@ -9,6 +9,8 @@
                                 v-model="newSession.title">
                 </b-form-input>
             </b-form-group>
+            
+            <!--         TODO: Decide if we want this
             <b-form-group 	id="course"
                             :label="getLocale.selectCourse"
                             label-for="courseSelect">
@@ -16,7 +18,7 @@
                                 :options="getCourseOptions"
                                 v-model="newSession.course"
                                 @change="selectedCourseChanged($event)">
-                </b-form-select>
+                </b-form-select> -->
             </b-form-group>
             <b-form-group 	id="questions"
                             :label="getLocale.selectQuestions"
@@ -58,6 +60,10 @@
             okHandler: Function
         },
         methods: {
+            show() {
+                let c = event.split(" ");
+                this.$socket.emit("getQuestionsInCourse", {code: c[0], semester: c[1]});
+            },
             callOkHandler: function() {
                 this.okHandler(this.newSession);
             },
