@@ -9,7 +9,8 @@
 	export default {
 		name: "ClientQuestionWaitTime",
         props: [
-        	"quizCode"
+        	"quizCode",
+            "sessionState"
         ],
         methods: {
 			nextQuestion(){

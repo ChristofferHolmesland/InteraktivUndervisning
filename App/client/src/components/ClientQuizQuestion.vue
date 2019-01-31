@@ -62,10 +62,10 @@
             },
             questionNotAnswered() {
 				console.log("Answered not clicked");
-				this.$socket.emit("questionNotAnswered");
+				this.$socket.emit("questionAnswered","",this.quizCode);
             },
             getTextValue(inputText) {
-				this.$socket.emit("questionAnswered",inputText);
+				this.$socket.emit("questionAnswered",inputText,this.quizCode);
             },
             exitSession() {
 				console.log("Leaving Session");
@@ -87,7 +87,7 @@
 					} else if (minutes === 0 && seconds === 0) {
 						console.log("timesup");
 						clearInterval(this.interval); //TODO find a way to actually stop the interval
-						this.$socket.emit("questionNotAnswered");
+						this.$socket.emit("questionAnswered","");
 					} else {
 						counter = `${minutes}:${seconds}`;
 					}
