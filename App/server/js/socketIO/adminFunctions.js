@@ -8,25 +8,29 @@ const session = require("../session.js").Session;
 const question = require("../session.js").Question;
 const answer = require("../session.js").Answer;
 
+let courseListRequestHandler = function(socket, db, user, sessions) {
+    let userInfo = "2222221";
+
+    get.userCourses(db, userInfo).then((courses) => {
+        let result = [];
+        for (let i = 0; i < courses.length; i++) {
+            let courseString = courses[i].code + " " + courses[i].semester;
+            result.push({
+                "value": courseString,
+                "text": courseString
+            });
+        }
+        socket.emit("courseListResponse", result);
+    });
+}
+
 module.exports.admin = function(socket, db, user, sessions) {
     socket.on("adminStarted", function() {
             
     });
 
     socket.on("courseListRequest", function() {
-        let userInfo = "2222221" // TODO Change this to user feide id
-
-        get.userCourses(db, userInfo).then((courses) => {
-            let result = [];
-            for (let i = 0; i < courses.length; i++) {
-                let courseString = courses[i].code + " " + courses[i].semester;
-                result.push({
-                    "value": courseString,
-                    "text": courseString
-                });
-            }
-            socket.emit("courseListResponse", result);
-        })
+        courseListRequestHandler(socket, db, user, sessions);
     });
 
     socket.on("getSessions", function(course) {
@@ -183,7 +187,16 @@ module.exports.admin = function(socket, db, user, sessions) {
                     text: types[i].name
                 })
             }
-            socket.emit("sendQuestionTypes", result);    
+            socket.emit("sendQuestionTypes", result);
+        });
+    });
+
+    socket.on("createCourse", function(course) {
+        insert.course(db, course.semester, course.code, course.name).then(() => {
+            // TODO Change feideId to user's feideid
+            insert.courseAdmin(db, course.semester, course.code, "2222221").then(() => {
+                courseListRequestHandler(socket, db, user, sessions);
+            });
         });
     });
 }

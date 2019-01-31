@@ -78,7 +78,7 @@
 			SelectCourse
 		},
 		created() {
-			this.$socket.emit("getAllQuestionsWithinCourse", "DAT200");
+			this.$socket.emit("getAllQuestionsWithinCourse", this.$store.getters.getSelectedCourse.split(" ")[0]);
 		},
 		computed: {
 			currentQuestions: function() {
@@ -125,16 +125,13 @@
 				this.$refs.addQuestionToSessionModal._data.question.text = item.text;
 				this.$refs.addQuestionToSessionModal.$refs.innerModal.show();
 			},
-			getQuestionsFromDatabase: function() {
-				this.$socket.emit("getAllQuestionsWithinCourse", "DAT200");
-			},
 			addNewQuestionHandler: function(newQuestion) {
-				this.$socket.emit("addNewQuestion", Object.assign({}, newQuestion, {courseCode: "DAT200"}));
-				this.$socket.emit("getAllQuestionsWithinCourse", "DAT200");
+				this.$socket.emit("addNewQuestion", Object.assign({}, newQuestion, {courseCode: this.$store.getters.getSelectedCourse.split(" ")[0]}));
+				this.$socket.emit("getAllQuestionsWithinCourse", this.$store.getters.getSelectedCourse.split(" ")[0]);
 			},
 			editQuestionHandler: function(updatedQuestion) {
 				this.$socket.emit("updateQuestion", updatedQuestion);
-				this.$socket.emit("getAllQuestionsWithinCourse", "DAT200");
+				this.$socket.emit("getAllQuestionsWithinCourse", this.$store.getters.getSelectedCourse.split(" ")[0]);
 
 			}
 		}

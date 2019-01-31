@@ -23,7 +23,10 @@
         methods: {
             selectedCourseChanged(event) {
                 this.$store.commit("setSelectedCourse", event);
-                this.changeHandler(event);
+              
+                if (this.changeHandler != undefined) {
+                    this.changeHandler(event);
+                }
             }
         },
         computed: {
