@@ -29,20 +29,22 @@ module.exports.client = function(socket, db, user, sessions) {
         socket.emit("returnToJoinRoom");
     });
 
-    socket.on("questionAnswered", function (answer) {
+    socket.on("questionAnswered", function (answer,sessionCode) {
         let a;
         if (answer === "") {
-             a = {questionId: 1,userid:1,result:-1};
+            console.log("did not answer");
+            a = {questionId: 1,userid:1,result:-1};
         }else {
+            console.log("answered");
             a = {questionId:1,userId:1,answerObject:answer};
         }
-        socket.emit("AnswerResponse", a)
-    });
-
-    socket.on("questionNotAnswered", function () {
-        console.log("did not answer");
-        let a = {questionId: 1,userid:1,result:-1};
-        socket.emit("AnswerResponse", a)
+        let response = "";
+        if (a.result === -1) {
+            response = "Vet ikke";
+        }else {
+            response = "Riktig?";
+        }
+        socket.emit("AnswerResponse", response);
     });
 
     socket.on("nextQuestion", function (sessionCode) { /*This function is most likely not going to be in client*/
