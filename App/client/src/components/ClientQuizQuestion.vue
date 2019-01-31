@@ -21,7 +21,7 @@
             </b-row>
             <b-row>
                 <b-col>
-                    <b-btn>Avslutt</b-btn>
+                    <b-btn @click="exitSession">Avslutt</b-btn>
                     <b-btn @click="questionNotAnswered">Vet ikke</b-btn>
                     <b-btn @click="questionAnswered">Svar</b-btn>
                 </b-col>
@@ -50,6 +50,7 @@
         },
         props: [
         	"questioninfo",
+            "quizCode"
         ],
 		methods: {
 			setTimer() {
@@ -64,17 +65,14 @@
 				this.$socket.emit("questionNotAnswered");
             },
             getTextValue(inputText) {
-				console.log("Got text from child component");
 				this.$socket.emit("questionAnswered",inputText);
+            },
+            exitSession() {
+				console.log("Leaving Session");
+                //TODO remove finsihSession and insert socket.emit("leaveRoom",this.$socket.emit("leaveRoom",this.quizCode);
+                this.$socket.emit("finishSession",this.quizCode);
             }
-	    },sockets: {
-			/*questionAnsweredResponse(ans) {
-				console.log("The question was answered! Answer given: " + ans);
-			},
-			questionNotAnsweredResponse() {
-				console.log("The question was not answered");
-			}*/
-        },
+	    },
 		computed: {
 			updateTimer() {
 				let counter = "";
@@ -84,10 +82,12 @@
                 }else {
 					let minutes = Math.floor(this.questioninfo.time / 60);
 					let seconds = this.questioninfo.time % 60;
-					if (seconds < 10) {
+					if (seconds < 10 && seconds > 0) {
 						counter = `${minutes}:0${seconds}`;
 					} else if (minutes === 0 && seconds === 0) {
-						clearInterval(this.interval); //TODO emit not answered if time runs out.
+						console.log("timesup");
+						clearInterval(this.interval); //TODO find a way to actually stop the interval
+						this.$socket.emit("questionNotAnswered");
 					} else {
 						counter = `${minutes}:${seconds}`;
 					}
@@ -101,7 +101,7 @@
 				return this.questioninfo.text;
             },
             getDescription() {
-				return this.questioninfo.questionDescription
+				return this.questioninfo.description;
             },
             useTimer() {
 				if (this.questioninfo.time < 0) {

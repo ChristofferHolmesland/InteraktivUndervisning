@@ -23,12 +23,7 @@
         props: [
         	"quizCode",
         ],
-		sockets: {
-			returnToJoinRoom() {
-				console.log("Returning");
-				this.$router.push("/client");
-			},
-		},methods: {
+        methods: {
 			leaveRoom(){
 			    this.$socket.emit("leaveRoom",this.quizCode);
 			    console.log("Leaving Room!");
