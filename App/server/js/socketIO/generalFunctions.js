@@ -2,11 +2,6 @@ const socketio = require('socket.io');
 const locales = (require("../../localization/localeLoader.js")).locales;
 const User = (require("../user.js")).User;
 const anonymousNames = (require("../anonymousName.js")).Animals;
-const cookie = require('cookie');
-
-const get = require("../database/databaseFunctions").get;
-const insert = require("../database/databaseFunctions").insert;
-const update = require("../database/databaseFunctions").update;
 
 var sessions = new Map();
 

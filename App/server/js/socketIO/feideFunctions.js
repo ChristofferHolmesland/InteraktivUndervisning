@@ -1,6 +1,4 @@
-const get = require("../database/databaseFunctions").get;
-const insert = require("../database/databaseFunctions").insert;
-const update = require("../database/databaseFunctions").update;
+const dbFunctions = require("../database/databaseFunctions").dbFunctions;
 
 module.exports.feide = function(socket, db, user){
     socket.on("clientLoginInfoRequest", function() {
@@ -29,12 +27,12 @@ module.exports.feide = function(socket, db, user){
         }
         */
 
-        get.sessionsToUser(db, user.feide.id).then(async function(sessions) {
+        dbFunctions.get.sessionsToUser(db, user.feide.id).then(async function(sessions) {
             result = {};
             result.sessionList = sessions;
             result.totalsessions = sessions.length;
             
-            await get.amountCorrectAnswersForUser(db, user.feide.id).then((correct) => {
+            await dbFunctions.get.amountCorrectAnswersForUser(db, user.feide.id).then((correct) => {
                 result.totalCorrectAnswers = correct;
             }).catch((err) => {
                 console.log(err);
@@ -42,7 +40,7 @@ module.exports.feide = function(socket, db, user){
             });
 
 
-            let wrong = await get.amountWrongAnswersForUser(db, user.id).catch((err) => {
+            let wrong = await dbFunctions.get.amountWrongAnswersForUser(db, user.id).catch((err) => {
                 
             });
             result.totalIncorrectAnswers = wrong;

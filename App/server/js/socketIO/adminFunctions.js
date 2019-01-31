@@ -1,6 +1,4 @@
-const get = require("../database/databaseFunctions").get;
-const insert = require("../database/databaseFunctions").insert;
-const update = require("../database/databaseFunctions").update;
+const dbFunctions = require("../database/databaseFunctions").dbFunctions;
 
 const generalFunctions =  require("../generalFunctions.js").functions;
 
@@ -15,7 +13,7 @@ module.exports.admin = function(socket, db, user, sessions) {
     socket.on("courseListRequest", function() {
         let userInfo = "2222221" // TODO Change this to user feide id
 
-        get.userCourses(db, userInfo).then((courses) => {
+        dbFunctions.get.userCourses(db, userInfo).then((courses) => {
             let result = [];
             for (let i = 0; i < courses.length; i++) {
                 let courseString = courses[i].code + " " + courses[i].semester;
@@ -29,7 +27,7 @@ module.exports.admin = function(socket, db, user, sessions) {
     });
 
     socket.on("getSessions", function(course) {
-        get.allSessionWithinCourse(db, course.code, course.semester).then((sessions) => {
+        dbFunctions.get.allSessionWithinCourse(db, course.code, course.semester).then((sessions) => {
             /*let result = [];
             sessions.forEach(session => {
                 result.push({
@@ -43,16 +41,16 @@ module.exports.admin = function(socket, db, user, sessions) {
 
     socket.on("addNewSession", function(session) {
         let c = session.course.split(" ");
-        insert.session(db, session.title, c[1], c[0]).then(function (id) {
+        dbFunctions.insert.session(db, session.title, c[1], c[0]).then(function (id) {
             for (let i = 0; i < session.questions.length; i++) {
-                insert.addQuestionToSession(db, id, session.questions[i].id);
+                dbFunctions.insert.addQuestionToSession(db, id, session.questions[i].id);
             }
             socket.emit("addNewSessionDone");
         });
     });
 
     socket.on("getQuestionsInCourse", function(course) {
-        get.allQuestionsWithinCourse(db, course.code, course.semester).then((questions) => {
+        dbFunctions.get.allQuestionsWithinCourse(db, course.code, course.semester).then((questions) => {
             let result = [];
             for (let i = 0; i < questions.length; i++) {
                 result.push({
@@ -65,17 +63,17 @@ module.exports.admin = function(socket, db, user, sessions) {
     });
 
     socket.on("getSession", function(sessionId) {
-        get.sessionById(db, sessionId).then(async function(session) {
+        dbFunctions.get.sessionById(db, sessionId).then(async function(session) {
             let result = {};
             result.questions = [];
             result.participants = session.participants;
 
             let totalCorrectAnswers = 0;
             
-            let questions = await get.allQuestionInSession(db, session.id);
+            let questions = await dbFunctions.get.allQuestionInSession(db, session.id);
             for (let i = 0; i < questions.length; i++) {
                 let question = questions[i];
-                let answer = await get.allAnswerToQuestion(db, question.sqId);
+                let answer = await dbFunctions.get.allAnswerToQuestion(db, question.sqId);
                 let answers = [];
                 let correctAnswers = 0;
 
@@ -109,11 +107,11 @@ module.exports.admin = function(socket, db, user, sessions) {
 
     socket.on("initializeSession", function(sessionId){
         if(currentSession != undefined) socket.emit("initializeSessionErrorResponse", "error1")
-        get.sessionById(db, sessionId).then(async (sessionInformation) => {
+        dbFunctions.get.sessionById(db, sessionId).then(async (sessionInformation) => {
             let sessionCode = generalFunctions.calculateSessionCode(sessions);
             socket.join(sessionCode);
             
-            let questions = await get.allQuestionInSession(db, sessionInformation.id);
+            let questions = await dbFunctions.get.allQuestionInSession(db, sessionInformation.id);
             let questionList = [];
 
             currentSession = {session: new session(sessionInformation.id, sessionInformation.name,
@@ -131,7 +129,7 @@ module.exports.admin = function(socket, db, user, sessions) {
     });
 
     socket.on("sessionOverviewRequest", function(course) {
-        get.allSessionWithinCourseForSessionOverview(db, course.code, course.semester).then((sessionList) => {
+        dbFunctions.get.allSessionWithinCourseForSessionOverview(db, course.code, course.semester).then((sessionList) => {
             socket.emit("sessionOverviewResponse", sessionList)
         }).catch((err) => {
             console.log(err);
@@ -149,12 +147,12 @@ module.exports.admin = function(socket, db, user, sessions) {
         delete firstQuestionForClient.solution;
         delete firstQuestionForClient.questionId;
 
-        socket.emit("startSessionResponse", firstQuestionForAdmin)
-        socket.broadcast.to("sessionCode").emit("startFirstQuestion", firstQuestionForClient);
+        socket.emit("nextQuestionResponse", firstQuestionForAdmin);
+        socket.broadcast.to("sessionCode").emit("nextQuestionResponse", firstQuestionForClient);
     });
 
     socket.on("getSessionWithinCourse", function(course) {   
-        get.allSessionWithinCourse(db, course.code, course.semester).then((sessions) => {
+        dbFunctions.get.allSessionWithinCourse(db, course.code, course.semester).then((sessions) => {
             let result = [];
             for (let i = 0; i < sessions.length; i++) {
                 result.push({
@@ -168,11 +166,11 @@ module.exports.admin = function(socket, db, user, sessions) {
     });
 
     socket.on("addQuestionToSession", function(data) {
-        insert.addQuestionToSession(db, data.sessionId, data.questionId);
+        dbFunctions.insert.addQuestionToSession(db, data.sessionId, data.questionId);
     });
 
     socket.on("getAllQuestionsWithinCourse", function(course) {
-        get.allQuestionsWithinCourse(db, course).then(questions => {
+        dbFunctions.get.allQuestionsWithinCourse(db, course).then(questions => {
             let result = [];
             for (let i = 0; i < questions.length; i++) {
                 let q = questions[i];
@@ -189,18 +187,18 @@ module.exports.admin = function(socket, db, user, sessions) {
     });
 
     socket.on("addNewQuestion", function(question) {
-        insert.question(db, question.text, question.description, question.solution, 60, // TODO ADD TIME
+        dbFunctions.insert.question(db, question.text, question.description, question.solution, 60, // TODO ADD TIME
             question.solutionType, question.courseCode, question.object);
     });
 
     socket.on("updateQuestion", function(question) {
         console.log(question);
-        update.question(db, question.id, question.text, question.description,
+        dbFunctions.update.question(db, question.id, question.text, question.description,
             "TODO ADD ME", question.solution, question.solutionType, 60); // TODO ADD TIME
     });
 
     socket.on("getQuestionTypes", function() {
-        get.questionTypes(db).then(types => {
+        dbFunctions.get.questionTypes(db).then(types => {
             let result = [];
             for (let i = 0; i < types.length; i++) {
                 result.push({
