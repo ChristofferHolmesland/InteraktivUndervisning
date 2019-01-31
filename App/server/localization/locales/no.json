@@ -92,5 +92,27 @@
         "totalSessions": "Antall økter:",
         "correctAnswers": "Antall rett svar:",
         "incorrectAnswers": "Antall feil svar:"
+    },
+    "ClientSessionQuestion": {
+        "question": "Spørsmål",
+        "answer": "Svar",
+        "exitSessionBtnText": "Forlat økt",
+        "answerDontKnowBtnText": "Svar: \"Jeg vet ikke\"",
+        "answerBtnText": "Send inn svar",
+        "leaveSessionBody": "Ved å klikke ok, så vil du koble deg fra denne økten.\nAlle svare frem til nå vil være lagret."
+    },
+    "ClientSessionWaitingArea": {
+        "title": "Venteområde",
+        "sessionId": "Økt ID:",
+        "leaveSession": "Forlat økt",
+        "beforeSession": "Koblet til økt! Venter på at admin skal starte økten",
+        "betweenQuestionsCorrect": "Du har svart og svaret ditt er riktig! Venter på at admin skal starte neste spørsmål",
+        "betweenQuestionsIncorrect": "Du har svart og svaret ditt er feil! Du kan sjekke svaret ditt mot fasiten etter økten er ferdig. Venter på at admin skal starte neste spørmsål",
+        "sessionFinished": "Økten er nå over! Alle svarene dine er nå lagret og du kan sjekke dem mot løsningen på skrivebordet hvis du ikke har logget inn som anonym."
+    },
+    "JoinSession": {
+        "title": "Bli med i økt!",
+        "errorTitle": "Det skjedde en feil! Prøv på nytt",
+        "joinBtn": "Bli med"
     }
 }

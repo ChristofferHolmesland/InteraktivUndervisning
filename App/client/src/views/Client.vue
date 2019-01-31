@@ -12,7 +12,7 @@
 </template>
 
 <script>
-	import JoinRoom from "../components/user/JoinRoom.vue";
+	import JoinRoom from "../components/client/JoinRoom.vue";
 
 	export default {
 		name: 'client',

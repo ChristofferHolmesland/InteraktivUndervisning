@@ -10,17 +10,17 @@ import VueSocketIO from 'vue-socket.io';
 
 Vue.use(BootstrapVue);
 Vue.use(new VueSocketIO({
-  debug: true,
-  connection: "http://localhost:80",
-  vuex: {
-      store
-  }
+	debug: true,
+	connection: "http://localhost:80",
+	vuex: {
+		store
+	}
 }));
 
 Vue.config.productionTip = false;
 
 new Vue({
-  router,
-  store,
-  render: h => h(App)
+	router,
+	store,
+	render: h => h(App)
 }).$mount("#app");

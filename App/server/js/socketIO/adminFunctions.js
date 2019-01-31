@@ -148,7 +148,7 @@ module.exports.admin = function(socket, db, user, sessions) {
         delete firstQuestionForClient.questionId;
 
         socket.emit("nextQuestionResponse", firstQuestionForAdmin);
-        socket.broadcast.to("sessionCode").emit("nextQuestionResponse", firstQuestionForClient);
+        socket.to("sessionCode").emit("nextQuestionResponse", firstQuestionForClient);
     });
 
     socket.on("getSessionWithinCourse", function(course) {   

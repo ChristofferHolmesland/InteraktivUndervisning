@@ -12,8 +12,8 @@
 </template>
 
 <script>
-import UserInfo from "../components/user/UserInfo.vue";
-import UserStats from "../components/user/UserStats.vue";
+import UserInfo from "../components/client/userProfile/UserInfo.vue";
+import UserStats from "../components/client/userProfile/UserStats.vue";
 
 export default {
 	name: "userProfile",
