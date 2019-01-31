@@ -13,8 +13,9 @@ module.exports.client = function(socket, db, user, sessions) {
     socket.on("quickJoinRoom", function (sessionCode) {
         let rooms= [1,2,3,4,5,6,7,8,9,10,3334];
         if(sessions.get(sessionCode) || rooms.indexOf(parseInt(sessionCode)) != -1){
+            console.log(sessions.get(sessionCode));
             socket.join(sessionCode);
-           //sessions.get(sessionCode).session.addUser(user);
+            //sessions.get(sessionCode).session.addUser(user);
             //sessions.get(sessionCode).adminSocket.emit("updateParticipantCount", sessions.get(sessionCode).session.userList.length);
             socket.emit("joinRoom",sessionCode);
         }else {
@@ -52,10 +53,10 @@ module.exports.client = function(socket, db, user, sessions) {
             console.log(clients);
         });
         io.to(sessionCode).emit("nextQuestionResponse",question);
-    })
+    });
 
     socket.on("finishSession", function (sessionCode) {
         console.log(sessionCode);
-        io.to(sessionCode).emit("finishSessionResponse");
+        io.to(sessionCode).emit("finishSessionResponse"); //TODO Change all io.to to socket.to when the message is sent from the admin.
     });
 }

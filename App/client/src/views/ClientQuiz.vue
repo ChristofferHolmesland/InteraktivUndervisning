@@ -3,18 +3,21 @@
     <b-container>
         <ClientQuizQuestion v-if="getSessionState == 1" :quizCode="quizCode" :questioninfo="questioninfo"></ClientQuizQuestion>
         <ClientWaitTime v-else-if="getSessionState == 2" :quizCode="quizCode"></ClientWaitTime>
-        <SessionFinished v-else-if="getSessionState == 3" :quizCode="quizCode"></SessionFinished>
+        <SessionFinished v-else-if="getSessionState == 3" :quizCode="quizCode"></SessionFinished> <!--TODO Change order of the components and their session state depending on the order they should normally run-->
         <ClientWaitingRoom v-else :quizCode="quizCode"></ClientWaitingRoom>
-        <!--Client Result? -->
+        <ClientResult></ClientResult>
     </b-container>
     </div>
 </template>
 
 <script>
+	//TODO change order based on the components order in line 4-8
     import ClientWaitingRoom from "../components/ClientWaitingRoom.vue";
     import ClientQuizQuestion from "../components/ClientQuizQuestion.vue";
     import ClientWaitTime from "../components/ClientQuestionWaitTime.vue";
+	import ClientResult from "./ClientResult";
     import SessionFinished from "../components/SessionFinished.vue";
+
 
 
 	export default {
@@ -33,7 +36,7 @@
 			};
 		},
 		created() {
-			this.$socket.emit("clientStarted");
+			this.$socket.emit("verifyUserLevel", 1);
 			//this.$socket.emit("startQuiz");
 		},
         props: [
@@ -82,10 +85,11 @@
 				this.sessionState = 3;
             }
 		},
-		components: {
+		components: {   //TODO change order based on the components order in line 4-8
 			ClientWaitingRoom,
 			ClientQuizQuestion,
             ClientWaitTime,
+			ClientResult,
 			SessionFinished,
 		},
 	}
