@@ -2,14 +2,14 @@
     <div id="Waitingarea">
         <b-container>
             <b-row>
-                <b-col sm="12" offset-sm="5" class="mt-5 mb-3" lg="12" offset-lg="1">
+                <b-col cols="12">
                     <h1>{{ getLocale.title }}</h1>
                     <p>{{ getLocale.sessionId }}: {{ sessionCode }}</p>
                 </b-col>
-                <b-col sm="12" offset-sm="5" lg="12" class="ml-2 mr-2" offset-lg="5">
+                <b-col cols="12">
                     <p>{{ getWaitingAreaBody }}</p>
                 </b-col>
-                <b-col sm="12" offset-sm="5" lg="3" offset-lg="1">
+                <b-col cols="12">
                     <b-button variant="danger" @click="leaveSession">{{ getLocale.leaveSession }}</b-button>
                 </b-col>
             </b-row>
@@ -36,7 +36,7 @@
                 this.interval = setInterval(() => {
                     if (this.emptyLocaleElement === "...") this.emptyLocaleElement = "";
                     else this.emptyLocaleElement += ".";
-                }, 1500);
+                }, 500);
             }
         },
         beforeDestroy() {
@@ -50,8 +50,10 @@
         computed: {
             getLocale() {
                 let locale = this.$store.getters.getLocale("ClientSessionWaitingArea");
+                console.log("betweenQuestionsIncorrect")
+                console.log(this.localeElement);
                 if(locale) {
-                    if (this.localeElement !== "sessionFinished") this.text = locale[this.localeElement]; 
+                    if (this.localeElement !== "sessionFinished") this.text = locale[this.localeElement];
                     return locale;
                 }
                 return {};

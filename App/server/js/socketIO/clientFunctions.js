@@ -1,3 +1,5 @@
+const Answer = require("../session.js").Answer;
+
 module.exports.client = function(socket, db, user, sessions) {
 
     socket.on("quickJoinRoom", function (sessionCode) {
@@ -19,22 +21,26 @@ module.exports.client = function(socket, db, user, sessions) {
     });
 
     socket.on("questionAnswered", function (answerObject, sessionCode) {
-        let session = sessions.get(sessionCode).sessions;
+        let session = sessions.get(sessionCode).session;
         let question = session.questionList[session.currentQuestion];
 
-        if(answerObject === undefined)
-            socket.emit("answerResponse", "bewteenQuestionsIncorrect");
+        if(answerObject === null)
+            socket.emit("answerResponse", "betweenQuestionsNotAnswered");
 
         // TODO add logic to test if the solution is correct
-
-        let solution = "test"; 
         
-        if(answerObject === solution){
-            socket.emit("answerResponse", "bewteenQuestionsCorrect")
+
+        if(answerObject === question.solution){
+            socket.emit("answerResponse", "betweenQuestionsCorrect")
         } else {
-            socket.emit("answerResponse", "bewteenQuestionsIncorrect")
+            socket.emit("answerResponse", "betweenQuestionsIncorrect")
         }
 
         // TODO add logic to store the answer. Use the class Answer and add it to the answerList in the Question class that is in the questionList in the Session class
+        let answer = new Answer()
+
+        let numAnswers = question.answerList.length;
+        let participants = session.currentUsers;
+        session.adminSocket.emit("updateNumberOfAnswers", numAnswers, participants);
     });
 }

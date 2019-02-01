@@ -4,7 +4,7 @@
 		<b-container>
 			<b-row>
 				<b-col cols="12" lg="4">
-					<JoinRoom></JoinRoom>
+					<JoinSession/>
 				</b-col>
 			</b-row>
 		</b-container>
@@ -12,12 +12,12 @@
 </template>
 
 <script>
-	import JoinRoom from "../components/client/JoinRoom.vue";
+	import JoinSession from "../components/client/JoinSession.vue";
 
 	export default {
 		name: 'client',
 		components: {
-			JoinRoom
+			JoinSession
 		},
 		created() {
 			this.$socket.emit("verifyUserLevel", 1);
@@ -25,7 +25,6 @@
 	}
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 	h1 {
 		margin-top: 3rem;

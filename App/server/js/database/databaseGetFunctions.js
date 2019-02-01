@@ -61,7 +61,7 @@ const get = {
     },
     allQuestionInSession: function (db, sessionId) {
         return new Promise((resolve, reject) => {
-            let statement = `SELECT Q.id, Q.text,Q.description,Q.object,Q.solution,T.type,SQ.id AS sqId
+            let statement = `SELECT Q.id, Q.text, Q.description, Q.object, Q.solution, T.type, Q.time, SQ.id AS sqId
                              FROM Question AS Q
                              INNER JOIN Session_has_Question AS SQ ON SQ.questionId = Q.id
                              INNER JOIN Type AS T ON T.type = Q.questionType

@@ -13,13 +13,13 @@
                             </b-card>
                         </b-tab>
                         <b-tab :title="getLocale.answer">
-                            <Text :requestAnswer="requestAnswer"
+                            <TextInput :requestAnswer="requestAnswer"
                                     @getTextResponse="getTextValue"
-                                    v-if="getType===1"
+                                    v-if="getQuestionType===1"
                                     />
-                            <MultipleChoice v-if="getType===2"/>
+                            <MultipleChoice v-if="getQuestionType===2"/>
                         </b-tab>
-                        <b-tab :title="getTimeLeft" v-if="interval !== undefined" disabled></b-tab>
+                        <b-tab :title="updateTimer" v-if="interval !== undefined" disabled></b-tab>
                     </b-tabs>
                 </b-col>
             </b-row>
@@ -35,7 +35,7 @@
 </template>
 
 <script>
-	import Text from "./questionTypes/Text.vue";
+	import TextInput from "./questionTypes/TextInput.vue";
 	import MultipleChoice from "./questionTypes/MultipleChoice.vue";
 	export default {
 		name: "Question",
@@ -58,10 +58,10 @@
                 this.timeLeft = timeLeft;
                 this.interval = setInterval(() => {
                     if(this.timeLeft === 0) {
-                        sendNotAnswered();
+                        this.questionNotAnswered();
                         clearInterval(this.interval);
                     } else this.timeLeft--;
-                });
+                }, 1000);
             }
         },
         beforeDestroy() {
@@ -87,13 +87,10 @@
 	    },
 		computed: {
 			updateTimer() {                
-                let min = Math.floor(this.timeLeft / 60);
-                let sec = Math.floor(this.timeLeft % 60);
+                let min = Math.floor(this.timeLeft / 60).toString();
+                let sec = Math.floor(this.timeLeft % 60).toString();
 
-                min.padStart(2, "0");
-                sec.padStart(2, "0");
-
-                return `${min}:${sec}`;
+                return `${min.padStart(2, "0")}:${sec.padStart(2, "0")}`;
             },
             getQuestionInfo() {
                 return this.questionInfo;
@@ -102,10 +99,18 @@
                 let locale = this.$store.getters.getLocale("ClientSessionQuestion");
                 if(locale) return locale;
                 return {};
+            },
+            getQuestionType() {
+                return this.questionInfo.type;
             }
-		},
+        },
+        sockets: {
+            adminForceNext() {
+                this.questionNotAnswered();
+            }
+        },
 		components: {
-			Text,
+			TextInput,
 			MultipleChoice
         }
 	}

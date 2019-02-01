@@ -7,7 +7,7 @@
         </b-row>
         <b-row align-h="center">
             <b-col cols="12" class="text-center mb-5">
-                <b-form-input v-model="sessionCode" type="text" placeholder="Enter room id!"/>
+                <b-form-input v-model="sessionCode" type="text" :placeholder="getLocale.inputPlaceholder"/>
             </b-col>
         </b-row>
         <b-row align-h="center">
@@ -20,7 +20,7 @@
 
 <script>
 export default {
-    name: "joinRoom",
+    name: "JoinSession",
     data() {
         return{
             responsetext: "",
@@ -52,7 +52,7 @@ export default {
             else return this.getLocale.title;
         },
         getLocale() {
-            let locale = this.$store.getters.getLocale("JoinRoom");
+            let locale = this.$store.getters.getLocale("JoinSession");
             if(locale) return locale;
             return {};
         }

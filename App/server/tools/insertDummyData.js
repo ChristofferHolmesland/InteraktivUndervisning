@@ -102,7 +102,7 @@ module.exports.InsertData = function (db) {
         //console.log(sqlInsertSession);
 
         //Creating Question Insert
-        var sqlInsertQuestion = "INSERT INTO Question(text, description,object,solution,time,questionType,courseCode) VALUES";
+        var sqlInsertQuestion = "INSERT INTO Question(text, description, object, solution, time, questionType,courseCode) VALUES";
 
         for (let o=1;o<=200;o++) {
             let chosenCode = 0;
