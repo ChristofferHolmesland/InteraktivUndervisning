@@ -37,10 +37,11 @@ module.exports.client = function(socket, db, user, sessions) {
         }
 
         // TODO add logic to store the answer. Use the class Answer and add it to the answerList in the Question class that is in the questionList in the Session class
-        let answer = new Answer()
+        let answer = new Answer();
+        question.answerList.push(answer);
 
         let numAnswers = question.answerList.length;
         let participants = session.currentUsers;
-        session.adminSocket.emit("updateNumberOfAnswers", numAnswers, participants);
+        sessions.get(sessionCode).adminSocket.emit("updateNumberOfAnswers", numAnswers, participants);
     });
 }

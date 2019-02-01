@@ -141,7 +141,7 @@ module.exports.admin = function(socket, db, user, sessions) {
         });
     })
     
-    socket.on("startSessionWaitingRoom", function(sessionId) {
+    socket.on("startSessionWaitingRoom", function() {
         socket.emit("startSessionWaitingRoomResponse");
     });
 
@@ -158,6 +158,29 @@ module.exports.admin = function(socket, db, user, sessions) {
 
         io.to(sessionCode).emit("nextQuestion", safeFirstQuestion);
     });
+
+    socket.on("forceNextQuestion", function() {
+        socket.to(currentSession.session.sessionCode).emit("adminForceNext");
+        socket.emit("goToQuestionResultScreen");
+    });
+
+    socket.on("nextQuestionRequest", function() {
+        currentSession.session.currentQuestion++;
+        if (true /*currentSession.session.currentQuestion < currentSession.session.questionList.length*/){
+            let question = currentSession.session.questionList[currentSession.session.currentQuestion];
+            let safeQuestion = {
+                "text": question.text,
+                "description": question.description,
+                "object": question.object,
+                "type": question.type,
+                "time": 30,//question.time TODO remove comment
+                "participants": currentSession.session.currentUsers
+            }
+
+            io.to(currentSession.session.sessionCode).emit("nextQuestion", safeQuestion)
+        }
+    });
+
 
     socket.on("getSessionWithinCourse", function(course) {   
         dbFunctions.get.allSessionWithinCourse(db, course.code, course.semester).then((sessions) => {

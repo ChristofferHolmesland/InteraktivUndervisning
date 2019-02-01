@@ -1,13 +1,15 @@
 <template>
     <div id="session">
-        <WaitingRoom v-if="state == 1" :sessionId="sessionId"/>
-        <Question v-if="state == 2" :sessionId="sessionId" :questionInfo="questionInfo"/>
+        <WaitingRoom v-if="state === 1" :sessionId="sessionId"/>
+        <Question v-if="state === 2" :sessionId="sessionId" :questionInfo="questionInfo"/>
+        <QuestionResultScreen v-if="state === 3" :sessionId="sessionId" :questionInfo="questionInfo"/>
     </div>
 </template>
 
 <script>
 import WaitingRoom from "../components/admin/startSession/WaitingRoom.vue";
 import Question from "../components/admin/startSession/Question.vue";
+import QuestionResultScreen from "../components/admin/startSession/QuestionResultScreen.vue";
 
 export default {
     name: "session",
@@ -28,9 +30,12 @@ export default {
         startSessionWaitingRoomResponse() {
             this.state = 1;
         },
-        nextQuestion(questionInfo){
+        nextQuestion(questionInfo) {
             this.questionInfo = questionInfo;
             this.state = 2;
+        },
+        goToQuestionResultScreen() {
+            this.state = 3;
         }
     },
     computed: {
@@ -41,7 +46,8 @@ export default {
     },
     components: {
         WaitingRoom,
-        Question
+        Question,
+        QuestionResultScreen
     },
     beforeDestroy() {
       // TODO add logic if the admin goes to another path before the sessions ends  

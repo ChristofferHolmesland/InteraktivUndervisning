@@ -49,6 +49,7 @@ class Question {
         this.solution = solution;
         this.type = type;
         this.time = time;
+        this.answerList = [];
     }
 }
 
