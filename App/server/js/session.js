@@ -55,14 +55,12 @@ class Question {
 
 class Answer {
     /*
-    answerId
     questionId
     userId
     answerObject
     result
     */
-    constructor(id, questionId, userId, answerObject, result) {
-        this.id = id;
+    constructor(questionId, userId, answerObject, result) {
         this.questionId = questionId;
         this.userId = userId;
         this.answerObject = answerObject;

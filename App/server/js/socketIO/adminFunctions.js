@@ -166,21 +166,27 @@ module.exports.admin = function(socket, db, user, sessions) {
 
     socket.on("nextQuestionRequest", function() {
         currentSession.session.currentQuestion++;
-        if (true /*currentSession.session.currentQuestion < currentSession.session.questionList.length*/){
+        if (currentSession.session.currentQuestion < currentSession.session.questionList.length){
             let question = currentSession.session.questionList[currentSession.session.currentQuestion];
             let safeQuestion = {
                 "text": question.text,
                 "description": question.description,
                 "object": question.object,
                 "type": question.type,
-                "time": 30,//question.time TODO remove comment
+                "time": question.time,
                 "participants": currentSession.session.currentUsers
             }
 
             io.to(currentSession.session.sessionCode).emit("nextQuestion", safeQuestion)
+        } else {
+            socket.to(currentSession.session.sessionCode).emit("answerResponse", "sessionFinished");
+            socket.emit("endSessionScreen");
         }
     });
 
+    socket.on("closeSession", function() {
+        socket.emit("closeSessionResponse");
+    });
 
     socket.on("getSessionWithinCourse", function(course) {   
         dbFunctions.get.allSessionWithinCourse(db, course.code, course.semester).then((sessions) => {

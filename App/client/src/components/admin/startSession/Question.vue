@@ -38,7 +38,7 @@
                 this.timeLeft = timeLeft;
                 this.interval = setInterval(() => {
                     if(this.timeLeft === 0) {
-						this.$socket.emit("timesUp");
+						this.$socket.emit("forceNextQuestion");
                         clearInterval(this.interval);
                     } else this.timeLeft--;
                 }, 1000);
@@ -59,9 +59,11 @@
 			}
 		},
 		sockets: {
-			updateNumberOfAnswers(number, participants) {
-				this.number = number;
-				this.participants = participants;
+			updateNumberOfAnswers(data) {
+				console.log(data);
+				this.answered = data[0];
+				this.participants = data[1];
+				console.log(this.participants);
 			}
 		},
 		methods: {

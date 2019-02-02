@@ -1,4 +1,5 @@
 const Answer = require("../session.js").Answer;
+const dbFunctions = require("../database/databaseFunctions.js").dbFunctions;
 
 module.exports.client = function(socket, db, user, sessions) {
 
@@ -20,28 +21,36 @@ module.exports.client = function(socket, db, user, sessions) {
         sessions.get(sessionCode).adminSocket.emit("updateParticipantCount", sessions.get(sessionCode).session.currentUsers);
     });
 
-    socket.on("questionAnswered", function (answerObject, sessionCode) {
+    socket.on("questionAnswered", async function (answerObject, sessionCode) {
         let session = sessions.get(sessionCode).session;
         let question = session.questionList[session.currentQuestion];
+        let result = -1;
 
         if(answerObject === null)
             socket.emit("answerResponse", "betweenQuestionsNotAnswered");
 
         // TODO add logic to test if the solution is correct
-        
 
         if(answerObject === question.solution){
             socket.emit("answerResponse", "betweenQuestionsCorrect")
         } else {
+            result = 1;
             socket.emit("answerResponse", "betweenQuestionsIncorrect")
         }
 
         // TODO add logic to store the answer. Use the class Answer and add it to the answerList in the Question class that is in the questionList in the Session class
-        let answer = new Answer();
+        let userId = 1;
+        if(user.feide !== undefined) userId = await dbFunctions.get.userIdByFeideId(user.feide.id).catch((err) => {
+            console.log(err);
+        });
+        let answer = new Answer(session.currentQuestion, userId, answerObject, result);
+        
         question.answerList.push(answer);
 
         let numAnswers = question.answerList.length;
         let participants = session.currentUsers;
         sessions.get(sessionCode).adminSocket.emit("updateNumberOfAnswers", numAnswers, participants);
+
+        if(numAnswers === participants) sessions.get(sessionCode).adminSocket.emit("goToQuestionResultScreen");
     });
 }

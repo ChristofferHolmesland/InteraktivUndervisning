@@ -44,7 +44,8 @@
         },
         methods: {
 			leaveSession(){
-			    this.$socket.emit("leaveSession",this.sessionCode);
+                if (this.localeElement === "sessionFinished") this.$router.push("/client");
+			    else this.$socket.emit("leaveSession",this.sessionCode);
 		    }
         },
         computed: {
