@@ -114,5 +114,5 @@ module.exports.getDB = function setupDatabase() {
 
 module.exports.deleteDB = function deleteDatabase(){
     if (fs.existsSync(databasePath)) fs.unlinkSync(databasePath);
-}
+ }
 

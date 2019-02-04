@@ -1,6 +1,7 @@
 const get = require("../database/databaseFunctions").get;
 const insert = require("../database/databaseFunctions").insert;
 const update = require("../database/databaseFunctions").update;
+const del = require("../database/databaseFunctions").del;
 
 const generalFunctions =  require("../generalFunctions.js").functions;
 
@@ -173,7 +174,6 @@ module.exports.admin = function(socket, db, user, sessions) {
     });
 
     socket.on("updateQuestion", function(question) {
-        console.log(question);
         update.question(db, question.id, question.text, question.description,
             "TODO ADD ME", question.solution, question.solutionType, 60); // TODO ADD TIME
     });
@@ -199,4 +199,44 @@ module.exports.admin = function(socket, db, user, sessions) {
             });
         });
     });
+
+    socket.on("getUsersByUserRightsLevelsRequest", function(data) {
+        let course = data.course.split(" ");
+        for (let i = 0; i < data.levels.length; i++) {
+            let level = data.levels[i];
+
+            get.feideUsersByUserRightsLevel(db, level, course[0], course[1]).then((users) => {
+                socket.emit("getUsersByUserRightsLevelResponse", {
+                    level: level,
+                    users: users
+                });
+            });
+        }
+    });
+
+    /*
+        data {
+            feideId String
+            course = "Code + Semester"
+            level Int
+        }
+    */
+    socket.on("setUserRightsLevel", function(data) {
+        let course = data.course.split(" ");
+        get.userRightsByFeideId(db, data.feideId, course[0], course[1]).then((user) => {
+            if (user == undefined) {
+                insert.userRightsLevelByFeideId(db, data.feideId, course[0], course[1], data.level).then(() => {
+                    socket.emit("setUserRightsLevelDone");
+                });
+            } else if (data.level !== -1) {
+                update.userRightsLevelByFeideId(db, data.feideId, course[0], course[1], data.level).then(() => {
+                    socket.emit("setUserRightsLevelDone");
+                });
+            } else if (data.level == -1) {
+                del.userRights(db, data.feideId, course[0], course[1]).then(() => {
+                    socket.emit("setUserRightsLevelDone");
+                });
+            }
+        });
+    })
 }

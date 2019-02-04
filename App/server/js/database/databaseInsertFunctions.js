@@ -48,7 +48,6 @@ const insert = {
 	_questionNoObject: function (db, questionText, questionDescription, questionSolution, time, Type, courseCode) {
 		let statement = `INSERT INTO Question(text,description,solution,time,questionType,courseCode)
 						VALUES('${questionText}','${questionDescription}','${questionSolution}',${time},${Type},'${courseCode}')`;
-		console.log(statement);
 		return createPromise(db, statement, "questionNoObject");
 	},
 	_questionWithObject: function (db, questionText, questionDescription, questionObject, questionSolution, time, Type, courseCode) {
@@ -79,6 +78,11 @@ const insert = {
 						VALUES(${sessionId},${questionId})`;
 		return createPromise(db, statement, "addQuestionToSession");
 	},
+	userRightsLevelByFeideId: function (db, feideId, courseCode, courseSemester, level) {
+		let statement = `INSERT INTO UserRight(feideId, courseSemester, courseCode, level) 
+						 VALUES (${feideId}, '${courseSemester}', '${courseCode}', ${level})`;
+		return createPromise(db, statement, "userRightsLevelByFeideId");
+	}
 };
 
 module.exports.insert = insert;
