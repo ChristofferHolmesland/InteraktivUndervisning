@@ -20,11 +20,11 @@ export default new Router({
 				import("./views/Client.vue")
 		},
 		{
-			path: "/client/quiz/:quizCode",
+			path: "/client/session/:sessionCode",
 			props: true,
-			name: "clientQuiz",
+			name: "clientSession",
 			component: () =>
-				import("./views/ClientQuiz.vue")
+				import("./views/ClientSession.vue")
 		},
 		{
 			path: "/admin",

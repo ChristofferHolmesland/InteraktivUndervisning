@@ -61,7 +61,7 @@ const get = {
     },
     allQuestionInSession: function (db, sessionId) {
         return new Promise((resolve, reject) => {
-            let statement = `SELECT Q.id, Q.text,Q.description,Q.object,Q.solution,T.type,SQ.id AS sqId
+            let statement = `SELECT Q.id, Q.text, Q.description, Q.object, Q.solution, T.type, Q.time, SQ.id AS sqId
                              FROM Question AS Q
                              INNER JOIN Session_has_Question AS SQ ON SQ.questionId = Q.id
                              INNER JOIN Type AS T ON T.type = Q.questionType
@@ -84,6 +84,19 @@ const get = {
     allSessionWithinCourse: function(db, courseCode, courseSemester) {
         return new Promise((resolve, reject) => {
             let statement = `SELECT Q.id, C.name AS courseName, Q.name AS name, C.code, Q.courseSemester
+                             FROM Session AS Q
+                             INNER JOIN Course AS C ON Q.courseCode = C.code 
+                             WHERE C.code = '${courseCode}' AND C.semester = '${courseSemester}' 
+                             GROUP BY Q.id;`;
+            db.all(statement, (err,rows) => {
+                if (err) reject(customReject(err, "allSessionWithinCourse"));
+                resolve(rows);
+            });
+        });
+    },
+    allSessionWithinCourseForSessionOverview: function(db, courseCode, courseSemester) {
+        return new Promise((resolve, reject) => {
+            let statement = `SELECT Q.id, Q.name
                              FROM Session AS Q
                              INNER JOIN Course AS C ON Q.courseCode = C.code 
                              WHERE C.code = '${courseCode}' AND C.semester = '${courseSemester}' 

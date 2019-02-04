@@ -88,7 +88,7 @@ app.get('/login/callback/feide', passport.authenticate('passport-openid-connect'
     // Add Christoffer as admin
     if (idNumber == "239416" || idNumber == "228288") {
         userRights = 4;
-    } 
+    }
 
     // Makes a new active user
     let tempKey = user.generateSessionId();

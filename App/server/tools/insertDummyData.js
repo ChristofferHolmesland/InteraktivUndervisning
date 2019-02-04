@@ -102,7 +102,7 @@ module.exports.InsertData = function (db) {
         //console.log(sqlInsertSession);
 
         //Creating Question Insert
-        var sqlInsertQuestion = "INSERT INTO Question(text, description,object,solution,time,questionType,courseCode) VALUES";
+        var sqlInsertQuestion = "INSERT INTO Question(text, description, object, solution, time, questionType,courseCode) VALUES";
 
         for (let o=1;o<=200;o++) {
             let chosenCode = 0;
@@ -111,9 +111,9 @@ module.exports.InsertData = function (db) {
             }
             let addstring = "";
             if (o===1) {
-                addstring = "('"+"QuestionText"+ o + "','" + "QuestionDescription" + o + "','" + "QuestionObject"+ o + "','" + "QuestionSolution"+ o + "',"+ -1 + "," + 1 + ",'"+ courses[chosenCode].courseCode + "')";
+                addstring = "('"+"QuestionText"+ o + "','" + "QuestionDescription" + o + "','" + "QuestionObject"+ o + "','" + "QuestionSolution"+ o + "',"+ 30 + "," + 1 + ",'"+ courses[chosenCode].courseCode + "')";
             }else {
-                addstring = ",('"+"QuestionText"+ o + "','" + "QuestionDescription" + o + "','" + "QuestionObject"+ o + "','" + "QuestionSolution"+ o + "'," + -1 + "," + 1 + ",'" + courses[chosenCode].courseCode + "')";
+                addstring = ",('"+"QuestionText"+ o + "','" + "QuestionDescription" + o + "','" + "QuestionObject"+ o + "','" + "QuestionSolution"+ o + "'," + 30 + "," + 1 + ",'" + courses[chosenCode].courseCode + "')";
             }
             sqlInsertQuestion += addstring;
         }

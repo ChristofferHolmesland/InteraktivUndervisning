@@ -1,8 +1,7 @@
-const get = require("./databaseGetFunctions").get;
-const insert = require("./databaseInsertFunctions").insert;
-const update = require("./databaseUpdateFunctions").update;
+dbFunctions = {
+    get: require("./databaseGetFunctions").get,
+    insert: require("./databaseInsertFunctions").insert,
+    update: require("./databaseUpdateFunctions").update
+}
 
-module.exports.get = get;
-module.exports.insert = insert;
-module.exports.update = update;
-
+module.exports.dbFunctions = dbFunctions;

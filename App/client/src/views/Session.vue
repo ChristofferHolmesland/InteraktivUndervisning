@@ -1,11 +1,18 @@
 <template>
     <div id="session">
-        <AdminWaitingRoom v-if="state == 1" :sessionId="sessionId"/>
+        <WaitingRoom v-if="state === 1" :sessionId="sessionId"/>
+        <Question v-if="state === 2" :sessionId="sessionId" :questionInfo="questionInfo"/>
+        <QuestionResultScreen v-if="state === 3" :sessionId="sessionId" :questionInfo="questionInfo"/>
+        <SessionOverScreen v-if="state === 3" :sessionId="sessionId" :questionInfo="questionInfo"/>
     </div>
 </template>
 
 <script>
-import AdminWaitingRoom from "../components/admin/startSession/AdminWaitingRoom.vue";
+import WaitingRoom from "../components/admin/startSession/WaitingRoom.vue";
+import Question from "../components/admin/startSession/Question.vue";
+import QuestionResultScreen from "../components/admin/startSession/QuestionResultScreen.vue";
+import SessionOverScreen from "../components/admin/startSession/SessionOverScreen.vue";
+
 export default {
     name: "session",
     props: [
@@ -13,7 +20,8 @@ export default {
     ],
     data() {
         return {
-            state: 0
+            state: 0,
+            questionInfo: undefined
         }
     },
     created() {
@@ -23,6 +31,16 @@ export default {
     sockets: {
         startSessionWaitingRoomResponse() {
             this.state = 1;
+        },
+        nextQuestion(questionInfo) {
+            this.questionInfo = questionInfo;
+            this.state = 2;
+        },
+        goToQuestionResultScreen() {
+            this.state = 3;
+        },
+        endSessionScreen() {
+            this.state = 4;
         }
     },
     computed: {
@@ -32,7 +50,13 @@ export default {
         
     },
     components: {
-        AdminWaitingRoom
-    }
+        WaitingRoom,
+        Question,
+        QuestionResultScreen,
+        SessionOverScreen
+    },
+    beforeDestroy() {
+      // TODO add logic if the admin goes to another path before the sessions ends  
+    },
 }
 </script>
