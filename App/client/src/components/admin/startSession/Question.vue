@@ -60,10 +60,8 @@
 		},
 		sockets: {
 			updateNumberOfAnswers(data) {
-				console.log(data);
 				this.answered = data[0];
 				this.participants = data[1];
-				console.log(this.participants);
 			}
 		},
 		methods: {

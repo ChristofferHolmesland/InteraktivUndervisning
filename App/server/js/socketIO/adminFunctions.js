@@ -152,7 +152,7 @@ module.exports.admin = function(socket, db, user, sessions) {
             "description": firstQuestion.description,
             "object": firstQuestion.object,
             "type": firstQuestion.type,
-            "time": 30,//firstQuestion.time
+            "time": firstQuestion.time,
             "participants": currentSession.session.currentUsers
         }
 
@@ -176,6 +176,7 @@ module.exports.admin = function(socket, db, user, sessions) {
                 "time": question.time,
                 "participants": currentSession.session.currentUsers
             }
+            console.log(safeQuestion);
 
             io.to(currentSession.session.sessionCode).emit("nextQuestion", safeQuestion)
         } else {

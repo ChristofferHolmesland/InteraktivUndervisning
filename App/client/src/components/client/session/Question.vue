@@ -25,9 +25,9 @@
             </b-row>
             <b-row>
                 <b-col>
-                    <b-btn @click="exitSession">{{getLocale.exitSessionBtnText}}</b-btn>
-                    <b-btn @click="questionNotAnswered">{{getLocale.answerDontKnowBtnText}}</b-btn>
-                    <b-btn @click="questionAnswered">{{getLocale.answerBtnText}}</b-btn>
+                    <b-btn @click="exitSession">{{ getLocale.exitSessionBtnText }}</b-btn>
+                    <b-btn @click="questionNotAnswered">{{ getLocale.answerDontKnowBtnText }}</b-btn>
+                    <b-btn @click="questionAnswered">{{ getLocale.answerBtnText }}</b-btn>
                 </b-col>
             </b-row>
         </b-container>
@@ -80,7 +80,7 @@
 				this.$socket.emit("questionAnswered", inputText, this.sessionCode);
             },
             exitSession() {
-                if (confirm(getLocale.leaveSessionBody)) {
+                if (confirm(this.getLocale.leaveSessionBody)) {
                     this.$socket.emit("leaveSession",this.sessionCode);
                 }
             }

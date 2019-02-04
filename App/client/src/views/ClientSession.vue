@@ -35,7 +35,7 @@
 		},
 		sockets: {
 			nextQuestion(questionInfo) {
-				this.questionInfo = questionInfo
+				this.questionInfo = questionInfo;
 				this.sessionState = 1;
 			},
 			answerResponse(localeElement) {
@@ -46,6 +46,7 @@
 				this.$router.push("/client");
 			},
 			finishSessionResponse(localeElement) {
+				this.localeElement = localeElement;
 				this.sessionState = 0;
 			}
 		},

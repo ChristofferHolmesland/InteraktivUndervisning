@@ -111,9 +111,9 @@ module.exports.InsertData = function (db) {
             }
             let addstring = "";
             if (o===1) {
-                addstring = "('"+"QuestionText"+ o + "','" + "QuestionDescription" + o + "','" + "QuestionObject"+ o + "','" + "QuestionSolution"+ o + "',"+ -1 + "," + 1 + ",'"+ courses[chosenCode].courseCode + "')";
+                addstring = "('"+"QuestionText"+ o + "','" + "QuestionDescription" + o + "','" + "QuestionObject"+ o + "','" + "QuestionSolution"+ o + "',"+ 30 + "," + 1 + ",'"+ courses[chosenCode].courseCode + "')";
             }else {
-                addstring = ",('"+"QuestionText"+ o + "','" + "QuestionDescription" + o + "','" + "QuestionObject"+ o + "','" + "QuestionSolution"+ o + "'," + -1 + "," + 1 + ",'" + courses[chosenCode].courseCode + "')";
+                addstring = ",('"+"QuestionText"+ o + "','" + "QuestionDescription" + o + "','" + "QuestionObject"+ o + "','" + "QuestionSolution"+ o + "'," + 30 + "," + 1 + ",'" + courses[chosenCode].courseCode + "')";
             }
             sqlInsertQuestion += addstring;
         }
