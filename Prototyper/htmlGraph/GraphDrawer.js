@@ -18,6 +18,8 @@ class GraphDrawer {
     constructor(canvas) {
         // Radius of nodes.
         this.R = 25;
+        // Relative size of square nodes compared to circle nodes.
+        this.SQUARE_FACTOR = 1.5;
         // How often the canvas should be updated.
         this.FPS = 60;
         // Milliseconds between each update.
@@ -35,8 +37,12 @@ class GraphDrawer {
             Graph1 = Simple mode 
             Quicksort = Quicksort
         */
-        this.controlType = "Graph0"
-        this.Graph0 = new Graph0(this);
+        this.controlType = "Quicksort";
+        this.controllers = {
+            Graph0: new Graph0(this),
+            Graph1: new Graph1(this),
+            Quicksort: new Quicksort(this)
+        };
 
         // Nodes in the graph {x, y, r, v, culled (can be undefined)}.
         this.nodes = [];
@@ -67,14 +73,7 @@ class GraphDrawer {
         this.drawContext = this.drawBuffer.getContext("2d");
 
         this.canvas.addEventListener("mousedown", (function(e) {
-            let consumed;
-            if (this.controlType == "Graph0") {
-                consumed = this.Graph0.mouseDownHandler(e);
-            }
-            else if (this.controlType == "Graph1") {
-                consumed = this.simpleStateHandler(e);
-                this.dirty = true;
-            }
+            let consumed = this.controllers[this.controlType].mouseDownHandler(e);
             if (consumed) return;
 
             // Gesture detection
@@ -194,7 +193,7 @@ class GraphDrawer {
            }
         }
 
-        if (this.controlType == "Graph0") this.Graph0.drawStatic();
+        if (this.controlType == "Graph0") this.controllers["Graph0"].drawStatic();
     }
 
     // TODO: Remove this, and implement a better interface
@@ -245,9 +244,23 @@ class GraphDrawer {
         for (let i = 0; i < this.edges.length; i++) {
             if (this.camera.cull(this.edges[i], false)) continue;
 
+            let cx1 = this.edges[i].n1.x;
+            let cy1 = this.edges[i].n1.y;
+            let cx2 = this.edges[i].n2.x;
+            let cy2 = this.edges[i].n2.y;
+
+            if (this.nodeShape == "Square") {
+                let n1 = this.edges[i].n1;
+                let n2 = this.edges[i].n2;
+                cx1 += n1.r / 2;
+                cy1 += n1.r / 2;
+                cx2 += n2.r / 2;
+                cy2 += n2.r / 2;
+            }
+
             this.drawContext.beginPath();
-            this.drawContext.moveTo(this.edges[i].n1.x, this.edges[i].n1.y);
-            this.drawContext.lineTo(this.edges[i].n2.x, this.edges[i].n2.y);
+            this.drawContext.moveTo(cx1, cy1);
+            this.drawContext.lineTo(cx2, cy2);
             this.drawContext.stroke();
             this.drawContext.closePath();
         }
@@ -275,47 +288,16 @@ class GraphDrawer {
                 https://developer.mozilla.org/en-US/docs/Web/API/TextMetrics
             */
             let textWidth = this.drawContext.measureText(this.nodes[i].v).width;
-            this.drawContext.fillText(this.nodes[i].v,
-                this.nodes[i].x - (textWidth / 2),
-                this.nodes[i].y + (this.fontHeight / 2));
+            let ox = this.nodeShape == "Circle" ? 0 : this.nodes[i].r / 2;
+            let oy = this.nodeShape == "Circle" ? 0 : this.nodes[i].r / 2;
+            this.drawContext.fillText(
+                this.nodes[i].v,
+                this.nodes[i].x - (textWidth / 2) + ox,
+                this.nodes[i].y + (this.fontHeight / 2) + oy
+            );
         }
 
         for (let i = 0; i < this.nodes.length; i++) this.nodes[i].culled = undefined;
-    }
-
-    drawUIPanel(node) {
-        this.staticContext.clearRect(0, 0, this.staticBuffer.width, this.staticBuffer.height);
-        
-        let nodeOnCanvas = this.camera.unproject(node.x, node.y);
-        let borderX = nodeOnCanvas.x + node.r;
-        let borderY = nodeOnCanvas.y - (1.5 * node.r);
-        // Divide the panel into a 2x3 grid.
-        let borderWidth = node.r * 4;
-        let borderHeight = node.r * 4;
-        let rowHeight = borderHeight / 3;
-        let columnWidth = borderWidth / 2;
-
-        // Border
-        this.staticContext.rect(borderX, borderY, borderWidth, borderHeight);
-        this.staticContext.stroke();
-        // Value input
-        this.staticContext.fillStyle = "black";
-        let textWidth = this.staticContext.measureText(node.v).width;
-        this.staticContext.fillText(
-            node.v,
-            borderX + borderWidth / 2 - textWidth / 2,
-            borderY + rowHeight / 2 + this.fontHeight
-        );
-
-        // Add button
-
-        // Remove button
-
-        // Join button
-
-        // Move button
-
-        // Return location of buttons
     }
 
     /*
@@ -327,23 +309,6 @@ class GraphDrawer {
             this.switchBuffers();
             this.dirty = false;
         }
-    }
-
-    simpleStateHandler(e) {
-        if (this.nodes.length == 0) {
-            return this.addNode(e);
-        }
-
-        let node = this.getNodeAtCursor(e).node;
-        if (node == undefined) {
-            this.showUIPanel = false;
-            return false;
-        }
-
-        this.drawUIPanel(node);
-        this.showUIPanel = true;
-
-        return true;
     }
 
     /*
@@ -441,13 +406,91 @@ class GraphDrawer {
         }
         /*
             Checks whether a poin (x, y) is inside a square (nx, ny)
-            with radius R * 1.5.
+            with radius R * SQUARE_FACTOR.
         */
         if (this.nodeShape == "Square") {
-            if (x < nx || x > nx + this.R * 1.5) return false;
-            if (y < ny || y > ny + this.R * 1.5) return false;
+            if (x < nx || x > nx + this.R * this.SQUARE_FACTOR) return false;
+            if (y < ny || y > ny + this.R * this.SQUARE_FACTOR) return false;
             return true;
         }
+    }
+}
+
+class Quicksort {
+    constructor(graphDrawer) {
+        this.gd = graphDrawer;
+        this.arrays = [];
+    }
+
+    mouseDownHandler(e) {
+        if (this.arrays.length == 0) {
+            this.gd.controllers["Graph0"].addNode(e);
+            this.arrays.push([this.gd.nodes[0]]);
+            return true;
+        }
+
+        return false;
+    }
+}
+
+class Graph1 {
+    constructor(graphDrawer) {
+        this.gd = graphDrawer;
+    }
+
+    mouseDownHandler(e) {
+        this.gd.dirty = true;
+
+        if (this.gd.nodes.length == 0) {
+            return this.gd.controllers["Graph0"].addNode(e);
+        }
+
+        let node = this.gd.getNodeAtCursor(e).node;
+        if (node == undefined) {
+            this.showUIPanel = false;
+            return false;
+        }
+
+        this.drawUIPanel(node);
+        this.showUIPanel = true;
+
+        return true;
+    }
+
+    drawUIPanel(node) {
+        this.gd.staticContext.clearRect(0, 0, 
+            this.gd.staticBuffer.width, this.gd.staticBuffer.height);
+        
+        let nodeOnCanvas = this.gd.camera.unproject(node.x, node.y);
+        let borderX = nodeOnCanvas.x + node.r;
+        let borderY = nodeOnCanvas.y - (1.5 * node.r);
+        // Divide the panel into a 2x3 grid.
+        let borderWidth = node.r * 4;
+        let borderHeight = node.r * 4;
+        let rowHeight = borderHeight / 3;
+        let columnWidth = borderWidth / 2;
+
+        // Border
+        this.gd.staticContext.rect(borderX, borderY, borderWidth, borderHeight);
+        this.gd.staticContext.stroke();
+        // Value input
+        this.gd.staticContext.fillStyle = "black";
+        let textWidth = this.gd.staticContext.measureText(node.v).width;
+        this.gd.staticContext.fillText(
+            node.v,
+            borderX + borderWidth / 2 - textWidth / 2,
+            borderY + rowHeight / 2 + this.gd.fontHeight
+        );
+
+        // Add button
+
+        // Remove button
+
+        // Join button
+
+        // Move button
+
+        // Return location of buttons
     }
 }
 
@@ -495,11 +538,9 @@ class Graph0 {
         let p = this.gd.camera.project(e.offsetX, e.offsetY);
 
         let node = {
-            //x: this.gd.nodeShape == "Circle" ? p.x : p.x - (this.gd.R * 1.5 / 2),
-            //y: this.gd.nodeShape == "Circle" ? p.y : p.y - (this.gd.R * 1.5 / 2),
             x: p.x,
             y: p.y,
-            r: this.gd.nodeShape == "Circle" ? this.gd.R : this.gd.R * 1.5,
+            r: this.gd.nodeShape == "Circle" ? this.gd.R : this.gd.R * this.gd.SQUARE_FACTOR,
             v: 0
         }
 
