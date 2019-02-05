@@ -17,6 +17,20 @@
                                 v-model="newQuestion.description">
                 </b-form-input>
             </b-form-group>
+            <!-- TODO Make it possible to add graph objects to question
+            <b-form-group id="objects"
+                label="Objects"
+                label-for="objectsInput">
+                <b-form-select id="objectsInput"
+                    :options="getObjectTypes"
+                    @change="objectsInputChanged($event)">
+                </b-form-select>
+                <ul>
+                    <li :key="object.i" v-for="object in getQuestionObjects">
+                        <component v-on:updateState="newQuestion[object.i].state = $event" :is="object.componentName" :index="i" :state="object.state" />
+                    </li>
+                </ul>
+            </b-form-group> -->
             <b-form-group 	id="solutionType"
                             :label="getLocale.newQuestionSolutionType"
                             label-for="solutionTypeInput">
@@ -46,7 +60,8 @@
                     text: "",
                     description: "", 
               		solutionType: "",
-					solution: "",
+                    solution: "",
+                    objects: []
                 },
                 solutionTypes: []
             }
@@ -62,6 +77,12 @@
         methods: {
             callOkHandler: function() {
                 this.okHandler(this.newQuestion);
+            },
+            objectsInputChanged(newObject) {
+                if (newObject == undefined) return;
+                let i = this.newQuestion.objects.length;
+                // TODO Make it possible to add graph object to question
+                return
             }
         },
         computed: {
@@ -72,7 +93,22 @@
             },
             getSolutionTypes: function() {
                 return this.solutionTypes;
-			}
+            },
+            getQuestionObjects: function() {
+                return this.newQuestion.objects;
+            },
+            getObjectTypes: function() {
+                return [
+                    {
+                        value: undefined,
+                        text: "Add object"
+                    },
+                    {
+                        value: "graph",
+                        text: "Graph"
+                    },
+                ]
+            }
         },
         sockets: {
             sendQuestionTypes: function(types) {

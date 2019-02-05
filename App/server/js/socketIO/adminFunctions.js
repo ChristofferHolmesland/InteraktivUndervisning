@@ -6,24 +6,28 @@ const session = require("../session.js").Session;
 const question = require("../session.js").Question;
 const answer = require("../session.js").Answer;
 
+let courseListRequestHandler = function(socket, db, user, sessions) {
+    let userInfo = "2222221";
+
+    dbFunctions.get.userCourses(db, userInfo).then((courses) => {
+        let result = [];
+        for (let i = 0; i < courses.length; i++) {
+            let courseString = courses[i].code + " " + courses[i].semester;
+            result.push({
+                "value": courseString,
+                "text": courseString
+            });
+        }
+        socket.emit("courseListResponse", result);
+    });
+}
+
 var currentSession = undefined;
 
 module.exports.admin = function(socket, db, user, sessions) {
 
     socket.on("courseListRequest", function() {
-        let userInfo = "2222221" // TODO Change this to user feide id
-
-        dbFunctions.get.userCourses(db, userInfo).then((courses) => {
-            let result = [];
-            for (let i = 0; i < courses.length; i++) {
-                let courseString = courses[i].code + " " + courses[i].semester;
-                result.push({
-                    "value": courseString,
-                    "text": courseString
-                });
-            }
-            socket.emit("courseListResponse", result);
-        })
+        courseListRequestHandler(socket, db, user, sessions);
     });
 
     socket.on("getSessions", function(course) {
@@ -230,7 +234,6 @@ module.exports.admin = function(socket, db, user, sessions) {
     });
 
     socket.on("updateQuestion", function(question) {
-        console.log(question);
         dbFunctions.update.question(db, question.id, question.text, question.description,
             "TODO ADD ME", question.solution, question.solutionType, 60); // TODO ADD TIME
     });
@@ -244,7 +247,56 @@ module.exports.admin = function(socket, db, user, sessions) {
                     text: types[i].name
                 })
             }
-            socket.emit("sendQuestionTypes", result);    
+            socket.emit("sendQuestionTypes", result);
         });
     });
+
+    socket.on("createCourse", function(course) {
+        dbFunctions.insert.course(db, course.semester, course.code, course.name).then(() => {
+            // TODO Change feideId to user's feideid
+            dbFunctions.insert.courseAdmin(db, course.semester, course.code, "2222221").then(() => {
+                courseListRequestHandler(socket, db, user, sessions);
+            });
+        });
+    });
+
+    socket.on("getUsersByUserRightsLevelsRequest", function(data) {
+        let course = data.course.split(" ");
+        for (let i = 0; i < data.levels.length; i++) {
+            let level = data.levels[i];
+
+            dbFunctions.get.feideUsersByUserRightsLevel(db, level, course[0], course[1]).then((users) => {
+                socket.emit("getUsersByUserRightsLevelResponse", {
+                    level: level,
+                    users: users
+                });
+            });
+        }
+    });
+
+    /*
+        data {
+            feideId String
+            course = "Code + Semester"
+            level Int
+        }
+    */
+    socket.on("setUserRightsLevel", function(data) {
+        let course = data.course.split(" ");
+        dbFunctions.get.userRightsByFeideId(db, data.feideId, course[0], course[1]).then((user) => {
+            if (user == undefined) {
+                dbFunctions.insert.userRightsLevelByFeideId(db, data.feideId, course[0], course[1], data.level).then(() => {
+                    socket.emit("setUserRightsLevelDone");
+                });
+            } else if (data.level !== -1) {
+                dbFunctions.update.userRightsLevelByFeideId(db, data.feideId, course[0], course[1], data.level).then(() => {
+                    socket.emit("setUserRightsLevelDone");
+                });
+            } else if (data.level == -1) {
+                dbFunctions.del.userRights(db, data.feideId, course[0], course[1]).then(() => {
+                    socket.emit("setUserRightsLevelDone");
+                });
+            }
+        });
+    })
 }

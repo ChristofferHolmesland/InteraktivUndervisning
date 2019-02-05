@@ -30,6 +30,20 @@ const get = {
             });
         });
     },
+    userRightsByFeideId: function(db, feideId, courseCode, courseSemester) {
+        return new Promise((resolve, reject) => {
+            let statement = `SELECT level FROM UserRight 
+                            WHERE feideId = ${feideId}
+                            AND courseCode = '${courseCode}'
+                            AND courseSemester = '${courseSemester}'`;
+            db.get(statement, (err,row) => {
+                if (err) {
+                    reject(customReject(err, "userRightsByFeideId"));
+                }
+                resolve(row);
+            });
+        });
+    },
     sessionById: function(db, sessionId) {
         return new Promise((resolve, reject) => {
             let statement = `SELECT * FROM Session WHERE id = ${sessionId}`;
@@ -190,6 +204,20 @@ const get = {
                     reject(new customReject(new Error(`userInfo.Type does not exist: ${userInfo.type}`), "userId"))
                 })
         }
+    },
+    feideUsersByUserRightsLevel: function(db, level, courseCode, courseSemester) {
+        return new Promise(async (resolve, reject) => {
+            let statement = `SELECT UR.feideId, F.name
+                            FROM UserRight as UR
+                            LEFT JOIN Feide as F ON Ur.feideId = F.id
+                            WHERE UR.courseSemester = '${courseSemester}' 
+                            AND UR.courseCode = '${courseCode}'
+                            AND UR.level = ${level}`;
+            db.all(statement, (err,rows) => {
+                if (err) reject(customReject(err, "feideUsersByUserRightsLevel"));
+                resolve(rows);
+            });
+        });
     }
 };
 
