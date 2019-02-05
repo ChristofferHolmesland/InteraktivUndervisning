@@ -1,7 +1,7 @@
 <template>
-    <div id="TextInputField">
+    <div id="TextInput">
         <b-container>
-            <b-form-input v-model="inputText" type="text" placeholder="Skriv inn svar">
+            <b-form-input v-model="inputText" type="text" :placeholder="getLocale.inputPlaceholder">
             </b-form-input>
         </b-container>
     </div>
@@ -9,7 +9,8 @@
 
 <script>
 	export default {
-         data() {
+		name: "TextInput",
+        data() {
             return{
                 inputText: ""
             }
@@ -17,16 +18,17 @@
         props: [
         	"requestAnswer"
         ],
-		name: "ClientQuizQuestion",
         watch: {
          	requestAnswer: function () {
-         		console.log("I am watching you!");
                 this.$emit("getTextResponse",this.inputText);
 			}
+        },
+        computed: {
+            getLocale() {
+                let locale = this.$store.getters.getLocale("ClientSessionTextInput");
+                if(locale) return locale;
+                return {};
+            }
         }
 	}
 </script>
-
-<style scoped>
-
-</style>

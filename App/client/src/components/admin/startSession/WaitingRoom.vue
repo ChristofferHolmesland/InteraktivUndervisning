@@ -52,8 +52,8 @@ export default {
         }, this.intervalStep);
     },
     sockets: {
-        updateCurrentlyJoineUsers(data) {
-            this.numberOfUsersConnected = data.numberOfUsersConnected;
+        updateParticipantCount(participantsCount) {
+            this.numberOfUsersConnected = participantsCount;
         }
     },
     methods: {

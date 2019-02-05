@@ -93,5 +93,32 @@
         "totalSessions": "Total number of sessions:",
         "correctAnswers": "Correct answers:",
         "incorrectAnswers": "Incorrect answers:"
+    },
+    "ClientSessionQuestion": {
+        "question": "Question",
+        "answer": "Answer",
+        "exitSessionBtnText": "Leave session",
+        "answerDontKnowBtnText": "Answer \"I don't know\"",
+        "answerBtnText": "Answer",
+        "leaveSessionBody": "By clicking ok you will leave this session.\nAll answers up to this point will be saved."
+    },
+    "ClientSessionWaitingArea": {
+        "title": "Waiting Area",
+        "sessionId": "Session ID:",
+        "leaveSession": "Leave session",
+        "beforeSession": "Joined session!\nWaiting for admin to start the session",
+        "betweenQuestionsCorrect": "You have answered and your answer was correct!\nWaiting for admin to start the next question",
+        "betweenQuestionsIncorrect": "You have answered and your answer was incorrect!\nYou can check your answer towards the solution after the session is over.\nWaiting for admin to start the next question",
+        "betweenQuestionsNotAnswered": "You answered \"I don't know\"!\nYou can check the solution after the session is over.\nWaiting for admin to start the next question",
+        "sessionFinished": "The session is over!\nAll your answers are stored and you can view them with the solution back at the dashboard if you haven't logged in as anonomously."
+    },
+    "JoinSession": {
+        "title": "Quick join session!",
+        "errorTitle": "Error joining session! Try again",
+        "joinBtn": "Join",
+        "inputPlaceholder": "Enter session code!" 
+    },
+    "clientSessionTextInput": {
+        "placeholder": "Input your answer here!"
     }
 }
