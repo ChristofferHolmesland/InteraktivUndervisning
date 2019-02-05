@@ -15,12 +15,12 @@ const insert = {
 	},
 	feideUser: function (db, userId, feideId) {
 		let statement = `INSERT INTO User(id,feideId)
-						VALUES (${userId},${feideId})`;
+						VALUES ('${userId}',${feideId})`;
 		return createPromise(db, statement, "feideUser");
 	},
 	anonymousUser: function (db, userId) {
 		let statement = `INSERT INTO User(id)
-						VALUES (${userId})`;
+						VALUES ('${userId}')`;
 		return createPromise(db, statement, "anonymousUser");
 	},
 	session: function (db, sessionName, courseSemester, courseCode) {
@@ -43,7 +43,6 @@ const insert = {
 	_questionNoObject: function (db, questionText, questionDescription, questionSolution, time, Type, courseCode) {
 		let statement = `INSERT INTO Question(text,description,solution,time,questionType,courseCode)
 						VALUES('${questionText}','${questionDescription}','${questionSolution}',${time},${Type},'${courseCode}')`;
-		console.log(statement);
 		return createPromise(db, statement, "questionNoObject");
 	},
 	_questionWithObject: function (db, questionText, questionDescription, questionObject, questionSolution, time, Type, courseCode) {
@@ -52,8 +51,8 @@ const insert = {
 		return createPromise(db, statement, "questionWithObject");
 	},
 	_storeAnswerWithoutUser: function (db, result, answerObject, sessionHasQuestionId) {
-		let statement = `INSERT INTO Answer(object,result,sessionHasQuestionId, userId)
-						VALUES(${answerObject}, ${result}, ${sessionHasQuestionId}, 1)`;
+		let statement = `INSERT INTO Answer(object, result, sessionHasQuestionId, userId)
+						VALUES('${answerObject}', ${result}, ${sessionHasQuestionId}, 1)`;
 		return createPromise(db, statement, "storeAnswerWithoutUser");
 	},
 	storeAnswer: function (db, answerObject, result, sessionHasQuestionId, userId) {
@@ -61,7 +60,7 @@ const insert = {
 			return this._storeAnswerWithoutUser(db, result, answerObject, sessionHasQuestionId);
 		}
 		let statement = `INSERT INTO Answer(object, result, sessionHasQuestionId, userId)
-						VALUES(${answerObject}, ${result}, ${sessionHasQuestionId}, ${userId})`;
+						VALUES('${JSON.stringify(answerObject)}', ${result}, ${sessionHasQuestionId}, '${userId}')`;
 		return createPromise(db, statement, "storeAnswer");
 	},
 	addUserToSession: function (db, userId, sessionId) {

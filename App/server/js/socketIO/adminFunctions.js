@@ -115,7 +115,7 @@ module.exports.admin = function(socket, db, user, sessions) {
             let questionList = [];
             for(let i = 0; i < questions.length; i++){
                 let tempQuestion = questions[i];
-                questionList.push(new question(tempQuestion.id, tempQuestion.text, tempQuestion.description, tempQuestion.object, tempQuestion.solution, tempQuestion.type, tempQuestion.time));
+                questionList.push(new question(tempQuestion.id, tempQuestion.text, tempQuestion.description, tempQuestion.object, tempQuestion.solution, tempQuestion.type, tempQuestion.time, tempQuestion.sqId));
             }
 
             currentSession = {session: new session(sessionInformation.id, sessionInformation.name,
@@ -132,6 +132,8 @@ module.exports.admin = function(socket, db, user, sessions) {
         });
     });
 
+    // Course is an object with course code and course semester
+    // e.g: {code: "DAT200", semester: "18H"}
     socket.on("sessionOverviewRequest", function(course) {
         dbFunctions.get.allSessionWithinCourseForSessionOverview(db, course.code, course.semester).then((sessionList) => {
             socket.emit("sessionOverviewResponse", sessionList)
@@ -176,12 +178,12 @@ module.exports.admin = function(socket, db, user, sessions) {
                 "time": question.time,
                 "participants": currentSession.session.currentUsers
             }
-            console.log(safeQuestion);
-
             io.to(currentSession.session.sessionCode).emit("nextQuestion", safeQuestion)
         } else {
             socket.to(currentSession.session.sessionCode).emit("answerResponse", "sessionFinished");
             socket.emit("endSessionScreen");
+
+            sessions.delete(currentSession.session.sessionCode);
         }
     });
 

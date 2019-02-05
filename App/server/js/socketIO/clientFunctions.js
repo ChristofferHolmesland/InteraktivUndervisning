@@ -24,33 +24,56 @@ module.exports.client = function(socket, db, user, sessions) {
     socket.on("questionAnswered", async function (answerObject, sessionCode) {
         let session = sessions.get(sessionCode).session;
         let question = session.questionList[session.currentQuestion];
-        let result = -1;
 
-        if(answerObject === null)
+        if(answerObject === null){
+            answerObject = "You didn't answer";
             socket.emit("answerResponse", "betweenQuestionsNotAnswered");
+        }
 
-        // TODO add logic to test if the solution is correct
+        let result = require("../SolutionChecker/solutionChecker.js").solutionChecker.checkAnswer(answerObject, question.solution);
 
-        if(answerObject === question.solution){
+        if (result){
+            result = 1;
             socket.emit("answerResponse", "betweenQuestionsCorrect")
         } else {
-            result = 1;
+            result = -1;
             socket.emit("answerResponse", "betweenQuestionsIncorrect")
         }
 
+        let information = {
+            answer: answerObject, 
+            userId: 1, 
+            session: session, 
+            result: result
+        }
+
         // TODO add logic to store the answer. Use the class Answer and add it to the answerList in the Question class that is in the questionList in the Session class
-        let userId = 1;
-        if(user.feide !== undefined) userId = await dbFunctions.get.userIdByFeideId(user.feide.id).catch((err) => {
-            console.log(err);
-        });
-        let answer = new Answer(session.currentQuestion, userId, answerObject, result);
+        if(user.feide !== undefined) {
+            dbFunctions.get.userIdByFeideId(db, user.feide.idNumber).then(async (userId) => {
+                information.userId = userId.id;
+                await insertAnswerToDatabase(information);
+            }).catch((err) => {
+                console.log(err);
+            });
+        } else {
+            await insertAnswerToDatabase(information)
+        }
+    });
+
+    async function insertAnswerToDatabase(information) {
+        let answer = new Answer(information.session.currentQuestion, information.userId, information.answer, information.result);
+        let question = information.session.questionList[information.session.currentQuestion];
         
         question.answerList.push(answer);
 
-        let numAnswers = question.answerList.length;
-        let participants = session.currentUsers;
-        sessions.get(sessionCode).adminSocket.emit("updateNumberOfAnswers", numAnswers, participants);
-
-        if(numAnswers === participants) sessions.get(sessionCode).adminSocket.emit("goToQuestionResultScreen");
-    });
+        dbFunctions.insert.storeAnswer(db, information.answer, information.result, question.sqId, information.userId).then(() => {
+            let numAnswers = question.answerList.length;
+            let participants = information.session.currentUsers;
+            sessions.get(information.session.sessionCode).adminSocket.emit("updateNumberOfAnswers", numAnswers, participants);
+    
+            if(numAnswers === participants) sessions.get(information.session.sessionCode).adminSocket.emit("goToQuestionResultScreen");
+        }).catch((err) => {
+            console.log(err);
+        });
+    }
 }

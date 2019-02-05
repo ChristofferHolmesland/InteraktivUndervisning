@@ -27,6 +27,10 @@ module.exports.listen = function(server, users, db) {
         //------------- Common functions -------------//
         //--------------------------------------------//
 
+        socket.on("test", function() {
+            console.log("no");
+        });
+
         socket.on('disconnect', function(){
 			// TODO handle socket disconnect
         });

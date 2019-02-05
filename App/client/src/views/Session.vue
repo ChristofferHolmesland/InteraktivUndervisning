@@ -3,7 +3,7 @@
         <WaitingRoom v-if="state === 1" :sessionId="sessionId"/>
         <Question v-if="state === 2" :sessionId="sessionId" :questionInfo="questionInfo"/>
         <QuestionResultScreen v-if="state === 3" :sessionId="sessionId" :questionInfo="questionInfo"/>
-        <SessionOverScreen v-if="state === 3" :sessionId="sessionId" :questionInfo="questionInfo"/>
+        <SessionOverScreen v-if="state === 4" :sessionId="sessionId"/>
     </div>
 </template>
 
