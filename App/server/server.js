@@ -10,7 +10,7 @@ const user = (require("./js/user.js")).User;
 const users = new Map();
 
 const merge_sort = require("./js/algorithms/sorting/mergesort");
-const x = merge_sort([4, 3, 2, 1, 5], 5);
+const x = merge_sort([5, 3, 2, -1, 99, 2], 2);
 while (!x.isSorted()) console.log(x.step());
 console.log(x.finish());
 return;
