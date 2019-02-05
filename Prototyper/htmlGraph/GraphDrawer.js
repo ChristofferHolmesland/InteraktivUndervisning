@@ -44,7 +44,14 @@ class GraphDrawer {
             Quicksort: new Quicksort(this)
         };
 
-        // Nodes in the graph {x, y, r, v, culled (can be undefined)}.
+        /*
+            Nodes in the graph 
+            {
+                x, y, r, v, 
+                selected (can be undefined), 
+                culled (can be undefined)
+            }.
+        */
         this.nodes = [];
         // Edges between nodes {n1, n2}.
         this.edges = [];
@@ -269,17 +276,17 @@ class GraphDrawer {
         for (let i = 0; i < this.nodes.length; i++) {
             if (this.camera.cull(this.nodes[i], true)) continue;
             
+            this.drawContext.beginPath();
             if (this.nodeShape == "Circle") {
-                this.drawContext.beginPath();
                 this.drawContext.arc(this.nodes[i].x, this.nodes[i].y, this.R, 0, 2 * Math.PI);
-                this.drawContext.fillStyle = "white";
-                this.drawContext.fill();
-                this.drawContext.stroke();
-                this.drawContext.closePath();
             } else if (this.nodeShape == "Square") {
-                this.drawContext.strokeRect(this.nodes[i].x, this.nodes[i].y, 
+                this.drawContext.rect(this.nodes[i].x, this.nodes[i].y, 
                     this.nodes[i].r, this.nodes[i].r);
             }
+            this.drawContext.fillStyle = "white";
+            this.drawContext.fill();
+            this.drawContext.stroke();
+            this.drawContext.closePath();
     
             // Text
             this.drawContext.fillStyle = "black";
@@ -423,13 +430,29 @@ class Quicksort {
     }
 
     mouseDownHandler(e) {
-        if (this.arrays.length == 0) {
+        if (this.arrays.length < 3) {
             this.gd.controllers["Graph0"].addNode(e);
-            this.arrays.push([this.gd.nodes[0]]);
+            this.arrays.push([this.gd.nodes[this.gd.nodes.length - 1]]);
             return true;
         }
 
+        this.gd.controllers["Graph0"].joinNode(e);
+        return true;
+
+
         return false;
+    }
+
+    drawUI() {  
+        // Draw + buttons between every element of the arrays
+        for (let ai = 0; this.arrays.length; ai++) {
+            for (let ni = 0; this.arrays[ai].length; ni++) {
+                // Every node should draw a + between them and the next node.
+                // The first node should draw a + at the start of the array.
+            }
+        }
+        // If node is selected display - button to remove and join
+        // button to create arrow
     }
 }
 
