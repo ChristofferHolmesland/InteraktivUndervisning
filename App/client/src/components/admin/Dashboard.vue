@@ -48,7 +48,7 @@
 			<b-col cols="4" style="text-align: center;">
 				<b-row><p>Add new question</p></b-row>
 				<b-row>
-					<div class="btn btn-secondary m-0 p-0" 
+					<div class="btn disabled btn-secondary m-0 p-0" 
 						style="display: flex; justify-content: center; align-items: center; position: absolute; height: 50%; width: 90%; left: 5%; bottom: 0px;"
 						@click="newQuestionClicked" >
 						New question
@@ -59,7 +59,7 @@
 			<b-col cols="4">
 				<b-row><p>View last session</p></b-row>
 				<b-row>
-					<div class="btn btn-secondary m-0 p-0" 
+					<div class="btn disabled btn-secondary m-0 p-0" 
 						style="display: flex; justify-content: center; align-items: center; position: absolute; height: 50%; width: 90%; left: 5%; bottom: 0px;"
 						@click="viewLastSession" >
 						Open
