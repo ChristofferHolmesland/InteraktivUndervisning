@@ -46,6 +46,8 @@ class Camera {
         RectB.Top = node.y - (node.r / 2);
         RectB.Bottom = node.y + (node.r / 2);
 
+        // TODO Make the culling work better with square nodes
+
         // ref: (modified for our coordinate system)
         // https://stackoverflow.com/questions/306316/determine-if-two-rectangles-overlap-each-other
         node.culled = !(RectA.Left < RectB.Right && RectA.Right > RectB.Left &&

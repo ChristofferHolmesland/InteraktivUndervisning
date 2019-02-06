@@ -44,7 +44,28 @@ class Quicksort {
     }
 
     addNewNodeToArray(event) {
+        console.log(event);
 
+        // fix event.data.ni doesn't change when the array changes
+        // fix calculate nodes bases on array startposition and node index
+        //      every time a node is added/removed from an array
+
+        let clickedNode = this.arrays[event.data.ai][event.data.ni];
+        let node = {
+            x: clickedNode.x + (event.data.side == "left" ? -clickedNode.r : clickedNode.r),
+            y: clickedNode.y,
+            r: clickedNode.r,
+            v: clickedNode.v + 1
+        }
+
+        this.arrays[event.data.ai].splice(
+            event.data.ni + (event.data.side == "left" ? 0 : 1),
+            0,
+            node
+        )
+
+        this.gd.nodes.push(node);
+        this.gd.dirty = true;
     }
 
     drawUI() {
@@ -53,63 +74,62 @@ class Quicksort {
 
         // Draw + buttons between every element of the arrays
         this.gd.staticContext.fillStyle = "white";
+        this.gd.staticContext.strokeStyle = "black";
         for (let ai = 0; ai < this.arrays.length; ai++) {
             this.gd.staticContext.beginPath();
             for (let ni = 0; ni < this.arrays[ai].length; ni++) {
                 // Every node should draw a + between them and the next node.
                 // The first node should draw a + at the start of the array.
-                let bsf = 3;
-                let node = this.arrays[ai][ni];
-                let right = this.gd.camera.unproject(
-                    node.x + node.r - (node.r / bsf) / 2, node.y + (node.r / bsf) / 2
-                );
-                if (ni == 0) {
-                    let left = this.gd.camera.unproject(
-                        node.x - (node.r / bsf) / 2, node.y + (node.r / bsf) / 2
-                    );
-                    this.gd.staticContext.rect(
-                        left.x, left.y,
-                        node.r / bsf, node.r / bsf
-                    );
-                    this.buttons.push({
-                        position: {
-                            x: left.x,
-                            y: left.y,
-                            width: node.r / bsf,
-                            height: node.r / bsf
-                        },
-                        handler: this.addNewNodeToArray,
-                        data: {
-                            ai: ai,
-                            ni: ni,
-                            side: "left"
-                        }
-                    });
-                }
-                this.gd.staticContext.rect(
-                    right.x, right.y,
-                    node.r / bsf, node.r / bsf
-                );
-                this.buttons.push({
-                    position: {
-                        x: right.x,
-                        y: right.y,
-                        width: node.r / bsf,
-                        height: node.r / bsf
-                    },
-                    handler: this.addNewNodeToArray,
-                    data: {
-                        ai: ai,
-                        ni: ni,
-                        side: "right"
-                    }
-                });
+                if (ni == 0) this._renderAddNodeButton(this.arrays[ai][ni], "left", ai, ni);
+                this._renderAddNodeButton(this.arrays[ai][ni], "right", ai, ni);
+               
             }
-            this.gd.staticContext.fill();
-            this.gd.staticContext.stroke();
             this.gd.staticContext.closePath();
         }
         // If node is selected display - button to remove and join
         // button to create arrow
+    }
+
+    _renderAddNodeButton(node, side, ai, ni) {
+        let bsf = 3;
+        let bSize = node.r / bsf;
+        let bX = node.x + node.r - bSize / 2;
+        if (side == "left") {
+            bX -= node.r;
+        }
+
+        let point = this.gd.camera.unproject(
+            bX,
+            node.y + bSize / 2
+        );
+        
+        let plussSize = bSize / 2;
+        let plussPadding = (bSize - plussSize) / 2;
+        // Button
+        this.gd.staticContext.rect(point.x, point.y, bSize, bSize);
+        // Vertical
+        this.gd.staticContext.moveTo(point.x + bSize / 2, point.y + plussPadding);
+        this.gd.staticContext.lineTo(point.x + bSize / 2, point.y + bSize - plussPadding);
+        // Horizontal
+        this.gd.staticContext.moveTo(point.x + plussPadding, point.y + bSize / 2);
+        this.gd.staticContext.lineTo(point.x + bSize - plussPadding, point.y + bSize / 2);
+        
+        this.gd.staticContext.fill();
+        this.gd.staticContext.stroke();
+
+        this.buttons.push({
+            position: {
+                x: point.x,
+                y: point.y,
+                width: bSize,
+                height: bSize
+            },
+            handler: this.addNewNodeToArray.bind(this),
+            data: {
+                ai: ai,
+                ni: ni,
+                side: side
+            }
+        });
     }
 }
