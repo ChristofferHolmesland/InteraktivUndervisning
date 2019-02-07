@@ -1,7 +1,13 @@
 class Quicksort {
     constructor(graphDrawer) {
         this.gd = graphDrawer;
-        // All the arrays stored as a list inside a list.
+        /*
+            All the arrays stored as a object
+            {
+                position: { x, y },
+                nodes: []
+            }
+        */
         this.arrays = [];
         /*
             Buttons stored as a object
@@ -17,7 +23,13 @@ class Quicksort {
     mouseDownHandler(e) {
         if (this.arrays.length == 0) {
             this.gd.controllers["Graph0"].addNode(e);
-            this.arrays.push([this.gd.nodes[this.gd.nodes.length - 1]]);
+            let node = this.gd.nodes[this.gd.nodes.length - 1];
+            this.arrays.push(
+                {
+                    position: { x: node.x, y: node.y },
+                    nodes: [node]
+                }
+            );
             return true;
         }
 
@@ -44,13 +56,10 @@ class Quicksort {
     }
 
     addNewNodeToArray(event) {
-        console.log(event);
-
-        // fix event.data.ni doesn't change when the array changes
         // fix calculate nodes bases on array startposition and node index
         //      every time a node is added/removed from an array
 
-        let clickedNode = this.arrays[event.data.ai][event.data.ni];
+        let clickedNode = this.arrays[event.data.ai].nodes[event.data.ni];
         let node = {
             x: clickedNode.x + (event.data.side == "left" ? -clickedNode.r : clickedNode.r),
             y: clickedNode.y,
@@ -58,14 +67,29 @@ class Quicksort {
             v: clickedNode.v + 1
         }
 
-        this.arrays[event.data.ai].splice(
+        this.arrays[event.data.ai].nodes.splice(
             event.data.ni + (event.data.side == "left" ? 0 : 1),
             0,
             node
         )
 
+        // Recalculate node position inside the array
+        if (event.data.side == "left") 
+            this.arrays[event.data.ai].position.x -= clickedNode.r;
+        this._repositionNodes(event.data.ai);
+
         this.gd.nodes.push(node);
         this.gd.dirty = true;
+    }
+
+    _repositionNodes(ai) {
+        let start = this.arrays[ai].position
+        for (let ni = 0; ni < this.arrays[ai].nodes.length; ni++) {
+            let node = this.arrays[ai].nodes[ni];
+            // Assumes all the nodes have the same width
+            node.x = start.x + ni * node.r;
+            node.y = start.y;
+        }
     }
 
     drawUI() {
@@ -77,11 +101,11 @@ class Quicksort {
         this.gd.staticContext.strokeStyle = "black";
         for (let ai = 0; ai < this.arrays.length; ai++) {
             this.gd.staticContext.beginPath();
-            for (let ni = 0; ni < this.arrays[ai].length; ni++) {
+            for (let ni = 0; ni < this.arrays[ai].nodes.length; ni++) {
                 // Every node should draw a + between them and the next node.
                 // The first node should draw a + at the start of the array.
-                if (ni == 0) this._renderAddNodeButton(this.arrays[ai][ni], "left", ai, ni);
-                this._renderAddNodeButton(this.arrays[ai][ni], "right", ai, ni);
+                if (ni == 0) this._renderAddNodeButton(this.arrays[ai].nodes[ni], "left", ai, ni);
+                this._renderAddNodeButton(this.arrays[ai].nodes[ni], "right", ai, ni);
                
             }
             this.gd.staticContext.closePath();
