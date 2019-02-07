@@ -44,14 +44,19 @@ class Quicksort {
 
         // Pivot nodes will have their fill color set to this
         this.pivotColor = "#add8e6";
+        // Selected nodes will have their stroke color set to this
+        this.selectedColor = "red";
 
         // Used by desktop users to render buttons on the hovered node
         this.lastHoveredNode = undefined;
         // Same format as this.buttons
         this.hoverButtons = [];
 
+        // The nodes currently selected by the user, used to create new arrays
+        this.selectedNodes = [];
+
         // Used by mobile users to display buttons to interact with the selected node
-        this.selectedNode = undefined;
+        this.clickedNode = undefined;
         /*
             The buttons which are displayed to a mobile user when a 
             node is selected. The position is calculated automatically.
@@ -64,7 +69,7 @@ class Quicksort {
                 },
             }
         */
-        this.selectedButtons = [];
+        this.clickedButtons = [];
     }
 
     mouseDownHandler(e) {
@@ -134,7 +139,45 @@ class Quicksort {
     }
 
     checkNodes(e) {
+        // These need to be defined inside this function, so .bind(this) can be used
+        let checkNodesMouseUp = function(newE) {
+            this.gd.canvas.removeEventListener("mouseup", checkNodesMouseUp);
+            this.gd.canvas.removeEventListener("mousemove", checkNodesMouseMove);
+
+            this.clickedButtons.push({
+                data: {
+                    text: "Extract array",
+                    relSize: 0.9
+                },
+                handler: e =>  this.mobileSelectedButtons().extract(e)
+            });
+            this._calculatePositionForClickedButtons();
+            this.gd.dirty = true;
+        }.bind(this);
+
+        let checkNodesMouseMove = function(newE) {
+            let nodeAtCursor = this.gd.getNodeAtCursor(newE).node;
+            // Checks if no node is under the cursor, or it's already in the list
+            if (nodeAtCursor == undefined || this.selectedNodes.indexOf(nodeAtCursor) != -1)
+                return;
+
+            this.gd.dirty = true;
+            nodeAtCursor.strokeColor = this.selectedColor;
+            this.selectedNodes.push(nodeAtCursor);
+        }.bind(this);
+
+        // Removes the selected stroke color from the previous selected nodes
+        for (let i = 0; i < this.selectedNodes.length; i++)
+            this.selectedNodes[i].strokeColor = undefined;
+        this.selectedNodes = [];
+
         let node = this.gd.getNodeAtCursor(e).node;
+        this.gd.dirty = true;
+        // Lets the user select multiple nodes
+        if (node != undefined) {
+            this.gd.canvas.addEventListener("mousemove", checkNodesMouseMove);
+            this.gd.canvas.addEventListener("mouseup", checkNodesMouseUp);
+        }
 
         // Desktop users can click on a node to enter the value
         if (this.gd.DEVICE == "Desktop") {
@@ -144,18 +187,25 @@ class Quicksort {
         }
         // Display buttons to mobile users when they click on a node
         if (this.gd.DEVICE == "Mobile") {
-            this.gd.dirty = true;
-            this.selectedButtons = [];
-            if (node == this.selectedNode) {
-                this.selectedNode = undefined;
+            // Displays buttons for the clicked node
+            this.clickedButtons = [];
+            if (node == this.clickedNode) {
+                if (node != undefined)
+                    node.strokeColor = undefined;
+                this.clickedNode = undefined;
                 return false;
             }
 
-            this.selectedNode = node;
-            if (this.selectedNode == undefined) return false;
+            if (this.clickedNode != undefined)
+                this.clickedNode.strokeColor = undefined;
+            if (node != undefined)
+                node.strokeColor = this.selectedColor;
+
+            this.clickedNode = node;
+            if (this.clickedNode == undefined) return false;
             let relSize = 0.9;
             // Edit value
-            this.selectedButtons.push({
+            this.clickedButtons.push({
                 data: {
                     text: "Edit value",
                     relSize: relSize
@@ -163,7 +213,7 @@ class Quicksort {
                 handler: e =>  this.mobileSelectedButtons().edit(e)
             });
             // Set pivot
-            this.selectedButtons.push({
+            this.clickedButtons.push({
                 data: {
                     text: "Set pivot",
                     relSize: relSize
@@ -171,49 +221,87 @@ class Quicksort {
                 handler: e => this.mobileSelectedButtons().pivot(e)
             });
             // Delete
-            this.selectedButtons.push({
+            this.clickedButtons.push({
                 data: {
                     text: "Delete",
                     relSize: relSize
                 },
                 handler: e => this.mobileSelectedButtons().del(e)
             });
+            this._calculatePositionForClickedButtons();
+            return true;
+        }
+    }
 
-            let numBtns = this.selectedButtons.length;
-            // Every button get an equal amount of screen size
-            let maxButtonWidth = this.gd.staticBuffer.width / numBtns;
-            let maxButtonHeight = this.gd.staticBuffer.height / 10;
-            for (let i = 0; i < numBtns; i++) {
-                let btn = this.selectedButtons[i];
-                //  Sets the button size to the allocated size * relative button size
-                let btnWidth = maxButtonWidth * btn.data.relSize;
-                let btnHeight = maxButtonHeight * btn.data.relSize;
-                // Centers the button inside the allocated space
-                let xPadding = (maxButtonWidth - btnWidth) / 2;
-                let yPadding = (maxButtonHeight - btnHeight) / 2;
-                
-                btn.position = {
-                    x: i * maxButtonWidth + xPadding,
-                    y: this.gd.staticBuffer.height - maxButtonHeight + yPadding,
-                    width: btnWidth,
-                    height: btnHeight
-                };
-            }
+    _calculatePositionForClickedButtons() {
+        let numBtns = this.clickedButtons.length;
+        // Every button get an equal amount of screen size
+        let maxButtonWidth = this.gd.staticBuffer.width / numBtns;
+        let maxButtonHeight = this.gd.staticBuffer.height / 10;
+        for (let i = 0; i < numBtns; i++) {
+            let btn = this.clickedButtons[i];
+            //  Sets the button size to the allocated size * relative button size
+            let btnWidth = maxButtonWidth * btn.data.relSize;
+            let btnHeight = maxButtonHeight * btn.data.relSize;
+            // Centers the button inside the allocated space
+            let xPadding = (maxButtonWidth - btnWidth) / 2;
+            let yPadding = (maxButtonHeight - btnHeight) / 2;
+            
+            btn.position = {
+                x: i * maxButtonWidth + xPadding,
+                y: this.gd.staticBuffer.height - maxButtonHeight + yPadding,
+                width: btnWidth,
+                height: btnHeight
+            };
         }
     }
 
     mobileSelectedButtons(e) {
         return {
+            extract: function(e) {
+                // Sort the selected nodes based on x coordinate to get them in the right order
+                let sorter = function(n1, n2) {
+                    if (n1.x < n2.x) return -1;
+                    if (n1.x > n2.x) return 1;
+                    return 0;
+                };
+
+                this.selectedNodes.sort(sorter);
+                let newArr = {};
+                newArr.position = {
+                    x: this.selectedNodes[0].x,
+                    y: this.selectedNodes[0].y + 100
+                }
+
+                newArr.nodes = [];
+                for (let i = 0; i < this.selectedNodes.length; i++) {
+                    let clone = JSON.parse(JSON.stringify(this.selectedNodes[i]));
+                    clone.fillColor = undefined;
+                    clone.strokeColor = undefined;
+                    newArr.nodes.push(clone);
+                    this.gd.nodes.push(clone);
+                    if (i == 0) {
+                        this.gd.edges.push({
+                            n1: this.selectedNodes[i], 
+                            n2: clone
+                        });
+                    }
+                }
+
+                this.arrays.push(newArr);
+                this._repositionNodes(this.arrays.length - 1);
+                this.gd.dirty = true;
+            }.bind(this),
             edit: function(e) {
-                this.gd._editNode(this.selectedNode);
+                this.gd._editNode(this.clickedNode);
             }.bind(this),
             pivot: function(e) {
-                if (this.selectedNode.pivot) {
-                    this.selectedNode.pivot = undefined;
-                    this.selectedNode.fillColor = undefined;
+                if (this.clickedNode.pivot) {
+                    this.clickedNode.pivot = undefined;
+                    this.clickedNode.fillColor = undefined;
                 } else {
-                    this.selectedNode.pivot = true;
-                    this.selectedNode.fillColor = this.pivotColor;
+                    this.clickedNode.pivot = true;
+                    this.clickedNode.fillColor = this.pivotColor;
                 }
                 this.gd.dirty = true;
             }.bind(this),
@@ -222,7 +310,7 @@ class Quicksort {
                 let arrayRemoved = false;
                 // Remove node from array
                 for (let i = 0; i < this.arrays.length; i++) {
-                    let index = this.arrays[i].nodes.indexOf(this.selectedNode);
+                    let index = this.arrays[i].nodes.indexOf(this.clickedNode);
                     if (index > -1) {
                         ai = i;
                         this.arrays[i].nodes.splice(index, 1);
@@ -234,14 +322,15 @@ class Quicksort {
                         break
                     }
                 }
+
                 // Remove node from GraphDrawer
-                this.gd.nodes.splice(this.gd.nodes.indexOf(this.selectedNode), 1);
+                this.gd.nodes.splice(this.gd.nodes.indexOf(this.clickedNode), 1);
                 // Fix visuals
                 if (!arrayRemoved)
                     this._repositionNodes(ai);
                 this.gd.dirty = true;
-                this.selectedNode = undefined;
-                this.selectedButtons = [];
+                this.clickedNode = undefined;
+                this.clickedButtons = [];
             }.bind(this)
         }
     }
@@ -259,8 +348,8 @@ class Quicksort {
 
         // Checks the selectedButtons
         if (this.gd.DEVICE == "Mobile") {
-            for (let i = 0; i < this.selectedButtons.length; i++) {
-                let btn = this.selectedButtons[i];
+            for (let i = 0; i < this.clickedButtons.length; i++) {
+                let btn = this.clickedButtons[i];
                 if (this.gd.isPointInSquare(e.offsetX, e.offsetY, btn.position.x,
                     btn.position.y, btn.position.width)) {
                     btn.handler(e);
@@ -311,6 +400,12 @@ class Quicksort {
         }
     }
 
+    _recalculateEdges() {
+        for (let i = 0; i < this.gd.edges.length; i++) {
+
+        }
+    }
+
     drawUI() {
         this.gd.staticContext.clearRect(0, 0,
             this.gd.staticBuffer.width, this.gd.staticBuffer.height);
@@ -328,8 +423,8 @@ class Quicksort {
                     if (ni == 0) this._renderAddNodeButton(node, "left", ai, ni);
                     this._renderAddNodeButton(node, "right", ai, ni);
                 } else if (this.gd.DEVICE == "Mobile") {
-                    // Only render + buttons on the selected node
-                    if (node != this.selectedNode) continue;
+                    // Only render + buttons on the clicked node
+                    if (node != this.clickedNode) continue;
                     this._renderAddNodeButton(node, "left", ai, ni);
                     this._renderAddNodeButton(node, "right", ai, ni);
                 }
@@ -355,8 +450,8 @@ class Quicksort {
         }
 
         // Render selected buttons
-        for (let i = 0; i < this.selectedButtons.length; i++) {
-            let btn = this.selectedButtons[i];
+        for (let i = 0; i < this.clickedButtons.length; i++) {
+            let btn = this.clickedButtons[i];
             this.gd.staticContext.beginPath();
 
             // Button

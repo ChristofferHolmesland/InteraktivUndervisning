@@ -60,7 +60,8 @@ class GraphDrawer {
                 x, y, r, v, 
                 selected (can be undefined), 
                 culled (can be undefined),
-                fillColor (undefined => white)
+                fillColor (undefined => white),
+                strokeColor (undefined => black)
             }.
         */
         this.nodes = [];
@@ -199,10 +200,17 @@ class GraphDrawer {
                 this.drawContext.fillStyle = "white";
             else
                 this.drawContext.fillStyle = this.nodes[i].fillColor;
+
+            if (this.nodes[i].strokeColor == undefined)
+                this.drawContext.strokeStyle = "black";
+            else
+                this.drawContext.strokeStyle = this.nodes[i].strokeColor;
+
             this.drawContext.fill();
             this.drawContext.stroke();
             this.drawContext.closePath();
-    
+            
+            this.drawContext.strokeStyle = "black";
             // Text
             this.drawContext.fillStyle = "black";
             /*
