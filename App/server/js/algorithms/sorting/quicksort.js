@@ -4,14 +4,12 @@ function quicksort(unsortedList, typePivot) {
     ]
 
     let split = (unsortedList, typePivot) => {
-        steps.push({
-            unsortedList: unsortedList
-        })
-        let currentStep = steps.length - 1;
 
-        if (unsortedList.length <= 1) {
-            return unsortedList;
-        }
+        if (unsortedList.length === 0) return unsortedList;
+        steps.push({ unsortedList: unsortedList })
+        let currentStep = steps.length - 1;
+        if (unsortedList.length === 1) return unsortedList;
+
         let pivot = 0;
         let pivotIndex = 0;
 
@@ -49,6 +47,7 @@ function quicksort(unsortedList, typePivot) {
     }
 
     split(unsortedList, typePivot)
+
     return {
         isSorted: function() {
             return currentStep === steps.length - 1;
@@ -73,3 +72,7 @@ function quicksort(unsortedList, typePivot) {
         }
     }
 }
+
+
+let unsorted = [3,56,3,85,63,54,99,25,5];
+quicksort(unsorted, 3);

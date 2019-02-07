@@ -15,9 +15,10 @@
                         <b-tab :title="getLocale.answer">
                             <TextInput :requestAnswer="requestAnswer"
                                     @getTextResponse="getTextValue"
-                                    v-if="getQuestionType===1"
+                                    v-if="getQuestionType === 1"
                                     />
-                            <MultipleChoice v-if="getQuestionType===2"/>
+                            <MultipleChoice v-if="getQuestionType === 2"/>
+                            <QuickSort v-if="getQuestiontype === 3"/>
                         </b-tab>
                         <b-tab :title="updateTimer" v-if="interval !== undefined" disabled></b-tab>
                     </b-tabs>
@@ -36,7 +37,9 @@
 
 <script>
 	import TextInput from "./questionTypes/TextInput.vue";
-	import MultipleChoice from "./questionTypes/MultipleChoice.vue";
+    import MultipleChoice from "./questionTypes/MultipleChoice.vue";
+    import QuickSort from ".questionTypes/QuickSort.vue";
+
 	export default {
 		name: "Question",
 		data() {
@@ -111,7 +114,8 @@
         },
 		components: {
 			TextInput,
-			MultipleChoice
+            MultipleChoice,
+            QuickSort
         }
 	}
 </script>
