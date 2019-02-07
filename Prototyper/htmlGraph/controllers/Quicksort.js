@@ -42,6 +42,9 @@ class Quicksort {
         // Button size factor, button size relative to node size.
         this.bsf = 3;
 
+        // Pivot nodes will have their fill color set to this
+        this.pivotColor = "#add8e6";
+
         // Used by desktop users to render buttons on the hovered node
         this.lastHoveredNode = undefined;
         // Same format as this.buttons
@@ -205,24 +208,40 @@ class Quicksort {
                 this.gd._editNode(this.selectedNode);
             }.bind(this),
             pivot: function(e) {
-
+                if (this.selectedNode.pivot) {
+                    this.selectedNode.pivot = undefined;
+                    this.selectedNode.fillColor = undefined;
+                } else {
+                    this.selectedNode.pivot = true;
+                    this.selectedNode.fillColor = this.pivotColor;
+                }
+                this.gd.dirty = true;
             }.bind(this),
             del: function(e) {
                 let ai = -1;
+                let arrayRemoved = false;
                 // Remove node from array
                 for (let i = 0; i < this.arrays.length; i++) {
                     let index = this.arrays[i].nodes.indexOf(this.selectedNode);
                     if (index > -1) {
                         ai = i;
                         this.arrays[i].nodes.splice(index, 1);
+                        // If there are no more nodes in a array, it's removed
+                        if (this.arrays[i].nodes.length == 0) {
+                            this.arrays.splice(i, 1);
+                            arrayRemoved = true;
+                        }
                         break
                     }
                 }
                 // Remove node from GraphDrawer
                 this.gd.nodes.splice(this.gd.nodes.indexOf(this.selectedNode), 1);
                 // Fix visuals
-                this._repositionNodes(ai);
+                if (!arrayRemoved)
+                    this._repositionNodes(ai);
                 this.gd.dirty = true;
+                this.selectedNode = undefined;
+                this.selectedButtons = [];
             }.bind(this)
         }
     }
@@ -234,7 +253,6 @@ class Quicksort {
             if (this.gd.isPointInSquare(e.offsetX, e.offsetY, btn.position.x, btn.position.y, 
                 btn.position.width)) {
                 btn.handler(btn);
-                console.log("button clicked");
                 return true;
             }
         }
@@ -353,7 +371,14 @@ class Quicksort {
 
             // Text
             this.gd.staticContext.fillStyle = "black";
-            this.gd.staticContext.fillText(btn.data.text, btn.position.x, btn.position.y);
+            let textWidth = this.gd.staticContext.measureText(btn.data.text).width;
+            let xPadding = (btn.position.width - textWidth) / 2;
+            let yPadding = (btn.position.height + this.gd.fontHeight) / 2;
+            this.gd.staticContext.fillText(
+                btn.data.text,
+                btn.position.x + xPadding,
+                btn.position.y + yPadding
+            );
             this.gd.staticContext.fillStyle = "white";
 
             this.gd.staticContext.closePath();
