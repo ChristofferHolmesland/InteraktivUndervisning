@@ -9,6 +9,19 @@
             as the canvas space size, because this makes zooming functionality
             a lot simpler.
         Canvas space is where the user interacts with the world.
+
+
+    The GraphDrawer uses three canvases to render a graph:
+        Offscreen: A drawing canvas (drawBuffer, drawContext), 
+            where nodes and edges are drawn in world coordinates.
+            Controllers shouldn't draw directly to this canvas.
+        Offscreen: A UI canvas (staticBuffer, staticContext), 
+            where the user interface is drawn in canvas coordinates.
+            This can be used by controllers to draw, e.g. buttons.
+        Onscreen: This canvas is the combination of drawBuffer and 
+            staticBuffer drawn on top of eachother. It is displayed
+            to the user.
+        
 */
 class GraphDrawer {
     /*
@@ -24,6 +37,8 @@ class GraphDrawer {
         this.FPS = 60;
         // Milliseconds between each update.
         this.MS_PER_FRAME = 1000 / this.FPS;
+        // Device type, "Desktop" or "Mobile"
+        this.DEVICE = "Mobile";
         // Size of the font in px. TODO: Make it dynamic
         this.fontHeight = 10;
         /*
@@ -37,12 +52,7 @@ class GraphDrawer {
             Graph1 = Simple mode 
             Quicksort = Quicksort
         */
-        this.controlType = "Quicksort";
-        this.controllers = {
-            Graph0: new Graph0(this),
-            Graph1: new Graph1(this),
-            Quicksort: new Quicksort(this)
-        };
+       this.controlType = "Quicksort";
 
         /*
             Nodes in the graph 
@@ -96,6 +106,11 @@ class GraphDrawer {
 
         this.camera = new Camera(this);
 
+        this.controllers = {
+            Graph0: new Graph0(this),
+            Graph1: new Graph1(this),
+            Quicksort: new Quicksort(this)
+        };
         if (this.controlType == "Graph0") this.controllers["Graph0"].drawStatic();
     }
 

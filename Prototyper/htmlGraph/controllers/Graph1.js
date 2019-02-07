@@ -1,3 +1,8 @@
+/* NOT DONE
+    Let's the user create and modify graphs.
+    The user interaction state is decided by clicking on
+    one of the nodes and then selecting something from the panel.
+*/
 class Graph1 {
     constructor(graphDrawer) {
         this.gd = graphDrawer;

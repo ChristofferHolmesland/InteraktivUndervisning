@@ -1,3 +1,8 @@
+/*
+    Let's the user create and modify graphs.
+    The user interaction state is decided by clicking on
+    one of five buttons.
+*/
 class Graph0 {
     constructor(graphDrawer) {
         this.gd = graphDrawer;
