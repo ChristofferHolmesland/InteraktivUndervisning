@@ -10,7 +10,8 @@ module.exports.InsertData = function (db) {
         let feideids = [
             "222221","222222","222223","222224","222225","222226","222227","222228","222229","222220","2222221","2222222"
         ];
-        let type = {typeid:1,typename:"Text"};
+        //TODO Update the Type and Question dummy data once the components are available, so that we can test multiple question types.
+        let type = {typeid:1,typename:"TextInput"};
 
 
         //SQL STATEMENTS
