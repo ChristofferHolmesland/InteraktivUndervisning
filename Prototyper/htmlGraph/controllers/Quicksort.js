@@ -78,7 +78,12 @@ class Quicksort {
         this.clickedButtons = [];
     }
 
+    /*
+        Called by the GraphDrawer when the user presses one of their mouse
+        buttons.
+    */
     mouseDownHandler(e) {
+        // If there are no arrays, the first click creates the first node.
         if (this.arrays.length == 0) {
             this.gd.controllers["Graph0"].addNode(e);
             let node = this.gd.nodes[this.gd.nodes.length - 1];
@@ -96,53 +101,6 @@ class Quicksort {
         if (this.checkNodes(e)) return true;
 
         return false;
-    }
-
-    mouseMoveHandler(e) {
-        // Check if the user is hovering a node
-        let hoveredNode = undefined;
-        let p = this.gd.camera.project(e.offsetX, e.offsetY);
-        for (let ai = 0; ai < this.arrays.length; ai++) {
-            for (let ni = 0; ni < this.arrays[ai].nodes.length; ni++) {
-                let node = this.arrays[ai].nodes[ni];
-                if (this.gd.isPointInNode(p.x, p.y, node.x, node.y)) {
-                    hoveredNode = node;
-                    break;
-                }
-            }
-
-            if (hoveredNode != undefined) {
-                break;
-            }
-        }
-        // Check if it's the same as last time
-        if (hoveredNode == this.lastHoveredNode) return;
-        // If not clear buttons and add new
-        this.lastHoveredNode = hoveredNode;
-        this.hoverButtons = [];
-        this.gd.dirty = true;
-        if (hoveredNode == undefined) return;
-
-        // Delete node
-        let bSize = hoveredNode.r / this.bsf;
-        let bX = hoveredNode.x + hoveredNode.r / 2 - bSize / 2;
-        let dP = this.gd.camera.unproject(
-            bX,
-            hoveredNode.y
-        );
-        
-        this.hoverButtons.push({
-            position: {
-                x: dP.x,
-                y: dP.y,
-                width: bSize,
-                height: bSize
-            },
-            handler: ((e) => console.log("Delete clicked")),
-            data: {
-                type: "Delete"
-            }
-        });
     }
 
     checkNodes(e) {
@@ -401,6 +359,11 @@ class Quicksort {
         return false;
     }
 
+    /*
+        The dirtyUpdate function is called from the GraphDrawer's update function
+        if the GraphDrawer is in the dirty state. This is called before the 
+        drawing happens.
+    */
     dirtyUpdate() {
         this.buttons = [];
         this.drawUI();
@@ -430,6 +393,9 @@ class Quicksort {
         this.gd.dirty = true;
     }
 
+    /*
+        Calculate node positions based on their position in a given array
+    */
     _repositionNodes(ai) {
         let start = this.arrays[ai].position
         for (let ni = 0; ni < this.arrays[ai].nodes.length; ni++) {
@@ -442,28 +408,30 @@ class Quicksort {
         this._recalculateEdges();
     }
 
-    // Change the edges between arrays to be the center node
+    /*
+        Creates GraphDrawer edges based on links between arrays.
+    */
     _recalculateEdges() {
         this.gd.edges = [];
+        this.gd.dirty = true;
 
         for (let ai = 0; ai < this.arrays.length; ai++) {
             for (let li = 0; li < this.arrays[ai].links.length; li++) {
                 let link = this.arrays[ai].links[li];
+                // Checks if the array the being linked to has been removed
                 if (link == undefined || link.nodes.length == 0) {
-                    this.gd.dirty = true;
                     this.arrays[ai].links.splice(li, 1);
                     li--;
                     continue;
                 }
 
+                // Sets the edge to be between the center nodes.
                 this.gd.edges.push({
                     n1: this.arrays[ai].nodes[Math.floor(this.arrays[ai].nodes.length / 2)],
                     n2: link.nodes[Math.floor(link.nodes.length / 2)]
                 });
             }
         }
-
-        console.log(this.gd.edges);
     }
 
     drawUI() {
@@ -540,6 +508,9 @@ class Quicksort {
         }
     }
 
+    /*
+        Creates a + button next to a node on a given side.
+    */
     _renderAddNodeButton(node, side, ai, ni) {
         let bSize = node.r / this.bsf;
         let bX = node.x + node.r - bSize / 2;
@@ -582,6 +553,11 @@ class Quicksort {
         });
     }
 
+    /*
+        Finds which array (ai) the node belongs in, and what
+        position (ni) the node has in the array.
+        Returns {ai, ni}.
+    */
     _findArrayPosition(node) {
         for (let ai = 0; ai < this.arrays.length; ai++) {
             let ni = this.arrays[ai].nodes.indexOf(node);
@@ -592,5 +568,55 @@ class Quicksort {
                 };
             }
         }
+    }
+
+    /*
+        Used by desktop clients to show buttons over the hovered node
+    */
+    mouseMoveHandler(e) {
+        // Check if the user is hovering a node
+        let hoveredNode = undefined;
+        let p = this.gd.camera.project(e.offsetX, e.offsetY);
+        for (let ai = 0; ai < this.arrays.length; ai++) {
+            for (let ni = 0; ni < this.arrays[ai].nodes.length; ni++) {
+                let node = this.arrays[ai].nodes[ni];
+                if (this.gd.isPointInNode(p.x, p.y, node.x, node.y)) {
+                    hoveredNode = node;
+                    break;
+                }
+            }
+
+            if (hoveredNode != undefined) {
+                break;
+            }
+        }
+        // Check if it's the same as last time
+        if (hoveredNode == this.lastHoveredNode) return;
+        // If not clear buttons and add new
+        this.lastHoveredNode = hoveredNode;
+        this.hoverButtons = [];
+        this.gd.dirty = true;
+        if (hoveredNode == undefined) return;
+
+        // Delete node
+        let bSize = hoveredNode.r / this.bsf;
+        let bX = hoveredNode.x + hoveredNode.r / 2 - bSize / 2;
+        let dP = this.gd.camera.unproject(
+            bX,
+            hoveredNode.y
+        );
+        
+        this.hoverButtons.push({
+            position: {
+                x: dP.x,
+                y: dP.y,
+                width: bSize,
+                height: bSize
+            },
+            handler: ((e) => console.log("Delete clicked")),
+            data: {
+                type: "Delete"
+            }
+        });
     }
 }

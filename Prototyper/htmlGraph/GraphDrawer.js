@@ -236,6 +236,8 @@ class GraphDrawer {
     */
     update() {
         if (this.dirty) {
+            // Controllers can implement the dirtyUpdate function to be notified
+            // before a draw happens.
             if (this.controllers[this.controlType].dirtyUpdate != undefined) {
                 this.controllers[this.controlType].dirtyUpdate();
             }   
