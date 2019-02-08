@@ -1,7 +1,6 @@
 /*
     Let's the user perform a quicksort on an array.
     // TODO: Add merge sort
-    // TODO: Let the user join nodes from different arrays to a new array
     // TODO: Let the user move arrays (if only one node is selected, show move button ?)
     // TODO: Parse step list to arrays
     // TODO: Generate step list from arrays
@@ -22,7 +21,6 @@ class Quicksort {
 
     constructor(graphDrawer, config) {
         this.gd = graphDrawer;
-        this._config(config);
         // This doesn't work on mobile, because there is no
         // mouse
         if (this.gd.DEVICE == "Desktop") {
@@ -81,6 +79,7 @@ class Quicksort {
             }
         */
         this.clickedButtons = [];
+        this._config(config);
     }
 
     /*
@@ -88,22 +87,26 @@ class Quicksort {
         buttons.
     */
     mouseDownHandler(e) {
-        // If there are no arrays, the first click creates the first node.
-        if (this.arrays.length == 0) {
-            this.gd.controllers["Graph0"].addNode(e);
-            let node = this.gd.nodes[this.gd.nodes.length - 1];
-            this.arrays.push(
-                {
-                    position: { x: node.x, y: node.y },
-                    nodes: [node],
-                    links: []
-                }
-            );
-            return true;
-        }
+        if (this.gd.operatingMode == "Interactive") {
+            // If there are no arrays, the first click creates the first node.
+            if (this.arrays.length == 0) {
+                this.gd.controllers["Graph0"].addNode(e);
+                let node = this.gd.nodes[this.gd.nodes.length - 1];
+                this.arrays.push(
+                    {
+                        position: { x: node.x, y: node.y },
+                        nodes: [node],
+                        links: []
+                    }
+                );
+                return true;
+            }
 
-        if (this.checkUI(e)) return true;
-        if (this.checkNodes(e)) return true;
+            if (this.checkUI(e)) return true;
+            if (this.checkNodes(e)) return true;
+
+            return false;
+        }
 
         return false;
     }

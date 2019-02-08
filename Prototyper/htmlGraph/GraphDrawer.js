@@ -1,6 +1,8 @@
 /*
     Adds graph drawing functionality to a canvas object.
 
+    // TODO: Support dynamic canvas size
+
     The GraphDrawer works in three different coordinate spaces:
         World is where the nodes and edges are defined. This should generally
             be larger than the other two.
@@ -37,6 +39,16 @@ class GraphDrawer {
             Quicksort = Quicksort
         */
         this.controlType = config.controlType || "Quicksort";
+        /*
+            This can be used in a controller to decide how
+            the user can interact with the world.
+
+            Interactive: Let's the user use a given controller to
+                manipulate the world.
+            Visualize: Let's the user navigate between steps and
+                see the progress of a algorithm.
+        */
+       this.operatingMode = config.operatingMode || "Interactive";
     }
 
     constructor(canvas, config) {
