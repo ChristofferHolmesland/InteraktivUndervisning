@@ -1,6 +1,10 @@
 /*
     Let's the user perform a quicksort on an array.
     // TODO: Add merge sort
+    // TODO: Let the user join nodes from different arrays to a new array
+    // TODO: Let the user move arrays (if only one node is selected, show move button ?)
+    // TODO: Parse step list to arrays
+    // TODO: Generate step list from arrays
 */
 class Quicksort {
     _config(config) {
@@ -12,7 +16,8 @@ class Quicksort {
         this.selectedColor = config.selectedColor || "red";
         // Determines if extracted arrays should be sorted or not
         // when they are placed. Sorted: "vSorter", not sorted: "xSorter".
-        this.sortType = config.sortType || "xSorter";
+        this.extractType = config.extractType || "xSorter";
+        this.joinType = config.joinType || "vSorter";
     }
 
     constructor(graphDrawer, config) {
@@ -110,22 +115,35 @@ class Quicksort {
             this.gd.canvas.removeEventListener("mousemove", checkNodesMouseMove);
 
             // If all of the selected nodes are in the same array
-            // they can be extracted as a new array
+            // they can be extracted as a new array. If they're not in
+            // the same, they can be joined.
+            let extract = true;
             let ai = this._findArrayPosition(this.selectedNodes[0]).ai;
             for (let i = 1; i < this.selectedNodes.length; i++) {
                 if (ai != this._findArrayPosition(this.selectedNodes[i]).ai) {
-                    // TODO: Implement array joining
-                    return;
+                    extract = false;
+                    break;
                 }
             }
 
-            this.clickedButtons.push({
-                data: {
-                    text: "Extract array",
-                    relSize: 0.9,
-                },
-                handler: e =>  this.mobileSelectedButtons().extract(e, ai)
-            });
+            if (extract) {
+                this.clickedButtons.push({
+                    data: {
+                        text: "Extract array",
+                        relSize: 0.9,
+                    },
+                    handler: e =>  this.mobileSelectedButtons().extract(e, ai)
+                });
+            } else {
+                this.clickedButtons.push({
+                    data: {
+                        text: "Join to array",
+                        relSize: 0.9,
+                    },
+                    handler: e => this.mobileSelectedButtons().join(e)
+                });
+            }
+
             this._calculatePositionForClickedButtons();
             this.gd.dirty = true;
         }.bind(this);
@@ -233,53 +251,77 @@ class Quicksort {
     }
 
     mobileSelectedButtons(e) {
+        let getNewArray = function() {     
+            let newArr = {};
+            newArr.nodes = [];
+            newArr.links = [];
+            newArr.position = {
+                x: this.selectedNodes[0].x,
+                y: this.selectedNodes[0].y + 100
+            }
+            return newArr;
+        }.bind(this);
+
+        let initializeNewArray = function(sortType) {
+            let sorter = sortType == "xSorter" ? this.gd.xSorter : this.gd.vSorter;
+            this.selectedNodes.sort(sorter);
+            
+            let newArr = getNewArray();
+
+            // Clones the selected nodes and puts them in the new array
+            for (let i = 0; i < this.selectedNodes.length; i++) {
+                let clone = JSON.parse(JSON.stringify(this.selectedNodes[i]));
+                clone.fillColor = undefined;
+                clone.strokeColor = undefined;
+
+                newArr.nodes.push(clone);
+                this.gd.nodes.push(clone);
+            }
+
+            this.arrays.push(newArr);
+            return newArr;
+        }.bind(this);
+
+        let cleanupNewArray = function() {
+            this._repositionNodes(this.arrays.length - 1);
+
+            // Reset selected nodes
+            for (let i = 0; i < this.selectedNodes.length; i++)
+                this.selectedNodes[i].strokeColor = undefined;
+
+            this.selectedNodes = [];
+            this.clickedNode = undefined;
+            this.clickedButtons = [];
+            this.gd.dirty = true;
+        }.bind(this);
+
         return {
-            extract: function(e, ai) {
-                // Sort the selected nodes based on x coordinate to get them in the right order
-                let xSorter = function(n1, n2) {
-                    if (n1.x < n2.x) return -1;
-                    if (n1.x > n2.x) return 1;
-                    return 0;
-                };
-                // Sort the selected nodes based on node value to get them in the right order
-                let vSorter = function(n1, n2) {
-                    if (n1.v < n2.v) return -1;
-                    if (n1.v > n2.v) return 1;
-                    return 0;
-                }
+            join: function(e) {
+                let newArr = initializeNewArray(this.joinType);
 
-                let sorter = this.sortType == "xSorter" ? xSorter : vSorter;
-                this.selectedNodes.sort(sorter);
-                
-                let newArr = {};
-                newArr.nodes = [];
-                newArr.links = [];
-                newArr.position = {
-                    x: this.selectedNodes[0].x,
-                    y: this.selectedNodes[0].y + 100
-                }
-
-                // Clones the selected nodes and puts them in the new array
+                let ais = [];
+                // Link all the arrays containing a selected node to 
+                // the new array
                 for (let i = 0; i < this.selectedNodes.length; i++) {
-                    let clone = JSON.parse(JSON.stringify(this.selectedNodes[i]));
-                    clone.fillColor = undefined;
-                    clone.strokeColor = undefined;
-                    
-                    newArr.nodes.push(clone);
-                    this.gd.nodes.push(clone);
+                    let ai = this._findArrayPosition(this.selectedNodes[i]).ai;
+                    ais.push(ai);
+                    this.arrays[ai].links.push(newArr);
                 }
 
-                this.arrays.push(newArr);
-                this.arrays[ai].links.push(newArr);
-                this._repositionNodes(this.arrays.length - 1);
+                // Center the x-coordinate of the new array to the center
+                // of the original arrays
+                let xSum = 0;
+                for (let i = 0; i < ais.length; i++) {
+                    xSum += this.arrays[ais[i]].position.x;
+                }
+                newArr.position.x = xSum / ais.length;
 
-                // Reset selected nodes
-                for (let i = 0; i < this.selectedNodes.length; i++)
-                    this.selectedNodes[i].strokeColor = undefined;
-                this.selectedNodes = [];
-                this.clickedNode = undefined;
-                this.clickedButtons = [];
-                this.gd.dirty = true;
+                cleanupNewArray();
+            }.bind(this),
+            extract: function(e, ai) {
+                let newArr = initializeNewArray(this.extractType);
+                this.arrays[ai].links.push(newArr);
+                cleanupNewArray();
             }.bind(this),
             edit: function(e) {
                 this.gd._editNode(this.clickedNode);

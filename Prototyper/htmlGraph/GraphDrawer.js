@@ -359,4 +359,18 @@ class GraphDrawer {
         if (y < ny || y > ny + r) return false;
         return true;
     }
+
+    // Sort the selected nodes based on x coordinate to get them in the right order
+    xSorter(n1, n2) {
+        if (n1.x < n2.x) return -1;
+        if (n1.x > n2.x) return 1;
+        return 0;
+    }
+
+    // Sort the selected nodes based on node value to get them in the right order
+    vSorter(n1, n2) {
+        if (n1.v < n2.v) return -1;
+        if (n1.v > n2.v) return 1;
+        return 0;
+    }
 }

@@ -1,11 +1,12 @@
 let c = document.getElementById("canvas");
 let graphDrawer = new GraphDrawer(c, {
-    nodeShape: "Circle",
-    controlType: "Graph0",
+    nodeShape: "Square",
+    controlType: "Quicksort",
     quicksort: {
-        bsf: 2.5,
+        bsf: 2.75,
         pivotColor: "#add8e6",
         selectedColor: "red",
-        sortType: "vSorter"
+        extractType: "xSorter",
+        joinType: "vSorter"
     }
 });
