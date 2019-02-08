@@ -3,9 +3,21 @@
     // TODO: Add merge sort
 */
 class Quicksort {
-    constructor(graphDrawer) {
-        this.gd = graphDrawer;
+    _config(config) {
+        // Button size factor, button size relative to node size.
+        this.bsf = config.bsf || 3;
+        // Pivot nodes will have their fill color set to this
+        this.pivotColor = config.pivotColor || "#add8e6";
+        // Selected nodes will have their stroke color set to this
+        this.selectedColor = config.selectedColor || "red";
+        // Determines if extracted arrays should be sorted or not
+        // when they are placed. Sorted: "vSorter", not sorted: "xSorter".
+        this.sortType = config.sortType || "xSorter";
+    }
 
+    constructor(graphDrawer, config) {
+        this.gd = graphDrawer;
+        this._config(config);
         // This doesn't work on mobile, because there is no
         // mouse
         if (this.gd.DEVICE == "Desktop") {
@@ -18,7 +30,8 @@ class Quicksort {
             All the arrays stored as a object
             {
                 position: { x, y },
-                nodes: []
+                nodes: [],
+                links: []
             }
         */
         this.arrays = [];
@@ -39,13 +52,6 @@ class Quicksort {
             NOTE: Not safe to store references to the list
         */
         this.buttons = [];
-        // Button size factor, button size relative to node size.
-        this.bsf = 3;
-
-        // Pivot nodes will have their fill color set to this
-        this.pivotColor = "#add8e6";
-        // Selected nodes will have their stroke color set to this
-        this.selectedColor = "red";
 
         // Used by desktop users to render buttons on the hovered node
         this.lastHoveredNode = undefined;
@@ -79,7 +85,8 @@ class Quicksort {
             this.arrays.push(
                 {
                     position: { x: node.x, y: node.y },
-                    nodes: [node]
+                    nodes: [node],
+                    links: []
                 }
             );
             return true;
@@ -144,12 +151,22 @@ class Quicksort {
             this.gd.canvas.removeEventListener("mouseup", checkNodesMouseUp);
             this.gd.canvas.removeEventListener("mousemove", checkNodesMouseMove);
 
+            // If all of the selected nodes are in the same array
+            // they can be extracted as a new array
+            let ai = this._findArrayPosition(this.selectedNodes[0]).ai;
+            for (let i = 1; i < this.selectedNodes.length; i++) {
+                if (ai != this._findArrayPosition(this.selectedNodes[i]).ai) {
+                    // TODO: Implement array joining
+                    return;
+                }
+            }
+
             this.clickedButtons.push({
                 data: {
                     text: "Extract array",
-                    relSize: 0.9
+                    relSize: 0.9,
                 },
-                handler: e =>  this.mobileSelectedButtons().extract(e)
+                handler: e =>  this.mobileSelectedButtons().extract(e, ai)
             });
             this._calculatePositionForClickedButtons();
             this.gd.dirty = true;
@@ -175,6 +192,7 @@ class Quicksort {
         this.gd.dirty = true;
         // Lets the user select multiple nodes
         if (node != undefined) {
+            this.selectedNodes.push(node);
             this.gd.canvas.addEventListener("mousemove", checkNodesMouseMove);
             this.gd.canvas.addEventListener("mouseup", checkNodesMouseUp);
         }
@@ -258,38 +276,51 @@ class Quicksort {
 
     mobileSelectedButtons(e) {
         return {
-            extract: function(e) {
+            extract: function(e, ai) {
                 // Sort the selected nodes based on x coordinate to get them in the right order
-                let sorter = function(n1, n2) {
+                let xSorter = function(n1, n2) {
                     if (n1.x < n2.x) return -1;
                     if (n1.x > n2.x) return 1;
                     return 0;
                 };
+                // Sort the selected nodes based on node value to get them in the right order
+                let vSorter = function(n1, n2) {
+                    if (n1.v < n2.v) return -1;
+                    if (n1.v > n2.v) return 1;
+                    return 0;
+                }
 
+                let sorter = this.sortType == "xSorter" ? xSorter : vSorter;
                 this.selectedNodes.sort(sorter);
+                
                 let newArr = {};
+                newArr.nodes = [];
+                newArr.links = [];
                 newArr.position = {
                     x: this.selectedNodes[0].x,
                     y: this.selectedNodes[0].y + 100
                 }
 
-                newArr.nodes = [];
+                // Clones the selected nodes and puts them in the new array
                 for (let i = 0; i < this.selectedNodes.length; i++) {
                     let clone = JSON.parse(JSON.stringify(this.selectedNodes[i]));
                     clone.fillColor = undefined;
                     clone.strokeColor = undefined;
+                    
                     newArr.nodes.push(clone);
                     this.gd.nodes.push(clone);
-                    if (i == 0) {
-                        this.gd.edges.push({
-                            n1: this.selectedNodes[i], 
-                            n2: clone
-                        });
-                    }
                 }
 
                 this.arrays.push(newArr);
+                this.arrays[ai].links.push(newArr);
                 this._repositionNodes(this.arrays.length - 1);
+
+                // Reset selected nodes
+                for (let i = 0; i < this.selectedNodes.length; i++)
+                    this.selectedNodes[i].strokeColor = undefined;
+                this.selectedNodes = [];
+                this.clickedNode = undefined;
+                this.clickedButtons = [];
                 this.gd.dirty = true;
             }.bind(this),
             edit: function(e) {
@@ -317,6 +348,7 @@ class Quicksort {
                         // If there are no more nodes in a array, it's removed
                         if (this.arrays[i].nodes.length == 0) {
                             this.arrays.splice(i, 1);
+                            i--;
                             arrayRemoved = true;
                         }
                         break
@@ -325,9 +357,17 @@ class Quicksort {
 
                 // Remove node from GraphDrawer
                 this.gd.nodes.splice(this.gd.nodes.indexOf(this.clickedNode), 1);
-                // Fix visuals
-                if (!arrayRemoved)
+                
+                // If the array wasn't removed, the nodes need to be moved to
+                // fill the open space left after the node was removed
+                if (!arrayRemoved) {
                     this._repositionNodes(ai);
+                } else {
+                    // If the array was removed, edges need to be recalculated
+                    // because the removed array might have a link to/from it.
+                    this._recalculateEdges();
+                }
+                
                 this.gd.dirty = true;
                 this.clickedNode = undefined;
                 this.clickedButtons = [];
@@ -398,12 +438,32 @@ class Quicksort {
             node.x = start.x + ni * node.r;
             node.y = start.y;
         }
+
+        this._recalculateEdges();
     }
 
+    // Change the edges between arrays to be the center node
     _recalculateEdges() {
-        for (let i = 0; i < this.gd.edges.length; i++) {
+        this.gd.edges = [];
 
+        for (let ai = 0; ai < this.arrays.length; ai++) {
+            for (let li = 0; li < this.arrays[ai].links.length; li++) {
+                let link = this.arrays[ai].links[li];
+                if (link == undefined || link.nodes.length == 0) {
+                    this.gd.dirty = true;
+                    this.arrays[ai].links.splice(li, 1);
+                    li--;
+                    continue;
+                }
+
+                this.gd.edges.push({
+                    n1: this.arrays[ai].nodes[Math.floor(this.arrays[ai].nodes.length / 2)],
+                    n2: link.nodes[Math.floor(link.nodes.length / 2)]
+                });
+            }
         }
+
+        console.log(this.gd.edges);
     }
 
     drawUI() {
@@ -520,5 +580,17 @@ class Quicksort {
                 side: side
             }
         });
+    }
+
+    _findArrayPosition(node) {
+        for (let ai = 0; ai < this.arrays.length; ai++) {
+            let ni = this.arrays[ai].nodes.indexOf(node);
+            if (ni != -1) {
+                return {
+                    ai: ai,
+                    ni: ni
+                };
+            }
+        }
     }
 }

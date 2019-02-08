@@ -24,11 +24,22 @@
         
 */
 class GraphDrawer {
-    /*
-        Private and public class fields are experimental and
-        shouldn't be used.
-    */
-    constructor(canvas) {
+    _config(config) {
+        /*
+            What shape is drawn for the nodes
+            Possible values: Circle, Square
+        */
+        this.nodeShape = config.nodeShape || "Square";
+        /*
+            Determines how the user can interact with the canvas.
+            Graph0 = Buttons are shown.
+            Graph1 = Simple mode 
+            Quicksort = Quicksort
+        */
+        this.controlType = config.controlType || "Quicksort";
+    }
+
+    constructor(canvas, config) {
         // Radius of nodes.
         this.R = 25;
         // Relative size of square nodes compared to circle nodes.
@@ -39,20 +50,10 @@ class GraphDrawer {
         this.MS_PER_FRAME = 1000 / this.FPS;
         // Device type, "Desktop" or "Mobile"
         this.DEVICE = "Mobile";
-        // Size of the font in px. TODO: Make it dynamic
+        // Size of the font in px.
         this.fontHeight = 10;
-        /*
-            What shape is drawn for the nodes
-            Possible values: Circle, Square
-        */
-        this.nodeShape = "Square";
-        /*
-            Determines how the user can interact with the canvas.
-            Graph0 = Buttons are shown.
-            Graph1 = Simple mode 
-            Quicksort = Quicksort
-        */
-       this.controlType = "Quicksort";
+
+        this._config(config);
 
         /*
             Nodes in the graph 
@@ -111,7 +112,7 @@ class GraphDrawer {
         this.controllers = {
             Graph0: new Graph0(this),
             Graph1: new Graph1(this),
-            Quicksort: new Quicksort(this)
+            Quicksort: new Quicksort(this, config.quicksort)
         };
         if (this.controlType == "Graph0") this.controllers["Graph0"].drawStatic();
     }
@@ -344,7 +345,7 @@ class GraphDrawer {
         with center (nx, ny) and radius r.
     */
     isPointInCircle(x, y, nx, ny, r) {
-        return (x - nx) * (x - nx) + (y - ny) * (y - ny) <= r;
+        return (x - nx) * (x - nx) + (y - ny) * (y - ny) <= r * r;
     }
 
     /*
