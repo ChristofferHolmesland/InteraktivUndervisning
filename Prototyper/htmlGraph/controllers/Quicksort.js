@@ -79,6 +79,13 @@ class Quicksort {
             }
         */
         this.clickedButtons = [];
+
+        // Index of the array being moved (-1 means no array)
+        this.movingArray = -1;
+        // Used to calculate how far the mouse moved between clicks
+        // so the array position can be translated the same amount
+        this.startPositionOfMove = { x: -1, y: 1 };
+
         this._config(config);
     }
 
@@ -103,6 +110,23 @@ class Quicksort {
             }
 
             if (this.checkUI(e)) return true;
+
+            // If an array is being moved, it has higher priority than
+            // selecting a new node/array
+            if (this.movingArray > -1) {
+                let p = this.gd.camera.project(e.offsetX, e.offsetY);
+                let dx = p.x - this.startPositionOfMove.x;
+                let dy = p.y - this.startPositionOfMove.y;
+
+                this.arrays[this.movingArray].position.x += dx;
+                this.arrays[this.movingArray].position.y += dy;
+                this._repositionNodes(this.movingArray);
+                this.movingArray = -1;
+                this.gd.dirty = true;
+
+                return true;
+            }
+
             if (this.checkNodes(e)) return true;
 
             return false;
@@ -117,9 +141,44 @@ class Quicksort {
             this.gd.canvas.removeEventListener("mouseup", checkNodesMouseUp);
             this.gd.canvas.removeEventListener("mousemove", checkNodesMouseMove);
 
+            // If there is just one selected node,
+            // it's value can be edited, it can be removed
+            // Display buttons to mobile users when they click on a node
+            let relSize = 0.9;
+            let node = this.gd.getNodeAtCursor(e).node;
+            if (this.gd.DEVICE == "Mobile") {
+                // Displays buttons for the clicked node
+                this.clickedNode = node;
+                if (this.clickedNode == undefined) return;
+                // Edit value
+                this.clickedButtons.push({
+                    data: {
+                        text: "Edit value",
+                        relSize: relSize
+                    },
+                    handler: e =>  this.mobileSelectedButtons().edit(e)
+                });
+                // Set pivot
+                this.clickedButtons.push({
+                    data: {
+                        text: "Set pivot",
+                        relSize: relSize
+                    },
+                    handler: e => this.mobileSelectedButtons().pivot(e)
+                });
+                // Delete
+                this.clickedButtons.push({
+                    data: {
+                        text: "Delete",
+                        relSize: relSize
+                    },
+                    handler: e => this.mobileSelectedButtons().del(e)
+                });
+            }
+
             // If all of the selected nodes are in the same array
-            // they can be extracted as a new array. If they're not in
-            // the same, they can be joined.
+            // they can be extracted as a new array, or moved.
+            // If they're not in the same array, they can be joined.
             let extract = true;
             let ai = this._findArrayPosition(this.selectedNodes[0]).ai;
             for (let i = 1; i < this.selectedNodes.length; i++) {
@@ -132,8 +191,16 @@ class Quicksort {
             if (extract) {
                 this.clickedButtons.push({
                     data: {
+                        text: "Move array",
+                        relSize: relSize,
+                    },
+                    handler: e =>  this.mobileSelectedButtons().move(e, ai)
+                });
+
+                this.clickedButtons.push({
+                    data: {
                         text: "Extract array",
-                        relSize: 0.9,
+                        relSize: relSize,
                     },
                     handler: e =>  this.mobileSelectedButtons().extract(e, ai)
                 });
@@ -141,7 +208,7 @@ class Quicksort {
                 this.clickedButtons.push({
                     data: {
                         text: "Join to array",
-                        relSize: 0.9,
+                        relSize: relSize,
                     },
                     handler: e => this.mobileSelectedButtons().join(e)
                 });
@@ -169,65 +236,45 @@ class Quicksort {
 
         let node = this.gd.getNodeAtCursor(e).node;
         this.gd.dirty = true;
+
+        // Clear selected and clicked
+        this.clickedButtons = [];
+        // Checks if the same node was clicked again
+        if (node == this.clickedNode) {
+            if (node != undefined)
+                node.strokeColor = undefined;
+            this.clickedNode = undefined;
+            return;
+        }
+
+        // Resets the old clicked node
+        if (this.clickedNode != undefined)
+            this.clickedNode.strokeColor = undefined;
+        if (node != undefined)
+            node.strokeColor = this.selectedColor;
+
+        // Sets the clicked node to a new value
+        // All checks should happen before this if they depend
+        // on the old clickedNode
+        this.clickedNode = node;
+
         // Lets the user select multiple nodes
         if (node != undefined) {
             this.selectedNodes.push(node);
             this.gd.canvas.addEventListener("mousemove", checkNodesMouseMove);
             this.gd.canvas.addEventListener("mouseup", checkNodesMouseUp);
+        } else {
+            // Click event is not consumed if no node was clicked on
+            return false;
         }
 
         // Desktop users can click on a node to enter the value
         if (this.gd.DEVICE == "Desktop") {
-            if (node == undefined) return false;
             this.gd._editNode(node);
             return true;
         }
-        // Display buttons to mobile users when they click on a node
-        if (this.gd.DEVICE == "Mobile") {
-            // Displays buttons for the clicked node
-            this.clickedButtons = [];
-            if (node == this.clickedNode) {
-                if (node != undefined)
-                    node.strokeColor = undefined;
-                this.clickedNode = undefined;
-                return false;
-            }
 
-            if (this.clickedNode != undefined)
-                this.clickedNode.strokeColor = undefined;
-            if (node != undefined)
-                node.strokeColor = this.selectedColor;
-
-            this.clickedNode = node;
-            if (this.clickedNode == undefined) return false;
-            let relSize = 0.9;
-            // Edit value
-            this.clickedButtons.push({
-                data: {
-                    text: "Edit value",
-                    relSize: relSize
-                },
-                handler: e =>  this.mobileSelectedButtons().edit(e)
-            });
-            // Set pivot
-            this.clickedButtons.push({
-                data: {
-                    text: "Set pivot",
-                    relSize: relSize
-                },
-                handler: e => this.mobileSelectedButtons().pivot(e)
-            });
-            // Delete
-            this.clickedButtons.push({
-                data: {
-                    text: "Delete",
-                    relSize: relSize
-                },
-                handler: e => this.mobileSelectedButtons().del(e)
-            });
-            this._calculatePositionForClickedButtons();
-            return true;
-        }
+        return true;
     }
 
     _calculatePositionForClickedButtons() {
@@ -299,6 +346,12 @@ class Quicksort {
         }.bind(this);
 
         return {
+            move: function(e, ai) {
+                let info = this._findArrayPosition(this.selectedNodes[0]);
+                this.movingArray = info.ai;
+                this.startPositionOfMove.x = this.selectedNodes[0].x;
+                this.startPositionOfMove.y = this.selectedNodes[0].y;
+            }.bind(this),
             join: function(e) {
                 let newArr = initializeNewArray(this.joinType);
 
