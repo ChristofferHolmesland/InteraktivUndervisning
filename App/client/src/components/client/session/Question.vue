@@ -15,11 +15,13 @@
                         <b-tab :title="getLocale.answer">
                             <TextInput :requestAnswer="requestAnswer"
                                     @getTextResponse="getTextValue"
-                                    v-if="getQuestionType === 1"
+                                    v-if="getQuestionType === 2"
                                     />
-                            <MultipleChoice v-if="getQuestionType === 2"/>
-                            <QuickSort v-if="getQuestiontype === 4"/>
-                            <ArraySort v-if="getQuestionType === 5" 
+                            <MultipleChoice v-if="getQuestionType === 1"
+                                            :requestAnswer="requestAnswer"
+                                            @getTextResponse="getTextValue"
+                                            :choices="choices"/>
+                            <ArraySort v-if="getQuestionType === 3" 
                                         :requestAnswer="requestAnswer"
                                         @getTextResponse="getTextValue"
                                         />
@@ -42,7 +44,6 @@
 <script>
 	import TextInput from "./questionTypes/TextInput.vue";
     import MultipleChoice from "./questionTypes/MultipleChoice.vue";
-    import QuickSort from ".questionTypes/QuickSort.vue";
     import ArraySort from "./questionTypes/sorting/ArraySort.vue";
     
 	export default {
@@ -51,7 +52,8 @@
 			return {
                 interval: undefined,
                 requestAnswer: false,
-                timeLeft: undefined
+                timeLeft: undefined,
+                choices: ["choice1", "choice2", "choice3", "choice4"]
 			};
         },
         props: [
@@ -122,7 +124,6 @@
 		components: {
 			TextInput,
             MultipleChoice,
-            QuickSort,
             ArraySort
         }
 	}
