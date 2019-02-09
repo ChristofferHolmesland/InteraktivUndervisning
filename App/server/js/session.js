@@ -41,7 +41,7 @@ class Question {
     questionType
     courseCode
     */
-    constructor(id, text, description, object, solution, type, time) {
+    constructor(id, text, description, object, solution, type, time, sqId) {
         this.id = id;
         this.text = text;
         this.description = description;
@@ -50,6 +50,7 @@ class Question {
         this.type = type;
         this.time = time;
         this.answerList = [];
+        this.sqId = sqId;
     }
 }
 

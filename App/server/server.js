@@ -9,6 +9,8 @@ const cookieParser = require("cookie-parser");
 const user = (require("./js/user.js")).User;
 const users = new Map();
 
+const dbFunctions = require("./js/database/databaseFunctions").dbFunctions;
+
 // Imports and checks environment variables
 const env = require('./js/environment.js');
 if(!env.load()) { return; }
@@ -97,8 +99,23 @@ app.get('/login/callback/feide', passport.authenticate('passport-openid-connect'
         "userId": userId,
         "idNumber": idNumber
     });
-    users.set(tempKey, tempUser);
 
-    // Stores a new cooikie with a random generated userid
-    res.cookie("sessionId", tempKey, {expires: new Date(Date.now + 500/*2678400000*/)}).redirect("/client");
+    dbFunctions.get.userIdByFeideId(db, idNumber).then((id) => {
+        if (id === undefined) {
+            dbFunctions.insert.feide(db, idNumber, accessToken, userName).then(() => {
+                dbFunctions.insert.feideUser(db, userId, idNumber).catch((err) => {
+                    console.log(err)
+                });
+            }).catch((err) => {
+                console.log(err);
+            })
+        }
+
+        users.set(tempKey, tempUser);
+
+        // Stores a new cooikie with a random generated userid
+        res.cookie("sessionId", tempKey, {expires: new Date(Date.now + 500/*2678400000*/)}).redirect("/client");
+    }).catch(() => {
+
+    });
 });
