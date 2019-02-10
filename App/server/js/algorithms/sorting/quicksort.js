@@ -3,12 +3,13 @@ function quicksort(unsortedList, typePivot) {
     let steps = [
     ]
 
-    let split = (unsortedList, typePivot) => {
+    steps.push({
+        type: "Initial",
+        list: unsortedList
+    }) 
 
-        if (unsortedList.length === 0) return unsortedList;
-        steps.push({ unsortedList: unsortedList })
-        let currentStep = steps.length - 1;
-        if (unsortedList.length === 1) return unsortedList;
+    let split = (unsortedList, typePivot) => {
+        if (unsortedList.length <= 1) return unsortedList;
 
         let pivot = 0;
         let pivotIndex = 0;
@@ -29,8 +30,6 @@ function quicksort(unsortedList, typePivot) {
                 else if (pivot === middle) pivotIndex = Math.floor(unsortedList.length / 2);
                 else pivotIndex = unsortedList.length - 1;
         }
-
-        steps[currentStep].pivot = pivot;
    
         let left = []; 
         let right = [];
@@ -39,11 +38,28 @@ function quicksort(unsortedList, typePivot) {
             if (i !== pivotIndex)
                 unsortedList[i] < pivot ? left.push(unsortedList[i]) : right.push(unsortedList[i]);
         }
+        steps.push({
+            type: "Split",
+            list: unsortedList,
+            pivot: pivot,
+            left: left,
+            right: right
+        })
 
-        steps[currentStep].left = left;
-        steps[currentStep].right = right;
-        steps[currentStep].sorted = split(left, typePivot).concat(pivot, split(right, typePivot));
-        return steps[currentStep].sorted;
+        let leftSorted = split(left, typePivot);
+        let rightSorted = split(right, typePivot);
+
+        let sorted = leftSorted.concat(pivot, rightSorted);
+
+        steps.push({
+            type: "Merge",
+            leftSorted: leftSorted,
+            rightSorted: rightSorted,
+            pivot: pivot,
+            sorted: sorted
+        })
+
+        return sorted
     }
 
     split(unsortedList, typePivot)
@@ -72,7 +88,3 @@ function quicksort(unsortedList, typePivot) {
         }
     }
 }
-
-
-let unsorted = [3,56,3,85,63,54,99,25,5];
-quicksort(unsorted, 3);
