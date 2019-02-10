@@ -51,6 +51,11 @@ class GraphDrawer {
        this.operatingMode = config.operatingMode || "Interactive";
     }
 
+    // TODO: Remove/move this
+    export() {
+        return this.controllers[this.controlType].export();
+    }
+
     constructor(canvas, config) {
         // Radius of nodes.
         this.R = 25;

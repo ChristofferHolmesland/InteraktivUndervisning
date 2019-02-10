@@ -1,7 +1,6 @@
 /*
     Let's the user perform a quicksort on an array.
     // TODO: Add merge sort
-    // TODO: Let the user move arrays (if only one node is selected, show move button ?)
     // TODO: Parse step list to arrays
     // TODO: Generate step list from arrays
 */
@@ -17,6 +16,13 @@ class Quicksort {
         // when they are placed. Sorted: "vSorter", not sorted: "xSorter".
         this.extractType = config.extractType || "xSorter";
         this.joinType = config.joinType || "vSorter";
+
+        // If there are some starting steps, they are parsed
+        // and put into the world.
+        if (config.steps) {
+            this.steps = config.steps;
+            this._parseSteps();
+        }
     }
 
     constructor(graphDrawer, config) {
@@ -300,23 +306,25 @@ class Quicksort {
         }
     }
 
-    mobileSelectedButtons(e) {
-        let getNewArray = function() {     
-            let newArr = {};
-            newArr.nodes = [];
-            newArr.links = [];
-            newArr.position = {
-                x: this.selectedNodes[0].x,
-                y: this.selectedNodes[0].y + 100
-            }
-            return newArr;
-        }.bind(this);
+    // Creates a new array object at the (x, y) position.
+    getNewArray(x, y) {
+        let newArr = {};
+        newArr.nodes = [];
+        newArr.links = [];
+        newArr.position = {
+            x: x,
+            y: y
+        }
+        return newArr;
+    }
 
+    mobileSelectedButtons(e) {
         let initializeNewArray = function(sortType) {
             let sorter = sortType == "xSorter" ? this.gd.xSorter : this.gd.vSorter;
             this.selectedNodes.sort(sorter);
             
-            let newArr = getNewArray();
+            let newArr = this.getNewArray(this.selectedNodes[0].x,
+                                          this.selectedNodes[0].y + 100);
 
             // Clones the selected nodes and puts them in the new array
             for (let i = 0; i < this.selectedNodes.length; i++) {
@@ -666,6 +674,163 @@ class Quicksort {
                 };
             }
         }
+    }
+
+    export() {
+        let arrToList = function(arr) {
+            let list = [];
+            for (let i = 0; i < arr.nodes.length; i++) {
+                list.push(arr.nodes[i].v);
+            }
+            return list;
+        };
+
+        let linkCounter = function() {
+            let counter = new Map();
+
+            for (let i = 0; i < this.arrays.length; i++) {
+                let arr = this.arrays[i];
+                for (let l = 0; l < arr.links.length; l++) {
+                    if (!counter.has(arr.links[l])) {
+                        counter.set(arr.links[l], {
+                            count: 1,
+                            parents: [arr]
+                        });
+                    } else {
+                        counter.get(arr.links[l]).count += 1;
+                        counter.get(arr.links[l]).parents.push(arr);
+                    }
+                }
+            }
+
+            return counter;
+        }.bind(this);
+
+        let steps = [];
+
+        // Create the initial step if it exists
+        if (this.arrays.length > 0) {
+            steps.push({
+                type: "Initial",
+                list: arrToList(this.arrays[0])
+            });
+        }
+
+        let counter = linkCounter();
+        for (let i = 0; i < this.arrays.length; i++) {
+            let arr = this.arrays[i];
+            let c = counter.get(arr);
+
+            if (c == undefined) {
+                continue;
+            }
+
+            // Every array which has only one link to it
+            // is a split.
+            if (c.count == 1) {
+                // Check if the other splitlist has already
+                // added a split step.
+                let found = false;
+                let parentList = arrToList(c.parents[0]);
+                for (let s = 0; s < steps.length; s++) {
+                    // TODO: Tell Gaute to add a list property to split steps
+                    if (steps[s].type == "Split") {
+                        // .toString() works as .isEqual()
+                        if (steps[s].list.toString() == parentList.toString()) {
+                            steps[s].right = arrToList(arr);
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!found) {
+                    let pivot = undefined;
+                    for (let n = 0; n < c.parents[0].nodes.length; n++) {
+                        if (c.parents[0].nodes[n].pivot) {
+                            pivot = c.parents[0].nodes[n].v;
+                            break;
+                        }
+                    }
+
+                    steps.push({
+                        type: "Split",
+                        list: parentList,
+                        left: arrToList(arr),
+                        pivot: pivot,
+                        right: undefined
+                    });
+                }
+            } else if (c.count == 2) {
+                // Arrays with two links to it, is a join.
+
+            }
+        }
+
+        return steps;
+    }
+
+    /*
+        Parses the steps from a step list into arrays
+    */
+    _parseSteps() {
+        this.gd.dirty = true;
+
+        // The inital array is placed centered
+        // at the top of the canvas relative 
+        // to the current camera position.
+        let parseInitial = (step) => {
+            let p = this.gd.camera.project(
+                this.gd.canvas.width / 2,
+                0
+            );
+
+            // Add some padding between canvas top and array
+            let r = this.gd.nodeShape == "Circle" ? this.gd.R : this.gd.R * this.gd.SQUARE_FACTOR;
+            p.y += r / 2;
+
+            // Assumes same size nodes
+            let arrayWidth = step.list.length * r;
+            p.x -= arrayWidth / 2;
+
+            let newArr = this.getNewArray(p.x, p.y);
+
+            for (let i = 0; i < step.list.length; i++) {
+                let node = {
+                    x: p.x + r * i,
+                    y: p.y,
+                    r: r,
+                    v: step.list[i]
+                };
+
+                this.gd.nodes.push(node);
+                newArr.nodes.push(node);
+            }
+
+            this.arrays.push(newArr);
+        };
+        
+        let parseSplit = (step) => {
+
+        };
+
+        let parseMerge = (step) => {
+
+        };
+
+        for (let i = 0; i < this.steps.length; i++) {
+            let step = this.steps[i];
+            if (step.type == "Initial") { 
+                parseInitial(step);
+            } else if (step.type == "Split") {
+                parseSplit(step);
+            } else if (step.type == "Merge") {
+                parseMerge(step);
+            } else {
+                console.log(`Found invalid step type: ${step.type} 
+                    at index ${i}, skipping.`);
+            }
+        } 
     }
 
     /*

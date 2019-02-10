@@ -12,8 +12,8 @@ let graphDrawer = new GraphDrawer(c, {
         joinType: "vSorter",
         steps: [
             {
-                type: "Inital",
-                list: [3,56,3,85,63,54,99,25,5]
+                type: "Initial",
+                list: [10, 80, 30, 90, 40, 50, 70]
             }
         ]
     }
