@@ -5,20 +5,28 @@ module.exports.client = function(socket, db, user, sessions) {
 
     socket.on("quickJoinRoom", function (sessionCode) {
         if (sessions.get(sessionCode)) {
-            sessions.get(sessionCode).session.addUser(user);
+            let session = sessions.get(sessionCode).session;
+            let adminSocket = sessions.get(sessionCode).adminSocket;
+
+            session.addUser(user);
             socket.join(sessionCode);
+
             socket.emit("joinSession", sessionCode);
-            sessions.get(sessionCode).adminSocket.emit("updateParticipantCount", sessions.get(sessionCode).session.currentUsers);
+            adminSocket.emit("updateParticipantCount", session.currentUsers);
         } else {
             socket.emit("sessionInActive", sessionCode);
         }
     });
 
     socket.on("leaveSession",function (sessionCode) {
-        sessions.get(sessionCode).session.userLeaving();
+        let session = sessions.get(sessionCode).session;
+        let adminSocket = sessions.get(sessionCode).adminSocket;
+
+        session.userLeaving();
         socket.leave(sessionCode);
+
         socket.emit("returnToClientDashboard");
-        sessions.get(sessionCode).adminSocket.emit("updateParticipantCount", sessions.get(sessionCode).session.currentUsers);
+        adminSocket.emit("updateParticipantCount", session.currentUsers);
     });
 
     socket.on("questionAnswered", async function (answerObject, sessionCode) {
@@ -45,9 +53,8 @@ module.exports.client = function(socket, db, user, sessions) {
             userId: 1, 
             session: session, 
             result: result
-        }
+        };
 
-        // TODO add logic to store the answer. Use the class Answer and add it to the answerList in the Question class that is in the questionList in the Session class
         if(user.feide !== undefined) {
             dbFunctions.get.userIdByFeideId(db, user.feide.idNumber).then(async (userId) => {
                 information.userId = userId.id;
@@ -63,15 +70,16 @@ module.exports.client = function(socket, db, user, sessions) {
     async function insertAnswerToDatabase(information) {
         let answer = new Answer(information.session.currentQuestion, information.userId, information.answer, information.result);
         let question = information.session.questionList[information.session.currentQuestion];
+        let adminSocket = sessions.get(information.session.sessionCode).adminSocket;
         
         question.answerList.push(answer);
 
         dbFunctions.insert.storeAnswer(db, information.answer, information.result, question.sqId, information.userId).then(() => {
             let numAnswers = question.answerList.length;
             let participants = information.session.currentUsers;
-            sessions.get(information.session.sessionCode).adminSocket.emit("updateNumberOfAnswers", numAnswers, participants);
+            adminSocket.emit("updateNumberOfAnswers", numAnswers, participants);
     
-            if(numAnswers === participants) sessions.get(information.session.sessionCode).adminSocket.emit("goToQuestionResultScreen");
+            if(numAnswers === participants) adminSocket.emit("goToQuestionResultScreen");
         }).catch((err) => {
             console.log(err);
         });
