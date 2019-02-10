@@ -61,7 +61,7 @@ module.exports.getDB = function setupDatabase() {
                 ");", (err) => { if (err) reject(err) });
 
             db.run("CREATE TABLE IF NOT EXISTS Type(\n" +
-                "    type INTEGER PRIMARY KEY,\n" +
+                "    type INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
                 "    name TEXT NOT NULL\n" +
                 ");", (err) => { if (err) reject(err) });
 
@@ -107,6 +107,16 @@ module.exports.getDB = function setupDatabase() {
             }).catch((err) => {
                 reject(err);
             })
+
+
+            // TODO add more questionTypes
+            let questionTypes = ["Text", "Multiple choice", "ArraySort", "MergeSort", "QuickSort"];
+
+            for(let i = 0; i < questionTypes.length; i++) {
+                dbFunctions.insert.questionType(db, questionTypes[i])
+                    .then(() => resolve(db))
+                    .catch((err) => reject(err));
+            }
         });
     });
 };

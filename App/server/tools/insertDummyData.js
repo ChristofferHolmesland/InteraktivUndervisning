@@ -11,7 +11,7 @@ module.exports.InsertData = function (db) {
             "222221","222222","222223","222224","222225","222226","222227","222228","222229","222220","2222221","2222222"
         ];
         //TODO Update the Type and Question dummy data once the components are available, so that we can test multiple question types.
-        let type = {typeid:1,typename:"TextInput"};
+        //let type = {typeid: 1, typename: "TextInput"};
 
 
         //SQL STATEMENTS
@@ -112,9 +112,9 @@ module.exports.InsertData = function (db) {
             }
             let addstring = "";
             if (o===1) {
-                addstring = "('"+"QuestionText"+ o + "','" + "QuestionDescription" + o + "','" + "QuestionObject"+ o + "','" + "QuestionSolution"+ o + "',"+ -1 + "," + 1 + ",'"+ courses[chosenCode].courseCode + "')";
+                addstring = "('"+"QuestionText"+ o + "','" + "QuestionDescription" + o + "','" + JSON.stringify("QuestionObject" + o) + "','" + JSON.stringify("QuestionSolution"+ o) + "',"+ -1 + "," + 1 + ",'"+ courses[chosenCode].courseCode + "')";
             }else {
-                addstring = ",('"+"QuestionText"+ o + "','" + "QuestionDescription" + o + "','" + "QuestionObject"+ o + "','" + "QuestionSolution"+ o + "'," + -1 + "," + 1 + ",'" + courses[chosenCode].courseCode + "')";
+                addstring = ",('"+"QuestionText"+ o + "','" + "QuestionDescription" + o + "','" + JSON.stringify("QuestionObject" + o) + "','" + JSON.stringify("QuestionSolution"+ o) + "'," + -1 + "," + 1 + ",'" + courses[chosenCode].courseCode + "')";
             }
             sqlInsertQuestion += addstring;
         }
@@ -236,12 +236,12 @@ module.exports.InsertData = function (db) {
         sqlInsertAnswer += ";";
 
         //Creating Type Insert
-        let sqlInsertType = `INSERT INTO Type(type,name) VALUES (${type.typeid},'${type.typename}')`;
+        //let sqlInsertType = `INSERT INTO Type(type,name) VALUES (${type.typeid},'${type.typename}')`;
 
         const rejectErr = (err) => { if (err) { reject(err); return true; } else { return false; }};
         //Running SQL Statements
         db.serialize(function () {   
-            const strings = [sqlInsertFeide, sqlInsertUser, sqlInsertCourse, sqlInsertUserRight, sqlInsertSession, sqlInsertQuestion, sqlInsertSessionHasQuestion, sqlInsertUserHasSession, sqlInsertAnswer, sqlInsertType];
+            const strings = [sqlInsertFeide, sqlInsertUser, sqlInsertCourse, sqlInsertUserRight, sqlInsertSession, sqlInsertQuestion, sqlInsertSessionHasQuestion, sqlInsertUserHasSession, sqlInsertAnswer/*, sqlInsertType*/];
             
             strings.forEach((s, i) => i != strings.length - 1 ? db.run(s, (err) => rejectErr(err)) : db.run(s, (err) => rejectErr(err) ? "" : resolve()));
         });

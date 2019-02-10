@@ -30,7 +30,7 @@ module.exports.client = function(socket, db, user, sessions) {
             socket.emit("answerResponse", "betweenQuestionsNotAnswered");
         }
 
-        let result = require("../SolutionChecker/solutionChecker.js").solutionChecker.checkAnswer(answerObject, question.solution);
+        let result = require("../SolutionChecker/solutionChecker.js").solutionChecker.checkAnswer(answerObject, question.solution, question.type);
 
         if (result){
             result = 1;

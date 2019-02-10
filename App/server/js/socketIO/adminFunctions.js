@@ -119,7 +119,7 @@ module.exports.admin = function(socket, db, user, sessions) {
             let questionList = [];
             for(let i = 0; i < questions.length; i++){
                 let tempQuestion = questions[i];
-                questionList.push(new question(tempQuestion.id, tempQuestion.text, tempQuestion.description, tempQuestion.object, tempQuestion.solution, tempQuestion.type, tempQuestion.time, tempQuestion.sqId));
+                questionList.push(new question(tempQuestion.id, tempQuestion.text, tempQuestion.description, JSON.parse(tempQuestion.object), JSON.parse(tempQuestion.solution), tempQuestion.type, tempQuestion.time, tempQuestion.sqId));
             }
 
             currentSession = {session: new session(sessionInformation.id, sessionInformation.name,
@@ -182,6 +182,7 @@ module.exports.admin = function(socket, db, user, sessions) {
                 "time": question.time,
                 "participants": currentSession.session.currentUsers
             }
+            console.log(question)
             io.to(currentSession.session.sessionCode).emit("nextQuestion", safeQuestion)
         } else {
             socket.to(currentSession.session.sessionCode).emit("answerResponse", "sessionFinished");
@@ -223,7 +224,8 @@ module.exports.admin = function(socket, db, user, sessions) {
                     text: q.text,
                     description: q.description,
                     solutionType: q.type,
-                    solution: q.solution
+                    solution: q.solution,
+                    time: q.time
                 })
             }
             socket.emit("sendAllQuestionsWithinCourse", result);
@@ -231,13 +233,13 @@ module.exports.admin = function(socket, db, user, sessions) {
     });
 
     socket.on("addNewQuestion", function(question) {
-        dbFunctions.insert.question(db, question.text, question.description, question.solution, 60, // TODO ADD TIME
-            question.solutionType, question.courseCode, question.object);
+        console.log(question);
+        dbFunctions.insert.question(db, question.text, question.description, question.solution, question.time,
+            question.solutionType, question.courseCode, question.objects);
     });
 
     socket.on("updateQuestion", function(question) {
-        dbFunctions.update.question(db, question.id, question.text, question.description,
-            "TODO ADD ME", question.solution, question.solutionType, 60); // TODO ADD TIME
+        dbFunctions.update.question(db, question.id, question.text, question.description, question.objects, question.solution, question.solutionType, question.time);
     });
 
     socket.on("getQuestionTypes", function() {

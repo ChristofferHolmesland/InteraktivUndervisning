@@ -152,7 +152,7 @@ const get = {
     },
     allQuestionsWithinCourse: function(db, course) {
         return new Promise((resolve, reject) => {
-            let statement = `SELECT Q.id,Q.text,Q.description,Q.object,Q.solution,T.type,Q.courseCode
+            let statement = `SELECT Q.id, Q.text, Q.description, Q.object, Q.solution, T.type, Q.courseCode, Q.time
                              FROM Question AS Q
                              INNER JOIN Type AS T ON Q.questionType = T.type
                              WHERE Q.courseCode = "${course}";`;

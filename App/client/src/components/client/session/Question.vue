@@ -15,12 +15,14 @@
                         <b-tab :title="getLocale.answer">
                             <TextInput :requestAnswer="requestAnswer"
                                     @getTextResponse="getTextValue"
-                                    v-if="getQuestionType === 2"
+                                    v-if="getQuestionType === 1"
                                     />
-                            <MultipleChoice v-if="getQuestionType === 1"
-                                            :requestAnswer="requestAnswer"
+                            <MultipleChoice :requestAnswer="requestAnswer"
                                             @getTextResponse="getTextValue"
-                                            :choices="choices"/>
+                                            :choices="questionInfo.object.multipleChoices"
+                                            v-if="getQuestionType === 2"
+                                            />
+                                            <!--getQuestionInfo.object.choices-->
                             <ArraySort v-if="getQuestionType === 3" 
                                         :requestAnswer="requestAnswer"
                                         @getTextResponse="getTextValue"
@@ -52,8 +54,7 @@
 			return {
                 interval: undefined,
                 requestAnswer: false,
-                timeLeft: undefined,
-                choices: ["choice1", "choice2", "choice3", "choice4"]
+                timeLeft: undefined
 			};
         },
         props: [

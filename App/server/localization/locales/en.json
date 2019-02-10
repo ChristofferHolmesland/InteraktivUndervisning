@@ -7,9 +7,11 @@
         "newQuestionText": "Question text:",
         "newQuestionSolutionType": "Solution type:",
         "newQuestionSolution": "Solution:",
+        "newQuestionTime": "Time:",
         "addToSession": "Add",
         "solutionText": "Solution: ",
-        "selectSessionText": "Select session: "
+        "selectSessionText": "Select session: ",
+        "time": "Time:"
     },
     "AdminSessions": {
         "newSession": "New session",
