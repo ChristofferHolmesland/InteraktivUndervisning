@@ -58,13 +58,12 @@ module.exports.client = function(socket, db, user, sessions) {
         if(user.feide !== undefined) {
             dbFunctions.get.userIdByFeideId(db, user.feide.idNumber).then(async (userId) => {
                 information.userId = userId.id;
-                await insertAnswerToDatabase(information);
             }).catch((err) => {
                 console.log(err);
             });
-        } else {
-            await insertAnswerToDatabase(information)
         }
+        
+        await insertAnswerToDatabase(information);
     });
 
     async function insertAnswerToDatabase(information) {
