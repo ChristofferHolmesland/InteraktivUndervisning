@@ -196,4 +196,33 @@ class Graph0 {
         this.gd.staticContext.stroke();
         this.gd.staticContext.closePath();
     }
+
+    exportAsTree() {
+        // Normally a tree would only have one root.
+        // Since the user might create a graph with two or more
+        // roots, the datastructure needs to be able to store them.
+        let tree = {
+            roots: []
+        };
+
+        // Parse nodes to generate tree.
+        for (let i = 0; i < this.gd.nodes.length; i++) {
+            let node = this.gd.nodes[i];
+            if (!node.children) node.children = [];
+
+            let isRoot = true;
+            for (let j = 0; j < this.gd.edges.length; j++) {
+                let edge = this.gd.edges[j];
+                
+                // A node which is being linked to, is a child node.
+                if (node == edge.n2) isRoot = false;
+                // A node linking to another node, has a child node.
+                if (node == edge.n1) node.children.push(edge.n2);
+            }
+
+            if (isRoot) tree.roots.push(node);
+        }
+
+        return tree;
+    }
 }
