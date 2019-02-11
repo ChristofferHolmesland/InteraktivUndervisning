@@ -51,15 +51,11 @@
         computed: {
             getLocale() {
                 let locale = this.$store.getters.getLocale("ClientSessionWaitingArea");
-                console.log("betweenQuestionsIncorrect")
-                console.log(this.localeElement);
-                if(locale) {
-                    if (this.localeElement !== "sessionFinished") this.text = locale[this.localeElement];
-                    return locale;
-                }
+                if(locale) return locale;
                 return {};
             },
             getWaitingAreaBody() {
+                this.text = this.getLocale[this.localeElement];
                 if (this.localeElement !== "sessionFinished") return this.text + this.emptyLocaleElement;
                 else return this.text;
             }

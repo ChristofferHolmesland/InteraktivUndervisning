@@ -15,9 +15,18 @@
                         <b-tab :title="getLocale.answer">
                             <TextInput :requestAnswer="requestAnswer"
                                     @getTextResponse="getTextValue"
-                                    v-if="getQuestionType===1"
+                                    v-if="getQuestionType === 1"
                                     />
-                            <MultipleChoice v-if="getQuestionType===2"/>
+                            <MultipleChoice :requestAnswer="requestAnswer"
+                                            @getTextResponse="getTextValue"
+                                            :choices="questionInfo.object.multipleChoices"
+                                            v-if="getQuestionType === 2"
+                                            />
+                                            <!--getQuestionInfo.object.choices-->
+                            <ArraySort v-if="getQuestionType === 3" 
+                                        :requestAnswer="requestAnswer"
+                                        @getTextResponse="getTextValue"
+                                        />
                         </b-tab>
                         <b-tab :title="updateTimer" v-if="interval !== undefined" disabled></b-tab>
                     </b-tabs>
@@ -36,7 +45,9 @@
 
 <script>
 	import TextInput from "./questionTypes/TextInput.vue";
-	import MultipleChoice from "./questionTypes/MultipleChoice.vue";
+    import MultipleChoice from "./questionTypes/MultipleChoice.vue";
+    import ArraySort from "./questionTypes/sorting/ArraySort.vue";
+    
 	export default {
 		name: "Question",
 		data() {
@@ -76,7 +87,9 @@
             questionNotAnswered() {
 				this.$socket.emit("questionAnswered", undefined, this.sessionCode);
             },
+            //This is the function that sends the answerobject to the server
             getTextValue(inputText) {
+            	console.log(inputText);
 				this.$socket.emit("questionAnswered", inputText, this.sessionCode);
             },
             exitSession() {
@@ -111,7 +124,8 @@
         },
 		components: {
 			TextInput,
-			MultipleChoice
+            MultipleChoice,
+            ArraySort
         }
 	}
 </script>

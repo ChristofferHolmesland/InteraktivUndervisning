@@ -12,6 +12,8 @@ module.exports.listen = function(server, users, db) {
 
     io.on("connection", function(socket) {
 
+        socket.emit()
+
         // On new connection, checks if user has a cookie with userId and verifies the user
         let user = User.getUser(users, socket);
 
@@ -26,6 +28,10 @@ module.exports.listen = function(server, users, db) {
         //--------------------------------------------//
         //------------- Common functions -------------//
         //--------------------------------------------//
+
+        socket.on("test", function() {
+            console.log("no");
+        });
 
         socket.on('disconnect', function(){
 			// TODO handle socket disconnect
