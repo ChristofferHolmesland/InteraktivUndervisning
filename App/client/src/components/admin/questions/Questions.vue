@@ -113,10 +113,12 @@
 				this.$socket.emit("getAllQuestionsWithinCourse", c[0]);
 			},
 			showEditQuestionModal: function(item) {
+				if (item.time === -1) item.time = 0;
 				this.$refs.editQuestionModal._data.newQuestion = item;
 				this.$refs.editQuestionModal.$refs.innerModal.show();
 			},
 			showShowQuestionModal: function(item) {
+				if (item.time === -1) item.time = 0;
 				this.$refs.showQuestionModal._data.question = item;
 				this.$refs.showQuestionModal.$refs.innerModal.show();
 			},
@@ -126,10 +128,13 @@
 				this.$refs.addQuestionToSessionModal.$refs.innerModal.show();
 			},
 			addNewQuestionHandler: function(newQuestion) {
+				console.log(newQuestion);
+				if (newQuestion.time === 0) newQuestion.time = -1;
 				this.$socket.emit("addNewQuestion", Object.assign({}, newQuestion, {courseCode: this.$store.getters.getSelectedCourse.split(" ")[0]}));
 				this.$socket.emit("getAllQuestionsWithinCourse", this.$store.getters.getSelectedCourse.split(" ")[0]);
 			},
 			editQuestionHandler: function(updatedQuestion) {
+				if (updatedQuestion.time === 0) updatedQuestion.time = -1;
 				this.$socket.emit("updateQuestion", updatedQuestion);
 				this.$socket.emit("getAllQuestionsWithinCourse", this.$store.getters.getSelectedCourse.split(" ")[0]);
 

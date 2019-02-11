@@ -12,7 +12,7 @@ const get = {
             });
         });
     },
-    userById:  function (db,userId) {
+    userById:  function (db, userId) {
         return new Promise((resolve, reject) => {
             let statement = `SELECT * FROM User WHERE id=${userId};`;
             db.get(statement, (err,row) => {
@@ -21,7 +21,7 @@ const get = {
             });
         });
     },
-    userIdByFeideId: function (db,feideId) {
+    userIdByFeideId: function (db, feideId) {
         let statement = `SELECT id FROM User WHERE feideId = ${feideId} LIMIT 1`;
         return new Promise((resolve, reject) => {
             db.get(statement, (err,row) => {
@@ -65,7 +65,7 @@ const get = {
                             WHERE UQ.userId = (
                                 SELECT U.id 
                                 FROM User AS U 
-                                WHERE U.feideid= ${userId}
+                                WHERE U.feideid = '${userId}'
                             LIMIT 1)`;
             db.all(statement, (err,rows) => {
                 if (err) reject(customReject(err, "sessionsToUser"));
@@ -128,11 +128,11 @@ const get = {
             });
             let statement = `SELECT id
                             FROM Answer
-                            WHERE result = ${resultValue} 
-                            AND userId = ${userId}`;
+                            WHERE result = ${resultValue}
+                            AND userId = '${userId.id}'`;
             db.all(statement, (err,rows) => {
                 if (err) reject(customReject(err, "amountAnswersForUserByResult"));
-                resolve(rows.length);
+                resolve(rows === undefined ? 0 : rows.length);
             });
         });
     },
@@ -152,7 +152,7 @@ const get = {
     },
     allQuestionsWithinCourse: function(db, course) {
         return new Promise((resolve, reject) => {
-            let statement = `SELECT Q.id,Q.text,Q.description,Q.object,Q.solution,T.type,Q.courseCode
+            let statement = `SELECT Q.id, Q.text, Q.description, Q.object, Q.solution, T.type, Q.courseCode, Q.time
                              FROM Question AS Q
                              INNER JOIN Type AS T ON Q.questionType = T.type
                              WHERE Q.courseCode = "${course}";`;

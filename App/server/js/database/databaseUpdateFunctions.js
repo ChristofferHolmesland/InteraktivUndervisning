@@ -8,7 +8,7 @@ function createPromise(db, statement, funcName) {
 }
 
 const update = {
-	question: function(db, id, questionText, questionDescription, questionObject, questionSolution, questionType,time) {
+	question: function(db, id, questionText, questionDescription, questionObject, questionSolution, questionType, time) {
 		let statement = `UPDATE Question 
 						 SET text = '${questionText}', 
     					 description = '${questionDescription}', 

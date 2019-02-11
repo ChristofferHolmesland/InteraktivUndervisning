@@ -7,9 +7,11 @@
         "newQuestionText": "Spørsmål tekst:",
         "newQuestionSolutionType": "Løsnings type:",
         "newQuestionSolution": "Løsning:",
+        "newQuestionTime": "Tid:",
         "addToSession": "Legg til",
         "solutionText": "Løsning: ",
-        "selectSessionText": "Velg økt: "
+        "selectSessionText": "Velg økt: ",
+        "time": "Tid:"
     },
     "AdminSessions": {
         "newSession": "Ny økt",

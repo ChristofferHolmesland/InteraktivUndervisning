@@ -6,7 +6,7 @@ module.exports.feide = function(socket, db, user){
             "username": user.userName, 
             "loggedIn": true,
             "userRights": user.userRights,
-            "feideId": user.feide.id
+            "feideId": user.feide.idNumber
         });
     });
     
@@ -27,23 +27,33 @@ module.exports.feide = function(socket, db, user){
         }
         */
 
-        dbFunctions.get.sessionsToUser(db, user.feide.id).then(async function(sessions) {
+        dbFunctions.get.sessionsToUser(db, {id: user.feide.idNumber, type: "feide"}).then(async function(sessions) {
             result = {};
-            result.sessionList = sessions;
-            result.totalsessions = sessions.length;
+            if (sessions !== undefined){
+                result.sessionList = sessions;
+                result.totalSessions = sessions.length;
+            } else {
+                result.sessionList = [];
+                result.totalSessions = 0;
+            } 
             
-            await dbFunctions.get.amountCorrectAnswersForUser(db, user.feide.id).then((correct) => {
-                result.totalCorrectAnswers = correct;
+            await dbFunctions.get.amountAnswersForUserByResult(db, {id: user.feide.idNumber, type: "feide"}, 1).then((correct) => {
+                if (correct === undefined) result.totalCorrectAnswers = 0;
+                else result.totalCorrectAnswers = correct;
             }).catch((err) => {
                 console.log(err);
                 result.totalCorrectAnswers = "Not available at this time."
             });
 
 
-            let wrong = await dbFunctions.get.amountWrongAnswersForUser(db, user.id).catch((err) => {
-                
+            await dbFunctions.get.amountAnswersForUserByResult(db, {id: user.feide.idNumber, type: "feide"}, -1).then((incorrect) => {
+                if (incorrect === undefined) result.totalIncorrectAnswers = 0;
+                else result.totalIncorrectAnswers = incorrect;
+            }).catch((err) => {
+                console.log(err);
+                result.totalIncorrectAnswers = "Not available at this time."
             });
-            result.totalIncorrectAnswers = wrong;
+
             socket.emit("getUserStatsResponse", result);
         }).catch((err) => {
             console.log(err);
