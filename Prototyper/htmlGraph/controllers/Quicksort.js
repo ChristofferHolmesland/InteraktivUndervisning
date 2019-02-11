@@ -215,13 +215,16 @@ class Quicksort {
                     handler: e =>  this.mobileSelectedButtons().extract(e, ai)
                 });
             } else {
-                this.clickedButtons.push({
-                    data: {
-                        text: "Join to array",
-                        relSize: relSize,
-                    },
-                    handler: e => this.mobileSelectedButtons().join(e)
-                });
+                /* 
+                Will probably not be used
+                    this.clickedButtons.push({
+                        data: {
+                            text: "Join to array",
+                            relSize: relSize,
+                        },
+                        handler: e => this.mobileSelectedButtons().join(e)
+                    });
+                */
             }
 
             this._calculatePositionForClickedButtons();
