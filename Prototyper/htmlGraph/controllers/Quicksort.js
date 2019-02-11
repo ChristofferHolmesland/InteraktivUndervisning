@@ -100,6 +100,8 @@ class Quicksort {
         buttons.
     */
     mouseDownHandler(e) {
+        console.log("Click");
+
         if (this.gd.operatingMode == "Interactive") {
             // If there are no arrays, the first click creates the first node.
             if (this.arrays.length == 0) {
@@ -144,6 +146,7 @@ class Quicksort {
     checkNodes(e) {
         // These need to be defined inside this function, so .bind(this) can be used
         let checkNodesMouseUp = function(newE) {
+            console.log("up");
             this.gd.canvas.removeEventListener("mouseup", checkNodesMouseUp);
             this.gd.canvas.removeEventListener("mousemove", checkNodesMouseMove);
 
@@ -154,6 +157,7 @@ class Quicksort {
             let node = this.gd.getNodeAtCursor(e).node;
             if (this.gd.DEVICE == "Mobile") {
                 // Displays buttons for the clicked node
+                console.log("adding buttons");
                 this.clickedNode = node;
                 if (this.clickedNode == undefined) return;
                 // Edit value
@@ -541,6 +545,7 @@ class Quicksort {
     }
 
     drawUI() {
+        console.log("drawing ui");
         this.gd.staticContext.clearRect(0, 0,
             this.gd.staticBuffer.width, this.gd.staticBuffer.height);
 
@@ -566,7 +571,7 @@ class Quicksort {
             this.gd.staticContext.closePath();
         }
 
-        // Render hover buttons
+        // Render hover buttons (Desktop)
         for (let i = 0; i < this.hoverButtons.length; i++) {
             let btn = this.hoverButtons[i];
             this.gd.staticContext.beginPath();
@@ -583,8 +588,11 @@ class Quicksort {
             this.gd.staticContext.closePath();
         }
 
-        // Render selected buttons
+        console.log("selected buttons");
+        console.log(this.clickedButtons.length);
+        // Render selected buttons (Mobile)
         for (let i = 0; i < this.clickedButtons.length; i++) {
+            console.log(i);
             let btn = this.clickedButtons[i];
             this.gd.staticContext.beginPath();
 
