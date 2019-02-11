@@ -225,8 +225,9 @@ module.exports.admin = function(socket, db, user, sessions) {
                     text: q.text,
                     description: q.description,
                     solutionType: q.type,
-                    solution: q.solution,
-                    time: q.time
+                    solution: JSON.parse(q.solution),
+                    time: q.time,
+                    objects: JSON.parse(q.object)
                 })
             }
             socket.emit("sendAllQuestionsWithinCourse", result);

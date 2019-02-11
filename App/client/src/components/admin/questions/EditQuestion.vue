@@ -132,6 +132,9 @@
             elementId: String,
             okHandler: Function
         },
+        created() {
+            console.log(this.newQuestion);
+        },
         mounted() {
             this.$socket.emit("getQuestionTypes");
         },
@@ -193,9 +196,9 @@
         },
         watch: {
             newQuestion: {
-                solution: function() {
-                    if (this.newQuestion.solutionType === 1) this.newQuestion.solution = "";
-                    else if (this.newQuestion.solutionType === 2) this.newQuestion.solution = [];
+                solutionType: function() {
+                    if (this.solutionType === 1) this.newQuestion.solution = "";
+                    else if (this.solutionType === 2) this.newQuestion.solution = [];
                 }
             }
         },

@@ -2,6 +2,11 @@
     <b-modal :id="elementId" :ref="elementRef" :title="question.text" style="text-align: left;">
     <p>{{question.description}}</p>
     <p>{{getLocale.time}} {{getTime}}</p>
+    <b-container v-if="question.solutionType === 2">
+        <p v-for="(choice, index) in question.objects.multipleChoices" :key="index">
+            Choice {{index}}: {{choice}}
+        </p>
+    </b-container>
     <p>{{getLocale.solutionText}}</p>
     <p>{{question.solution}}</p>
     </b-modal>
