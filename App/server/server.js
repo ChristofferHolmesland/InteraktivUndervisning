@@ -78,7 +78,6 @@ app.get('/login/callback/feide', passport.authenticate('passport-openid-connect'
 
     // Reads information from the scope request to feide
     let accessToken = req.user.token.access_token;
-    let userRights = 2; //TODO write function to check database for the userRight
     let userName = req.user.data.name;
     let userId = req.user.token.id_token;
 
@@ -86,36 +85,41 @@ app.get('/login/callback/feide', passport.authenticate('passport-openid-connect'
     temp = temp.split("@");
     temp = temp[0].split(":");
     let idNumber = temp[1];
-
-    // Add Christoffer as admin
-    if (idNumber == "239416" || idNumber == "228288") {
-        userRights = 4;
-    }
-
-    // Makes a new active user
-    let tempKey = user.generateSessionId();
-    let tempUser = new user(userRights, userName, tempKey, {
-        "accessToken": accessToken,
-        "userId": userId,
-        "idNumber": idNumber
-    });
-
-    dbFunctions.get.userIdByFeideId(db, idNumber).then((id) => {
-        if (id === undefined) {
-            dbFunctions.insert.feide(db, idNumber, accessToken, userName).then(() => {
-                dbFunctions.insert.feideUser(db, userId, idNumber).catch((err) => {
-                    console.log(err)
-                });
-            }).catch((err) => {
-                console.log(err);
-            })
+    let userRights = 2;
+    
+    dbFunctions.get.userRightByFeideId(db, idNumber).then((rows) => {
+        for (let i = 0; i < rows.length; i++) {
+            if (rows[i].level > userRights) userRights = rows[i].level;
+            if (userRights === 4) break;
         }
+        
+        // Makes a new active user
+        let tempKey = user.generateSessionId();
+        let tempUser = new user(userRights, userName, tempKey, {
+            "accessToken": accessToken,
+            "userId": userId,
+            "idNumber": idNumber
+        });
 
-        users.set(tempKey, tempUser);
+        dbFunctions.get.userIdByFeideId(db, idNumber).then((id) => {
+            if (id === undefined) {
+                dbFunctions.insert.feide(db, idNumber, accessToken, userName).then(() => {
+                    dbFunctions.insert.feideUser(db, userId, idNumber).catch((err) => {
+                        console.log(err)
+                    });
+                }).catch((err) => {
+                    console.log(err);
+                })
+            }
 
-        // Stores a new cooikie with a random generated userid
-        res.cookie("sessionId", tempKey, {expires: new Date(Date.now + 500/*2678400000*/)}).redirect("/client");
-    }).catch(() => {
+            users.set(tempKey, tempUser);
 
+            // Stores a new cooikie with a random generated userid
+            res.cookie("sessionId", tempKey, {expires: new Date(Date.now + 500)}).redirect("/client");
+        }).catch(() => {
+
+        });
+    }).catch((err) => {
+        console.log(err);
     });
 });

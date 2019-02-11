@@ -7,9 +7,9 @@ const question = require("../session.js").Question;
 const answer = require("../session.js").Answer;
 
 let courseListRequestHandler = function(socket, db, user, sessions) {
-    let userInfo = "2222221";
-
-    dbFunctions.get.userCourses(db, userInfo).then((courses) => {
+    let feideId = "228288" // TODO remove me 
+    if (user.feide) feideId = user.feide.idNumber; // TODO change me
+    dbFunctions.get.userCourses(db, feideId).then((courses) => {
         let result = [];
         for (let i = 0; i < courses.length; i++) {
             let courseString = courses[i].code + " " + courses[i].semester;
@@ -19,6 +19,8 @@ let courseListRequestHandler = function(socket, db, user, sessions) {
             });
         }
         socket.emit("courseListResponse", result);
+    }).catch((err) => {
+        console.log(err);
     });
 }
 
@@ -182,7 +184,6 @@ module.exports.admin = function(socket, db, user, sessions) {
                 "time": question.time,
                 "participants": currentSession.session.currentUsers
             }
-            console.log(question)
             io.to(currentSession.session.sessionCode).emit("nextQuestion", safeQuestion)
         } else {
             socket.to(currentSession.session.sessionCode).emit("answerResponse", "sessionFinished");
@@ -233,7 +234,6 @@ module.exports.admin = function(socket, db, user, sessions) {
     });
 
     socket.on("addNewQuestion", function(question) {
-        console.log(question);
         dbFunctions.insert.question(db, question.text, question.description, question.solution, question.time,
             question.solutionType, question.courseCode, question.objects);
     });

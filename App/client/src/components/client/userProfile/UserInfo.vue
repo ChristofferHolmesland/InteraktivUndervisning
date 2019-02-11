@@ -17,7 +17,7 @@
 					</b-button>
 					<DeleteUserInfo></DeleteUserInfo>
 				</b-form-group>
-				<div v-if="getUser.userRights > 1">
+				<div v-if="getUser.userRights > 2">
 					<b-row>
 						<b-col>
 							<h3>{{getLocale.userRightsTitle}}</h3>

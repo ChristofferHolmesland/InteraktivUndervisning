@@ -36,7 +36,7 @@ const get = {
                             WHERE feideId = ${feideId}
                             AND courseCode = '${courseCode}'
                             AND courseSemester = '${courseSemester}'`;
-            db.get(statement, (err,row) => {
+            db.get(statement, (err, row) => {
                 if (err) {
                     reject(customReject(err, "userRightsByFeideId"));
                 }
@@ -58,14 +58,14 @@ const get = {
             let userId = await this.userId(db, userInfo).catch((err) => {
                 reject(customReject(err), "sessionsToUser");
             });
-            let statement = `SELECT Q.name, C.code
-                            FROM Session AS Q
-                            INNER JOIN User_has_Session AS UQ ON UQ.sessionId = Q.id
-                            INNER JOIN Course AS C ON Q.courseCode = C.code AND Q.courseSemester = C.semester 
-                            WHERE UQ.userId = (
-                                SELECT U.id 
-                                FROM User AS U 
-                                WHERE U.feideid = '${userId}'
+            let statement = `SELECT S.name, C.code
+                            FROM Session AS S
+                            INNER JOIN User_has_Session AS US ON US.sessionId = S.id
+                            INNER JOIN Course AS C ON S.courseCode = C.code AND S.courseSemester = C.semester 
+                            WHERE US.userId = (
+                                SELECT id 
+                                FROM User
+                                WHERE id = '${userId.id}'
                             LIMIT 1)`;
             db.all(statement, (err,rows) => {
                 if (err) reject(customReject(err, "sessionsToUser"));
@@ -185,6 +185,7 @@ const get = {
             let statement = `SELECT courseSemester AS semester, courseCode AS code
                             FROM UserRight
                             WHERE feideId = ${feideId}`;
+            console.log(statement);
             db.all(statement, (err,rows) => {
                 if (err) reject(customReject(err, "userCourses"));
                 resolve(rows);
@@ -205,6 +206,19 @@ const get = {
                 })
         }
     },
+    adminSubjects: function(db, feideNumber) {
+        return new Promise(async (resolve, reject) => {
+            let statement = `SELECT C.code AS subjectName, UR.level AS userRights
+                            FROM Course as C
+                            INNER JOIN UserRight as UR on UR.courseCode = C.code
+                            INNER JOIN Feide as F on UR.feideId = F.id
+                            WHERE F.id = ${feideNumber}`;
+            db.all(statement, (err, rows) => {
+                if(err) reject(customReject(err, "adminSubjects"));
+                resolve(rows);
+            });
+        })
+    },
     feideUsersByUserRightsLevel: function(db, level, courseCode, courseSemester) {
         return new Promise(async (resolve, reject) => {
             let statement = `SELECT UR.feideId, F.name
@@ -213,6 +227,18 @@ const get = {
                             WHERE UR.courseSemester = '${courseSemester}' 
                             AND UR.courseCode = '${courseCode}'
                             AND UR.level = ${level}`;
+            db.all(statement, (err,rows) => {
+                if (err) reject(customReject(err, "feideUsersByUserRightsLevel"));
+                resolve(rows);
+            });
+        });
+    },
+    userRightByFeideId: function(db, feideNumber) {
+        return new Promise(async (resolve, reject) => {
+            let statement = `SELECT UR.level
+                            FROM UserRight as UR
+                            INNER JOIN Feide as F ON UR.feideId = F.id
+                            WHERE F.id = ${feideNumber}`
             db.all(statement, (err,rows) => {
                 if (err) reject(customReject(err, "feideUsersByUserRightsLevel"));
                 resolve(rows);

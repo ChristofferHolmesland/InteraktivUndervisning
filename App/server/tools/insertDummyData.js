@@ -8,7 +8,7 @@ module.exports.InsertData = function (db) {
             {courseSemester: "18V", courseCode: "DAT100", courseName: "Objektorientert programmering"}
         ];
         let feideids = [
-            "222221","222222","222223","222224","222225","222226","222227","222228","222229","222220","2222221","2222222"
+            "222221","222222","222223","222224","222225","222226","222227","222228","222229","222220","228288","2222222"
         ];
         //TODO Update the Type and Question dummy data once the components are available, so that we can test multiple question types.
         //let type = {typeid: 1, typename: "TextInput"};
@@ -203,12 +203,12 @@ module.exports.InsertData = function (db) {
             for (let p= 0;p<participatingusers.length;p++) {    //for all users in the session
                 questionid = ((sessionId-1)*10)+1;
                 if (countedusers === participatingusers.length) {
-                    while (countedusers >= participatingusers.length && countedusers<=10) {
+                    while (countedusers >= participatingusers.length && countedusers <= 10) {
                         questionid = (sessionId-1)*10+1;
 
                         for (let r=1; r<=10;r++) {  //adding for annomous users
                             let addstring = "";
-                            let result = Math.floor(Math.random()*2);
+                            let result = Math.floor(Math.random() * 2);
                             addstring = `,('answerObject${1}.${sessionId}.${questionid}',${result},${questionid},'${1}')`;
                             sqlInsertAnswer += addstring;
                             questionid++;

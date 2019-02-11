@@ -1,13 +1,21 @@
 const dbFunctions = require("../database/databaseFunctions").dbFunctions;
 
 module.exports.feide = function(socket, db, user){
-    socket.on("clientLoginInfoRequest", function() {
-        socket.emit("clientLoginInfoResponse", {
+    socket.on("clientLoginInfoRequest", async function() {
+        let response = {
             "username": user.userName, 
             "loggedIn": true,
             "userRights": user.userRights,
             "feideId": user.feide.idNumber
+        }
+
+        await dbFunctions.get.adminSubjects(db, user.feide.idNumber).then((adminSubjects) => {
+            response.adminSubjects = adminSubjects
+        }).catch((err) => {
+            console.log(err);
         });
+
+        socket.emit("clientLoginInfoResponse", response);
     });
     
     socket.on("getUserStats", function() {
@@ -46,9 +54,16 @@ module.exports.feide = function(socket, db, user){
             });
 
 
-            await dbFunctions.get.amountAnswersForUserByResult(db, {id: user.feide.idNumber, type: "feide"}, -1).then((incorrect) => {
+            await dbFunctions.get.amountAnswersForUserByResult(db, {id: user.feide.idNumber, type: "feide"}, 0).then((incorrect) => {
                 if (incorrect === undefined) result.totalIncorrectAnswers = 0;
                 else result.totalIncorrectAnswers = incorrect;
+            }).catch((err) => {
+                console.log(err);
+                result.totalIncorrectAnswers = "Not available at this time."
+            });
+
+            await dbFunctions.get.amountAnswersForUserByResult(db, {id: user.feide.idNumber, type: "feide"}, -1).then((incorrect) => {
+                if (incorrect !== undefined) result.totalIncorrectAnswers += incorrect;
             }).catch((err) => {
                 console.log(err);
                 result.totalIncorrectAnswers = "Not available at this time."
