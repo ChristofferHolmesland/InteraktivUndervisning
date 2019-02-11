@@ -115,8 +115,6 @@
 			showEditQuestionModal: function(item) {
 				if (item.time === -1) item.time = 0;
 				this.$refs.editQuestionModal._data.newQuestion = item;
-				console.log("item")
-				console.log(item);
 				this.$refs.editQuestionModal.$refs.innerModal.show();
 			},
 			showShowQuestionModal: function(item) {

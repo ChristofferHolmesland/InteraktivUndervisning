@@ -132,9 +132,6 @@
             elementId: String,
             okHandler: Function
         },
-        created() {
-            console.log(this.newQuestion);
-        },
         mounted() {
             this.$socket.emit("getQuestionTypes");
         },

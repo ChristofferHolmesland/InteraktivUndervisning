@@ -185,7 +185,6 @@ const get = {
             let statement = `SELECT courseSemester AS semester, courseCode AS code
                             FROM UserRight
                             WHERE feideId = ${feideId}`;
-            console.log(statement);
             db.all(statement, (err,rows) => {
                 if (err) reject(customReject(err, "userCourses"));
                 resolve(rows);
