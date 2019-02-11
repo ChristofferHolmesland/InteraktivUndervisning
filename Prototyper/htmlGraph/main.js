@@ -1,7 +1,7 @@
 let c = document.getElementById("canvas");
 let graphDrawer = new GraphDrawer(c, {
-    nodeShape: "Square",
-    controlType: "Quicksort",
+    nodeShape: "Circle",
+    controlType: "Graph0",
     operationMode: "Interactive",
     
     quicksort: {
