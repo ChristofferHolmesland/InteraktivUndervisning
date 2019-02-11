@@ -154,12 +154,13 @@ class Quicksort {
             // it's value can be edited, it can be removed
             // Display buttons to mobile users when they click on a node
             let relSize = 0.9;
-            let node = this.gd.getNodeAtCursor(e).node;
+            let node = this.gd.getNodeAtCursor(newE).node;
             if (this.gd.DEVICE == "Mobile") {
                 // Displays buttons for the clicked node
-                console.log("adding buttons");
                 this.clickedNode = node;
                 if (this.clickedNode == undefined) return;
+
+                console.log("adding buttons");
                 // Edit value
                 this.clickedButtons.push({
                     data: {
@@ -226,7 +227,7 @@ class Quicksort {
                     });
                 */
             }
-
+            console.log("Setting dirty flag at mouse up");
             this._calculatePositionForClickedButtons();
             this.gd.dirty = true;
         }.bind(this);
