@@ -2,6 +2,7 @@
     Adds graph drawing functionality to a canvas object.
 
     // TODO: Support dynamic canvas size
+    // TODO: Node z index
 
     The GraphDrawer works in three different coordinate spaces:
         World is where the nodes and edges are defined. This should generally

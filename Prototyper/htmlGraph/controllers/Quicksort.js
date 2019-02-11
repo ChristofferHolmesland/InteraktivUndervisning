@@ -741,9 +741,8 @@ class Quicksort {
                 let found = false;
                 let parentList = arrToList(c.parents[0]);
                 for (let s = 0; s < steps.length; s++) {
-                    // TODO: Tell Gaute to add a list property to split steps
                     if (steps[s].type == "Split") {
-                        // .toString() works as .isEqual()
+                        // .toString() works as .isEqual() - deepequal
                         if (steps[s].list.toString() == parentList.toString()) {
                             steps[s].right = arrToList(arr);
                             found = true;
