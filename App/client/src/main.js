@@ -11,10 +11,10 @@ import VueSocketIO from 'vue-socket.io';
 Vue.use(BootstrapVue);
 Vue.use(new VueSocketIO({
 	debug: true,
-	connection: "http://localhost:80",
+	connection: "https://localhost:8081",
 	vuex: {
 		store
-	}
+	},
 }));
 
 Vue.config.productionTip = false;
