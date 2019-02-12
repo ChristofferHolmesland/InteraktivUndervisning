@@ -61,11 +61,6 @@ if (process.env.NODE_ENV === "dev") {
     require('./js/database/database').deleteDB();
 }
 
-app.get("/", function(req, res) {
-    console.log("hei");
-    res.send("hei");
-});
-
 require('./js/database/database').getDB().then(function(value) {
     db = value;
 
