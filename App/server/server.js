@@ -16,16 +16,8 @@ const env = require('./js/environment.js');
 if(!env.load()) { return; }
 if(!env.validate()) { return; }
 
-const fs = require("fs");
-const https = require("https");
-
-var options = {
-    key: fs.readFileSync('./file.pem'),
-    cert: fs.readFileSync('./file.crt')
-};
-
 const app = express();
-const port = process.env.PORT || 443;
+const port = process.env.PORT || 8081;
 
 // Setup dataporten
 var oic = new OICStrategy({
@@ -61,11 +53,6 @@ if (process.env.NODE_ENV === "dev") {
     require('./js/database/database').deleteDB();
 }
 
-app.get("/", function(req, res) {
-    console.log("hei");
-    res.send("hei");
-});
-
 require('./js/database/database').getDB().then(function(value) {
     db = value;
 
@@ -77,8 +64,7 @@ require('./js/database/database').getDB().then(function(value) {
         });
     }
     // Starts the server and the socket.io websocket
-    const server = https.createServer(options, app);
-    server.listen(port, function() {
+    const server = app.listen(port, function() {
         console.log(`Server listening on localhost:${ port }! Use ctrl + c to stop the server!`)
     });
     require('./js/socketIO/generalFunctions').listen(server, users, db);
