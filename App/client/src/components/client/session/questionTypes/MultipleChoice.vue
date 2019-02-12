@@ -45,7 +45,6 @@
 			selectChoice(event) {
 				let id = event.target.id;
 				this.edibleChoices[id].selected = !this.edibleChoices[id].selected;
-				console.log(this.edibleChoices);
 			}
 		},
 		computed: {
@@ -72,8 +71,5 @@
 		border: 2px solid;
 		height: 1em;
 		width: 1em;
-	}
-	#multipleChoiceMainContainer {
-		padding: calc(0.025 * width)
 	}
 </style>
