@@ -2,21 +2,7 @@
 //Every child needs a parent.
 //Tree is a DAG(directed acyclic graph), only 1 direction
 const BinaryTreeNode = require("./BinaryTreeNode.js").BinaryTreeNode;
-
-
-let testtree = [];
-let node1 = new BinaryTreeNode(1);
-let node2 = new BinaryTreeNode(2);
-let node3 = new BinaryTreeNode(3);
-let node4 = new BinaryTreeNode(4);
-node2.addParent(node1);
-node3.addParent(node1);
-node4.addParent(node2);
-testtree.push(node1);
-testtree.push(node2);
-testtree.push(node3);
-testtree.push(node4);
-function checkTree(tree) {
+module.exports.checkTreeCriteria = function(tree) {
 	let checkresult = true;
 	if (tree.length === 0) {
 		checkresult = false;
@@ -35,5 +21,4 @@ function checkTree(tree) {
 		}
 	}
 	return checkresult
-}
-console.log(checkTree(testtree));
+};

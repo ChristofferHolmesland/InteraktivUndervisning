@@ -37,6 +37,7 @@ describe('TestBinaryTrees', function () {
 	testtree.push(node8);
 	testtree.push(node9);
 
+	let testtree2 = [];
 	let root2 = new BinaryTreeNode(28);
 	let node12 = new BinaryTreeNode(31);
 	let node22 = new BinaryTreeNode(33);
@@ -47,8 +48,6 @@ describe('TestBinaryTrees', function () {
 	let node72 = new BinaryTreeNode(6);
 	let node82 = new BinaryTreeNode(13);
 	let node92 = new BinaryTreeNode(3);
-
-	let testtree2 = [];
 	node12.addParent(root2);
 	node22.addParent(node12);
 	node32.addParent(node22);
@@ -68,6 +67,7 @@ describe('TestBinaryTrees', function () {
 	testtree2.push(node72);
 	testtree2.push(node82);
 	testtree2.push(node92);
+
 	describe('TestBinaryTreeConditions', function () {
 		it("checkBinaryTreeTrueConditions", function () {
 			assert(BinaryTreeFunctions.checkTreeCriteria(testtree));
@@ -127,5 +127,4 @@ describe('TestBinaryTrees', function () {
 			assert(!BinarySearchTreeFunctions.checkStudentAnswer(testtree,testtree2));
 		})
 	});
-
 });
