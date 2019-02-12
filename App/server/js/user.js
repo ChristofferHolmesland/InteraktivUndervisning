@@ -39,6 +39,7 @@ class User {
         if(!socket.handshake.headers.cookie) return undefined;
         
         let sessionId = cookie.parse(socket.handshake.headers.cookie).sessionId;
+        console.log(socket.handshake.headers);
         let user = users.get(socket.id);
 
         // Checks if userId cookie exists

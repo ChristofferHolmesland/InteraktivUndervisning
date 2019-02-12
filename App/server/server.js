@@ -115,7 +115,10 @@ app.get('/login/callback/feide', passport.authenticate('passport-openid-connect'
             users.set(tempKey, tempUser);
 
             // Stores a new cooikie with a random generated userid
-            res.cookie("sessionId", tempKey, {expires: new Date(Date.now + 500)}).redirect("/client");
+            let cookieOptions = {
+                maxAge: 1000 * 60 * 60 * 24, // cookie expires after 1 day
+            }
+            res.cookie("sessionId", tempKey, cookieOptions).redirect("/client");
         }).catch(() => {
 
         });
