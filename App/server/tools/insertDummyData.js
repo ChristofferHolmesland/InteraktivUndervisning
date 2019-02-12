@@ -17,14 +17,14 @@ module.exports.InsertData = function (db) {
         //SQL STATEMENTS
 
         //Creating Feide Insert
-        var sqlInsertFeide = "INSERT INTO Feide(id,accessToken,name) VALUES";
+        var sqlInsertFeide = "INSERT INTO Feide(id, accessToken, name, sessionId) VALUES";
 
         for (let k= 0; k<feideids.length; k++) {
             let addstring = "";
             if (k===0) {
-                addstring = "("+feideids[k]+",\'"+"FeideAccess"+k+"\',\'"+"feideName"+k+"\')";
+                addstring = "("+feideids[k]+",\'"+"FeideAccess"+k+"\',\'"+"feideName"+k+"\',\'"+"sessionId"+k+"\')";
             }else {
-                addstring = ",("+feideids[k]+",\'"+"FeideAccess"+k+"\',\'"+"feideName"+k+"\')";
+                addstring = ",("+feideids[k]+",\'"+"FeideAccess"+k+"\',\'"+"feideName"+k+"\',\'"+"SessionId"+k+"\')";
             }
             sqlInsertFeide += addstring;
         }

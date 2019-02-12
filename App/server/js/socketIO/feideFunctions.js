@@ -1,22 +1,7 @@
 const dbFunctions = require("../database/databaseFunctions").dbFunctions;
 
 module.exports.feide = function(socket, db, user){
-    socket.on("clientLoginInfoRequest", async function() {
-        let response = {
-            "username": user.userName, 
-            "loggedIn": true,
-            "userRights": user.userRights,
-            "feideId": user.feide.idNumber
-        }
-
-        await dbFunctions.get.adminSubjects(db, user.feide.idNumber).then((adminSubjects) => {
-            response.adminSubjects = adminSubjects
-        }).catch((err) => {
-            console.log(err);
-        });
-
-        socket.emit("clientLoginInfoResponse", response);
-    });
+    sendUserInfo(db, socket, user)
     
     socket.on("getUserStats", function() {
         /* 
@@ -74,4 +59,21 @@ module.exports.feide = function(socket, db, user){
             console.log(err);
         });
     });
+}
+
+async function sendUserInfo(db, socket, user) {
+    let response = {
+        "username": user.userName, 
+        "loggedIn": true,
+        "userRights": user.userRights,
+        "feideId": user.feide.idNumber
+    }
+
+    await dbFunctions.get.adminSubjects(db, user.feide.idNumber).then((adminSubjects) => {
+        response.adminSubjects = adminSubjects
+    }).catch((err) => {
+        console.log(err);
+    });
+
+    socket.emit("clientLoginInfoResponse", response);
 }

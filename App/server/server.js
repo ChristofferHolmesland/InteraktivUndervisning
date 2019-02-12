@@ -16,16 +16,8 @@ const env = require('./js/environment.js');
 if(!env.load()) { return; }
 if(!env.validate()) { return; }
 
-const fs = require("fs");
-const https = require("https");
-
-var options = {
-    key: fs.readFileSync('./file.pem'),
-    cert: fs.readFileSync('./file.crt')
-};
-
 const app = express();
-const port = process.env.PORT || 443;
+const port = process.env.PORT;
 
 // Setup dataporten
 var oic = new OICStrategy({
@@ -58,22 +50,22 @@ app.use(express.static(path.join(__dirname, '/public/')));
 let db = undefined;
 
 if (process.env.NODE_ENV === "dev") {
-    require('./js/database/database').deleteDB();
+    //require('./js/database/database').deleteDB();
 }
 
 require('./js/database/database').getDB().then(function(value) {
     db = value;
 
-    if (process.env.NODE_ENV === "dev"){
+    /*if (process.env.NODE_ENV === "dev"){
         const dummydata = require('./tools/insertDummyData');
         dummydata.InsertData(db).catch(function(err) {
             console.log(err);
             process.exit(1);
         });
-    }
+    }*/
+
     // Starts the server and the socket.io websocket
-    const server = https.createServer(options, app);
-    server.listen(port, function() {
+    const server = app.listen(port, function() {
         console.log(`Server listening on localhost:${ port }! Use ctrl + c to stop the server!`)
     });
     require('./js/socketIO/generalFunctions').listen(server, users, db);
@@ -84,8 +76,8 @@ require('./js/database/database').getDB().then(function(value) {
 
 app.post('/login/feide', passport.authenticate('passport-openid-connect', {"successReturnToOrRedirect": "/client"}))
 app.get('/login/callback/feide', passport.authenticate('passport-openid-connect', {callback: true}), function(req, res) {
-
     // Reads information from the scope request to feide
+    console.log(req.user);
     let accessToken = req.user.token.access_token;
     let userName = req.user.data.name;
     let userId = req.user.token.id_token;
@@ -112,15 +104,16 @@ app.get('/login/callback/feide', passport.authenticate('passport-openid-connect'
 
         dbFunctions.get.userIdByFeideId(db, idNumber).then((id) => {
             if (id === undefined) {
-                dbFunctions.insert.feide(db, idNumber, accessToken, userName).then(() => {
+                dbFunctions.insert.feide(db, idNumber, accessToken, userName, tempKey).then(() => {
                     dbFunctions.insert.feideUser(db, userId, idNumber).catch((err) => {
-                        console.log(err)
+                        console.log(err);
                     });
                 }).catch((err) => {
                     console.log(err);
-                })
+                });
+            }else {
+                dbFunctions.update.feideSessionId(db, idNumber, tempKey);
             }
-
             users.set(tempKey, tempUser);
 
             // Stores a new cooikie with a random generated userid
@@ -128,8 +121,8 @@ app.get('/login/callback/feide', passport.authenticate('passport-openid-connect'
                 maxAge: 1000 * 60 * 60 * 24, // cookie expires after 1 day
             }
             res.cookie("sessionId", tempKey, cookieOptions).redirect("/client");
-        }).catch(() => {
-
+        }).catch((err) => {
+            console.log(err)
         });
     }).catch((err) => {
         console.log(err);

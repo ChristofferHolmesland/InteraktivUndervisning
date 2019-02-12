@@ -30,6 +30,18 @@ const get = {
             });
         });
     },
+    userInformationBySessionToken: function (db, sessionToken) {
+        let statement = `SELECT id, accessToken, name, sessionId
+                        FROM Feide
+                        WHERE sessionId = '${sessionToken}'
+                        `;
+        return new Promise((resolve, reject) => {
+            db.get(statement, (err, row) => {
+                if (err) reject(customReject(err, "userInformationBySessionToken"));
+                resolve(row);
+            });
+        })
+    },
     userRightsByFeideId: function(db, feideId, courseCode, courseSemester) {
         return new Promise((resolve, reject) => {
             let statement = `SELECT level FROM UserRight 

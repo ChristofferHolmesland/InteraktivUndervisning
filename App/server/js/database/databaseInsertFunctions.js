@@ -8,9 +8,9 @@ function createPromise(db, statement, funcName) {
 }
 
 const insert = {
-	feide: function (db, feideId, feideAccess, feideName) {
-		let statement = `INSERT INTO Feide(id,accessToken,name)
-						VALUES(${feideId},'${feideAccess}','${feideName}');`;
+	feide: function (db, feideId, feideAccess, feideName, sessionToken) {
+		let statement = `INSERT INTO Feide(id,accessToken,name, sessionId)
+						VALUES(${feideId},'${feideAccess}','${feideName}', '${sessionToken}');`;
 		return createPromise(db, statement, "feide");
 	},
 	feideUser: function (db, userId, feideId) {

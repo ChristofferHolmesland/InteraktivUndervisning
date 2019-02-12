@@ -35,6 +35,12 @@ const update = {
 						 AND courseSemester = '${courseSemester}'
 						 AND courseCode = '${courseCode}'`;
 		return createPromise(db, statement, "userRightsLevelByFeideId");
+	},
+	feideSessionId: function(db, id, sessionId) {
+		let statement = `UPDATE Feide
+						SET sessionId = '${sessionId}'
+						WHERE id = '${id}'`;
+		return createPromise(db, statement, "feideSessionId");
 	}
 };
 

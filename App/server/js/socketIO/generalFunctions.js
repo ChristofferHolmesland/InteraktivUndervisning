@@ -10,10 +10,11 @@ module.exports.listen = function(server, users, db) {
         cookie: false
     });
 
-    io.on("connection", function(socket) {
+    io.on("connection", async function(socket) {
 
         // On new connection, checks if user has a cookie with userId and verifies the user
-        let user = User.getUser(users, socket);
+        let user = await User.getUser(db, users, socket);
+        console.log(users);
         
         if(user != undefined){
             if (user.userRights > 0) require("./clientFunctions.js").client(socket, db, user, sessions);
@@ -32,7 +33,8 @@ module.exports.listen = function(server, users, db) {
         });
 
         socket.on('disconnect', function(){
-			// TODO handle socket disconnect
+            if (user) users.delete(user.sessionId);
+            console.log(users);
         });
 
         socket.on("signOutRequest", function(){
