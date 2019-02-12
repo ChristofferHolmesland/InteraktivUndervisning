@@ -46,7 +46,7 @@ export default {
 				username: true,
 				feideId: true,
 				userRights: true,
-				adminSubjects: true,
+				adminSubjects: true
 			});
 			return user;
 		},
@@ -57,5 +57,5 @@ export default {
 	components: {
 		DeleteUserInfo
 	}
-}
+};
 </script>

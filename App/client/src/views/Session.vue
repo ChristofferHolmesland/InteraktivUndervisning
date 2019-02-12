@@ -1,10 +1,10 @@
 <template>
-    <div id="session">
-        <WaitingRoom v-if="state === 1" :sessionId="sessionId"/>
-        <Question v-if="state === 2" :sessionId="sessionId" :questionInfo="questionInfo"/>
-        <QuestionResultScreen v-if="state === 3" :sessionId="sessionId" :questionInfo="questionInfo"/>
-        <SessionOverScreen v-if="state === 4" :sessionId="sessionId"/>
-    </div>
+	<div id="session">
+		<WaitingRoom v-if="state === 1" :sessionId="sessionId"/>
+		<Question v-if="state === 2" :sessionId="sessionId" :questionInfo="questionInfo"/>
+		<QuestionResultScreen v-if="state === 3" :sessionId="sessionId" :questionInfo="questionInfo"/>
+		<SessionOverScreen v-if="state === 4" :sessionId="sessionId"/>
+	</div>
 </template>
 
 <script>
@@ -14,49 +14,41 @@ import QuestionResultScreen from "../components/admin/startSession/QuestionResul
 import SessionOverScreen from "../components/admin/startSession/SessionOverScreen.vue";
 
 export default {
-    name: "session",
-    props: [
-        "sessionId" 
-    ],
-    data() {
-        return {
-            state: 0,
-            questionInfo: undefined
-        }
-    },
-    created() {
-        this.$socket.emit("verifyUserLevel", 3);
-        this.$socket.emit("startSessionWaitingRoom", this.sessionId);
-    },
-    sockets: {
-        startSessionWaitingRoomResponse() {
-            this.state = 1;
-        },
-        nextQuestion(questionInfo) {
-            this.questionInfo = questionInfo;
-            this.state = 2;
-        },
-        goToQuestionResultScreen() {
-            this.state = 3;
-        },
-        endSessionScreen() {
-            this.state = 4;
-        }
-    },
-    computed: {
-        
-    },
-    methods: {
-        
-    },
-    components: {
-        WaitingRoom,
-        Question,
-        QuestionResultScreen,
-        SessionOverScreen
-    },
-    beforeDestroy() {
-      // TODO add logic if the admin goes to another path before the sessions ends  
-    },
-}
+	name: "session",
+	props: ["sessionId"],
+	data() {
+		return {
+			state: 0,
+			questionInfo: undefined
+		};
+	},
+	created() {
+		this.$socket.emit("verifyUserLevel", 3);
+		this.$socket.emit("startSessionWaitingRoom", this.sessionId);
+	},
+	sockets: {
+		startSessionWaitingRoomResponse() {
+			this.state = 1;
+		},
+		nextQuestion(questionInfo) {
+			this.questionInfo = questionInfo;
+			this.state = 2;
+		},
+		goToQuestionResultScreen() {
+			this.state = 3;
+		},
+		endSessionScreen() {
+			this.state = 4;
+		}
+	},
+	components: {
+		WaitingRoom,
+		Question,
+		QuestionResultScreen,
+		SessionOverScreen
+	},
+	beforeDestroy() {
+		// TODO add logic if the admin goes to another path before the sessions ends
+	}
+};
 </script>

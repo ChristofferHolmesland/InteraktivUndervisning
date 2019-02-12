@@ -51,7 +51,7 @@ export default {
 			filteredSessionList: [],
 			courseList: [],
 			courseSelected: undefined
-		}
+		};
 	},
 	created() {
 		this.$socket.emit("checkSignedInFeide");
@@ -70,7 +70,7 @@ export default {
 				}
 			}
 
-			this.courseSelected = this.courseList[0]
+			this.courseSelected = this.courseList[0];
 		}
 	},
 	computed: {
@@ -93,7 +93,7 @@ export default {
 				}
 			}
 			this.filteredSessionList = list;
-		}	
+		}
 	}
-}
+};
 </script>

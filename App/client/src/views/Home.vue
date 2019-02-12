@@ -11,8 +11,8 @@ export default {
 </script>
 
 <style scoped>
-    h1 {
-		margin-top: 5rem;
-		text-align: center;
-	}
+h1 {
+	margin-top: 5rem;
+	text-align: center;
+}
 </style>

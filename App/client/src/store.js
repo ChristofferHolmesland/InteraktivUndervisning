@@ -40,7 +40,7 @@ export default new Vuex.Store({
 				state.adminSubjects = [];
 				return;
 			}
-			if (data.adminSubjects) state.adminSubjects = data.adminSubjects
+			if (data.adminSubjects) state.adminSubjects = data.adminSubjects;
 			if (data.username) state.user.username = data.username;
 			if (data.feideId) state.user.feideId = data.feideId;
 			if (data.userRights) state.user.userRights = data.userRights;
@@ -61,7 +61,10 @@ export default new Vuex.Store({
 			if (data.userRights) response.userRights = state.user.userRights;
 			if (data.loggedIn) response.loggedIn = state.loggedIn;
 			if (data.adminSubjects) {
-				if (state.user.userRights > 1 && state.adminSubjects.length > 0) {
+				if (
+					state.user.userRights > 1 &&
+					state.adminSubjects.length > 0
+				) {
 					response.adminSubjects = state.adminSubjects;
 				}
 			}

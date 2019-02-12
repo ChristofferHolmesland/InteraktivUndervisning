@@ -24,5 +24,5 @@ export default {
 		UserInfo,
 		UserStats
 	}
-}
+};
 </script>

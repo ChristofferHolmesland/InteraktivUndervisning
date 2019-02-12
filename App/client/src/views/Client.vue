@@ -12,22 +12,22 @@
 </template>
 
 <script>
-	import JoinSession from "../components/client/JoinSession.vue";
+import JoinSession from "../components/client/JoinSession.vue";
 
-	export default {
-		name: 'client',
-		components: {
-			JoinSession
-		},
-		created() {
-			this.$socket.emit("verifyUserLevel", 1);
-		}
+export default {
+	name: "client",
+	components: {
+		JoinSession
+	},
+	created() {
+		this.$socket.emit("verifyUserLevel", 1);
 	}
+};
 </script>
 
 <style scoped>
-	h1 {
-		margin-top: 3rem;
-		text-align: center;
-	}
+h1 {
+	margin-top: 3rem;
+	text-align: center;
+}
 </style>
