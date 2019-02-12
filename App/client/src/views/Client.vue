@@ -17,7 +17,7 @@
 	export default {
 		name: 'client',
 		components: {
-			JoinSession
+			JoinSession,
 		},
 		created() {
 			this.$socket.emit("verifyUserLevel", 1);

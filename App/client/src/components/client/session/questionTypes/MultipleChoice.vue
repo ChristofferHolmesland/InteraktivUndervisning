@@ -73,7 +73,4 @@
 		height: 1em;
 		width: 1em;
 	}
-	#multipleChoiceMainContainer {
-		padding: calc(0.025 * width)
-	}
 </style>

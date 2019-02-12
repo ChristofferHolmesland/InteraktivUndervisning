@@ -25,7 +25,7 @@ var options = {
 };
 
 const app = express();
-const port = 8081;
+const port = process.env.PORT || 443;
 
 // Setup dataporten
 var oic = new OICStrategy({
