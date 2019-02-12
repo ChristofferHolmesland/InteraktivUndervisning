@@ -2,11 +2,9 @@ module.exports.checkAVLTree = function (tree) {
 	let leftheight = 0;
 	let rightheight = 0;
 	if (tree[0].children[0] !== undefined) {
-		console.log("Check Left Branch");
 		leftheight = getHeight(tree[0].children[0]);
 	}
 	if (tree[0].children[1] !== undefined) {
-		console.log("Check Right Branch");
 		rightheight = getHeight(tree[0].children[1]);
 	}
 	let result = true;

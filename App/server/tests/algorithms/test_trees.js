@@ -1,11 +1,13 @@
 const assert = require("assert");
 
-const BinaryTreeNode = require("../../js/algorithms/trees/BinaryTreeNode.js").BinaryTreeNode;
+const Tree = require("../../js/algorithms/trees/Tree").Tree;
+const BinaryTreeNode = require("../../js/algorithms/trees/Tree.js").BinaryTreeNode;
 const BinaryTreeFunctions = require("../../js/algorithms/trees/BinaryTree.js");
 const BinarySearchTreeFunctions = require("../../js/algorithms/trees/BinarySearchTree.js");
 
 describe('TestBinaryTrees', function () {
 	//Creating 2 Tree Objects
+	let testArray = [28,17,6,3,13,25,18,31,33,49];
 	let testtree = [];
 	let root = new BinaryTreeNode(28);
 	let node1 = new BinaryTreeNode(17);
@@ -125,6 +127,54 @@ describe('TestBinaryTrees', function () {
 			let node102 = new BinaryTreeNode(51);
 			node102.addParent(node32);
 			assert(!BinarySearchTreeFunctions.checkStudentAnswer(testtree,testtree2));
+		})
+	});
+
+	describe("TestCreateBinarySearchSolution", function () {
+		it("Check with no existing tree", function () {
+			let completelyNewTree = BinarySearchTreeFunctions.createBinarySearchTreeSolution(testArray);
+			let solutionTree = new Tree(root,testtree);
+			assert(BinarySearchTreeFunctions.checkStudentAnswer(completelyNewTree.nodes,solutionTree.nodes));
+			//assert(Object.is(completelyNewTree,solutionTree)); //didn't work, not sure if this means the objects does not have the same value.
+		});
+
+		it("Check with existing tree", function () {
+			let testArr2 = [66,8,88,92,4,57,68,26,74,9];
+			let root = new BinaryTreeNode(66);
+			let defNode1 = new BinaryTreeNode(8);
+			let defNode2 = new BinaryTreeNode(88);
+			let defNode3 = new BinaryTreeNode(92);
+			let defNode4 = new BinaryTreeNode(4);
+			defNode1.addParent(root);
+			defNode2.addParent(root);
+			defNode3.addParent(defNode2);
+			defNode4.addParent(defNode1);
+			let defaultTree = new Tree(root);
+			defaultTree.nodes = [root,defNode1,defNode2,defNode3,defNode4];
+			let newTree = BinarySearchTreeFunctions.createBinarySearchTreeSolution(testArr2.slice(5),defaultTree);
+
+			let rootSol = new BinaryTreeNode(66);
+			let defNode1Sol = new BinaryTreeNode(8);
+			let defNode2Sol = new BinaryTreeNode(88);
+			let defNode3Sol = new BinaryTreeNode(92);
+			let defNode4Sol = new BinaryTreeNode(4);
+			let defNode5Sol = new BinaryTreeNode(57);
+			let defNode6Sol = new BinaryTreeNode(68);
+			let defNode7Sol = new BinaryTreeNode(26);
+			let defNode8Sol = new BinaryTreeNode(74);
+			let defNode9Sol = new BinaryTreeNode(9);
+			defNode1Sol.addParent(rootSol);
+			defNode2Sol.addParent(rootSol);
+			defNode3Sol.addParent(defNode2Sol);
+			defNode4Sol.addParent(defNode1Sol);
+			defNode5Sol.addParent(defNode1Sol);
+			defNode6Sol.addParent(defNode2Sol);
+			defNode7Sol.addParent(defNode5Sol);
+			defNode8Sol.addParent(defNode6Sol);
+			defNode9Sol.addParent(defNode7Sol);
+			let solutionTree = new Tree(rootSol);
+			solutionTree.nodes = [rootSol,defNode1Sol,defNode2Sol,defNode3Sol,defNode4Sol,defNode5Sol,defNode6Sol,defNode7Sol,defNode8Sol,defNode9Sol];
+			assert(BinarySearchTreeFunctions.checkStudentAnswer(newTree.nodes,solutionTree.nodes))
 		})
 	});
 });

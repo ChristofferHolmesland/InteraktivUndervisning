@@ -1,7 +1,6 @@
 //Requirement for a binary tree. A tree node can only have 2 children a left and a right.
 //Every child needs a parent.
 //Tree is a DAG(directed acyclic graph), only 1 direction
-const BinaryTreeNode = require("./BinaryTreeNode.js").BinaryTreeNode;
 module.exports.checkTreeCriteria = function(tree) {
 	let checkresult = true;
 	if (tree.length === 0) {
