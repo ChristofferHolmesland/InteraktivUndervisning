@@ -1,15 +1,10 @@
 \subsection{Sorting}
 Short description about sorting algorithms.
 
-\subsubsection{Insertion Sort}
-Insertion sort is simplest sorting algorithm learned in the algorithms and data structures course. Insertion sort uses an easy algorithm that is forced to go though every entry in a list. The algorithm checks whether or not the current entry has a smaller value then the previous entry, if entry has a smaller value, then the previous entries have to re-sorted with the entry until either you find an entry that is smaller or reach the start of the list. 
-\\The insertion sort is quite easy to implement, essentially only consists of a for-loop and a while-loop. Because its simple design its a sorting algorithm that his quite often used. Insertion sort is however quite slow compared to most other sorting algorithms. It only has an O(n) average run time, and a runtime of O($n^2$) in terms of worst case scenario.
-\\Although insertion sort is quite effective when it is used to sort almost fully sorted list's. This means that insertion sort algorithm is used by a lot of other sorting algorithms. Mostly used as a final step in these other sorting algorithms. Examples of this being the sorting algorithms Shell sort, Merge sort and Quick sort.	%Probably have should have a cite to the different sorting algorithms mentioned just now.
-\subsubsection{Shell Sort}
-Shell sort is an sorting algorithm that is based of insertion sort. The key difference between the two sorting algorithm is in performance. Shell sort will have both an average case and a worst case of O(n) runtime. The main reason for this is that shell sort will sort entries in the list that are at certain intervals from each other. The algorithm is essentially dividing list entries into smaller sublists in order to make the sorting more efficient. Through this method shell sort avoids having to check every entry in the list, which allows the algorithm to remove main drawback of using insertion sort. 
-\\The starting interval used in a shell sort is usually based on approximately half length of the list. The algorithm uses the interval to divide up the entries in the list. The entries chosen together are then compared to each other and sorted based on their value. Once the list has been effectively sorted the list on the current interval, the interval's value is halved and the sorting process starts anew. Eventually the interval will reach a value of 1, which is essentially will cause shell sort to finish sorting the list using insertion sort algorithm. Of course since the list should at this point be almost completely sorted, and therefore the insertion sort should never achieve a runtime of $O^2$.
-%not sure if this section should be mentioned or not, should I explain what a k-sort is?
-\\The implementations of shell sort used in this project is currently not the best implementation of shell sort. The implementation used is heavily inspired by practical shell sort methods taught during algorithms and data structures courses. This method is even more alike the insertion sort algorithm then it needs to be. However the shell short used in this project should end up with the same result after each interval sort, which is important considering most exercises involving shell sort focuses on students finding the result after each k-sort.  
-\subsubsection{Merge Sort}
+\input{sections/construction/sorting/insertionSort.tex}
 
-\subsubsection{Quick Sort}
+\input{sections/construction/sorting/shellSort.tex}
+
+\input{sections/construction/sorting/mergeSort.tex}
+
+\input{sections/construction/sorting/quickSort.tex}
