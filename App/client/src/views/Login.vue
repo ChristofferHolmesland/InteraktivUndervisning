@@ -1,5 +1,15 @@
 <template>
     <b-container>
+ <div>
+    <b-form-textarea id="textarea1"
+                     v-model="text"
+                     placeholder="Enter something"
+                     :rows="3"
+                     :max-rows="6">
+    </b-form-textarea>
+    <pre class="mt-3">{{ text }}</pre>
+  </div>
+
         <b-container id="LoginForm" class="vertical-center jumbotron">
             <b-row align-h="center">
                 <b-col cols="5" lg="3" class="text-center mb-5">
@@ -39,6 +49,7 @@
             return {
                 feideLogin: false,
                 termsApproved: true,
+                text: ""
             };
         },
         methods: {
