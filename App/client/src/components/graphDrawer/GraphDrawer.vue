@@ -11,12 +11,25 @@
 
 	export default {
         name: 'GraphDrawer',
+        data() {
+            return {
+                graphDrawer: undefined
+            };
+        },
         props: {
+            // When this changes, the parent wants to get the value from
+            // the GraphDrawer.
+            requestAnswer: Boolean,
             // Graph0 or Sort
             controlType: String,
             steps: Array,
             // Quicksort or Mergesort
             sortType: String
+        },
+        watch: {
+            requestAnswer: function() {
+                this.$emit("getValueResponse", graphDrawer.export());
+            }
         },
         mounted() {
             let c = document.getElementById("canvas");
@@ -26,7 +39,7 @@
                 nodeShape = "Square"
             }
 
-            let graphDrawer = new GraphDrawer(c, {
+            graphDrawer = new GraphDrawer(c, {
                 nodeShape: nodeShape,
                 controlType: this.controlType,
                 operationMode: "Interactive",

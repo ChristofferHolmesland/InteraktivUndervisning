@@ -770,7 +770,6 @@ export default class Sort {
 				}
 			} else if (c.count == 2) {
 				// Arrays with two links to it, is a join.
-
 			}
 		}
 
