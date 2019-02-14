@@ -20,6 +20,13 @@
         created() {
             this.selectedCourse = this.$store.getters.getSelectedCourse;
         },
+        watch: {
+            _watcherSelectedCourse: function(newCourse, oldCourse) {
+                if (newCourse != oldCourse) {
+                    this.selectedCourse = newCourse;
+                }
+            }
+        },
         methods: {
             selectedCourseChanged(event) {
                 this.$store.commit("setSelectedCourse", event);
@@ -32,6 +39,9 @@
         computed: {
             getCourseOptions: function() {
                 return this.$store.getters.getCourseOptions;
+            },
+            _watcherSelectedCourse() {
+                return this.$store.getters.getSelectedCourse;
             }
         }
     }

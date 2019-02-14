@@ -6,15 +6,17 @@ const databasePath = path.resolve(__dirname, `../../database/${process.env.NODE_
 const fs = require("fs");
 
 module.exports.getDB = function setupDatabase() {
-    return new Promise(function(resolve, reject) {
+    return new Promise(async function(resolve, reject) {
         //set up connection with the database
         let db = new sqlite3.Database(databasePath, (err) => { if (err) reject(err) });
         //Creating database tables
-        db.serialize(function () {
+        await db.serialize(async function () {
             db.run("CREATE TABLE IF NOT EXISTS \"Feide\" (\n" +
                 "    id TEXT PRIMARY KEY,\n" +
                 "    accessToken TEXT NOT NULL,\n" +
-                "    name TEXT NOT NULL\n" +
+                "    name TEXT NOT NULL,\n" +
+                "    sessionId TEXT NOT NULL,\n" +
+                "    admin INTEGER NOT NULL\n" +
                 ");", (err) => { if (err) reject(err) });
 
             db.run("CREATE TABLE IF NOT EXISTS \"User\"(\n" +
@@ -96,13 +98,10 @@ module.exports.getDB = function setupDatabase() {
                 "    FOREIGN KEY (userId) REFERENCES User(id)\n" +
                 ");", (err) => { if (err) reject(err) });
 
-            dbFunctions.get.userById(db, 1).then((row) => {
+            await dbFunctions.get.userById(db, 1).then((row) => {
                 if (row === undefined) {
                     dbFunctions.insert.anonymousUser(db, 1)
-                    .then(() => resolve(db))
                     .catch((err) => reject(err));
-                } else {
-                    resolve(db);
                 }
             }).catch((err) => {
                 reject(err);
@@ -111,12 +110,18 @@ module.exports.getDB = function setupDatabase() {
 
             // TODO add more questionTypes
             let questionTypes = ["Text", "Multiple choice", "ArraySort", "MergeSort", "QuickSort"];
-
-            for(let i = 0; i < questionTypes.length; i++) {
-                dbFunctions.insert.questionType(db, questionTypes[i])
-                    .then(() => resolve(db))
-                    .catch((err) => reject(err));
-            }
+            
+            await dbFunctions.get.questionTypes(db).then(async (rows) => {
+                for(let i = 0; i < questionTypes.length; i++) {
+                    if (rows.findIndex(row => row.name === questionTypes[i]) === -1)
+                        await dbFunctions.insert.questionType(db, questionTypes[i])
+                            .catch((err) => reject(err));
+                }
+            }).catch((err) => {
+                reject(err);
+            })
+            
+            resolve(db);
         });
     });
 };

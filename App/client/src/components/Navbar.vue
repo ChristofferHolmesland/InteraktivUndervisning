@@ -11,11 +11,11 @@
 
 					<b-nav-item center @click="adminRedirect" v-if="getUser.userRights == 4 && getUser.loggedIn">{{getLocale.admin}}</b-nav-item>
 
-					<b-nav-item center @click="sessionRedirect" v-if="getUser.userRights == 4 && getUser.loggedIn">{{getLocale.startSession}}</b-nav-item>
+					<b-nav-item center @click="sessionRedirect" v-if="getUser.userRights >= 3 && getUser.loggedIn">{{getLocale.startSession}}</b-nav-item>
 
-					<b-nav-item center @click="questionsRedirect" v-if="getUser.userRights == 4 && getUser.loggedIn">{{getLocale.questions}}</b-nav-item>
+					<b-nav-item center @click="questionsRedirect" v-if="getUser.userRights >= 3 && getUser.loggedIn">{{getLocale.questions}}</b-nav-item>
 
-					<b-nav-item center @click="sessionsRedirect" v-if="getUser.userRights == 4 && getUser.loggedIn">{{getLocale.sessions}}</b-nav-item>
+					<b-nav-item center @click="sessionsRedirect" v-if="getUser.userRights >= 3 && getUser.loggedIn">{{getLocale.sessions}}</b-nav-item>
 				</b-navbar-nav>
 
 				<!-- Right aligned nav items -->
@@ -44,81 +44,78 @@
 </template>
 
 <script>
-	export default {
-		name: "navbar",
-		created() {
-			this.$socket.emit("clientLoginInfoRequest");
+export default {
+	name: "navbar",
+	sockets: {
+		clientLoginInfoResponse(data) {
+			if (data.loggedIn) {
+				this.$store.commit("userChange", data);
+			}
 		},
-		sockets: {
-			clientLoginInfoResponse(data){
-				if (data.loggedIn) {
-					this.$store.commit("userChange", data)
+		signOutResponse() {
+			this.$store.commit({
+				type: "userChange",
+				data: {
+					username: "",
+					loggedIn: false,
+					userRights: 0,
+					feideId: ""
 				}
-			},
-			signOutResponse(){
-				this.$store.commit({
-					type: "userChange",
-					data: {
-						username: "",
-						loggedIn: false,
-						userRights: 0,
-						feideId: ""
-					}
-				})
-				this.$router.push("/");
-			}
-		},
-		methods: {
-			localeChange(event){
-				this.$socket.emit("getLocaleRequest", event.target.id);
-			},
-			signInRedirect(){
-				this.$router.push("/login");
-			},
-			homeRedirect(){
-				this.$router.push("/");
-			},
-			signOut(){
-				this.$socket.emit("signOutRequest");
-			},
-			clientRedirect(){
-				this.$router.push("/client");
-			},
-			adminRedirect(){
-				this.$router.push("/admin");
-			},
-			sessionRedirect(){
-				this.$router.push("/admin/session");
-			},
-			questionsRedirect(){
-				this.$router.push("/admin/questions");
-			},
-			sessionsRedirect(){
-				this.$router.push("/admin/sessions");
-			},
-			userProfileRedirect(){
-				this.$router.push("/client/user-profile");
-			}
-		},
-		computed: {
-			getLocale() {
-				let locale = this.$store.getters.getLocale("Navbar");
-				if (locale) return locale;
-				else return {};
-			},
-			getLocaleList() {
-				let list = this.$store.getters.getLocaleList;
-				if (list) return list;
-				else return {};
-			},
-			getUser() {
-				let user = this.$store.getters.getUser({
-					username: true,
-					userRights: true,
-					loggedIn: true
-				});
-				return user;
-			}
+			});
+			this.$router.push("/");
 		}
-	};
+	},
+	methods: {
+		localeChange(event) {
+			this.$socket.emit("getLocaleRequest", event.target.id);
+		},
+		signInRedirect() {
+			this.$router.push("/login");
+		},
+		homeRedirect() {
+			this.$router.push("/");
+		},
+		signOut() {
+			this.$socket.emit("signOutRequest");
+		},
+		clientRedirect() {
+			this.$router.push("/client");
+		},
+		adminRedirect() {
+			this.$router.push("/admin");
+		},
+		sessionRedirect() {
+			this.$router.push("/admin/session");
+		},
+		questionsRedirect() {
+			this.$router.push("/admin/questions");
+		},
+		sessionsRedirect() {
+			this.$router.push("/admin/sessions");
+		},
+		userProfileRedirect() {
+			this.$router.push("/client/user-profile");
+		}
+	},
+	computed: {
+		getLocale() {
+			let locale = this.$store.getters.getLocale("Navbar");
+			if (locale) return locale;
+			else return {};
+		},
+		getLocaleList() {
+			let list = this.$store.getters.getLocaleList;
+			if (list) return list;
+			else return {};
+		},
+		getUser() {
+			let user = this.$store.getters.getUser({
+				username: true,
+				userRights: true,
+				loggedIn: true
+			});
+			return user;
+		}
+	}
+};
 </script>

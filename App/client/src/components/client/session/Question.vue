@@ -27,6 +27,16 @@
                                         :requestAnswer="requestAnswer"
                                         @getTextResponse="getTextValue"
                                         />
+                            <Mergesort v-if="getQuestionType === 4"
+                                    :requestAnswer="requestAnswer"
+                                    @getTextResponse="getTextResponse"
+                                    :steps="questionInfo.object.steps"
+                                    />
+                            <Quicksort v-if="getQuestionType === 5"
+                                :requestAnswer="requestAnswer"
+                                @getTextResponse="getTextResponse"
+                                :steps="questionInfo.object.steps"
+                                />
                         </b-tab>
                         <b-tab :title="updateTimer" v-if="interval !== undefined" disabled></b-tab>
                     </b-tabs>
@@ -47,6 +57,8 @@
 	import TextInput from "./questionTypes/TextInput.vue";
     import MultipleChoice from "./questionTypes/MultipleChoice.vue";
     import ArraySort from "./questionTypes/sorting/ArraySort.vue";
+    import Mergesort from "./questionTypes/sorting/Mergesort.vue";
+    import Quicksort from "./questionTypes/sorting/Quicksort.vue";
     
 	export default {
 		name: "Question",
@@ -125,7 +137,9 @@
 		components: {
 			TextInput,
             MultipleChoice,
-            ArraySort
+            ArraySort,
+            Mergesort,
+            Quicksort
         }
-	}
+	};
 </script>
