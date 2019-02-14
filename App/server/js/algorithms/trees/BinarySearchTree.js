@@ -43,7 +43,7 @@ module.exports.checkBinarySearchTreeCriteria = function (tree) {
 };
 
 //Checks to two tree branches whether or not they are the same.
-//Will return true if they and false if they are not.
+//Will return true if two trees are the same and false if they are not.
 module.exports.checkStudentAnswer = function (studentTree,solutionTree) {
 	let checkresult = true;
 	if (studentTree.length === solutionTree.length) {

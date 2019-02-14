@@ -1,10 +1,34 @@
 class Tree {
-	constructor(rootnode,nodes) {
-		this.root = rootnode;
+	constructor(rootNode,nodes) {
+		this.root = rootNode;
 		if (nodes !== undefined) {
 			this.nodes = nodes;
 		}else {
-			this.nodes = [rootnode];
+			this.nodes = [rootNode];
+		}
+	}
+
+	changeRoot (node) {
+		if (node !== this.root) {
+			let oldIndex = this.nodes.indexOf(node);
+			console.log(oldIndex);
+			let tempRoot = this.root;
+			this.root = node;
+			this.nodes[0] = node;
+			if (oldIndex === -1) {
+				this.nodes.push(tempRoot);
+			} else {
+				this.nodes[oldIndex] = tempRoot;
+			}
+		}
+	}
+
+	printTree() {
+		console.log("Root: " );
+		console.log(this.root);
+		for (let n= 0; n<this.nodes.length;n++) {
+			console.log(n);
+			console.log(this.nodes[n])
 		}
 	}
 }
@@ -29,8 +53,13 @@ class BinaryTreeNode {
 			parentNode.children[1] = this;
 		} else {
 			console.log("Can not add node to parent node.");
+			console.log("Node: ");
+			console.log(this);
+			console.log("Parent Node: ");
+			console.log(parentNode);
 			this.parent = undefined;
 		}
+
 	}
 	/*
 	get leftChild() {
