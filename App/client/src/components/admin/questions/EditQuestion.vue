@@ -107,6 +107,15 @@
                     </b-row>
                 </b-col>
             </b-form-group>
+            <b-form-group 	id="sortingSolution"
+                            label="Starting array (elements seperated by ,)"
+                            label-for="solutionInput"
+                            v-if="newQuestion.solutionType === 4 || newQuestion.solutionType === 5">
+                <b-form-input 	id="solutionInput"
+                                type="text"
+                                v-model="newQuestion.objects.startingArray">
+                </b-form-input>
+            </b-form-group>
         </b-form>
     </b-modal>
 </template>
@@ -122,7 +131,10 @@
               		solutionType: "",
                     solution: "",
                     time: 0,
-                    objects: {multipleChoices: []}
+                    objects: {
+                        multipleChoices: [],
+                        startingArray: ""
+                    }
                 },
                 solutionTypes: []
             }

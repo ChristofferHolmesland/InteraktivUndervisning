@@ -1,6 +1,7 @@
 const dbFunctions = require("../database/databaseFunctions").dbFunctions;
 
 const generalFunctions =  require("../generalFunctions.js").functions;
+const algorithms = require("../algorithms/algorithms");
 
 const session = require("../session.js").Session;
 const question = require("../session.js").Question;
@@ -23,6 +24,40 @@ let courseListRequestHandler = function(socket, db, user, sessions) {
 }
 
 var currentSession = undefined;
+
+function generateAlgorithmSteps(question) {
+    // Determine sorting function
+    let sorter = undefined;
+    if (question.solutionType === 4) {
+        sorter = algorithms.sorting.mergesort;
+    } else if (question.solutionType === 5) {
+        sorter = algorithms.sorting.quicksort;
+    }
+
+    // Check if the array contains numbers and remove whitespace
+    let isNumbers = true;
+    let elements = question.objects.startingArray.split(",");
+    for (let i = 0; i < elements.length; i++) {
+        elements[i] = elements[i].trim();
+        if (isNaN(Number(elements[i]))) isNumbers = false;
+    }
+    // This is done in a seperate loop, because an array of strings
+    // might contain some elements which are numbers.
+    if (isNumbers) {
+        for (let i = 0; i < elements.length; i++) {
+            elements[i] = Number(elements[i]);
+        }
+    }
+
+    let steppingFunctions = sorter(elements);
+    // Store all the steps in the solution
+    question.objects.startingArray = undefined;
+    question.solution = steppingFunctions;
+    // Assign the first step to the objects, so the user can
+    // manipulate it.
+    question.objects.steps = [steppingFunctions.reset()];
+    return question;
+}
 
 module.exports.admin = function(socket, db, user, sessions) {
 
@@ -232,8 +267,18 @@ module.exports.admin = function(socket, db, user, sessions) {
         });
     });
 
+
+
     socket.on("addNewQuestion", function(question) {
         console.log(question);
+
+        // If the question being added is of type Quicksort or Mergesort.
+        // The algorithm should generate the solution steps before inserting it into
+        // the database.
+        if (question.solutionType === 4 || question.solutionType === 5) {
+            question = generateAlgorithmSteps(question);
+        }
+
         dbFunctions.insert.question(db, question.text, question.description, question.solution, question.time,
             question.solutionType, question.courseCode, question.objects);
     });

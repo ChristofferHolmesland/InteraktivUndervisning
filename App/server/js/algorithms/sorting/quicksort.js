@@ -1,4 +1,8 @@
-function quicksort(unsortedList, typePivot) {
+module.exports = function(unsortedList, typePivot) {
+    if (typePivot === undefined) {
+        typePivot = 3;
+    }
+
     currentStep = 0;
     let steps = [
     ]
@@ -67,6 +71,9 @@ function quicksort(unsortedList, typePivot) {
     return {
         isSorted: function() {
             return currentStep === steps.length - 1;
+        },
+        get: function() {
+            return steps[currentStep];
         },
         step: function() {
             if (currentStep < steps.length - 1)
