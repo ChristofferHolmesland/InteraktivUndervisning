@@ -17,7 +17,7 @@ export default {
 	data() {
 		return {
 			localeLoaded: false
-		}
+		};
 	},
 	components: {
 		Navbar
@@ -34,10 +34,11 @@ export default {
 		unauthorizedAccess() {
 			this.$router.push("/401");
 		},
-		deleteCookie(cookieId){
-			document.cookie = cookieId + "=;expires=Thu, 01 Jan 1970 00:00:01 GMT;"	
+		deleteCookie(cookieId) {
+			document.cookie =
+				cookieId + "=;expires=Thu, 01 Jan 1970 00:00:01 GMT;";
 		},
-		clientLoginInfoResponse(userData){
+		clientLoginInfoResponse(userData) {
 			this.$store.commit("userChange", userData);
 
 			if (userData.userRights > 2) {
@@ -48,5 +49,5 @@ export default {
 			this.$store.commit("setCourseList", courseList);
 		}
 	}
-}
+};
 </script>

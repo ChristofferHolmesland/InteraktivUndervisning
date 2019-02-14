@@ -50,19 +50,20 @@ app.use(express.static(path.join(__dirname, '/public/')));
 let db = undefined;
 
 if (process.env.NODE_ENV === "dev") {
-    require('./js/database/database').deleteDB();
+    //require('./js/database/database').deleteDB();
 }
 
 require('./js/database/database').getDB().then(function(value) {
     db = value;
 
-    if (process.env.NODE_ENV === "dev"){
+    /*if (process.env.NODE_ENV === "dev"){
         const dummydata = require('./tools/insertDummyData');
         dummydata.InsertData(db).catch(function(err) {
             console.log(err);
             process.exit(1);
         });
-    }
+    }*/
+
     // Starts the server and the socket.io websocket
     const server = app.listen(port, function() {
         console.log(`Server listening on localhost:${ port }! Use ctrl + c to stop the server!`)
@@ -75,10 +76,9 @@ require('./js/database/database').getDB().then(function(value) {
 
 app.post('/login/feide', passport.authenticate('passport-openid-connect', {"successReturnToOrRedirect": "/client"}))
 app.get('/login/callback/feide', passport.authenticate('passport-openid-connect', {callback: true}), function(req, res) {
-
     // Reads information from the scope request to feide
+    console.log(req.user);
     let accessToken = req.user.token.access_token;
-    let userRights = 2; //TODO write function to check database for the userRight
     let userName = req.user.data.name;
     let userId = req.user.token.id_token;
 
@@ -86,36 +86,45 @@ app.get('/login/callback/feide', passport.authenticate('passport-openid-connect'
     temp = temp.split("@");
     temp = temp[0].split(":");
     let idNumber = temp[1];
-
-    // Add Christoffer as admin
-    if (idNumber == "239416" || idNumber == "228288") {
-        userRights = 4;
-    }
-
-    // Makes a new active user
-    let tempKey = user.generateSessionId();
-    let tempUser = new user(userRights, userName, tempKey, {
-        "accessToken": accessToken,
-        "userId": userId,
-        "idNumber": idNumber
-    });
-
-    dbFunctions.get.userIdByFeideId(db, idNumber).then((id) => {
-        if (id === undefined) {
-            dbFunctions.insert.feide(db, idNumber, accessToken, userName).then(() => {
-                dbFunctions.insert.feideUser(db, userId, idNumber).catch((err) => {
-                    console.log(err)
-                });
-            }).catch((err) => {
-                console.log(err);
-            })
+    let userRights = 2;
+    
+    dbFunctions.get.userRightByFeideId(db, idNumber).then((rows) => {
+        for (let i = 0; i < rows.length; i++) {
+            if (rows[i].level > userRights) userRights = rows[i].level;
+            if (userRights === 4) break;
         }
+        
+        // Makes a new active user
+        let tempKey = user.generateSessionId();
+        let tempUser = new user(userRights, userName, tempKey, {
+            "accessToken": accessToken,
+            "userId": userId,
+            "idNumber": idNumber
+        });
 
-        users.set(tempKey, tempUser);
+        dbFunctions.get.userIdByFeideId(db, idNumber).then((id) => {
+            if (id === undefined) {
+                dbFunctions.insert.feide(db, idNumber, accessToken, userName, tempKey).then(() => {
+                    dbFunctions.insert.feideUser(db, userId, idNumber).catch((err) => {
+                        console.log(err);
+                    });
+                }).catch((err) => {
+                    console.log(err);
+                });
+            }else {
+                dbFunctions.update.feideSessionId(db, idNumber, tempKey);
+            }
+            users.set(tempKey, tempUser);
 
-        // Stores a new cooikie with a random generated userid
-        res.cookie("sessionId", tempKey, {expires: new Date(Date.now + 500/*2678400000*/)}).redirect("/client");
-    }).catch(() => {
-
+            // Stores a new cooikie with a random generated userid
+            let cookieOptions = {
+                maxAge: 1000 * 60 * 60 * 24, // cookie expires after 1 day
+            }
+            res.cookie("sessionId", tempKey, cookieOptions).redirect("/client");
+        }).catch((err) => {
+            console.log(err)
+        });
+    }).catch((err) => {
+        console.log(err);
     });
 });

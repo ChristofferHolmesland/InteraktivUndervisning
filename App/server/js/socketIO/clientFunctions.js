@@ -32,19 +32,20 @@ module.exports.client = function(socket, db, user, sessions) {
     socket.on("questionAnswered", async function (answerObject, sessionCode) {
         let session = sessions.get(sessionCode).session;
         let question = session.questionList[session.currentQuestion];
+        let result = -1; // Default value is -1 for the users that answers that they don't know. Changed later if they did answer
 
         if(answerObject === null){
             answerObject = "You didn't answer";
             socket.emit("answerResponse", "betweenQuestionsNotAnswered");
         }
 
-        let result = require("../SolutionChecker/solutionChecker.js").solutionChecker.checkAnswer(answerObject, question.solution, question.type);
+        result = require("../SolutionChecker/solutionChecker.js").solutionChecker.checkAnswer(answerObject, question.solution, question.type);
 
         if (result){
             result = 1;
             socket.emit("answerResponse", "betweenQuestionsCorrect")
         } else {
-            result = -1;
+            result = 0;
             socket.emit("answerResponse", "betweenQuestionsIncorrect")
         }
 

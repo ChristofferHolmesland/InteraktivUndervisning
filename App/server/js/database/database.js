@@ -14,7 +14,8 @@ module.exports.getDB = function setupDatabase() {
             db.run("CREATE TABLE IF NOT EXISTS \"Feide\" (\n" +
                 "    id TEXT PRIMARY KEY,\n" +
                 "    accessToken TEXT NOT NULL,\n" +
-                "    name TEXT NOT NULL\n" +
+                "    name TEXT NOT NULL,\n" +
+                "    sessionId TEXT NOT NULL\n" +
                 ");", (err) => { if (err) reject(err) });
 
             db.run("CREATE TABLE IF NOT EXISTS \"User\"(\n" +
