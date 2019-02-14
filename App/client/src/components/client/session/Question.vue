@@ -141,6 +141,5 @@
             Mergesort,
             Quicksort
         }
-	}
-};
+	};
 </script>

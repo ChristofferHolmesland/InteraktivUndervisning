@@ -7,7 +7,7 @@
 </template>
 
 <script>
-    import GraphDrawer from "../../../graphDrawer/GraphDrawer.vue"
+    import GraphDrawer from "../../../../graphDrawer/GraphDrawer.vue"
 
 	export default {
 		name: "Mergesort",

@@ -1,5 +1,7 @@
 <template>
-    <b-modal @show="show" :id="elementId" :ref="elementRef" :no-close-on-backdrop="true" :title="getLocale.newSession" @ok="callOkHandler" style="text-align: left;">
+    <b-modal @show="show" :id="elementId" :ref="elementRef" 
+            :no-close-on-backdrop="true" :title="getLocale.newSession" 
+            @ok="callOkHandler" style="text-align: left;">
         <b-form>
             <b-form-group 	id="sessionTitle"
                             :label="getLocale.newSessionTitle"
@@ -8,17 +10,6 @@
                                 type="text"
                                 v-model="newSession.title">
                 </b-form-input>
-            </b-form-group>
-            
-            <!--         TODO: Decide if we want this
-            <b-form-group 	id="course"
-                            :label="getLocale.selectCourse"
-                            label-for="courseSelect">
-                <b-form-select 	id="courseSelect"
-                                :options="getCourseOptions"
-                                v-model="newSession.course"
-                                @change="selectedCourseChanged($event)">
-                </b-form-select> -->
             </b-form-group>
             <b-form-group 	id="questions"
                             :label="getLocale.selectQuestions"
@@ -61,7 +52,8 @@
         },
         methods: {
             show() {
-                let c = event.split(" ");
+                this.newSession.course = this.$store.getters.getSelectedCourse;
+                let c = this.$store.getters.getSelectedCourse.split(" ");
                 this.$socket.emit("getQuestionsInCourse", {code: c[0], semester: c[1]});
             },
             callOkHandler: function() {
@@ -81,10 +73,6 @@
                     id: event,
                     text: selectedQuestionText
                 });
-            },
-            selectedCourseChanged: function(event) {
-                let c = event.split(" ");
-                this.$socket.emit("getQuestionsInCourse", {code: c[0], semester: c[1]});
             }
         },
         computed: {
