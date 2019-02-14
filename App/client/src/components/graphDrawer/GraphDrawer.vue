@@ -12,20 +12,27 @@
 	export default {
         name: 'GraphDrawer',
         props: {
+            // Graph0 or Sort
             controlType: String,
-            steps: Array
+            steps: Array,
+            // Quicksort or Mergesort
+            sortType: String
         },
         mounted() {
             let c = document.getElementById("canvas");
 
-            let nodeShape = this.controlType == "Quicksort" ? "Square" : "Circle";
+            let nodeShape = "Circle";
+            if (this.controlType == "Sort") {
+                nodeShape = "Square"
+            }
 
             let graphDrawer = new GraphDrawer(c, {
                 nodeShape: nodeShape,
                 controlType: this.controlType,
                 operationMode: "Interactive",
                 
-                quicksort: {
+                sort: {
+                    sortType: this.sortType,
                     bsf: 2.75,
                     pivotColor: "#add8e6",
                     selectedColor: "red",
