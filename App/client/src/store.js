@@ -25,6 +25,8 @@ export default new Vuex.Store({
 		},
 		setCourseList(state, data) {
 			if (data.length === 0) return;
+			console.log("Set course list");
+			console.log(data);
 			state.selectedCourse = data[0].value;
 			state.courseList = data;
 		},

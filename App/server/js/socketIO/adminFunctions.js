@@ -8,9 +8,7 @@ const question = require("../session.js").Question;
 const answer = require("../session.js").Answer;
 
 let courseListRequestHandler = function(socket, db, user, sessions) {
-	let feideId = "228288" // TODO remove me 
-	if (user.feide) feideId = user.feide.idNumber; // TODO change me
-	console.log(feideId);
+	if (user.feide) feideId = user.feide.idNumber;
 	dbFunctions.get.userCourses(db, feideId).then((courses) => {
 		let result = [];
 		for (let i = 0; i < courses.length; i++) {
