@@ -54,7 +54,7 @@ export default class GraphDrawer {
 			Visualize: Let's the user navigate between steps and
 				see the progress of a algorithm.
 		*/
-	   this.operatingMode = config.operatingMode || "Interactive";
+		this.operatingMode = config.operatingMode || "Interactive";
 	}
 
 	// TODO: Remove/move this
@@ -91,7 +91,7 @@ export default class GraphDrawer {
 		this.nodes = [];
 		// Edges between nodes {n1, n2}.
 		this.edges = [];
-		
+
 		// Flag which determines if the graph state should
 		// be redrawn. Default value is true, so the UI
 		// is rendered.
@@ -116,14 +116,14 @@ export default class GraphDrawer {
 		this.drawContext = this.drawBuffer.getContext("2d");
 
 		this.canvas.addEventListener("mousedown", (function(e) {
-			let consumed = this.controllers[this.controlType].mouseDownHandler(e);
-			if (consumed) return;
+				let consumed = this.controllers[this.controlType].mouseDownHandler(e);
+				if (consumed) return;
 
-			// Gesture detection
-			this.detectPanGesture(e);
-			// TODO: Figure out how to detect two-finger zooming
-			// TODO: Let desktop users zoom
-		}).bind(this));
+				// Gesture detection
+				this.detectPanGesture(e);
+				// TODO: Figure out how to detect two-finger zooming
+				// TODO: Let desktop users zoom
+			}).bind(this));
 
 		// Updates the GraphDrawer every <MS_PER_FRAME> milliseconds.
 		this.intervalId = setInterval((function() {
@@ -153,18 +153,35 @@ export default class GraphDrawer {
 	*/
 	switchBuffers() {
 		let camera = this.camera.getFrustumFront();
-		this.canvasContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
-		
+		this.canvasContext.clearRect(
+			0,
+			0,
+			this.canvas.width,
+			this.canvas.height
+		);
+
 		this.canvasContext.drawImage(
-			this.drawBuffer, 
-			camera.Left, camera.Top, camera.Width, camera.Height, 
-			0, 0, this.canvas.width, this.canvas.height
+			this.drawBuffer,
+			camera.Left,
+			camera.Top,
+			camera.Width,
+			camera.Height,
+			0,
+			0,
+			this.canvas.width,
+			this.canvas.height
 		);
 
 		this.canvasContext.drawImage(
 			this.staticBuffer,
-			0, 0, this.staticBuffer.width, this.staticBuffer.height,
-			0, 0, this.canvas.width, this.canvas.height
+			0,
+			0,
+			this.staticBuffer.width,
+			this.staticBuffer.height,
+			0,
+			0,
+			this.canvas.width,
+			this.canvas.height
 		);
 	}
 
@@ -172,7 +189,12 @@ export default class GraphDrawer {
 		Draws the nodes and edges to the buffer.
 	*/
 	draw() {
-		this.drawContext.clearRect(0, 0, this.drawBuffer.width, this.drawBuffer.height);
+		this.drawContext.clearRect(
+			0,
+			0,
+			this.drawBuffer.width,
+			this.drawBuffer.height
+		);
 
 		// World border
 		this.drawContext.beginPath();
@@ -208,32 +230,37 @@ export default class GraphDrawer {
 			this.drawContext.stroke();
 			this.drawContext.closePath();
 		}
-	
 		// Nodes.
 		for (let i = 0; i < this.nodes.length; i++) {
 			if (this.camera.cull(this.nodes[i], true)) continue;
-			
 			this.drawContext.beginPath();
 			if (this.nodeShape == "Circle") {
-				this.drawContext.arc(this.nodes[i].x, this.nodes[i].y, this.R, 0, 2 * Math.PI);
+				this.drawContext.arc(
+					this.nodes[i].x,
+					this.nodes[i].y,
+					this.R,
+					0,
+					2 * Math.PI
+				);
 			} else if (this.nodeShape == "Square") {
-				this.drawContext.rect(this.nodes[i].x, this.nodes[i].y, 
-					this.nodes[i].r, this.nodes[i].r);
+				this.drawContext.rect(
+					this.nodes[i].x,
+					this.nodes[i].y,
+					this.nodes[i].r,
+					this.nodes[i].r
+				);
 			}
 			if (this.nodes[i].fillColor == undefined)
 				this.drawContext.fillStyle = "white";
-			else
-				this.drawContext.fillStyle = this.nodes[i].fillColor;
+			else this.drawContext.fillStyle = this.nodes[i].fillColor;
 
 			if (this.nodes[i].strokeColor == undefined)
 				this.drawContext.strokeStyle = "black";
-			else
-				this.drawContext.strokeStyle = this.nodes[i].strokeColor;
+			else this.drawContext.strokeStyle = this.nodes[i].strokeColor;
 
 			this.drawContext.fill();
 			this.drawContext.stroke();
 			this.drawContext.closePath();
-			
 			this.drawContext.strokeStyle = "black";
 			// Text
 			this.drawContext.fillStyle = "black";
@@ -246,12 +273,13 @@ export default class GraphDrawer {
 			let oy = this.nodeShape == "Circle" ? 0 : this.nodes[i].r / 2;
 			this.drawContext.fillText(
 				this.nodes[i].v,
-				this.nodes[i].x - (textWidth / 2) + ox,
-				this.nodes[i].y + (this.fontHeight / 2) + oy
+				this.nodes[i].x - textWidth / 2 + ox,
+				this.nodes[i].y + this.fontHeight / 2 + oy
 			);
 		}
 
-		for (let i = 0; i < this.nodes.length; i++) this.nodes[i].culled = undefined;
+		for (let i = 0; i < this.nodes.length; i++)
+			this.nodes[i].culled = undefined;
 	}
 
 	/*
@@ -263,7 +291,7 @@ export default class GraphDrawer {
 			// before a draw happens.
 			if (this.controllers[this.controlType].dirtyUpdate != undefined) {
 				this.controllers[this.controlType].dirtyUpdate();
-			}   
+			}
 
 			this.draw();
 			this.switchBuffers();
@@ -278,7 +306,6 @@ export default class GraphDrawer {
 		// This is the only way to open a keyboard in mobile browsers.
 		let new_value = prompt("Enter new value:", node.v);
 		if (new_value == undefined) return;
-	
 		node.v = new_value;
 		this.dirty = true;
 	}
@@ -289,7 +316,6 @@ export default class GraphDrawer {
 	*/
 	detectPanGesture(e) {
 		let currentPosition = this.camera.project(e.offsetX, e.offsetY);
-		
 		// How much the camera moves relative to how far the mouse is dragged.
 		const velocityFactor = 0.85;
 		// How much the mouse must be moved before panning starts.
@@ -302,14 +328,22 @@ export default class GraphDrawer {
 			// Calculates the difference in position between last frame and this frame.
 			let dX = velocityFactor * (newPosition.x - currentPosition.x);
 			let dY = velocityFactor * (newPosition.y - currentPosition.y);
-			if (dX > threshold || dX < threshold) 
+			if (dX > threshold || dX < threshold)
 				// The camera won't put it's center close enough to the world edge,
 				// to render anything outside the world.
-				this.camera.translateX(-dX, frustum.Width / 2, this.drawBuffer.width - frustum.Width / 2);
-			if (dY > threshold || dY < threshold) 
-				this.camera.translateY(-dY, frustum.Height / 2, this.drawBuffer.height - frustum.Height / 2);
-			
-				this.dirty = true;
+				this.camera.translateX(
+					-dX,
+					frustum.Width / 2,
+					this.drawBuffer.width - frustum.Width / 2
+				);
+			if (dY > threshold || dY < threshold)
+				this.camera.translateY(
+					-dY,
+					frustum.Height / 2,
+					this.drawBuffer.height - frustum.Height / 2
+				);
+
+			this.dirty = true;
 			currentPosition = newPosition;
 		}.bind(this);
 
@@ -322,7 +356,7 @@ export default class GraphDrawer {
 		this.canvas.addEventListener("mousemove", panMoveHandler);
 		this.canvas.addEventListener("mouseup", panUpHandler);
 		this.canvas.addEventListener("mouseleave", panUpHandler);
-		}
+	}
 
 	/*
 		Returns {index, node} of the clicked node,
@@ -340,17 +374,17 @@ export default class GraphDrawer {
 	getNodeAtPoint(x, y) {
 		for (let i = 0; i < this.nodes.length; i++) {
 			if (this.isPointInNode(x, y, this.nodes[i].x, this.nodes[i].y)) {
-				return { 
+				return {
 					index: i,
 					node: this.nodes[i]
 				};
 			}
 		}
-	
+
 		return {
 			index: undefined,
 			node: undefined
-		}
+		};
 	}
 
 	/*
@@ -361,7 +395,13 @@ export default class GraphDrawer {
 			return this.isPointInCircle(x, y, nx, ny, this.R);
 		}
 		if (this.nodeShape == "Square") {
-			return this.isPointInSquare(x, y, nx, ny, this.R * this.SQUARE_FACTOR);
+			return this.isPointInSquare(
+				x,
+				y,
+				nx,
+				ny,
+				this.R * this.SQUARE_FACTOR
+			);
 		}
 	}
 
