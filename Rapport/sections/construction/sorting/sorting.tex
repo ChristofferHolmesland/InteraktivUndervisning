@@ -1,6 +1,6 @@
 \subsection{Sorting}
 Sorting algorithms are used to reorder elements in a datastructure, often arrays or lists. The elements are ordered by a rule depending on what type of element the datastructure contains. Numbers are often ordered from the lowest number to the largest. Characters are often ordered by transforming the character into a number, where "a" is often defined as smaller than "b".
-\par
+\\[11pt]
 To sort the elements an algorithm must be used. They have different performance and memory usage so it's important to be able to pick the best fitting algorithm depending on the situation. This project contains implementations of insertion sort, shell sort, merge sort and quick sort which are common algorithms. They are written to work on arrays containing any element which can be compared using the >, < and == operators in JavaScript. Instead of returning the sorted version of an array, they return functions which can be called to navigate between the steps of the algorithm. When checking if an student's answer is correct it's pointless to check if they managed to sort the array, because they might not have sorted the array according to the rules of the algorithm. The steps are therefore returned, so that together with the GraphDrawer, the students can graphically perform the sort. It is then possible to compare each step with what the student did and see if they know how the algorithm works.
 
 \input{sections/construction/sorting/insertionSort.tex}
