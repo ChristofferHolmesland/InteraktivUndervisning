@@ -55,7 +55,7 @@ class User {
                         user = undefined;
                         return;
                     }
-                    user = new User(2, row.name, row.sessionId, {
+                    user = new User(row.admin, row.name, row.sessionId, {
                         accessToken: row.accessToken, 
                         idNumber: row.id,
                         userId: ""

@@ -31,7 +31,7 @@ const get = {
         });
     },
     userInformationBySessionToken: function (db, sessionToken) {
-        let statement = `SELECT id, accessToken, name, sessionId
+        let statement = `SELECT id, accessToken, name, sessionId, admin
                         FROM Feide
                         WHERE sessionId = '${sessionToken}'
                         `;
@@ -177,7 +177,7 @@ const get = {
     questionTypes: function(db) {
         return new Promise((resolve, reject) => {
             let statement = `SELECT * FROM Type;`;
-            db.all(statement, (err,rows) => {
+            db.all(statement, (err, rows) => {
                 if (err) reject(customReject(err, "questionTypes"));
                 resolve(rows);
             });

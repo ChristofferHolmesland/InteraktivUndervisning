@@ -35,8 +35,7 @@ export default {
 			this.$router.push("/401");
 		},
 		deleteCookie(cookieId) {
-			document.cookie =
-				cookieId + "=;expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+			document.cookie = "sessionId=; Max-Age=0;";
 		},
 		clientLoginInfoResponse(userData) {
 			this.$store.commit("userChange", userData);
@@ -47,6 +46,9 @@ export default {
 		},
 		courseListResponse(courseList) {
 			this.$store.commit("setCourseList", courseList);
+		},
+		serverRestarted() {
+			location.reload(true);
 		}
 	}
 };

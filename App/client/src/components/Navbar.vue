@@ -11,11 +11,11 @@
 
 					<b-nav-item center @click="adminRedirect" v-if="getUser.userRights == 4 && getUser.loggedIn">{{getLocale.admin}}</b-nav-item>
 
-					<b-nav-item center @click="sessionRedirect" v-if="getUser.userRights == 4 && getUser.loggedIn">{{getLocale.startSession}}</b-nav-item>
+					<b-nav-item center @click="sessionRedirect" v-if="getUser.userRights >= 3 && getUser.loggedIn">{{getLocale.startSession}}</b-nav-item>
 
-					<b-nav-item center @click="questionsRedirect" v-if="getUser.userRights == 4 && getUser.loggedIn">{{getLocale.questions}}</b-nav-item>
+					<b-nav-item center @click="questionsRedirect" v-if="getUser.userRights >= 3 && getUser.loggedIn">{{getLocale.questions}}</b-nav-item>
 
-					<b-nav-item center @click="sessionsRedirect" v-if="getUser.userRights == 4 && getUser.loggedIn">{{getLocale.sessions}}</b-nav-item>
+					<b-nav-item center @click="sessionsRedirect" v-if="getUser.userRights >= 3 && getUser.loggedIn">{{getLocale.sessions}}</b-nav-item>
 				</b-navbar-nav>
 
 				<!-- Right aligned nav items -->

@@ -16,6 +16,8 @@ const env = require('./js/environment.js');
 if(!env.load()) { return; }
 if(!env.validate()) { return; }
 
+const admins = process.env.ADMINS.split(",");
+
 const app = express();
 const port = process.env.PORT;
 
@@ -77,7 +79,6 @@ require('./js/database/database').getDB().then(function(value) {
 app.post('/login/feide', passport.authenticate('passport-openid-connect', {"successReturnToOrRedirect": "/client"}))
 app.get('/login/callback/feide', passport.authenticate('passport-openid-connect', {callback: true}), function(req, res) {
     // Reads information from the scope request to feide
-    console.log(req.user);
     let accessToken = req.user.token.access_token;
     let userName = req.user.data.name;
     let userId = req.user.token.id_token;
@@ -86,17 +87,18 @@ app.get('/login/callback/feide', passport.authenticate('passport-openid-connect'
     temp = temp.split("@");
     temp = temp[0].split(":");
     let idNumber = temp[1];
-    let userRights = 2;
+	let admin = 2;
+	if (admins.indexOf(idNumber) > -1) admin = 4;
     
     dbFunctions.get.userRightByFeideId(db, idNumber).then((rows) => {
         for (let i = 0; i < rows.length; i++) {
-            if (rows[i].level > userRights) userRights = rows[i].level;
-            if (userRights === 4) break;
+            if (rows[i].level > admin) admin = rows[i].level;
+            if (admin === 4) break;
         }
         
         // Makes a new active user
-        let tempKey = user.generateSessionId();
-        let tempUser = new user(userRights, userName, tempKey, {
+        let sessionId = user.generateSessionId();
+        let tempUser = new user(admin, userName, sessionId, {
             "accessToken": accessToken,
             "userId": userId,
             "idNumber": idNumber
@@ -104,7 +106,7 @@ app.get('/login/callback/feide', passport.authenticate('passport-openid-connect'
 
         dbFunctions.get.userIdByFeideId(db, idNumber).then((id) => {
             if (id === undefined) {
-                dbFunctions.insert.feide(db, idNumber, accessToken, userName, tempKey).then(() => {
+                dbFunctions.insert.feide(db, idNumber, accessToken, userName, sessionId, admin).then(() => {
                     dbFunctions.insert.feideUser(db, userId, idNumber).catch((err) => {
                         console.log(err);
                     });
@@ -112,15 +114,15 @@ app.get('/login/callback/feide', passport.authenticate('passport-openid-connect'
                     console.log(err);
                 });
             }else {
-                dbFunctions.update.feideSessionId(db, idNumber, tempKey);
+				dbFunctions.update.feideSessionId(db, idNumber, sessionId);
             }
-            users.set(tempKey, tempUser);
+            users.set(sessionId, tempUser);
 
             // Stores a new cooikie with a random generated userid
             let cookieOptions = {
                 maxAge: 1000 * 60 * 60 * 24, // cookie expires after 1 day
             }
-            res.cookie("sessionId", tempKey, cookieOptions).redirect("/client");
+            res.cookie("sessionId", sessionId, cookieOptions).redirect("/client");
         }).catch((err) => {
             console.log(err)
         });
