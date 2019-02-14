@@ -17,7 +17,7 @@ if(!env.load()) { return; }
 if(!env.validate()) { return; }
 
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 8081;
 
 // Setup dataporten
 var oic = new OICStrategy({

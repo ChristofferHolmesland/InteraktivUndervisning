@@ -1,11 +1,8 @@
 /*
     Adds graph drawing functionality to a canvas object.
 
-    TODO: 
-        Figure out the best way to let both desktop and mobile 
-        users interact with the camera.
-
-        Buttons next to the nodes to add connected nodes
+    // TODO: Support dynamic canvas size
+    // TODO: Node z index
 
     The GraphDrawer works in three different coordinate spaces:
         World is where the nodes and edges are defined. This should generally
@@ -15,56 +12,85 @@
             as the canvas space size, because this makes zooming functionality
             a lot simpler.
         Canvas space is where the user interacts with the world.
+
+
+    The GraphDrawer uses three canvases to render a graph:
+        Offscreen: A drawing canvas (drawBuffer, drawContext), 
+            where nodes and edges are drawn in world coordinates.
+            Controllers shouldn't draw directly to this canvas.
+        Offscreen: A UI canvas (staticBuffer, staticContext), 
+            where the user interface is drawn in canvas coordinates.
+            This can be used by controllers to draw, e.g. buttons.
+        Onscreen: This canvas is the combination of drawBuffer and 
+            staticBuffer drawn on top of eachother. It is displayed
+            to the user.
+        
 */
 class GraphDrawer {
-    /*
-        Private and public class fields are experimental and
-        shouldn't be used.
-    */
-    constructor(canvas) {
+    _config(config) {
+        /*
+            What shape is drawn for the nodes
+            Possible values: Circle, Square
+        */
+        this.nodeShape = config.nodeShape || "Square";
+        /*
+            Determines how the user can interact with the canvas.
+            Graph0 = Buttons are shown.
+            Graph1 = Simple mode 
+            Quicksort = Quicksort
+        */
+        this.controlType = config.controlType || "Quicksort";
+        /*
+            This can be used in a controller to decide how
+            the user can interact with the world.
+
+            Interactive: Let's the user use a given controller to
+                manipulate the world.
+            Visualize: Let's the user navigate between steps and
+                see the progress of a algorithm.
+        */
+       this.operatingMode = config.operatingMode || "Interactive";
+    }
+
+    // TODO: Remove/move this
+    export() {
+        return this.controllers[this.controlType].export();
+    }
+
+    constructor(canvas, config) {
         // Radius of nodes.
         this.R = 25;
+        // Relative size of square nodes compared to circle nodes.
+        this.SQUARE_FACTOR = 1.5;
         // How often the canvas should be updated.
         this.FPS = 60;
         // Milliseconds between each update.
         this.MS_PER_FRAME = 1000 / this.FPS;
-        // Size of the font in px. TODO: Make it dynamic
+        // Device type, "Desktop" or "Mobile"
+        this.DEVICE = "Mobile";
+        // Size of the font in px.
         this.fontHeight = 10;
-        /*
-            Determines how the user can interact with the canvas.
-            0 = Buttons are shown.
-            1 = Simple mode 
-        */
-        this.controlType = 1;
 
-        // Nodes in the graph {x, y, r, v, culled (can be undefined)}.
+        this._config(config);
+
+        /*
+            Nodes in the graph 
+            {
+                x, y, r, v, 
+                selected (can be undefined), 
+                culled (can be undefined),
+                fillColor (undefined => white),
+                strokeColor (undefined => black)
+            }.
+        */
         this.nodes = [];
         // Edges between nodes {n1, n2}.
         this.edges = [];
-        
-        // Current interaction state.
-        this.currentState = "Add";
         
         // Flag which determines if the graph state should
         // be redrawn. Default value is true, so the UI
         // is rendered.
         this.dirty = true;
-
-        // Every interaction state and event handler.
-        this.stateHandlers = {
-            "Add": this.addNode,
-            "Remove": this.removeNode,
-            "Join": this.joinNode,
-            "Move": this.moveNode,
-            "Edit": this.editNode
-        }
-
-        // Binds the "this" context to the GraphDrawer object.
-        for (let key in this.stateHandlers) {
-            // Doesn't bind inherited properties.
-            if (!this.stateHandlers.hasOwnProperty(key)) continue;
-            this.stateHandlers[key] = this.stateHandlers[key].bind(this);
-        }
 
         // Canvas used to display graph.
         this.canvas = canvas;
@@ -85,19 +111,7 @@ class GraphDrawer {
         this.drawContext = this.drawBuffer.getContext("2d");
 
         this.canvas.addEventListener("mousedown", (function(e) {
-            let consumed;
-            // UI 
-            if (this.controlType == 0) consumed = this.detectUIInput(e);
-            if (consumed) return;
-
-            // Event handler for the current state
-            if (this.controlType == 0) {
-                consumed = this.stateHandlers[this.currentState](e);
-            }
-            else if (this.controlType == 1) {
-                consumed = this.simpleStateHandler(e);
-                this.dirty = true;
-            }
+            let consumed = this.controllers[this.controlType].mouseDownHandler(e);
             if (consumed) return;
 
             // Gesture detection
@@ -111,130 +125,20 @@ class GraphDrawer {
             this.update.call(this);
         }).bind(this), this.MS_PER_FRAME);
 
-        // The buttons which the user may click on to select interaction state
-        this.buttons = ["Add", "Remove", "Move", "Join", "Edit"];
+        this.camera = new Camera(this);
 
-        this.camera = {
-            canvas: canvas,
-            zoomLevel: 1,
-            // The camera starts centered on the world.
-            centerX: this.drawBuffer.width / 2,
-            centerY: this.drawBuffer.height / 2,
-            // This determines the dimensions of the camera view.
-            // For simplicity it should be the same as the canvas
-            // where the world is rendered.
-            viewportWidth: canvas.width,
-            viewportHeight: canvas.height,
-            /* 
-                Determines if an object is inside the camera frustum.
-                Returns true if the object was culled (removed).
-
-                Culling rule:
-                    Cull edge if n1 and n2 is culled.
-                    Cull node if a square with side length R centered at (node.x, node.y)
-                    doesn't overlap the viewport.
-            */
-            cull: function(object, isNode) {
-                if (isNode) {
-                    return this._cullNode(object);
-                }
-
-                this._cullNode(object.n1);
-                this._cullNode(object.n2);
-                return object.n1.culled && object.n2.culled;
-            },
-            /*
-                Determines if a given node is culled.
-            */
-            _cullNode : function(node) {
-                if (node.culled != undefined) return node.culled;
-                
-                // RectA and RectB objects can be removed if they're too slow.
-                let RectA = this.getFrustumFront();
-                let RectB = {};
-                RectB.Left = node.x - (node.r / 2);
-                RectB.Right = node.x + (node.r / 2);
-                RectB.Top = node.y - (node.r / 2);
-                RectB.Bottom = node.y + (node.r / 2);
-
-                // ref: (modified for our coordinate system)
-                // https://stackoverflow.com/questions/306316/determine-if-two-rectangles-overlap-each-other
-                node.culled = !(RectA.Left < RectB.Right && RectA.Right > RectB.Left &&
-                    RectA.Top < RectB.Bottom && RectA.Bottom > RectB.Top);
-                return node.culled;
-            },
-            /*
-                Calculates and returns a rectangle representing the front plane
-                off the camera frustum. Back plane isn't needed because
-                front dimensions == back dimensions, and we're working in 2D space.
-            */
-            getFrustumFront: function() {
-                let RectA = {};
-                RectA.Left = this.centerX - this.zoomLevel * (this.viewportWidth / 2);
-                RectA.Right = this.centerX + this.zoomLevel * (this.viewportWidth / 2);
-                RectA.Top = this.centerY - this.zoomLevel * (this.viewportHeight / 2);
-                RectA.Bottom = this.centerY + this.zoomLevel * (this.viewportHeight / 2);
-                RectA.Width = RectA.Right - RectA.Left;
-                RectA.Height = RectA.Bottom - RectA.Top;
-                return RectA;
-            },
-            /*
-                Converts canvas coordinates to world coordinates.
-            */
-            project: function(x, y) {
-                let frustum = this.getFrustumFront();
-                let worldX = (x / this.canvas.width) * frustum.Width + frustum.Left;
-                let worldY = (y / this.canvas.height) * frustum.Height + frustum.Top;
-                return { x: worldX, y: worldY };
-            },
-            /*
-                Converts world coordinates to canvas coordinates
-            */
-            unproject: function(x, y) {
-                let frustum = this.getFrustumFront();
-                
-                let cameraSpaceX = x - frustum.Left;
-                let cameraSpaceY = y - frustum.Top;
-                let canvasX = canvas.width * (cameraSpaceX / frustum.Width);
-                let canvasY = canvas.height * (cameraSpaceY / frustum.Height);
-                
-                return {x: canvasX, y: canvasY};
-            },
-            /*
-                Changes which x coordinate the camera looks at.
-                Bound in range (0, drawBuffer width).
-            */
-            translateX: function(x, min, max) {
-                this.centerX += x;
-                if (this.centerX < min) this.centerX = min;
-                else if (this.centerX > max) this.centerX = max;
-            },
-            /*
-                Changes which y coordinate the camera looks at.
-                Bound in range (0, drawBuffer height).
-            */
-           translateY: function(y, min, max) {
-                this.centerY += y;
-                if (this.centerY < min) this.centerY = min;
-                else if (this.centerY > max) this.centerY = max;
-           }
-        }
-
-        if (this.controlType == 0) this.drawStatic();
+        this.controllers = {
+            Graph0: new Graph0(this),
+            Graph1: new Graph1(this),
+            Quicksort: new Quicksort(this, config.quicksort)
+        };
+        if (this.controlType == "Graph0") this.controllers["Graph0"].drawStatic();
     }
 
     // TODO: Remove this, and implement a better interface
     set zoomLevel(newZoom) {
         this.camera.zoomLevel = newZoom;
         this.dirty = true;
-    }
-
-    /*
-        Used to change which interaction state the GraphDrawer is using.
-    */
-    set state(newState) {
-        if (newState == this.currentState) return;
-        this.currentState = newState;
     }
 
     /*
@@ -279,9 +183,23 @@ class GraphDrawer {
         for (let i = 0; i < this.edges.length; i++) {
             if (this.camera.cull(this.edges[i], false)) continue;
 
+            let cx1 = this.edges[i].n1.x;
+            let cy1 = this.edges[i].n1.y;
+            let cx2 = this.edges[i].n2.x;
+            let cy2 = this.edges[i].n2.y;
+
+            if (this.nodeShape == "Square") {
+                let n1 = this.edges[i].n1;
+                let n2 = this.edges[i].n2;
+                cx1 += n1.r / 2;
+                cy1 += n1.r / 2;
+                cx2 += n2.r / 2;
+                cy2 += n2.r / 2;
+            }
+
             this.drawContext.beginPath();
-            this.drawContext.moveTo(this.edges[i].n1.x, this.edges[i].n1.y);
-            this.drawContext.lineTo(this.edges[i].n2.x, this.edges[i].n2.y);
+            this.drawContext.moveTo(cx1, cy1);
+            this.drawContext.lineTo(cx2, cy2);
             this.drawContext.stroke();
             this.drawContext.closePath();
         }
@@ -289,14 +207,29 @@ class GraphDrawer {
         // Nodes.
         for (let i = 0; i < this.nodes.length; i++) {
             if (this.camera.cull(this.nodes[i], true)) continue;
-            // Circle
+            
             this.drawContext.beginPath();
-            this.drawContext.arc(this.nodes[i].x, this.nodes[i].y, this.R, 0, 2 * Math.PI);
-            this.drawContext.fillStyle = "white";
+            if (this.nodeShape == "Circle") {
+                this.drawContext.arc(this.nodes[i].x, this.nodes[i].y, this.R, 0, 2 * Math.PI);
+            } else if (this.nodeShape == "Square") {
+                this.drawContext.rect(this.nodes[i].x, this.nodes[i].y, 
+                    this.nodes[i].r, this.nodes[i].r);
+            }
+            if (this.nodes[i].fillColor == undefined)
+                this.drawContext.fillStyle = "white";
+            else
+                this.drawContext.fillStyle = this.nodes[i].fillColor;
+
+            if (this.nodes[i].strokeColor == undefined)
+                this.drawContext.strokeStyle = "black";
+            else
+                this.drawContext.strokeStyle = this.nodes[i].strokeColor;
+
             this.drawContext.fill();
             this.drawContext.stroke();
             this.drawContext.closePath();
-    
+            
+            this.drawContext.strokeStyle = "black";
             // Text
             this.drawContext.fillStyle = "black";
             /*
@@ -304,82 +237,16 @@ class GraphDrawer {
                 https://developer.mozilla.org/en-US/docs/Web/API/TextMetrics
             */
             let textWidth = this.drawContext.measureText(this.nodes[i].v).width;
-            this.drawContext.fillText(this.nodes[i].v,
-                this.nodes[i].x - (textWidth / 2),
-                this.nodes[i].y + (this.fontHeight / 2));
+            let ox = this.nodeShape == "Circle" ? 0 : this.nodes[i].r / 2;
+            let oy = this.nodeShape == "Circle" ? 0 : this.nodes[i].r / 2;
+            this.drawContext.fillText(
+                this.nodes[i].v,
+                this.nodes[i].x - (textWidth / 2) + ox,
+                this.nodes[i].y + (this.fontHeight / 2) + oy
+            );
         }
 
         for (let i = 0; i < this.nodes.length; i++) this.nodes[i].culled = undefined;
-    }
-
-    /*
-        Draws the UI to the staticBuffer.
-    */
-    drawStatic() {
-        this.staticContext.clearRect(0, 0, this.staticBuffer.width, this.staticBuffer.height);
-
-        let buttonWidth = this.staticBuffer.width / this.buttons.length;
-        let buttonHeight = this.staticBuffer.height / 10;
-
-        this.staticContext.beginPath();
-        for (let i = 0; i < this.buttons.length; i++) {
-            this.staticContext.fillStyle = "white";
-            this.staticContext.fillRect(
-                i * buttonWidth,
-                this.staticBuffer.height - buttonHeight,
-                buttonWidth,
-                buttonHeight
-            );
-            this.staticContext.rect(
-                i * buttonWidth,
-                this.staticBuffer.height - buttonHeight,
-                buttonWidth,
-                buttonHeight
-            );
-            this.staticContext.fillStyle = "black";
-            let textWidth = this.staticContext.measureText(this.buttons[i]).width;
-            this.staticContext.fillText(
-                this.buttons[i],
-                i * buttonWidth - (textWidth / 2) + buttonWidth / 2,
-                this.canvas.height - buttonHeight / 2 + (this.fontHeight / 2));
-        }
-        this.staticContext.stroke();
-        this.staticContext.closePath();
-    }
-
-    drawUIPanel(node) {
-        this.staticContext.clearRect(0, 0, this.staticBuffer.width, this.staticBuffer.height);
-        
-        let nodeOnCanvas = this.camera.unproject(node.x, node.y);
-        let borderX = nodeOnCanvas.x + node.r;
-        let borderY = nodeOnCanvas.y - (1.5 * node.r);
-        // Divide the panel into a 2x3 grid.
-        let borderWidth = node.r * 4;
-        let borderHeight = node.r * 4;
-        let rowHeight = borderHeight / 3;
-        let columnWidth = borderWidth / 2;
-
-        // Border
-        this.staticContext.rect(borderX, borderY, borderWidth, borderHeight);
-        this.staticContext.stroke();
-        // Value input
-        this.staticContext.fillStyle = "black";
-        let textWidth = this.staticContext.measureText(node.v).width;
-        this.staticContext.fillText(
-            node.v,
-            borderX + borderWidth / 2 - textWidth / 2,
-            borderY + rowHeight / 2 + this.fontHeight
-        );
-
-        // Add button
-
-        // Remove button
-
-        // Join button
-
-        // Move button
-
-        // Return location of buttons
     }
 
     /*
@@ -387,137 +254,16 @@ class GraphDrawer {
     */
     update() {
         if (this.dirty) {
+            // Controllers can implement the dirtyUpdate function to be notified
+            // before a draw happens.
+            if (this.controllers[this.controlType].dirtyUpdate != undefined) {
+                this.controllers[this.controlType].dirtyUpdate();
+            }   
+
             this.draw();
             this.switchBuffers();
             this.dirty = false;
         }
-    }
-
-    simpleStateHandler(e) {
-        if (this.nodes.length == 0) {
-            return this.addNode(e);
-        }
-
-        let node = this.getNodeAtCursor(e).node;
-        if (node == undefined) {
-            this.showUIPanel = false;
-            return false;
-        }
-
-        this.drawUIPanel(node);
-        this.showUIPanel = true;
-
-
-
-        return true;
-    }
-
-    /*
-        Creates a node and adds it to the nodes list.
-    */
-    addNode(e) {
-        let p = this.camera.project(e.offsetX, e.offsetY);
-
-        let node = {
-            x: p.x,
-            y: p.y,
-            r: this.R,
-            v: 0
-        }
-
-        //this._editNode(node);
-
-        this.nodes.push(node)
-        this.dirty = true;
-        return true;
-    }
-
-    /*
-        Removes the clicked node.
-    */
-    removeNode(e) {
-        let p = this.camera.project(e.offsetX, e.offsetY);
-
-        // Searches for the clicked node.
-        for (let i = 0; i < this.nodes.length; i++) {
-            if (this.isPointInNode(p.x, p.y, this.nodes[i].x, this.nodes[i].y)) {
-                // Checks if the node is connected to anything with edges.
-                for (let j = 0; j < this.edges.length; j++) {
-                    // Removes the edges.
-                    if (this.edges[j].n1 == this.nodes[i] || this.edges[j].n2 == this.nodes[i]) {
-                        this.edges.splice(j, 1);
-                        j--;
-                    }
-                }
-    
-                this.nodes.splice(i, 1);
-                this.dirty = true;
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /*
-        Creates an edge between two nodes.
-    */
-    joinNode(e) {
-        let node = this.getNodeAtCursor(e).node;
-        if (node == undefined) return false;
-    
-        let handler = function(newE) {
-            let node2 = this.getNodeAtCursor(newE).node;
-    
-            if (node2 != undefined) {
-                if (node != node2) {
-                    this.edges.push({
-                        n1: node,
-                        n2: node2
-                    });
-    
-                    this.dirty = true;
-                }
-            }
-    
-            this.canvas.removeEventListener("mouseup", handler);
-        }.bind(this);
-        this.canvas.addEventListener("mouseup", handler);
-        return true;
-    }
-    
-    /*
-        Lets the user drag a node around.
-    */
-    moveNode(e) {
-        let node = this.getNodeAtCursor(e).node;
-        if (node == undefined) return false;
-    
-        let moveHandler = function(newE) {
-            let p = this.camera.project(newE.offsetX, newE.offsetY);
-            node.x = p.x;
-            node.y = p.y;
-            this.dirty = true;
-        }.bind(this);
-
-        let upHandler = function(newE) {
-            this.canvas.removeEventListener("mousemove", moveHandler);
-            this.canvas.removeEventListener("mouseup", upHandler);
-        }.bind(this);
-
-        this.canvas.addEventListener("mousemove", moveHandler);
-        this.canvas.addEventListener("mouseup", upHandler);
-        return true;
-    }
-    
-    /*
-        Lets the user edit the value on a clicked node.
-    */
-    editNode(e) {
-        let node = this.getNodeAtCursor(e).node;
-        if (node == undefined) return false;
-        this._editNode(node);
-        return false;
     }
 
     /*
@@ -531,18 +277,6 @@ class GraphDrawer {
         node.v = new_value;
         this.dirty = true;
     }
-
-    /*
-        Checks if the event (click) happened on one of the buttons.
-    */
-   detectUIInput(e) {
-        if (e.offsetY < this.canvas.height * 0.9) return false;
-
-        let buttonIndex = Math.floor(e.offsetX / (this.canvas.width / this.buttons.length));
-        this.state = this.buttons[buttonIndex];
-
-        return true;
-   }
 
     /*
         Can be called to determine if the event e is the start of a panning gesture.
@@ -615,10 +349,46 @@ class GraphDrawer {
     }
 
     /*
-        Checks whether a point (x, y) is inside a circle
-        with center (nx, ny) and radius R.
+        Checks whether a point (x, y) is inside a node (nx, ny).
     */
     isPointInNode(x, y, nx, ny) {
-        return (x - nx) * (x - nx) + (y - ny) * (y - ny) <= this.R * this.R;
+        if (this.nodeShape == "Circle") {
+            return this.isPointInCircle(x, y, nx, ny, this.R);
+        }
+        if (this.nodeShape == "Square") {
+            return this.isPointInSquare(x, y, nx, ny, this.R * this.SQUARE_FACTOR);
+        }
+    }
+
+    /*
+        Checks whether a point (x, y) is inside a circle
+        with center (nx, ny) and radius r.
+    */
+    isPointInCircle(x, y, nx, ny, r) {
+        return (x - nx) * (x - nx) + (y - ny) * (y - ny) <= r * r;
+    }
+
+    /*
+        Checks whether a poin (x, y) is inside a square with radius r.
+        Top left corner of square (nx, ny).
+    */
+    isPointInSquare(x, y, nx, ny, r) {
+        if (x < nx || x > nx + r) return false;
+        if (y < ny || y > ny + r) return false;
+        return true;
+    }
+
+    // Sort the selected nodes based on x coordinate to get them in the right order
+    xSorter(n1, n2) {
+        if (n1.x < n2.x) return -1;
+        if (n1.x > n2.x) return 1;
+        return 0;
+    }
+
+    // Sort the selected nodes based on node value to get them in the right order
+    vSorter(n1, n2) {
+        if (n1.v < n2.v) return -1;
+        if (n1.v > n2.v) return 1;
+        return 0;
     }
 }
