@@ -65,6 +65,15 @@ const get = {
             });
         });
     },
+    sessionHasUserByUserId: function(db, userId) {
+        return new Promise((resolve, reject) => {
+            let statement = `SELECT * FROM User_has_Session WHERE userId = ${userId}`;
+            db.get(statement, (err, row) => {
+                if (err) reject(customReject(err, "sessionHasUserByUserId"));
+                resolve(row);
+            })
+        });
+    },
     sessionsToUser: function(db, userInfo) {
         return new Promise(async (resolve, reject) => {
             let userId = await this.userId(db, userInfo).catch((err) => {
@@ -255,6 +264,17 @@ const get = {
                 resolve(rows);
             });
         });
+    },
+    feideUsersInSession(db, sessionId) {
+        return new Promise(async (resolve, reject) => {
+            let statement = `SELECT *
+                            FROM User_has_Session
+                            WHERE userId != 1 AND sessionID = ${sessionId}`;
+            db.all(statement, (err, rows) => {
+                if (err) reject(customReject(err, "feideUsersInSession"));
+                resolve(rows);
+            });
+        })
     }
 };
 

@@ -10,8 +10,8 @@ module.exports.listen = function(server, users, db) {
         cookie: false
     });
 
+    
     setTimeout(function() {
-
         io.emit("serverRestarted");
     }, 5000);
 
@@ -32,13 +32,8 @@ module.exports.listen = function(server, users, db) {
         //------------- Common functions -------------//
         //--------------------------------------------//
 
-        socket.on("test", function() {
-            console.log("no");
-        });
-
         socket.on('disconnect', function(){
             if (user) users.delete(user.sessionId);
-            console.log(users);
         });
 
         socket.on("signOutRequest", function(){

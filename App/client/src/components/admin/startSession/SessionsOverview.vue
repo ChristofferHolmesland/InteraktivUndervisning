@@ -1,16 +1,20 @@
 <template>
-	<div class="session">
-		<SelectCourse :changeHandler="courseChanged"/>
-		<b-list-group>
-			<b-list-group-item 	v-for="session in sessionList"
-								:key="session.id">
-				{{session.name}} 	<b-button :id="session.id" 
-											@click="initializeSession($event)">
-										Start
-									</b-button>
-			</b-list-group-item>
-		</b-list-group>
-	</div>
+	<b-container class="session">
+		<b-row>
+			<b-col cols="10">
+				<SelectCourse :changeHandler="courseChanged"/>
+				<b-list-group>
+					<b-list-group-item 	v-for="session in sessionList"
+										:key="session.id">
+						{{session.name}} 	<b-button :id="session.id" 
+													@click="initializeSession($event)">
+												Start
+											</b-button>
+					</b-list-group-item>
+				</b-list-group>
+			</b-col>
+		</b-row>
+	</b-container>
 </template>
 
 <script>
