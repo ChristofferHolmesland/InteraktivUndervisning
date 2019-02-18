@@ -1,6 +1,6 @@
 <template>
     <div>
-        <canvas id="canvas" width="400" height="400">
+        <canvas id="canvas" width="600" height="600" style="background-color: #fff;">
 
         </canvas>
     </div>
@@ -28,7 +28,7 @@
         },
         watch: {
             requestAnswer: function() {
-                this.$emit("getValueResponse", graphDrawer.export());
+                this.$emit("getValueResponse", this.graphDrawer.export());
             }
         },
         mounted() {
@@ -39,7 +39,7 @@
                 nodeShape = "Square"
             }
 
-            graphDrawer = new GraphDrawer(c, {
+            this.graphDrawer = new GraphDrawer(c, {
                 nodeShape: nodeShape,
                 controlType: this.controlType,
                 operationMode: "Interactive",
