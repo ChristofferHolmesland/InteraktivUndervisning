@@ -181,7 +181,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 			console.log(err);
 			socket.emit("sessionOverviewErrorResponse")
 		});
-	})
+	});
 	
 	socket.on("startSessionWaitingRoom", function() {
 		socket.emit("startSessionWaitingRoomResponse");
@@ -202,8 +202,43 @@ module.exports.admin = function(socket, db, user, sessions) {
 	});
 
 	socket.on("forceNextQuestion", function() {
+		console.log("test");
+		let question = currentSession.session.questionList[currentSession.session.currentQuestion];
+		let answerList = [];
+		if (question.answerList) answerList = question.answerList;
+
+		let filteredAnswerList = [];
+		let correctAnswer = 0;
+		let incorrectAnswer = 0;
+		let didntKnow = 0;
+		
+		for (let i = 0; i < answerList.length; i++) {
+			let answer = answerList[i];
+			if (answer.result === 0) {
+				filteredAnswerList.push(answer)
+				incorrectAnswer++;
+			};
+			if (answer.result === -1) didntKnow++; 
+			if (answer.result === 0) correctAnswer++;
+		}
+
+		let response = {
+			question: {
+				text: question.text,
+				description: question.description,
+				object: question.object,
+				type: question.type
+			},
+			solution: question.solution,
+			answerList: filteredAnswerList,
+			correctAnswer: correctAnswer,
+			incorrectAnswer: incorrectAnswer,
+			didntKnow: didntKnow,
+			users: answerList.length
+		};
+
 		socket.to(currentSession.session.sessionCode).emit("adminForceNext");
-		socket.emit("goToQuestionResultScreen");
+		socket.emit("goToQuestionResultScreen", response);
 	});
 
 	socket.on("nextQuestionRequest", function() {
