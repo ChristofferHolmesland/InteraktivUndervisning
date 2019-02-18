@@ -31,6 +31,37 @@ class Tree {
 			console.log(this.nodes[n])
 		}
 	}
+
+	getLowestNode(node) {
+		let currentNode;
+		if (node === undefined) {
+			currentNode = this.root;
+		}else {
+			currentNode = node;
+		}
+		while (currentNode.children[0] !== undefined || currentNode.children[1] !== undefined) {
+			let leftHeight = 0;
+			let rightHeight = 0;
+			//console.log(currentNode);
+			if (currentNode.children[0] !== undefined) {
+				leftHeight = getHeight(currentNode.children[0])
+			}
+			if (currentNode.children[1] !== undefined) {
+				rightHeight = getHeight(currentNode.children[1])
+			}
+			if (leftHeight > rightHeight) {
+				currentNode = currentNode.children[0]
+			}
+			else if (rightHeight > leftHeight) {
+				currentNode = currentNode.children[1]
+			}
+			else {
+				//not sure what to do here
+				currentNode = currentNode.children[0]
+			}
+		}
+		return currentNode
+	}
 }
 
 class BinaryTreeNode {
@@ -59,8 +90,8 @@ class BinaryTreeNode {
 			console.log(parentNode);
 			this.parent = undefined;
 		}
-
 	}
+
 	/*
 	get leftChild() {
 		return this.#leftChild;
