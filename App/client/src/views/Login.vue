@@ -15,7 +15,11 @@
 			<b-row align-h="center" class="mb-2">
 				<b-col cols="12" lg="9">
 					<b-list-group style="border: 3px solid #ccc; border-radius:10px;">
-						<b-list-group-item style="background-color:#e9ecef;" class="border-0" :key="item" v-for="item in getLoginTerms"><li>{{item}}</li></b-list-group-item>
+						<ul>
+							<b-list-group-item style="background-color:#e9ecef;" class="border-0" :key="item" v-for="item in getLoginTerms">
+								<li>{{item}}</li>
+							</b-list-group-item>
+						</ul>
 					</b-list-group>
 				</b-col>
 			</b-row>

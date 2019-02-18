@@ -2,7 +2,7 @@
 	<div id="session">
 		<WaitingRoom v-if="state === 1" :sessionId="sessionId"/>
 		<Question v-if="state === 2" :sessionId="sessionId" :questionInfo="questionInfo"/>
-		<QuestionResultScreen v-if="state === 3" :sessionId="sessionId" :questionInfo="questionInfo"/>
+		<QuestionResultScreen v-if="state === 3" :sessionId="sessionId" :resultInfo="resultInfo"/>
 		<SessionOverScreen v-if="state === 4" :sessionId="sessionId"/>
 	</div>
 </template>
@@ -19,7 +19,8 @@ export default {
 	data() {
 		return {
 			state: 0,
-			questionInfo: undefined
+			questionInfo: undefined,
+			resultInfo: undefined
 		};
 	},
 	created() {
@@ -34,7 +35,8 @@ export default {
 			this.questionInfo = questionInfo;
 			this.state = 2;
 		},
-		goToQuestionResultScreen() {
+		goToQuestionResultScreen(resultInfo) {
+			this.resultInfo = resultInfo;
 			this.state = 3;
 		},
 		endSessionScreen() {
