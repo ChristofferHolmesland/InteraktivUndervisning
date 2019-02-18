@@ -1,24 +1,6 @@
 const Tree = require("./Tree.js").Tree;
 const BinaryTreeNode = require("./Tree.js").BinaryTreeNode;
 
-module.exports.checkAVLTree = function (tree) { //DOES NOT WORK DELETE LATER
-	let leftheight = 0;
-	let rightheight = 0;
-	if (tree[0].children[0] !== undefined) {
-		leftheight = getHeight(tree[0].children[0]);
-	}
-	if (tree[0].children[1] !== undefined) {
-		rightheight = getHeight(tree[0].children[1]);
-	}
-	let result = true;
-	console.log(leftheight);
-	console.log(rightheight);
-	if (Math.abs(leftheight - rightheight) > 1) {
-		result = false;
-	}
-	return result
-};
-
 function getHeight(node) {
 	let childrenHeights = [];
 	let maxHeight = 0;
@@ -37,6 +19,7 @@ function getHeight(node) {
 	return maxHeight;
 }
 
+//checks whether or not the tree is AVL balanced. It depends on the node given. If root is given the entire tree will be checked.
 function checkBalance(node) {
 	let balanced = true;
 	let leftHeight = 0;
@@ -49,7 +32,6 @@ function checkBalance(node) {
 		rightHeight = getHeight(node.children[1]);
 		balanced = checkBalance(node.children[1]);
 	}
-
 	if (balanced) {
 		if (Math.abs(leftHeight - rightHeight) > 1) {
 			balanced = false;
@@ -69,11 +51,10 @@ function getNodeHeight(node) {
 	if (node.children[1] !== undefined) {
 		rightHeight = getHeight(node.children[1]);
 	}
-	//console.log("LeftHeight: " + leftHeight);
-	//console.log("RightHeight: " + rightHeight);
 	return leftHeight-rightHeight	//the high will determine what kind of rotation needed for the AVL tree.
 }
 
+//creates a AVL tree based on given list of elements and existing tree object.
 module.exports.createAVLTreeSolution = function (addedElements,existingTreeObject) {
 	let tree;
 	let a = 0;
@@ -82,16 +63,15 @@ module.exports.createAVLTreeSolution = function (addedElements,existingTreeObjec
 		while(checkBalance(tree.root) === false) {
 			if (tree.root.children[0] !== undefined) {
 				let getLowestLeftNode = tree.getLowestNode(tree.root.children[0]);
-				checkAVLCondition(getLowestLeftNode,tree);
+				fixAVLCondition(getLowestLeftNode,tree);
 			}
 			if (tree.root.children[1] !== undefined) {
 				let getLowestRightNode = tree.getLowestNode(tree.root.children[1]);
 				console.log(getLowestRightNode);
-				checkAVLCondition(getLowestRightNode,tree);
+				fixAVLCondition(getLowestRightNode,tree);
 			}
 		}
 		console.log("Finished with the original tree");
-		tree.printTree();
 	}else { //existing tree object not given
 		let rootNode = new BinaryTreeNode(addedElements[0]);
 		tree = new Tree(rootNode);
@@ -104,12 +84,13 @@ module.exports.createAVLTreeSolution = function (addedElements,existingTreeObjec
 		node.addParent(bestParent);
 		tree.nodes.push(node);
 
-		checkAVLCondition(node,tree);
+		fixAVLCondition(node,tree);
 	}
 	return tree
-}
+};
 
-function checkAVLCondition(node,tree) {
+//finds the not that breaks the AVL condition and then rotates the tree if necessary
+function fixAVLCondition(node,tree) {
 	let respNode = getResponsibleNode(node);
 	console.log(respNode);
 	if(getNodeHeight(respNode) < -1) {
@@ -145,6 +126,7 @@ function checkAVLCondition(node,tree) {
 	}
 }
 
+//gets the node that is breaking the ACL condition
 function getResponsibleNode(node) {
 	let chosenNode = node;
 	while (Math.abs(getHeight(chosenNode.children[0]) - getHeight(chosenNode.children[1])) <= 1) {
@@ -156,11 +138,9 @@ function getResponsibleNode(node) {
 	return chosenNode
 }
 
+//rotates the tree towards the right, used when there are to many children on the left side of the subtree
 function rotationLeft(node,tree,double) {
-	console.log(node);
 	let leftChild = node.children[0];
-	console.log("Left Child");
-	console.log(leftChild);
 	let parent = node.parent;
 	//console.log(leftChild);
 	//console.log(parent);
@@ -177,8 +157,6 @@ function rotationLeft(node,tree,double) {
 		}
 	}
 	if(leftChild.children[1] !== undefined && double) {
-		console.log("Hail Mary, fin left");
-		console.log(leftChild);
 		leftChild.children[1].parent = node;
 	}
 	let subNode = leftChild.children[1];
@@ -188,6 +166,7 @@ function rotationLeft(node,tree,double) {
 	leftChild.parent = parent;
 }
 
+//rotates the tree towards the left, used when there are to many children on the right side of the subtree
 function rotationRight(node,tree,double) {
 	let rightChild = node.children[1];
 	let parent = node.parent;
@@ -205,8 +184,6 @@ function rotationRight(node,tree,double) {
 		}
 	}
 	if(rightChild.children[0] !== undefined && double) {
-		console.log("Hail Mary, fin right");
-		console.log(node);
 		rightChild.children[0].parent = node;
 	}
 	let subNode = rightChild.children[0];

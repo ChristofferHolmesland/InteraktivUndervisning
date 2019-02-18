@@ -3,14 +3,14 @@ const BinaryTreeNode = require("./Tree").BinaryTreeNode;
 
 module.exports.checkBinarySearchTreeCriteria = function (tree) {
 	//Should check that there are no duplicate values in the list!
-
+	let treeNodes = tree.nodes;
 	//Normal Tree rules
 	let checkresult = true;
-	if (tree.length === 0) {
+	if (treeNodes.length === 0) {
 		checkresult = false;
 		return checkresult;
 	}
-	for(let i=0;i<tree.length;i++) {
+	for(let i=0;i<treeNodes.length;i++) {
 		let currentNode = tree[i];
 		//Every tree node needs a parent node, exception being root node.
 		if (i > 0 && currentNode.parent === undefined) {
@@ -46,8 +46,8 @@ module.exports.checkBinarySearchTreeCriteria = function (tree) {
 //Will return true if two trees are the same and false if they are not.
 module.exports.checkStudentAnswer = function (studentTree,solutionTree) {
 	let checkresult = true;
-	if (studentTree.length === solutionTree.length) {
-		checkresult = checkNode(studentTree[0],solutionTree[0],checkresult);
+	if (studentTree.nodes.length === solutionTree.nodes.length) {
+		checkresult = checkNode(studentTree.root,solutionTree.root,checkresult);
 	}else {
 		checkresult = false;
 	}
