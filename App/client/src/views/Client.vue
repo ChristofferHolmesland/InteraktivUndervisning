@@ -7,11 +7,13 @@
 					<JoinSession/>
 				</b-col>
 				<b-col cols="12" lg="8">
-					<GraphDrawer 
-								controlType="Sort" 
-								sortType="Quicksort" 
-								operatingMode="Presentation" 
-								:steps="steps" />
+
+<!-- TODO: Remove GraphDrawer from this file. Currently used for testing -->
+    			<GraphDrawer 
+                            controlType="Sort" 
+                            sortType="Quicksort" 
+                            operatingMode="Presentation" 
+                            :steps="steps" />
 				</b-col>
 			</b-row>
 		</b-container>
