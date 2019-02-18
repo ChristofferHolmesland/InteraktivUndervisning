@@ -37,6 +37,29 @@ function getHeight(node) {
 	return maxHeight;
 }
 
+function checkBalance(node) {
+	let balanced = true;
+	let leftHeight = 0;
+	let rightHeight = 0;
+	if (node.children[0] !== undefined) {
+		leftHeight = getHeight(node.children[0]);
+		balanced = checkBalance(node.children[0]);
+	}
+	if (node.children[1] !== undefined) {
+		rightHeight = getHeight(node.children[1]);
+		balanced = checkBalance(node.children[1]);
+	}
+	//console.log("LeftHeight: " + leftHeight);
+	//console.log("RightHeight: " + rightHeight);
+	if (balanced) {
+		if (Math.abs(leftHeight - rightHeight) > 1) {
+			balanced = false;
+			return balanced
+		}
+	}
+	return balanced
+}
+
 //checks the height of the given node
 function getNodeHeight(node) {
 	let leftHeight = 0;
@@ -57,20 +80,20 @@ module.exports.createAVLTreeSolution = function (addedElements,existingTreeObjec
 	let a = 0;
 	if (existingTreeObject !== undefined) {	//still buggy not fixed
 		tree = existingTreeObject;
-		if (tree.root.children[0] !== undefined) {
-			let testLeftNode = tree.root.children[0];
-			while (testLeftNode.children[0] !== undefined) {
-				testLeftNode = testLeftNode.children[0];
+		while(checkBalance(tree.root) === false) {
+			if (tree.root.children[0] !== undefined) {
+				let getLowestLeftNode = tree.getLowestNode(tree.root.children[0]);
+				checkAVLCondition(getLowestLeftNode,tree);
 			}
-			checkAVLCondition(testLeftNode)
-		}
-		if (tree.root.children[1] !== undefined) {
-			let testRightNode = tree.root.children[1];
-			while (testRightNode.children[1] !== undefined) {
-				testRightNode = testRightNode.children[1];
+			if (tree.root.children[1] !== undefined) {
+				console.log("Hello PAPPA");
+				let getLowestRightNode = tree.getLowestNode(tree.root.children[1]);
+				console.log(getLowestRightNode);
+				checkAVLCondition(getLowestRightNode,tree);
 			}
-			checkAVLCondition(testRightNode);
 		}
+		console.log("Finished default tree balancing");
+		tree.printTree();
 	}else { //existing tree object not given	completely functional
 		let rootNode = new BinaryTreeNode(addedElements[0]);
 		tree = new Tree(rootNode);
