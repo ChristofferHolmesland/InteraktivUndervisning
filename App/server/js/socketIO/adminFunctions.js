@@ -183,10 +183,21 @@ module.exports.admin = function(socket, db, user, sessions) {
 	// e.g: {code: "DAT200", semester: "18H"}
 	socket.on("sessionOverviewRequest", function(course) {
 		dbFunctions.get.allSessionWithinCourseForSessionOverview(db, course.code, course.semester).then((sessionList) => {
-			socket.emit("sessionOverviewResponse", sessionList)
+			let response = [];
+			
+			for (let i = 0; i < sessionList.length; i++) {
+				response.push({
+					value: sessionList[i].id,
+					text: sessionList[i].name
+				});
+			}
+
+			console.log(response);
+
+			socket.emit("sessionOverviewResponse", response);
 		}).catch((err) => {
 			console.log(err);
-			socket.emit("sessionOverviewErrorResponse")
+			socket.emit("sessionOverviewErrorResponse");
 		});
 	});
 	
