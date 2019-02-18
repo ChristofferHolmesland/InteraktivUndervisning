@@ -27,7 +27,7 @@ function getHeight(node) {
 			childrenHeights.push(getHeight(node.children[i]));
 		}
 		for (let i = 0; i < childrenHeights.length; i++) {
-			console.log(childrenHeights);
+			//console.log(childrenHeights);
 			if (childrenHeights[i] > maxHeight) {
 				maxHeight = childrenHeights[i];
 			}
@@ -49,8 +49,7 @@ function checkBalance(node) {
 		rightHeight = getHeight(node.children[1]);
 		balanced = checkBalance(node.children[1]);
 	}
-	//console.log("LeftHeight: " + leftHeight);
-	//console.log("RightHeight: " + rightHeight);
+
 	if (balanced) {
 		if (Math.abs(leftHeight - rightHeight) > 1) {
 			balanced = false;
@@ -78,7 +77,7 @@ function getNodeHeight(node) {
 module.exports.createAVLTreeSolution = function (addedElements,existingTreeObject) {
 	let tree;
 	let a = 0;
-	if (existingTreeObject !== undefined) {	//still buggy not fixed
+	if (existingTreeObject !== undefined) {	//if an existing tree is given
 		tree = existingTreeObject;
 		while(checkBalance(tree.root) === false) {
 			if (tree.root.children[0] !== undefined) {
@@ -86,15 +85,14 @@ module.exports.createAVLTreeSolution = function (addedElements,existingTreeObjec
 				checkAVLCondition(getLowestLeftNode,tree);
 			}
 			if (tree.root.children[1] !== undefined) {
-				console.log("Hello PAPPA");
 				let getLowestRightNode = tree.getLowestNode(tree.root.children[1]);
 				console.log(getLowestRightNode);
 				checkAVLCondition(getLowestRightNode,tree);
 			}
 		}
-		console.log("Finished default tree balancing");
+		console.log("Finished with the original tree");
 		tree.printTree();
-	}else { //existing tree object not given	completely functional
+	}else { //existing tree object not given
 		let rootNode = new BinaryTreeNode(addedElements[0]);
 		tree = new Tree(rootNode);
 		a++;
@@ -105,33 +103,40 @@ module.exports.createAVLTreeSolution = function (addedElements,existingTreeObjec
 		//console.log(bestParent);
 		node.addParent(bestParent);
 		tree.nodes.push(node);
+
 		checkAVLCondition(node,tree);
 	}
 	return tree
-};
+}
 
 function checkAVLCondition(node,tree) {
 	let respNode = getResponsibleNode(node);
+	console.log(respNode);
 	if(getNodeHeight(respNode) < -1) {
 		if(node.value > respNode.children[1].value) {
 			//right rotation
-			rotationRight(respNode,tree);
+			console.log("Right");
+			rotationRight(respNode,tree,false);
 		}
 		else if(node.value < respNode.children[1].value) {
 			//dobbel left rotation
-			rotationLeft(respNode.children[1],tree);
-			rotationRight(respNode,tree);
+			console.log("Dobbel left");
+			rotationLeft(respNode.children[1],tree,false);
+			rotationRight(respNode,tree,true);
 		}else {
 			console.log("How could this happen!");
 		}
+
 	}else if(getNodeHeight(respNode) > 1) {
 		//left rotation
 		if(node.value < respNode.children[0].value) {
-			rotationLeft(respNode,tree);
+			console.log("Left");
+			rotationLeft(respNode,tree,false);
 		}else if(node.value > respNode.children[0].value) {
 			//dobbel right rotation
-			rotationRight(respNode.children[0],tree);
-			rotationLeft(respNode,tree);
+			console.log("Dobbel right");
+			rotationRight(respNode.children[0],tree,false);
+			rotationLeft(respNode,tree,true);
 		}else {
 			console.log("How could this happen!");
 		}
@@ -151,8 +156,11 @@ function getResponsibleNode(node) {
 	return chosenNode
 }
 
-function rotationLeft(node,tree) {
+function rotationLeft(node,tree,double) {
+	console.log(node);
 	let leftChild = node.children[0];
+	console.log("Left Child");
+	console.log(leftChild);
 	let parent = node.parent;
 	//console.log(leftChild);
 	//console.log(parent);
@@ -164,6 +172,14 @@ function rotationLeft(node,tree) {
 		}
 	}else {
 		tree.changeRoot(leftChild);
+		if (leftChild.children[1] !== undefined) {
+			leftChild.children[1].parent = node;
+		}
+	}
+	if(leftChild.children[1] !== undefined && double) {
+		console.log("Hail Mary, fin left");
+		console.log(leftChild);
+		leftChild.children[1].parent = node;
 	}
 	let subNode = leftChild.children[1];
 	leftChild.children[1] = node;
@@ -172,7 +188,7 @@ function rotationLeft(node,tree) {
 	leftChild.parent = parent;
 }
 
-function rotationRight(node,tree) {
+function rotationRight(node,tree,double) {
 	let rightChild = node.children[1];
 	let parent = node.parent;
 
@@ -183,7 +199,15 @@ function rotationRight(node,tree) {
 			parent.children[1] = rightChild;
 		}
 	}else {
-		tree.changeRoot(rightChild)
+		tree.changeRoot(rightChild);
+		if (rightChild.children[0] !== undefined) {
+			rightChild.children[0].parent = node;
+		}
+	}
+	if(rightChild.children[0] !== undefined && double) {
+		console.log("Hail Mary, fin right");
+		console.log(node);
+		rightChild.children[0].parent = node;
 	}
 	let subNode = rightChild.children[0];
 	rightChild.children[0] = node;
@@ -192,6 +216,8 @@ function rotationRight(node,tree) {
 	rightChild.parent = parent;
 }
 //copy function that is originally from BinarySearchTree.js. Delete copy once the original has been exported correctly
+//Traverses the tree looking for the best existing node to add a new given node.
+//parentNode should initially be the root node.
 function findBestParent(node,parentNode) {
 	let bestParent = parentNode;
 	if (node.value < parentNode.value) {
