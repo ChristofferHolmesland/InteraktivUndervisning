@@ -24,7 +24,9 @@
             controlType: String,
             steps: Array,
             // Quicksort or Mergesort
-            sortType: String
+            sortType: String,
+            // Interactive or Presentation
+            operatingMode: String
         },
         watch: {
             requestAnswer: function() {
@@ -42,7 +44,7 @@
             this.graphDrawer = new GraphDrawer(c, {
                 nodeShape: nodeShape,
                 controlType: this.controlType,
-                operationMode: "Interactive",
+                operatingMode: this.operatingMode,
                 
                 sort: {
                     sortType: this.sortType,
@@ -50,6 +52,7 @@
                     pivotColor: "#add8e6",
                     selectedColor: "red",
                     extractType: "xSorter",
+                    joinType: "vSorter",
                     steps: this.steps
                 }
             });
