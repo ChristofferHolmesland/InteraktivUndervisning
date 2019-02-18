@@ -68,14 +68,9 @@ module.exports.admin = function(socket, db, user, sessions) {
 
 	socket.on("getSessions", function(course) {
 		dbFunctions.get.allSessionWithinCourse(db, course.code, course.semester).then((sessions) => {
-			/*let result = [];
-			sessions.forEach(session => {
-				result.push({
-					"id": session.id,
-					"name": session.name
-				});
-			}); */
 			socket.emit("getSessionsResponse", sessions);
+		}).catch((err) => {
+			console.log(err);
 		});
 	});
 
@@ -106,8 +101,10 @@ module.exports.admin = function(socket, db, user, sessions) {
 		dbFunctions.get.sessionById(db, sessionId).then(async function(session) {
 			let result = {};
 			result.questions = [];
-			result.participants = session.participants;
 
+			let numberOfFeideUsers = await dbFunctions.get.feideUsersInSession(db, sessionId);
+			numberOfFeideUsers = numberOfFeideUsers.length;
+			let maxNumberOfAnonymouslyUsers = 0;
 			let totalCorrectAnswers = 0;
 			
 			let questions = await dbFunctions.get.allQuestionInSession(db, session.id);
@@ -116,14 +113,17 @@ module.exports.admin = function(socket, db, user, sessions) {
 				let answer = await dbFunctions.get.allAnswerToQuestion(db, question.sqId);
 				let answers = [];
 				let correctAnswers = 0;
+				let anonymousUser = 0;
 
 				answer.forEach(a => {
+					if (a.userId === "1") anonymousUser++;
+
 					if (a.result == 1) {
 						correctAnswers++;
 						totalCorrectAnswers++;
 					}
 
-					if(a.result != "1"){
+					if(a.result === 0){
 						answers.push({
 							"answer": a.object,
 							"result": a.result
@@ -135,12 +135,19 @@ module.exports.admin = function(socket, db, user, sessions) {
 					"sqId": question.sqId, 
 					"text": question.text,
 					"description": question.description,
-					"correctAnswers": Math.round(correctAnswers / session.participants * 100),
-					"answers": answers 
+					"correctAnswers": Math.round(correctAnswers / answer.length * 100),
+					"answers": answers,
+					"solution": question.solution
 				});
+
+				if (anonymousUser > maxNumberOfAnonymouslyUsers) maxNumberOfAnonymouslyUsers = anonymousUser;
 			}
+
+			result.participants = numberOfFeideUsers + maxNumberOfAnonymouslyUsers;
+
 			result.correctAnswers = Math.round(totalCorrectAnswers / (result.questions.length * result.participants) * 100);
 			result.numberOfQuestions = result.questions.length;
+
 			socket.emit("getSessionResponse", result);
 		});
 	});
@@ -188,7 +195,18 @@ module.exports.admin = function(socket, db, user, sessions) {
 	});
 
 	socket.on("startSession", function(sessionCode) {
-		let firstQuestion = currentSession.session.questionList[0];
+		let session = currentSession.session;
+
+		session.currentQuestion++;
+
+		let currentUsers = session.currentUsers;
+
+		session.questionList[session.currentQuestion].connectedUsers = currentUsers;
+
+		let firstQuestion = session.questionList[session.currentQuestion];
+
+		firstQuestion.timeStarted = Date.now();
+		
 		let safeFirstQuestion = {
 			"text": firstQuestion.text,
 			"description": firstQuestion.description,
@@ -202,7 +220,6 @@ module.exports.admin = function(socket, db, user, sessions) {
 	});
 
 	socket.on("forceNextQuestion", function() {
-		console.log("test");
 		let question = currentSession.session.questionList[currentSession.session.currentQuestion];
 		let answerList = [];
 		if (question.answerList) answerList = question.answerList;
@@ -242,23 +259,32 @@ module.exports.admin = function(socket, db, user, sessions) {
 	});
 
 	socket.on("nextQuestionRequest", function() {
-		currentSession.session.currentQuestion++;
-		if (currentSession.session.currentQuestion < currentSession.session.questionList.length){
-			let question = currentSession.session.questionList[currentSession.session.currentQuestion];
+		let session = currentSession.session;
+		let currentUsers = session.currentUsers;
+
+		session.currentQuestion++;
+		session.questionList[session.currentQuestion].connectedUsers = currentUsers;
+		
+		if (session.currentQuestion < session.questionList.length){
+			let question = session.questionList[session.currentQuestion];
+
+			question.timeStarted = Date.now();
+
 			let safeQuestion = {
 				"text": question.text,
 				"description": question.description,
 				"object": question.object,
 				"type": question.type,
 				"time": question.time,
-				"participants": currentSession.session.currentUsers
+				"participants": session.currentUsers
 			}
-			io.to(currentSession.session.sessionCode).emit("nextQuestion", safeQuestion)
+
+			io.to(session.sessionCode).emit("nextQuestion", safeQuestion)
 		} else {
-			socket.to(currentSession.session.sessionCode).emit("answerResponse", "sessionFinished");
+			socket.to(session.sessionCode).emit("answerResponse", "sessionFinished");
 			socket.emit("endSessionScreen");
 
-			sessions.delete(currentSession.session.sessionCode);
+			sessions.delete(session.sessionCode);
 		}
 	});
 

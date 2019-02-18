@@ -22,7 +22,7 @@
 		</b-row>
 		<b-row>
 			<b-col lg="4">
-				<b-list-group style="overflow-y: scroll; min-height: 600px; height: 650px; max-height: 650px;">
+				<b-list-group style="overflow-y: scroll; min-height: 400px; max-height: 500px;">
 					<b-list-group-item  v-for="(question, index) in getSession.questions" 
 										:key="question.qqId" 
 										style="cursor: pointer;" 
@@ -38,42 +38,23 @@
 				</b-list-group>
 			</b-col>
 			<b-col lg="6">
-				<!-- Add component to view question information. Need to be able to switch between information and incorrect answers -->
-				<div v-if="showAnswer">
-					<b-container>
-						<b-row>
-							<b-col>
-								<p>Answer: {{getAnswer}}</p>
-							</b-col>
-						</b-row>
-						<b-row>
-							<b-col>
-								<p v-if="incorrectAnswers[selectedAnswer].correct == 1"> Correct</p>
-								<p v-else-if="incorrectAnswers[selectedAnswer].correct == 0"> Incorrect</p>
-								<p v-else>User didn't know</p>
-							</b-col>
-						</b-row>
-					</b-container>
-				</div>
-				<div v-else>
-					<b-container>
-						<b-row>
-							<b-col>
-								<p>Text: {{getQuestionInfo.text}}</p>
-							</b-col>
-						</b-row>
-						<b-row>
-							<b-col>
-								<p>Description: {{getQuestionInfo.description}}</p>
-							</b-col>
-						</b-row>
-						<b-row>
-							<b-col>
-								<p>Correct answers: {{getQuestionInfo.correctAnswers}} %</p>
-							</b-col>
-						</b-row>
-					</b-container>
-				</div>
+				<b-card no-body>
+					<b-tabs card>
+						<b-tab title="Question">
+							<h1>Text: {{getQuestionInfo.text}}</h1>
+							<p>Description: {{getQuestionInfo.description}}</p>
+							<!-- TODO Add code to handle objects -->
+						</b-tab>
+						<b-tab title="Solution">
+							<h1>Solution</h1>
+							<p>{{ getQuestionInfo.solution }}</p>
+							<!-- TODO Add code to handle different solution types -->
+						</b-tab>
+						<b-tab title="Answer">
+							<p>Answer: {{ getAnswer }}</p>
+						</b-tab>
+					</b-tabs>
+				</b-card>
 			</b-col>
 		</b-row>
 		<b-row class="mt-3">
@@ -124,7 +105,7 @@ export default {
 	},
 	computed: {
 		getSession() {
-			if (this.session == undefined)
+			if (this.session === undefined)
 				return {
 					questions: []
 				};
@@ -151,6 +132,7 @@ export default {
 			return this.session.questions[this.selectedQuestion];
 		},
 		getAnswer() {
+			if (this.incorrectAnswers.length === 0) return "";
 			return this.incorrectAnswers[this.selectedAnswer].answer;
 		}
 	},
