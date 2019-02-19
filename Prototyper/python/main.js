@@ -16,30 +16,6 @@
         - TODO: Lists
 */
 
-/*
-    Testing:
-    class MyClass:
-        def __init__(self, a, b):
-           self.c = a + b
-
-        def assignF(self, a):
-            self.f = a
-
-        def getF(self):
-            return self.f
-
-    def addOne(num):
-        return num + 1
-
-    d = MyClass(2, 9)
-    d.e = "Hei på deg"
-    d.assignF(99)
-
-    x = d.getF()
-    #y = addOne(x)
-    #z = addOne(d.getF())
-*/ 
-
 let codeInput = document.getElementById("code");
 
 codeInput.addEventListener("keydown", function(e) {
@@ -76,15 +52,14 @@ function assignScope(object) {
 }
 
 function parse(code) {
-    let types = ["Number", "String", "Boolean", "Object"];
     let keyWords = ["def", "return", "class"];
     let operators = ["+", "-", "*", "/"];
-    let expressionTypes = ["value", "operation", "function"];
 
     let getNewStep = function() { 
         let newStep = {};
         assignScope(newStep);
         
+        /* Probably don't need this anymore
         if (steps.length > 0) {
             let previousStep = steps[steps.length - 1];
             Array.prototype.push.apply(newStep.data, previousStep.data);
@@ -101,13 +76,15 @@ function parse(code) {
                 );
             }
         }
+        */
 
         return newStep;
     };
 
-
     let steps = [];
-    let step = getNewStep();
+    let currentStep = 0;
+    let storedIndexes = [];
+    steps[currentStep] = getNewStep();
 
     let handleKeyWord = function(scope, line, keyWord, lineNumber, lines) {
         if (keyWord == "def") {
@@ -149,11 +126,13 @@ function parse(code) {
                 if (lines[i].startsWith("    ") || lines[i].trim() == "") {
                     length += 1;
                     lines[i] = lines[i].slice(4);
-                } else break;
+                } else {
+                    break;
+                }
             }
 
             let start = lineNumber + 1;
-            let end = start + length + 1;
+            let end = start + length;
 
             let c = { 
                 name: name,
@@ -254,6 +233,24 @@ function parse(code) {
             return scope.data[scope.objects.get(expression)];
         }
 
+        // Check if its a variable belongig to an object
+        if (expression.includes(".")) {
+            let s = expression.split(".");
+            let objectName = s[0];
+            let propertyName = s[1];
+            // Checks if the property contains a (, which means that its
+            // a function call instead of property access.
+            if (!propertyName.includes("(") && scope.objects.has(objectName)) {
+                let objectAddr = scope.objects.get(objectName);
+                let object = scope.data[objectAddr];
+                // Check that the object actually has the property
+                if (object.objects.has(propertyName)) {
+                    let propertyAddr = object.objects.get(propertyName);
+                    return object.data[propertyAddr];
+                }
+            }
+        }
+
         // Both operators and function calls use ( and ).
         // To decide what kind of expression it is, everything before
         // the first ( is assumed to be the function/class name.
@@ -295,14 +292,14 @@ function parse(code) {
             }
 
             // Global function
-            if (step.functions.has(name)) {
-                let func = step.functions.get(name);
+            if (steps[currentStep].functions.has(name)) {
+                let func = steps[currentStep].functions.get(name);
                 return callFunc(func, scope, args);
             }
 
             // Global class
-            if (step.classes.has(name)) {
-                let c = step.classes.get(name);
+            if (steps[currentStep].classes.has(name)) {
+                let c = steps[currentStep].classes.get(name);
                 return instantiateClass(c, scope, args);
             }
 
@@ -311,6 +308,7 @@ function parse(code) {
 
         // The only valid expression left is an operation on two expressions
         let info = getOperationInfo(scope, expression);
+
         if (info.operator == "+") {
             if (info.operand1.type !== info.operand2.type) return;
 
@@ -464,15 +462,29 @@ function parse(code) {
     let lines = code.split("\n");
     for (let i = 0; i < lines.length; i++) {
         let line = lines[i];
-        let r = parseLine(step, line, i, lines, true);
+        let r = parseLine(steps[currentStep], line, i, lines, true);
         if (r !== undefined) {
             if (r.type == "SkipLines") {
                 i += r.data;
             }
         }
+
+        // Check if this is something that should be stored
+        // as an step.
+        if (true && i != lines.length - 1) {
+            // Increment the current step if the step hasn't
+            // been saved before.
+            if (!storedIndexes.includes(i)) {
+                console.log("Storing step: " + i);
+
+                storedIndexes.push(i);
+                currentStep++;
+                steps[currentStep] = getNewStep();
+                i = 0;
+            }
+        }
     }
 
-    steps.push(step);
     return steps;
 }
 
@@ -511,4 +523,26 @@ function util_checkIfArrayContainsAnyElement(arr, elements) {
     d = MyClass(2, 9)
     d.e = "Hei på deg"
     d.assignF(99)
+
+    # 3
+    class Point:
+        def __init__(self, x, y):
+            self.x = x
+            self.y = y
+
+        def translate(self, dx, dy):
+            self.x = self.x + dx
+            self.y = self.y + dy
+
+    class Line:
+        def __init__(self, from, to):
+            self.p1 = from
+            self.p2 = to
+
+    a = Point(0, 0)
+    b = Point(1, 1)
+
+    c = Line(a, b)
+
+    a.translate(10, 10)
 */
