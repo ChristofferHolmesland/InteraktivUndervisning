@@ -11,8 +11,34 @@
         - Inner classes
         - Inner functions (Class functions are ok)
         - The standard library
+        - Shared class variables
+        - Class inheritance
         - TODO: Lists
 */
+
+/*
+    Testing:
+    class MyClass:
+        def __init__(self, a, b):
+           self.c = a + b
+
+        def assignF(self, a):
+            self.f = a
+
+        def getF(self):
+            return self.f
+
+    def addOne(num):
+        return num + 1
+
+    d = MyClass(2, 9)
+    d.e = "Hei på deg"
+    d.assignF(99)
+
+    x = d.getF()
+    #y = addOne(x)
+    #z = addOne(d.getF())
+*/ 
 
 let codeInput = document.getElementById("code");
 
@@ -98,10 +124,13 @@ function parse(code) {
                 else break;
             }
 
+            let start = lineNumber + 1;
+            let end = start + length + 1;
+
             let func = {
                 name: name,
                 args: args,
-                code: lines.slice(lineNumber + 1, length + 1)
+                code: lines.slice(start, end)
             };
             assignScope(func);
 
@@ -112,8 +141,62 @@ function parse(code) {
             };
         } else if (keyWord == "return") {
             return evaluateExpression(scope, line.substring(7));
+        } else if (keyWord == "class") {
+            name = line.substring(6, line.length - 1);
+
+            let length = 0;
+            for (let i = lineNumber + 1; i < lines.length; i++) {
+                if (lines[i].startsWith("    ") || lines[i].trim() == "") {
+                    length += 1;
+                    lines[i] = lines[i].slice(4);
+                } else break;
+            }
+
+            let start = lineNumber + 1;
+            let end = start + length + 1;
+
+            let c = { 
+                name: name,
+                code: lines.slice(start, end)
+            };
+            assignScope(c);
+
+            for (let i = 0; i < c.code.length; i++) {
+                let r = parseLine(c, c.code[i], i, c.code, true);
+                if (r !== undefined) {
+                    if (r.type == "SkipLines") {
+                        i += r.data;
+                    }
+                }
+            }
+
+            scope.classes.set(name, c);
+            return {
+                type: "SkipLines",
+                data: length
+            }
         }
     };
+
+    let instantiateClass = function(c, scope, args) {
+        let object = {
+            type: "Object",
+        };
+        assignScope(object);
+        object.functions = c.functions;
+
+        if (object.functions.has("__init__")) {
+            // Add the object as the self argument
+            args.unshift(object);
+            callFunc(
+                object.functions.get("__init__"),
+                scope,
+                args
+            );
+        }
+
+        return object;
+    }
 
     let callFunc = function(func, scope, args) {
         // Add arguments as local functions
@@ -196,10 +279,19 @@ function parse(code) {
                 args[i] = evaluateExpression(scope, args[i]);
             }
 
-            // This can only be true, if the function is defined inside
-            // a class.
-            if (scope.functions.has(name)) {
-                
+            // Checks if the function belongs to class
+            if (name.includes(".")) {
+                let s = name.split(".");
+                let objectAddr = scope.objects.get(s[0]);
+                let object = scope.data[objectAddr];
+                let funcName = s[1];
+                // Add the self argument
+                args.unshift(object);
+                return callFunc(
+                    object.functions.get(funcName),
+                    scope,
+                    args
+                );
             }
 
             // Global function
@@ -210,7 +302,8 @@ function parse(code) {
 
             // Global class
             if (step.classes.has(name)) {
-
+                let c = step.classes.get(name);
+                return instantiateClass(c, scope, args);
             }
 
             return;
@@ -313,6 +406,8 @@ function parse(code) {
         // a keyword handler.
         if (line.startsWith(" ") && skipIndents) return;
         line = line.trim();
+        // Skip comments
+        if (line.startsWith("#")) return;
 
         // Check if the line is a function or class definition
         for (let k = 0; k < keyWords.length; k++) {
@@ -339,7 +434,19 @@ function parse(code) {
 
         // Object property
         if (variableName.includes(".")) {
+            let s = variableName.split(".");
+            let objectAddr = scope.objects.get(s[0]);
+            let object = scope.data[objectAddr];
+            let attribute = s[1];
 
+            if (object.objects.has(attribute)) {
+                let addr = object.objects.get(attribute);
+                object.data[addr] = evaluated;
+            } else {
+                let addr = object.data.length;
+                object.objects.set(attribute, addr);
+                object.data[addr] = evaluated;
+            }
         }
         // Global object
         else if (variableName !== "") {
@@ -383,6 +490,7 @@ function util_checkIfArrayContainsAnyElement(arr, elements) {
 /*
     Examples of valid code that should run in this version
 
+    # 1
     def add(a, b):
         c = a + b
         return c + 10 + 10
@@ -391,4 +499,16 @@ function util_checkIfArrayContainsAnyElement(arr, elements) {
     b = 3
 
     f = add((b + 3) / a, 2) 
+
+    # 2
+    class MyClass:
+    def __init__(self, a, b):
+        self.c = a + b
+
+    def assignF(self, a):
+        self.f = a
+
+    d = MyClass(2, 9)
+    d.e = "Hei på deg"
+    d.assignF(99)
 */
