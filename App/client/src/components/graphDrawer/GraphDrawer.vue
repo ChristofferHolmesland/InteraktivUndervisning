@@ -45,6 +45,7 @@
                 nodeShape: nodeShape,
                 controlType: this.controlType,
                 operatingMode: this.operatingMode,
+                displayEdgeValues: true,
                 
                 sort: {
                     sortType: this.sortType,

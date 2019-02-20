@@ -9,11 +9,7 @@
 				<b-col cols="12" lg="8">
 
 <!-- TODO: Remove GraphDrawer from this file. Currently used for testing -->
-    			<GraphDrawer 
-                            controlType="Sort" 
-                            sortType="Quicksort" 
-                            operatingMode="Presentation" 
-                            :steps="steps" />
+    			<GraphDrawer controlType="Graph0" />
 				</b-col>
 			</b-row>
 		</b-container>
@@ -29,45 +25,6 @@ export default {
 	components: {
 		JoinSession,
 		GraphDrawer
-	},
-	data() {
-		return {
-			steps: [
-    {
-        type: "Initial",
-        list: [10, 9, 2, 3, 11, 7, 5],
-    },
-    {
-        type: "Split",
-        pivot: 5,
-        list: [10, 9, 2, 3, 11, 7, 5],
-        left: [2, 3],
-        right: [10, 9, 11, 7],
-    },
-    {
-        type: "Split",
-        pivot: 2,
-        list: [2, 3],
-        left: [3],
-        right: [],
-    },
-    {
-        type: "Split",
-        pivot: 10,
-        list: [10, 9, 11, 7],
-        left: [7, 9],
-        right: [11],
-    },
-    {
-        type: "Split",
-        pivot: 7,
-        list: [7, 9],
-        left: [9],
-        right: []
-    }
-]
-
-		}
 	},
 	created() {
 		this.$socket.emit("verifyUserLevel", 1);
