@@ -13,7 +13,19 @@
         - The standard library
         - Shared class variables
         - Class inheritance
-        - TODO: Lists
+
+    TODO: 
+        - Lists
+        - len() function
+        - if, elif, else
+        - operators
+            - <
+            - >
+            - >=
+            - <=
+            - is (js ==)
+            - is not (js !=)
+        - Class instantiation inside expression
 */
 
 let codeInput = document.getElementById("code");
@@ -52,32 +64,12 @@ function assignScope(object) {
 }
 
 function parse(code) {
-    let keyWords = ["def", "return", "class"];
-    let operators = ["+", "-", "*", "/"];
+    let keyWords = ["def", "return", "class", "if"];
+    let operators = ["==", "!=", "+", "-", "*", "/"];
 
     let getNewStep = function() { 
         let newStep = {};
         assignScope(newStep);
-        
-        /* Probably don't need this anymore
-        if (steps.length > 0) {
-            let previousStep = steps[steps.length - 1];
-            Array.prototype.push.apply(newStep.data, previousStep.data);
-            for (let i = 0; i < previousStep.objects.keys().length; i++) {
-                newStep.objects.set(
-                    previousStep.objects.keys()[i],
-                    previousStep.objects.get(previousStep.objects.keys()[i])
-                );
-            }
-            for (let i = 0; i < previousStep.functions.keys().length; i++) {
-                newStep.functions.set(
-                    previousStep.functions.keys()[i],
-                    previousStep.functions.get(previousStep.functions.keys()[i])
-                );
-            }
-        }
-        */
-
         return newStep;
     };
 
@@ -119,7 +111,7 @@ function parse(code) {
         } else if (keyWord == "return") {
             return evaluateExpression(scope, line.substring(7));
         } else if (keyWord == "class") {
-            name = line.substring(6, line.length - 1);
+            let name = line.substring(6, line.length - 1);
 
             let length = 0;
             for (let i = lineNumber + 1; i < lines.length; i++) {
@@ -154,6 +146,73 @@ function parse(code) {
                 type: "SkipLines",
                 data: length
             }
+        } else if (keyWord == "if") {
+            let lineNumbers = [];
+            let expressions = [];
+            let startIndent = 0;
+            let endOfIf = lineNumber;
+
+            for (let i = lineNumber; i < lines.length; i++) {
+                let t = lines[i].trim();
+                console.log(t);
+                if (t.startsWith("if")) {
+                    lineNumbers.push(i + 1);
+                    expressions[i + 1] = t.substring(3, t.length - 1);
+                    startIndent = lines[i].indexOf("if");
+                    continue;
+                } else if (t.startsWith("elif")) {
+                    lineNumbers.push(i + 1);
+                    expressions[i + 1] = t.substring(5, t.length - 1);
+                    continue;
+                } else if (t.startsWith("else")) {
+                    lineNumbers.push(i + 1);
+                    expressions[i + 1] = "True";
+                    continue;
+                }
+
+
+                // Something is wrong here
+                let outOfIf = false;
+                for (let j = 0; j < startIndent + 4; j++) {
+                    if (lines[i][j] !== " ") {
+                        outOfIf = true;
+                        endOfIf += i;
+                        lineNumbers.push(endOfIf);
+                        break;
+                    }
+                }
+                if (outOfIf) break;
+            }
+
+            for (let i = 0; i < lineNumbers.length; i++) {
+                let l = lineNumbers[i];
+                let expr = expressions[l];
+                let evaluated = evaluateExpression(scope, expr);
+
+                if (evaluated == undefined || evaluated.type !== "Boolean") {
+                    console.error("Something is wrong with the expression at line: " + l);
+                    console.error(evaluated);
+                    continue;
+                }
+
+                if (evaluated.data == false) continue;
+
+                for (let j = l; j < lineNumbers[i + 1] - 1; j++) {
+                    let r = parseLine(scope, lines[j], j, lines, false);
+                    if (r !== undefined) {
+                        if (r.type !== "SkipLines") {
+                            j += r.data;
+                        }
+                    }
+                }
+
+                break;
+            }
+
+            return {
+                type: "SkipLines",
+                data: endOfIf
+            };
         }
     };
 
@@ -368,6 +427,35 @@ function parse(code) {
             }
 
             return result;
+        } else if (info.operator == "==") {
+            if (info.operand1.type !== info.operand2.type) {
+                return {
+                    type: "Boolean",
+                    data: false
+                };
+            }
+
+            return {
+                type: "Boolean",
+                data: (info.operand1.data === info.operand2.data)
+            };
+        } else if (info.operator == "!=") {
+            if (info.operand.type !== info.operand2.type) {
+                return {
+                    type: "Boolean",
+                    data: false
+                };
+            }
+
+            return {
+                type: "Boolean",
+                data: info.operand1.data !== info.operand2.data
+            };
+        } else if (info.operator == "is") {
+            return {
+                type: "Boolean",
+                data: info.operand1 == info.operand2
+            };
         }
     };
 
@@ -385,11 +473,18 @@ function parse(code) {
                 open++;
             } else if (expression[i] == ")") {
                 open--;
-            } else if (operators.includes(expression[i]) && open == 0) {
-                return {
-                    operand1: evaluateExpression(scope, expression.slice(0, i)),
-                    operand2: evaluateExpression(scope, expression.slice(i + 1)),
-                    operator: expression[i]
+            } else {
+                if (open !== 0) continue;
+                for (let o = 0; o < operators.length; o++) {
+                    let operator = operators[o];
+                    let testOperator = expression.slice(i, i + operator.length);
+                    if (operator == testOperator) {
+                        return {
+                            operand1: evaluateExpression(scope, expression.slice(0, i)),
+                            operand2: evaluateExpression(scope, expression.slice(i + operator.length)),
+                            operator: operator
+                        }
+                    }
                 }
             }
         }
@@ -466,21 +561,6 @@ function parse(code) {
         if (r !== undefined) {
             if (r.type == "SkipLines") {
                 i += r.data;
-            }
-        }
-
-        // Check if this is something that should be stored
-        // as an step.
-        if (true && i != lines.length - 1) {
-            // Increment the current step if the step hasn't
-            // been saved before.
-            if (!storedIndexes.includes(i)) {
-                console.log("Storing step: " + i);
-
-                storedIndexes.push(i);
-                currentStep++;
-                steps[currentStep] = getNewStep();
-                i = 0;
             }
         }
     }
