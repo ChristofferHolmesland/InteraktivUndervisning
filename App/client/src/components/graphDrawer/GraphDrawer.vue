@@ -46,6 +46,7 @@
                 controlType: this.controlType,
                 operatingMode: this.operatingMode,
                 displayEdgeValues: true,
+                directedEdges: true,
                 
                 sort: {
                     sortType: this.sortType,
