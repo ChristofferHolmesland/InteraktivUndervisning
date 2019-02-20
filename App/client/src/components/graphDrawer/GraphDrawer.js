@@ -69,7 +69,6 @@ export default class GraphDrawer {
 		this.directedEdges = config.directedEdges || false;
 	}
 
-	// TODO: Remove/move this
 	export() {
 		return this.controllers[this.controlType].export();
 	}
@@ -145,7 +144,7 @@ export default class GraphDrawer {
 		this.camera = new Camera(this);
 
 		this.controllers = {
-			Graph0: new Graph0(this),
+			Graph0: new Graph0(this, config.graph),
 			Graph1: new Graph1(this),
 			Sort: new Sort(this, config.sort)
 		};
