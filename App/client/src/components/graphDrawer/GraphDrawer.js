@@ -55,6 +55,12 @@ export default class GraphDrawer {
 				see the progress of a algorithm.
 		*/
 		this.operatingMode = config.operatingMode || "Interactive";
+
+		/*
+			This can be used to determine if the value/cost of an edge
+			is displayed next to the edge.
+		*/
+		this.displayEdgeValues = config.displayEdgeValues || true;
 	}
 
 	// TODO: Remove/move this
@@ -89,7 +95,7 @@ export default class GraphDrawer {
 			}.
 		*/
 		this.nodes = [];
-		// Edges between nodes {n1, n2}.
+		// Edges between nodes {n1, n2, v}.
 		this.edges = [];
 
 		// Flag which determines if the graph state should
@@ -229,6 +235,12 @@ export default class GraphDrawer {
 			this.drawContext.lineTo(cx2, cy2);
 			this.drawContext.stroke();
 			this.drawContext.closePath();
+
+			if (this.displayEdgeValues) {
+				let tx = (cx1 + cx2) / 2 + 5;
+				let ty = (cy1 + cy2) / 2 + 5;
+				this.drawContext.fillText(this.edges[i].v, tx, ty);
+			}
 		}
 		// Nodes.
 		for (let i = 0; i < this.nodes.length; i++) {
@@ -301,6 +313,7 @@ export default class GraphDrawer {
 
 	/*
 		Lets the user edit the value on a node.
+		Can also be used on edges, because they share the v property.
 	*/
 	_editNode(node) {
 		// This is the only way to open a keyboard in mobile browsers.
@@ -414,13 +427,48 @@ export default class GraphDrawer {
 	}
 
 	/*
-		Checks whether a poin (x, y) is inside a square with radius r.
+		Checks whether a point (x, y) is inside a square with radius r.
 		Top left corner of square (nx, ny).
 	*/
 	isPointInSquare(x, y, nx, ny, r) {
 		if (x < nx || x > nx + r) return false;
 		if (y < ny || y > ny + r) return false;
 		return true;
+	}
+
+	/*
+		Calculates how far a point (x, y) is from a given edge.
+	*/
+	distanceFromEdgeToPoint(edge, x, y) {
+		let p = {
+			x: x,
+			y: y
+		}
+
+		let p1 = {
+			x: edge.n1.x,
+			y: edge.n1.y
+		};
+
+		let p2 = {
+			x: edge.n2.x,
+			y: edge.n2.y
+		};
+
+		return Math.sqrt(this._distToSegmentSquared(p, p1, p2));
+	}
+
+	// ref: https://stackoverflow.com/a/1501725, 20.02.2019
+	_distToSegmentSquared(p, v, w) {
+		function sqr(x) { return x * x }
+		function dist2(v, w) { return sqr(v.x - w.x) + sqr(v.y - w.y) }
+
+		var l2 = dist2(v, w);
+		if (l2 == 0) return dist2(p, v);
+		var t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
+		t = Math.max(0, Math.min(1, t));
+		return dist2(p, { x: v.x + t * (w.x - v.x),
+						y: v.y + t * (w.y - v.y) });
 	}
 
 	// Sort the selected nodes based on x coordinate to get them in the right order
