@@ -1,12 +1,12 @@
 import Graph0 from "./controllers/Graph0.js";
 import Graph1 from "./controllers/Graph1.js";
 import Sort from "./controllers/Sort.js";
+import Djikstra from "./controllers/Djikstra.js";
 import Camera from "./Camera.js";
 
 /*
 	Adds graph drawing functionality to a canvas object.
 
-	// TODO: Support dynamic canvas size
 	// TODO: Node z index
 
 	The GraphDrawer works in three different coordinate spaces:
@@ -100,7 +100,13 @@ export default class GraphDrawer {
 			}.
 		*/
 		this.nodes = [];
-		// Edges between nodes {n1, n2, v}.
+		/*
+			Edges between nodes 
+			{
+				n1, n2, v,
+				strokeColor (undefined => black)
+			}.
+		*/
 		this.edges = [];
 
 		// Flag which determines if the graph state should
@@ -146,7 +152,8 @@ export default class GraphDrawer {
 		this.controllers = {
 			Graph0: new Graph0(this, config.graph),
 			Graph1: new Graph1(this),
-			Sort: new Sort(this, config.sort)
+			Sort: new Sort(this, config.sort),
+			Djikstra: new Djikstra(this, config.djikstra)
 		};
 		if (this.controlType == "Graph0") this.controllers["Graph0"].drawStatic();
 	}
@@ -238,7 +245,11 @@ export default class GraphDrawer {
 			this.drawContext.beginPath();
 			this.drawContext.moveTo(cx1, cy1);
 			this.drawContext.lineTo(cx2, cy2);
+
+			if (this.edges[i].strokeColor)
+				this.drawContext.strokeStyle = this.edges[i].strokeColor;
 			this.drawContext.stroke();
+			this.drawContext.strokeStyle = "black";
 			this.drawContext.closePath();
 
 			// Draw an arrow, ref: https://stackoverflow.com/a/6333775, 20.02.2019
