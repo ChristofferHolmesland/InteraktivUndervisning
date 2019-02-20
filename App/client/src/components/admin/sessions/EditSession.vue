@@ -17,7 +17,9 @@
                 <b-form-select 	id="questionsSelect"
                                 :options="getPossibleQuestions"
                                 v-model="selectedQuestion"
-                                @change="selectedQuestionChanged($event)">
+                                @change="selectedQuestionChanged($event)"
+                                multiple 
+                                :select-size="100" >
                 </b-form-select>
             </b-form-group>
             <b-form-group>
@@ -42,7 +44,7 @@
                 },
                 courseOptions: [],
                 possibleQuestions: [],
-                selectedQuestion: -1
+                selectedQuestion: []
             }
         },
         props: {
@@ -60,19 +62,16 @@
                 this.okHandler(this.newSession);
             },
             selectedQuestionChanged: function(event) {
-                let selectedQuestionText = "";
-                for (let i = 0; i < this.possibleQuestions.length; i++) {
-                    let pq = this.possibleQuestions[i];
-                    if (pq.value == event) {
-                        selectedQuestionText = pq.text;
-                        break;
-                    }
-                }
+                for (let i = 0; i < event.length; i++){
+                    let selectedQuestionText = "";
+                    let index = this.possibleQuestions.findIndex(pq => pq.value === event[i]);
+                    selectedQuestionText = this.possibleQuestions[index].text;
 
-                this.newSession.questions.push({
-                    id: event,
-                    text: selectedQuestionText
-                });
+                    this.newSession.questions.push({
+                        id: event[i],
+                        text: selectedQuestionText
+                    });
+                }
             }
         },
         computed: {

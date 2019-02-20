@@ -4,7 +4,7 @@
             <b-row>
                 <b-col>
                     <b-tabs>
-                        <b-tab :title="getLocale.question" active>
+                        <b-tab :title="getLocale.question">
                             <b-card :title="getQuestionInfo.text" >
                                 <p v-if="getQuestionInfo.description !== undefined">
                                     {{ getQuestionInfo.description }}
@@ -12,7 +12,7 @@
                                 <!-- TODO add code to include question object if it is there -->
                             </b-card>
                         </b-tab>
-                        <b-tab :title="getLocale.answer">
+                        <b-tab :title="getLocale.answer" active>
                             <TextInput :requestAnswer="requestAnswer"
                                     @getTextResponse="getTextValue"
                                     v-if="getQuestionType === 1"
@@ -101,7 +101,6 @@
             },
             //This is the function that sends the answerobject to the server
             getTextValue(inputText) {
-            	console.log(inputText);
 				this.$socket.emit("questionAnswered", inputText, this.sessionCode);
             },
             exitSession() {

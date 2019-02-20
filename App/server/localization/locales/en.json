@@ -20,6 +20,23 @@
         "selectQuestions": "Add question",
         "selectedQuestions": "Questions in session"
     },
+    "AdminDashboard": {
+        "courseAdministrator": "Course administrators",
+        "addBtnText": "Add",
+        "courseAssistants": "Course assistants",
+        "startSession": "Start session",
+        "changeCourseTitle": "Change course",
+        "newCourseBtnText": "New",
+        "addNewQuestionBtnText": "Add new question",
+        "newQuestion": "New question",
+        "viewLastSession": "View last session",
+        "openLastSession": "Open"
+    },
+    "DisplayQuestion": {
+        "question": "Question",
+        "solution": "Solution",
+        "answer": "Answer"
+    },
     "Navbar": {
         "lang": "Language",
         "profile": "Profile",

@@ -82,7 +82,6 @@
         		this.$socket.emit("getSession", this.selectedSession)
 			},
 			addNewSessionHandler: function(newSession) {
-				console.log(newSession.course);
 				this.$socket.emit("addNewSession", newSession);
 			},
 			courseChanged: function(newCourse) {

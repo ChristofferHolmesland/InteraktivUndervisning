@@ -125,19 +125,21 @@ module.exports.admin = function(socket, db, user, sessions) {
 
 					if(a.result === 0){
 						answers.push({
-							"answer": a.object,
-							"result": a.result
+							answerObject: JSON.parse(a.object)
 						});
 					}
 				});
 
 				result.questions.push({
-					"sqId": question.sqId, 
-					"text": question.text,
-					"description": question.description,
-					"correctAnswers": Math.round(correctAnswers / answer.length * 100),
-					"answers": answers,
-					"solution": question.solution
+					question: {
+						text: question.text,
+						description: question.description,
+						object: JSON.parse(question.object),
+						type: question.type
+					},
+					solution: JSON.parse(question.solution),
+					answerList: answers,
+					correctAnswer: Math.round(correctAnswers / answer.length * 100)
 				});
 
 				if (anonymousUser > maxNumberOfAnonymouslyUsers) maxNumberOfAnonymouslyUsers = anonymousUser;
@@ -247,7 +249,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 				incorrectAnswer++;
 			};
 			if (answer.result === -1) didntKnow++; 
-			if (answer.result === 0) correctAnswer++;
+			if (answer.result === 1) correctAnswer++;
 		}
 
 		let response = {

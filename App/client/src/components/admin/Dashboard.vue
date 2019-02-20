@@ -4,14 +4,14 @@
 			<!-- Select course-->
 			<b-col cols="4">
 					<b-row>
-						<p>Change course</p>
+						<p>{{ getLocale.changeCourseTitle }}</p>
 					</b-row>
 					<b-row>
 							<b-col cols="9">
 								<SelectCourse/>
 							</b-col>
 							<b-col cols="3" class="pl-0">
-								<b-button v-b-modal.newCourseModal>New</b-button>
+								<b-button v-b-modal.newCourseModal>{{ getLocale.newCourseBtnText }}</b-button>
 								<b-modal id="newCourseModal" 
 										 :no-close-on-backdrop="true" 
 										 title="New course" 
@@ -19,8 +19,8 @@
 										 @ok="addNewCourse">
 
 										<b-form-group 	id="courseCode"
-																				label="Course code"
-																				label-for="courseCodeInput">
+														label="Course code"
+														label-for="courseCodeInput">
 										<b-form-input 	id="courseCodeInput"
 														type="text"
 														v-model="newCourse.code">
@@ -48,23 +48,23 @@
 			</b-col>
 			<!-- New question -->
 			<b-col cols="4" style="text-align: center;">
-				<b-row><p>Add new question</p></b-row>
+				<b-row><p>{{ getLocale.addNewQuestionBtnText }}</p></b-row>
 				<b-row>
 					<div class="btn disabled btn-secondary m-0 p-0" 
 						style="display: flex; justify-content: center; align-items: center; position: absolute; height: 50%; width: 90%; left: 5%; bottom: 0px;"
 						@click="newQuestionClicked" >
-						New question
+						{{ getLocale.newQuestion }}
 					</div>
 				</b-row>
 			</b-col>
 			<!-- Last session -->
 			<b-col cols="4">
-				<b-row><p>View last session</p></b-row>
+				<b-row><p>{{ getLocale.viewLastSession }}</p></b-row>
 				<b-row>
 					<div class="btn disabled btn-secondary m-0 p-0" 
 						style="display: flex; justify-content: center; align-items: center; position: absolute; height: 50%; width: 90%; left: 5%; bottom: 0px;"
 						@click="viewLastSession" >
-						Open
+						{{ getLocale.openLastSession }}
 					</div>
 				</b-row>
 			</b-col>
@@ -72,7 +72,7 @@
 		<b-row>
 			<!-- Add admin -->
 			<b-col cols="4">
-				<b-row><p>Course administrators</p></b-row>
+				<b-row><p>{{ getLocale.courseAdministrator }}</p></b-row>
 				<b-row>
 					<b-container>
 						<b-row>
@@ -83,7 +83,7 @@
 								</b-form-input>
 							</b-col>
 							<b-col cols="3" class="pl-0">
-								<b-button @click="addNewAdmin">Add</b-button>
+								<b-button @click="addNewAdmin">{{ getLocale.addBtnText }}</b-button>
 							</b-col>
 						</b-row>
 						<b-row>
@@ -101,7 +101,7 @@
 			</b-col>
 			<!-- Add student assistant -->
 			<b-col cols="4">
-				<b-row><p>Course assistants</p></b-row>
+				<b-row><p>{{getLocale.courseAssistants}}</p></b-row>
 				<b-row>
 					<b-container>
 						<b-row>
@@ -112,7 +112,7 @@
 								</b-form-input>
 							</b-col>
 							<b-col cols="3" class="pl-0">
-								<b-button @click="addNewAssistant">Add</b-button>
+								<b-button @click="addNewAssistant">{{ getLocale.addBtnText }}</b-button>
 							</b-col>
 						</b-row>
 						<b-row>
@@ -131,7 +131,7 @@
 			<!-- Start session -->
 			<b-col cols="4">
 				<b-row>
-					<p>Start session</p>
+					<p>{{ getLocale.startSession }}</p>
 				</b-row>
 				<b-row>
 					<SessionsOverview/>
@@ -235,10 +235,17 @@ export default {
 			});
 		}
 	},
+	computed: {
+		getLocale() {
+			let locale = this.$store.getters.getLocale("AdminDashboard");
+			if (locale) return locale;
+			else return {};
+		}
+	},
 	components: {
 		SelectCourse,
 		EditQuestion,
 		SessionsOverview
-	},
+	}
 };
 </script>

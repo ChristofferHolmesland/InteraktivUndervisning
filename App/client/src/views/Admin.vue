@@ -7,7 +7,7 @@
 <script>
 import Session from "../components/admin/startSession/SessionsOverview.vue";
 import Dashboard from "../components/admin/Dashboard.vue";
-import Questions from "../components/admin/questions/Questions.vue";
+import Questions from "../components/admin/question/Questions.vue";
 import Sessions from "../components/admin/sessions/Sessions.vue";
 
 export default {

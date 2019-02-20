@@ -28,7 +28,7 @@
 										style="cursor: pointer;" 
 										:id="index"
 										@click="changeQuestion($event)">
-						{{question.text}} | {{question.correctAnswers}} %
+						{{question.question.text}} | {{question.correctAnswer}} %
 					</b-list-group-item>
 					<div v-if="getSession.questions.length < 15">
 						<b-list-group-item v-for="index in 20" :key="index + getSession.questions.length">
@@ -37,30 +37,14 @@
 					</div>
 				</b-list-group>
 			</b-col>
-			<b-col lg="6">
-				<b-card no-body>
-					<b-tabs card>
-						<b-tab title="Question">
-							<h1>Text: {{getQuestionInfo.text}}</h1>
-							<p>Description: {{getQuestionInfo.description}}</p>
-							<!-- TODO Add code to handle objects -->
-						</b-tab>
-						<b-tab title="Solution">
-							<h1>Solution</h1>
-							<p>{{ getQuestionInfo.solution }}</p>
-							<!-- TODO Add code to handle different solution types -->
-						</b-tab>
-						<b-tab title="Answer">
-							<p>Answer: {{ getAnswer }}</p>
-						</b-tab>
-					</b-tabs>
-				</b-card>
+			<b-col lg="8">
+				<DisplayQuestion :selectedAnswer="selectedAnswer"
+									:resultInfo="getSession.questions[selectedQuestion]"/>
 			</b-col>
 		</b-row>
-		<b-row class="mt-3">
+		<b-row class="mt-3" v-if="getAnswerListSize">
 			<b-col lg="12">
 				<div style="overflow-x: scroll; max-width: 100%; white-space: nowrap;">
-					<!-- Add component to view incorrect answers -->
 					<ul class="list-inline">                        
 						<li v-for="(answer, index) in getIncorrectAnswers" 
 							:key="index"
@@ -82,16 +66,18 @@
 </template>
 
 <script>
+import DisplayQuestion from "../question/DisplayQuestion.vue";
+
 export default {
 	name: "session",
 	props: ["sessionId"],
 	data() {
 		return {
-			session: undefined,
-			selectedQuestion: 0,
-			selectedAnswer: 0,
-			incorrectAnswers: [],
-			showAnswer: false
+			session: Object,
+			selectedQuestion: Number,
+			selectedAnswer: Number,
+			incorrectAnswers: Array,
+			showAnswer: Boolean
 		};
 	},
 	sockets: {
@@ -123,27 +109,35 @@ export default {
 
 			this.incorrectAnswers = this.session.questions[
 				this.selectedQuestion
-			].answers;
+			].answerList;
 
 			return this.incorrectAnswers;
-		},
-		getQuestionInfo() {
-			if (this.session == undefined) return {};
-			return this.session.questions[this.selectedQuestion];
 		},
 		getAnswer() {
 			if (this.incorrectAnswers.length === 0) return "";
 			return this.incorrectAnswers[this.selectedAnswer].answer;
+		},
+		getAnswerListSize() {
+			if (!this.getSession) return false;
+			if (!this.getSession.questions) return false;
+			if (!this.selectedQuestion) return false;
+			if (!this.getSession.questions[this.selectedQuestion]) return false;
+			if (!this.getSession.questions[this.selectedQuestion].answerList) return false;
+			if (this.getSession.questions[this.selectedQuestion].answerList.length > 0) return true;
+			return false;
 		}
 	},
 	methods: {
 		changeAnswer(event) {
-			this.selectedAnswer = event.target.id;
+			this.selectedAnswer = Number(event.target.id);
 			this.showAnswer = true;
 		},
 		changeQuestion(event) {
 			this.selectedQuestion = event.target.id;
 		}
+	},
+	components: {
+		DisplayQuestion
 	}
 };
 </script>
