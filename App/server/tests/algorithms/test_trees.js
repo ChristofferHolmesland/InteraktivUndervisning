@@ -1,9 +1,9 @@
 const assert = require("assert");
-
 const Tree = require("../../js/algorithms/trees/Tree").Tree;
 const BinaryTreeNode = require("../../js/algorithms/trees/Tree.js").BinaryTreeNode;
 const BinaryTreeFunctions = require("../../js/algorithms/trees/BinaryTree.js");
 const BinarySearchTreeFunctions = require("../../js/algorithms/trees/BinarySearchTree.js");
+const GeneralTreeFunctions = require("../../js/algorithms/trees/GeneralTreeFunctions.js");
 
 describe('TestBinaryTrees', function () {
 	//Creating 2 Tree Objects
@@ -108,7 +108,7 @@ describe('TestBinaryTrees', function () {
 
 	describe('TestBinarySearchTreeComparisons', function () {
 		it("Compare the Tree Objects", function () {
-			assert(BinarySearchTreeFunctions.checkStudentAnswer(testTree1,testTree2))
+			assert(GeneralTreeFunctions.checkStudentAnswer(testTree1,testTree2))
 		});
 
 		it("testAddParent", function () {
@@ -125,10 +125,10 @@ describe('TestBinaryTrees', function () {
 				node10.addParent(node9);
 				testtree.push(node10);
 			}
-			assert(!BinarySearchTreeFunctions.checkStudentAnswer(testTree1,testTree2));
+			assert(!GeneralTreeFunctions.checkStudentAnswer(testTree1,testTree2));
 			let node102 = new BinaryTreeNode(51);
 			node102.addParent(node32);
-			assert(!BinarySearchTreeFunctions.checkStudentAnswer(testTree1,testTree2));
+			assert(!GeneralTreeFunctions.checkStudentAnswer(testTree1,testTree2));
 		})
 	});
 
@@ -140,8 +140,7 @@ describe('TestBinaryTrees', function () {
 			}
 
 			let solutionTree = new Tree(root,testtree);
-			solutionTree.printTree();
-			assert(BinarySearchTreeFunctions.checkStudentAnswer(completelyNewTree,solutionTree));
+			assert(GeneralTreeFunctions.checkStudentAnswer(completelyNewTree,solutionTree));
 			//assert(Object.is(completelyNewTree,solutionTree)); //didn't work, not sure if this means the objects does not have the same value.
 		});
 
@@ -181,7 +180,7 @@ describe('TestBinaryTrees', function () {
 			defNode9Sol.addParent(defNode7Sol);
 			let solutionTree = new Tree(rootSol);
 			solutionTree.nodes = [rootSol,defNode1Sol,defNode2Sol,defNode3Sol,defNode4Sol,defNode5Sol,defNode6Sol,defNode7Sol,defNode8Sol,defNode9Sol];
-			assert(BinarySearchTreeFunctions.checkStudentAnswer(newTree,solutionTree))
+			assert(GeneralTreeFunctions.checkStudentAnswer(newTree,solutionTree))
 		})
 	});
 });

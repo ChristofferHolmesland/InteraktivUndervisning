@@ -1,3 +1,5 @@
+const GeneralTreeFunctions = require("./GeneralTreeFunctions.js");
+
 class Tree {
 	constructor(rootNode,nodes) {
 		this.root = rootNode;
@@ -44,10 +46,10 @@ class Tree {
 			let rightHeight = 0;
 			//console.log(currentNode);
 			if (currentNode.children[0] !== undefined) {
-				leftHeight = getHeight(currentNode.children[0])
+				leftHeight = GeneralTreeFunctions.getHeight(currentNode.children[0])
 			}
 			if (currentNode.children[1] !== undefined) {
-				rightHeight = getHeight(currentNode.children[1])
+				rightHeight = GeneralTreeFunctions.getHeight(currentNode.children[1])
 			}
 			if (leftHeight > rightHeight) {
 				currentNode = currentNode.children[0]
@@ -91,20 +93,6 @@ class BinaryTreeNode {
 			this.parent = undefined;
 		}
 	}
-
-	/*
-	get leftChild() {
-		return this.#leftChild;
-	}
-
-	get rightChild() {
-		return this.#rightChild;
-	}
-
-	get parent() {
-		return this.#parent
-	}
-	*/
 }
 
 module.exports.Tree = Tree;

@@ -1,6 +1,8 @@
 const Tree = require("./Tree").Tree;
 const BinaryTreeNode = require("./Tree").BinaryTreeNode;
+const GeneralTreeFunctions = require("./GeneralTreeFunctions.js");
 
+//Checks whether or not the given tree is a valid Binary Search Tree.
 module.exports.checkBinarySearchTreeCriteria = function (tree) {
 	//Should check that there are no duplicate values in the list!
 	let treeNodes = tree.nodes;
@@ -22,7 +24,6 @@ module.exports.checkBinarySearchTreeCriteria = function (tree) {
 			checkresult = false;
 			break;
 		}
-
 		//Binary search tree rules
 		let leftChild = currentNode.children[0];
 		let rightChild = currentNode.children[1];
@@ -42,41 +43,9 @@ module.exports.checkBinarySearchTreeCriteria = function (tree) {
 	return checkresult
 };
 
-//Checks to two tree branches whether or not they are the same.
-//Will return true if two trees are the same and false if they are not.
-module.exports.checkStudentAnswer = function (studentTree,solutionTree) {
-	let checkresult = true;
-	if (studentTree.nodes.length === solutionTree.nodes.length) {
-		checkresult = checkNode(studentTree.root,solutionTree.root,checkresult);
-	}else {
-		checkresult = false;
-	}
-	//should probably be done in recursive function
-
-	return checkresult
-};
-//checks two nodes from different trees and returns false if they don't have the same value
-//Eventually the function will have traversed the entire tree in a inOrder algorithm
-function checkNode(studentNode,solutionNode,checkresult) {
-	//debug consoles
-	/*console.log("Student");
-	console.log(studentNode);
-	console.log("Solution");
-	console.log(solutionNode);*/
-	if (studentNode.value !== solutionNode.value) {
-		checkresult = false;
-	}
-	if (studentNode.children[0] !== undefined && checkresult) {
-		checkresult = checkNode(studentNode.children[0],solutionNode.children[0],checkresult)
-	}
-	if (studentNode.children[1] !== undefined && checkresult) {
-		checkresult =  checkNode(studentNode.children[1],solutionNode.children[1],checkresult)
-	}
-	return checkresult
-}
-
 //Creates a tree object based on added elements to the tree.
 //The function will either create a new tree instance or add the elements to a given tree.
+//Is going to be used to create a Binary Search tree object for the teacher's solution.
 module.exports.createBinarySearchTreeSolution = function(addedElements,existingTreeObject) {
 	let tree;
 	let a = 0;
@@ -91,28 +60,11 @@ module.exports.createBinarySearchTreeSolution = function(addedElements,existingT
 	}
 	for (a;a<addedElements.length;a++) {
 		let node = new BinaryTreeNode(addedElements[a]);
-		let bestParent = findBestParent(node,rootNode);
+		let bestParent = GeneralTreeFunctions.findBestParent(node,rootNode);
 		node.addParent(bestParent);
 		tree.nodes.push(node);
 	}
 	return tree
 };
-//Traverses the tree looking for the best existing node to add a new given node.
-//parentNode should initially be the root node.
-function findBestParent(node,parentNode) {
-	let bestParent = parentNode;
-	if (node.value < parentNode.value) {
-		if(parentNode.children[0] !== undefined) {
-			bestParent = findBestParent(node,parentNode.children[0])
-		}else {
-			return parentNode
-		}
-	}else if (node.value > parentNode.value) {
-		if(parentNode.children[1] !== undefined) {
-			bestParent = findBestParent(node,parentNode.children[1])
-		}else {
-			return parentNode;
-		}
-	}
-	return bestParent;
-}
+
+
