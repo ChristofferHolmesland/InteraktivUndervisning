@@ -87,6 +87,15 @@ export default class Graph0 {
 
 		// If no node was clicked, check if the cursor is close
 		// to an edge
+		let pickThreshold = 8;
+		for (let e = 0; e < this.gd.edges.length; e++) {
+			let d = this.gd.distanceFromEdgeToPoint(this.gd.edges[e], p.x, p.y);
+			if (d < pickThreshold) {
+				this.gd.edges.splice(e, 1);
+				this.gd.dirty = true;
+				return true;
+			}
+		}
 
 		return false;
 	}
@@ -133,7 +142,7 @@ export default class Graph0 {
 			this.gd.dirty = true;
 		}.bind(this);
 
-		let upHandler = function(newE) {
+		let upHandler = function() {
 			this.gd.canvas.removeEventListener("mousemove", moveHandler);
 			this.gd.canvas.removeEventListener("mouseup", upHandler);
 		}.bind(this);
@@ -215,6 +224,10 @@ export default class Graph0 {
 		this.gd.staticContext.closePath();
 	}
 
+	exportAsGraph() {
+
+	}
+
 	exportAsTree() {
 		// Normally a tree would only have one root.
 		// Since the user might create a graph with two or more
@@ -231,7 +244,7 @@ export default class Graph0 {
 			let isRoot = true;
 			for (let j = 0; j < this.gd.edges.length; j++) {
 				let edge = this.gd.edges[j];
-				
+
 				// A node which is being linked to, is a child node.
 				if (node == edge.n2) isRoot = false;
 				// A node linking to another node, has a child node.

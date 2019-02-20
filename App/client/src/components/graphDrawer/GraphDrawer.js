@@ -61,6 +61,12 @@ export default class GraphDrawer {
 			is displayed next to the edge.
 		*/
 		this.displayEdgeValues = config.displayEdgeValues || true;
+
+		/*
+			Directed edges can only be traveres in the given direction.
+			They are drawn as a arrow, instad of a line.
+		*/
+		this.directedEdges = config.directedEdges || false;
 	}
 
 	// TODO: Remove/move this
@@ -235,6 +241,37 @@ export default class GraphDrawer {
 			this.drawContext.lineTo(cx2, cy2);
 			this.drawContext.stroke();
 			this.drawContext.closePath();
+
+			// Draw an arrow, ref: https://stackoverflow.com/a/6333775, 20.02.2019
+			if (this.directedEdges) {
+				let dx = cx1 - cx2;
+				let dy = cy1 - cy2;
+				let magnitude = Math.sqrt(dx * dx + dy * dy);
+				let nx = dx / magnitude;
+				let ny = dy / magnitude;
+				let a = { x: this.edges[i].n2.x, y: this.edges[i].n2.y };
+				a.x += nx * this.edges[i].n2.r;
+				a.y += ny * this.edges[i].n2.r;
+				let b = { x: a.x, y: a.y };
+				b.x += nx * this.edges[i].n2.r;
+				b.y += ny * this.edges[i].n2.r;
+
+				let headlen = 20;
+				let angle = Math.atan2(a.y - b.y, a.x - b.x);
+				this.drawContext.beginPath();
+				this.drawContext.moveTo(b.x, b.y);
+				this.drawContext.lineTo(a.x, a.y);
+				this.drawContext.lineTo(
+					a.x - headlen * Math.cos(angle - Math.PI / 6),
+					a.y - headlen * Math.sin(angle - Math.PI / 6)
+				);
+				this.drawContext.moveTo(a.x, a.y);
+				this.drawContext.lineTo(
+					a.x - headlen * Math.cos(angle + Math.PI / 6),
+					a.y - headlen * Math.sin(angle + Math.PI / 6)
+				);
+				this.drawContext.stroke();
+			}
 
 			if (this.displayEdgeValues) {
 				let tx = (cx1 + cx2) / 2 + 5;
