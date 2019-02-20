@@ -20,6 +20,23 @@
         "selectQuestions": "Legg til spørsmål",
         "selectedQuestions": "Spørsmål i økten"
     },
+    "AdminDashboard": {
+        "courseAdministrator": "Fag adminstrator",
+        "addBtnText": "Legg til",
+        "courseAssistants": "Student assistenter",
+        "startSession": "Start økt",
+        "changeCourseTitle": "Endre fag",
+        "newCourseBtnText": "Legg til",
+        "addNewQuestionBtnText": "Legg til nytt spørsmål",
+        "newQuestion": "Nytt spørsmål",
+        "viewLastSession": "Vis forrige økt",
+        "openLastSession": "Åpne"
+    },
+    "DisplayQuestion": {
+        "question": "Spørsmål",
+        "solution": "Løsning",
+        "answer": "Svar"
+    },
     "Navbar": {
         "lang": "Språk",
         "profile": "Profil",

@@ -22,40 +22,43 @@
 			</b-col>
 			<b-col cols="8">
 				<!--Vindu over valgt feil svar, oppgave eller løsning-->
-				<b-card no-body>
-					<b-tabs card>
-						<b-tab title="Question">
-							<h1>{{ resultInfo.question.text }}</h1>
-							<p>{{ resultInfo.question.description }}</p>
-							<!-- TODO Add code to handle objects -->
-						</b-tab>
-						<b-tab title="Solution">
-							<h1>Solution</h1>
-							<p>{{ resultInfo.solution }}</p>
-							<!-- TODO Add code to handle different solution types -->
-						</b-tab>
-						<b-tab title="Answer">
-							<!-- TODO Add code to show a selected wrong answer-->
-						</b-tab>
-					</b-tabs>
-				</b-card>
+				<DisplayQuestion :selectedAnswer="selectedAnswer"
+									:resultInfo="resultInfo"/>
 			</b-col>
 		</b-row>
 		<b-row>
 			<b-col>
-				<!-- TODO liste over feil svar-->
+				<div style="overflow-x: scroll; max-width: 100%; white-space: nowrap;">
+					<!-- Add component to view incorrect answers -->
+					<ul class="list-inline">                        
+						<li v-for="(answer, index) in getIncorrectAnswers" 
+							:key="index"
+							class="list-inline-item"
+							>
+							<b-card 
+									style="cursor: pointer; min-width: 100px; min-height: 100px;"
+									v-on:click="changeAnswer($event)"
+									:id="index"
+									no-body>
+								Incorrect answer {{index}}
+							</b-card>
+						</li>
+					</ul>
+				</div>
 			</b-col>
 		</b-row>
 	</b-container>
 </template>
 
 <script>
+import DisplayQuestion from "../question/DisplayQuestion.vue"
+
 export default {
 	name: "QuestionResultScreen",
 	props: ["resultInfo"],
 	data() {
 		return {
-			selectedResult: 0
+			selectedAnswer: 0
 		}
 	},
 	methods: {
@@ -64,7 +67,19 @@ export default {
 		},
 		endSession() {
 
+		},
+		changeAnswer(event) {
+			this.selectedAnswer = event.target.id;
+		},
+
+	},
+	computed: {
+		getIncorrectAnswers() {
+			return this.resultInfo.answerList;
 		}
+	},
+	components: {
+		DisplayQuestion
 	}
 };
 </script>
