@@ -10,7 +10,7 @@ module.exports.checkTreeCriteria = function(tree) {
 	}
 	for(let i=0;i<treeNodes.length;i++) {
 		//Every tree node needs a parent node, exception being root node.
-		if (i > 0 && tree[i].parent === undefined){
+		if (i > 0 && treeNodes[i].parent === undefined){
 			checkresult = false;
 			break;
 		}

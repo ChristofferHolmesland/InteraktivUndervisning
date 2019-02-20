@@ -38,6 +38,7 @@ describe('TestBinaryTrees', function () {
 	testtree.push(node7);
 	testtree.push(node8);
 	testtree.push(node9);
+	let testTree1 = new Tree(root,testtree);
 
 	let testtree2 = [];
 	let root2 = new BinaryTreeNode(28);
@@ -69,19 +70,20 @@ describe('TestBinaryTrees', function () {
 	testtree2.push(node72);
 	testtree2.push(node82);
 	testtree2.push(node92);
+	let testTree2 = new Tree(root2,testtree2);
 
 	describe('TestBinaryTreeConditions', function () {
 		it("checkBinaryTreeTrueConditions", function () {
-			assert(BinaryTreeFunctions.checkTreeCriteria(testtree));
-			assert(BinaryTreeFunctions.checkTreeCriteria(testtree2));
+			assert(BinaryTreeFunctions.checkTreeCriteria(testTree1));
+			assert(BinaryTreeFunctions.checkTreeCriteria(testTree2));
 		});
 
 		it("checkBinaryTreeFalseConditions", function () {
 			let nodeex = new BinaryTreeNode(100);
 			node2.children.push(nodeex);
 			node72.children.push(nodeex);
-			assert(!BinaryTreeFunctions.checkTreeCriteria(testtree));
-			assert(!BinaryTreeFunctions.checkTreeCriteria(testtree));
+			assert(!BinaryTreeFunctions.checkTreeCriteria(testTree1));
+			assert(!BinaryTreeFunctions.checkTreeCriteria(testTree1));
 			node2.children.pop();
 			node72.children.pop();
 		})
@@ -89,16 +91,16 @@ describe('TestBinaryTrees', function () {
 
 	describe('TestBinarySearchConditions', function () {
 		it("checkBinarySearchTreeTrueConditions", function () {
-			assert(BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(testtree));
-			assert(BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(testtree2));
+			assert(BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(testTree1));
+			assert(BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(testTree2));
 		});
 
 		it("checkBinarySearchTreeFalseConditions", function () {
 			let wrongNode = new BinaryTreeNode(50);
 			node32.children[0] = wrongNode;
 			node9.children[0] = wrongNode;
-			assert(!BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(testtree));
-			assert(!BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(testtree2));
+			assert(!BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(testTree1));
+			assert(!BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(testTree2));
 			node9.children.pop();
 			node32.children.pop();
 		})
@@ -106,7 +108,7 @@ describe('TestBinaryTrees', function () {
 
 	describe('TestBinarySearchTreeComparisons', function () {
 		it("Compare the Tree Objects", function () {
-			assert(BinarySearchTreeFunctions.checkStudentAnswer(testtree,testtree2))
+			assert(BinarySearchTreeFunctions.checkStudentAnswer(testTree1,testTree2))
 		});
 
 		it("testAddParent", function () {
@@ -118,23 +120,28 @@ describe('TestBinaryTrees', function () {
 		});
 
 		it("Check failure condition", function () {
-			if (testtree.length === testtree2.length) {
+			if (testTree1.nodes.length === testTree2.nodes.length) {
 				let node10 = new BinaryTreeNode(50);
 				node10.addParent(node9);
 				testtree.push(node10);
 			}
-			assert(!BinarySearchTreeFunctions.checkStudentAnswer(testtree,testtree2));
+			assert(!BinarySearchTreeFunctions.checkStudentAnswer(testTree1,testTree2));
 			let node102 = new BinaryTreeNode(51);
 			node102.addParent(node32);
-			assert(!BinarySearchTreeFunctions.checkStudentAnswer(testtree,testtree2));
+			assert(!BinarySearchTreeFunctions.checkStudentAnswer(testTree1,testTree2));
 		})
 	});
 
 	describe("TestCreateBinarySearchSolution", function () {
 		it("Check with no existing tree", function () {
 			let completelyNewTree = BinarySearchTreeFunctions.createBinarySearchTreeSolution(testArray);
+			if (testArray.length !== testtree.length) {
+				testtree.pop();	//remove extra 50
+			}
+
 			let solutionTree = new Tree(root,testtree);
-			assert(BinarySearchTreeFunctions.checkStudentAnswer(completelyNewTree.nodes,solutionTree.nodes));
+			solutionTree.printTree();
+			assert(BinarySearchTreeFunctions.checkStudentAnswer(completelyNewTree,solutionTree));
 			//assert(Object.is(completelyNewTree,solutionTree)); //didn't work, not sure if this means the objects does not have the same value.
 		});
 
@@ -174,7 +181,7 @@ describe('TestBinaryTrees', function () {
 			defNode9Sol.addParent(defNode7Sol);
 			let solutionTree = new Tree(rootSol);
 			solutionTree.nodes = [rootSol,defNode1Sol,defNode2Sol,defNode3Sol,defNode4Sol,defNode5Sol,defNode6Sol,defNode7Sol,defNode8Sol,defNode9Sol];
-			assert(BinarySearchTreeFunctions.checkStudentAnswer(newTree.nodes,solutionTree.nodes))
+			assert(BinarySearchTreeFunctions.checkStudentAnswer(newTree,solutionTree))
 		})
 	});
 });
