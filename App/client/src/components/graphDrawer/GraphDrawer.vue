@@ -48,6 +48,10 @@
                 displayEdgeValues: true,
                 directedEdges: true,
                 
+                graph: {
+                    exportType: "Graph"
+                },
+
                 sort: {
                     sortType: this.sortType,
                     bsf: 2.75,

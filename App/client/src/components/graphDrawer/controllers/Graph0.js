@@ -4,7 +4,13 @@
 	one of five buttons.
 */
 export default class Graph0 {
-	constructor(graphDrawer) {
+	_config(config) {
+		// Decides what kind of data should be returned when exporting.
+		// Values: Graph or Tree.
+		this.exportType = config.exportType;
+	}
+
+	constructor(graphDrawer, config) {
 		this.gd = graphDrawer;
 
 		// Current interaction state.
@@ -28,6 +34,8 @@ export default class Graph0 {
 			if (!this.stateHandlers.hasOwnProperty(key)) continue;
 			this.stateHandlers[key] = this.stateHandlers[key].bind(this);
 		}
+
+		if (config) this._config(config);
 	}
 
 	mouseDownHandler(e) {
@@ -224,8 +232,17 @@ export default class Graph0 {
 		this.gd.staticContext.closePath();
 	}
 
-	exportAsGraph() {
+	export() {
+		if (this.exportType == "Graph") return this.exportAsGraph();
+		if (this.exportType == "Tree") return this.exportAsTree();
+	}
 
+	exportAsGraph() {
+		let graph = {};
+		graph.nodes = this.gd.nodes;
+		graph.edges = this.gd.edges;
+		graph.directed = this.gd.directedEdges;
+		return graph;
 	}
 
 	exportAsTree() {
