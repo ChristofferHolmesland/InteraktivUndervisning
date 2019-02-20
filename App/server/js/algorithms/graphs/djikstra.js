@@ -124,6 +124,9 @@ module.exports.djikstra = function(graph, from, to) {
         reset: function() {
             currentStep = 0;
             return steps[currentStep];
+        },
+        getSteps: function() {
+            return steps;
         }
     }
 };
