@@ -5,7 +5,7 @@ const BinaryTreeChecker = function (answerTree,solution) {
 	//Pretty sure that there is no reason to check the BinarySearchTree and AVL conditions, since the only way to  result = true is when the answer===solution.
 	let result = false;
 	let treeList = GeneralTreeFunctions.createTreeObjectFromCanvasObjectver1(answerTree);
-	if (treeList.length > 2) {
+	if (treeList.length !== 1) {
 		result = false;
 	}
 	if (BinaryTreeFunctions.checkTreeCriteria(treeList)) {
