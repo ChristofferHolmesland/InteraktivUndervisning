@@ -10,6 +10,10 @@ export default class Graph0 {
 		this.exportType = config.exportType;
 	}
 
+	configure() {
+		this._config(this.config);
+	}
+
 	constructor(graphDrawer, config) {
 		this.gd = graphDrawer;
 
@@ -35,7 +39,7 @@ export default class Graph0 {
 			this.stateHandlers[key] = this.stateHandlers[key].bind(this);
 		}
 
-		if (config) this._config(config);
+		this.config = config;
 	}
 
 	mouseDownHandler(e) {

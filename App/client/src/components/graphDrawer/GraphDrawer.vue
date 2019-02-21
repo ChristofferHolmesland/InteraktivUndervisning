@@ -45,7 +45,7 @@
                 nodeShape: nodeShape,
                 controlType: this.controlType,
                 operatingMode: this.operatingMode,
-                displayEdgeValues: true,
+                displayEdgeValues: false,
                 directedEdges: true,
                 
                 djikstra: {
