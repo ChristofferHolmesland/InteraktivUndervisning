@@ -45,8 +45,8 @@
                 nodeShape: nodeShape,
                 controlType: this.controlType,
                 operatingMode: this.operatingMode,
-                displayEdgeValues: false,
-                directedEdges: false,
+                displayEdgeValues: true,
+                directedEdges: true,
                 
                 djikstra: {
                     startColor: "LightGreen",
