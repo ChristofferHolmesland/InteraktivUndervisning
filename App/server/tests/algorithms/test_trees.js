@@ -3,6 +3,7 @@ const Tree = require("../../js/algorithms/trees/Tree").Tree;
 const BinaryTreeNode = require("../../js/algorithms/trees/Tree.js").BinaryTreeNode;
 const BinaryTreeFunctions = require("../../js/algorithms/trees/BinaryTree.js");
 const BinarySearchTreeFunctions = require("../../js/algorithms/trees/BinarySearchTree.js");
+const AVLFunctions = require("../../js/algorithms/trees/AVLTree.js");
 const GeneralTreeFunctions = require("../../js/algorithms/trees/GeneralTreeFunctions.js");
 
 describe('TestBinaryTrees', function () {
@@ -182,5 +183,95 @@ describe('TestBinaryTrees', function () {
 			solutionTree.nodes = [rootSol,defNode1Sol,defNode2Sol,defNode3Sol,defNode4Sol,defNode5Sol,defNode6Sol,defNode7Sol,defNode8Sol,defNode9Sol];
 			assert(GeneralTreeFunctions.checkStudentAnswer(newTree,solutionTree))
 		})
+	});
+	describe("TestCreateAVLTree",function () {
+		let testarray = [20,5,6,9,4,3,2,30,31];
+		let solutionAVLTree = new Tree();
+		let solutionRootNode = new BinaryTreeNode(20);
+		solutionAVLTree.root = solutionRootNode;
+		let solutionNode1 = new BinaryTreeNode(5);
+		let solutionNode2 = new BinaryTreeNode(3);
+		let solutionNode3 = new BinaryTreeNode(2);
+		let solutionNode4 = new BinaryTreeNode(4);
+		let solutionNode5 = new BinaryTreeNode(6);
+		let solutionNode6 = new BinaryTreeNode(9);
+		let solutionNode7 = new BinaryTreeNode(30);
+		let solutionNode8 = new BinaryTreeNode(31);
+		solutionNode1.addParent(solutionRootNode);
+		solutionNode2.addParent(solutionNode1);
+		solutionNode3.addParent(solutionNode2);
+		solutionNode4.addParent(solutionNode2);
+		solutionNode5.addParent(solutionNode1);
+		solutionNode6.addParent(solutionNode5);
+		solutionNode7.addParent(solutionRootNode);
+		solutionNode8.addParent(solutionNode7);
+		solutionAVLTree.nodes = [solutionRootNode,solutionNode1,solutionNode2,solutionNode3,solutionNode4,solutionNode5,solutionNode6,solutionNode7,solutionNode8];
+
+		it("Create an AVL tree using only an array of elements", function () {
+			let createdTree = AVLFunctions.createAVLTreeSolution(testarray);
+			//createdTree.printTree();
+			let solutionRootNode = new BinaryTreeNode(testarray[2]);
+			let solutionTree = new Tree(solutionRootNode);
+			let solutionNode4 = new BinaryTreeNode(4);
+			let solutionNode3 = new BinaryTreeNode(3);
+			let solutionNode2 = new BinaryTreeNode(2);
+			let solutionNode5 = new BinaryTreeNode(5);
+			let solutionNode20 = new BinaryTreeNode(20);
+			let solutionNode9 = new BinaryTreeNode(9);
+			let solutionNode30 = new BinaryTreeNode(30);
+			let solutionNode31 = new BinaryTreeNode(31);
+			solutionNode4.addParent(solutionRootNode);
+			solutionNode3.addParent(solutionNode4);
+			solutionNode2.addParent(solutionNode3);
+			solutionNode5.addParent(solutionNode4);
+			solutionNode20.addParent(solutionRootNode);
+			solutionNode30.addParent(solutionNode20);
+			solutionNode31.addParent(solutionNode30);
+			solutionNode9.addParent(solutionNode20);
+			solutionTree.nodes = [solutionRootNode,solutionNode4,solutionNode3,solutionNode2,solutionNode5,solutionNode20,solutionNode9,solutionNode30,solutionNode31];
+			assert(GeneralTreeFunctions.checkStudentAnswer(createdTree,solutionTree));
+		});
+		it("Create an AVL tree using only an existing tree", function () {
+			let defaultBSTTree = BinarySearchTreeFunctions.createBinarySearchTreeSolution(testarray);
+			let fullyRotatedTree = AVLFunctions.createAVLTreeSolution([],defaultBSTTree);
+			assert(GeneralTreeFunctions.checkStudentAnswer(fullyRotatedTree,solutionAVLTree));
+		});
+
+		it("Create an AVL tree using both an existing tree and and an array of elements",function () {
+			let addedElements = [92,60,58,8,55];
+			let startTree = solutionAVLTree;
+			let solutionTree = new Tree();
+			let rootNode = new BinaryTreeNode(20);
+			let solutionNode1 = new BinaryTreeNode(5);
+			let solutionNode2 = new BinaryTreeNode(3);
+			let solutionNode3 = new BinaryTreeNode(2);
+			let solutionNode4 = new BinaryTreeNode(4);
+			let solutionNode5 = new BinaryTreeNode(6);
+			let solutionNode6 = new BinaryTreeNode(8);
+			let solutionNode7 = new BinaryTreeNode(9);
+			let solutionNode8 = new BinaryTreeNode(30);
+			let solutionNode9 = new BinaryTreeNode(31);
+			let solutionNode10 = new BinaryTreeNode(60);
+			let solutionNode11 = new BinaryTreeNode(58);
+			let solutionNode12 = new BinaryTreeNode(55);
+			let solutionNode13 = new BinaryTreeNode(92);
+			solutionNode1.addParent(rootNode);
+			solutionNode11.addParent(rootNode);
+			solutionNode2.addParent(solutionNode1);
+			solutionNode6.addParent(solutionNode1);
+			solutionNode3.addParent(solutionNode2);
+			solutionNode4.addParent(solutionNode2);
+			solutionNode5.addParent(solutionNode6);
+			solutionNode7.addParent(solutionNode6);
+			solutionNode8.addParent(solutionNode9);
+			solutionNode12.addParent(solutionNode9);
+			solutionNode9.addParent(solutionNode11);
+			solutionNode10.addParent(solutionNode11);
+			solutionNode13.addParent(solutionNode10);
+			solutionTree.root = rootNode;
+			solutionTree.nodes = [rootNode,solutionNode1,solutionNode2,solutionNode3,solutionNode4,solutionNode5,solutionNode6,solutionNode7,solutionNode8,solutionNode9,solutionNode10,solutionNode11,solutionNode12,solutionNode13];
+			let createdAVLTree = AVLFunctions.createAVLTreeSolution(addedElements,startTree);
+			assert(GeneralTreeFunctions.checkStudentAnswer(createdAVLTree,solutionTree));
+		});
 	});
 });
