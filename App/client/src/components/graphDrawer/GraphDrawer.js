@@ -105,6 +105,7 @@ export default class GraphDrawer {
 			{
 				n1, n2, v,
 				strokeColor (undefined => black)
+				directed (undefined => false)
 			}.
 		*/
 		this.edges = [];
@@ -253,7 +254,11 @@ export default class GraphDrawer {
 			this.drawContext.closePath();
 
 			// Draw an arrow, ref: https://stackoverflow.com/a/6333775, 20.02.2019
-			if (this.directedEdges) {
+			if (
+				this.directedEdges &&
+				(this.edges[i].directed == undefined ||
+					this.edges[i].directed == true)
+			) {
 				let dx = cx1 - cx2;
 				let dy = cy1 - cy2;
 				let magnitude = Math.sqrt(dx * dx + dy * dy);
@@ -283,7 +288,7 @@ export default class GraphDrawer {
 				this.drawContext.stroke();
 			}
 
-			if (this.displayEdgeValues) {
+			if (this.displayEdgeValues && this.edges[i].v !== undefined) {
 				let tx = (cx1 + cx2) / 2 + 5;
 				let ty = (cy1 + cy2) / 2 + 5;
 				this.drawContext.fillText(this.edges[i].v, tx, ty);
