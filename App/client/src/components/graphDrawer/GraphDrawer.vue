@@ -46,7 +46,7 @@
                 controlType: this.controlType,
                 operatingMode: this.operatingMode,
                 displayEdgeValues: false,
-                directedEdges: true,
+                directedEdges: false,
                 
                 djikstra: {
                     startColor: "LightGreen",
@@ -58,7 +58,7 @@
                 },
 
                 graph: {
-                    exportType: "Graph"
+                    exportType: "Tree"
                 },
 
                 sort: {
