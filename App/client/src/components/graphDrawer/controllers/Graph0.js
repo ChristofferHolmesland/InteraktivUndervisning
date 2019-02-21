@@ -260,7 +260,7 @@ export default class Graph0 {
 		// Parse nodes to generate tree.
 		for (let i = 0; i < this.gd.nodes.length; i++) {
 			let node = this.gd.nodes[i];
-			if (!node.children) node.children = [];
+			node.children = [];
 
 			let isRoot = true;
 			for (let j = 0; j < this.gd.edges.length; j++) {
@@ -269,7 +269,9 @@ export default class Graph0 {
 				// A node which is being linked to, is a child node.
 				if (node == edge.n2) isRoot = false;
 				// A node linking to another node, has a child node.
-				if (node == edge.n1) node.children.push(edge.n2);
+				if (node == edge.n1) {
+					node.children.push(edge.n2);
+				}
 			}
 
 			if (isRoot) tree.roots.push(node);

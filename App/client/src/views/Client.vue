@@ -12,7 +12,7 @@
     			<GraphDrawer 
 					@getValueResponse="printGraphDrawer" 
 					:requestAnswer="requestAnswer" 
-					controlType="Djikstra" />
+					controlType="Graph0" />
 				<b-button @click="requestAnswer = !requestAnswer" >Export</b-button>
 				</b-col>
 			</b-row>

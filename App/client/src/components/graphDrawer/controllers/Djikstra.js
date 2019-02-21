@@ -37,7 +37,13 @@ export default class Djikstra {
 	export() {
 		let steps = [];
 		for (let i = 0; i < this.gd.edges.length; i++) {
-			let j = i;
+			let edge = this.gd.edges[i];
+			if (edge.directed) {
+				steps.push({
+					current: edge.n1,
+					node: edge.n2
+				});
+			}
 		}
 
 		return steps;
