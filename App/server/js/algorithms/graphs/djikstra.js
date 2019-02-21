@@ -2,10 +2,11 @@
     Stepping implementation of the djikstra algorithm.
 
     Step definitions:
-        - Giving a node a new distance.
+        - Starting graph.
+        - Checking if a node should have a new distance.
         - The shortest path from "from" to "to".
 */
-module.exports.djikstra = function(graph, from, to) {
+module.exports = function(graph, from, to) {
     let currentStep = 0;
     let steps = [
         {
@@ -59,12 +60,13 @@ module.exports.djikstra = function(graph, from, to) {
                     if (distance < edge.n2.distance) {
                         edge.n2.distance = distance;
                         edge.n2.previous = current;
-                        steps.push({
-                            type: "Distance",
-                            current: current,
-                            node: edge.n2
-                        });
                     }
+
+                    steps.push({
+                        type: "Distance",
+                        current: current.v,
+                        node: edge.n2.v
+                    });
                 } else if (edge.n2 == current && !graph.directed) {
                     if (edge.n2.visited) continue;
 
@@ -74,12 +76,13 @@ module.exports.djikstra = function(graph, from, to) {
                     if (distance < edge.n1.distance) {
                         edge.n1.distance = distance;
                         edge.n1.previous = current;
-                        steps.push({
-                            type: "Distance",
-                            current: current,
-                            node: edge.n1
-                        });
                     }
+
+                    steps.push({
+                        type: "Distance",
+                        current: current.v,
+                        node: edge.n1.v
+                    });
                 }
             }
 
