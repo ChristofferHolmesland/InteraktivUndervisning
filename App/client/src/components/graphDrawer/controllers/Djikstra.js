@@ -1,5 +1,3 @@
-import Graph0 from "./Graph0";
-
 export default class Djikstra {
 	_config(config) {
 		// Parse graph to build the world.
@@ -28,8 +26,12 @@ export default class Djikstra {
 
 	constructor(graphDrawer, config) {
 		this.gd = graphDrawer;
-		this._config(config);
 		this.gd.dirty = true;
+		this.config = config;
+	}
+
+	configure() {
+		this._config(this.config);
 	}
 
 	export() {

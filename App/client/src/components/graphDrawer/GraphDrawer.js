@@ -60,13 +60,17 @@ export default class GraphDrawer {
 			This can be used to determine if the value/cost of an edge
 			is displayed next to the edge.
 		*/
-		this.displayEdgeValues = config.displayEdgeValues || true;
+		if (config.displayEdgeValues !== undefined)
+			this.displayEdgeValues = config.displayEdgeValues;
+		else this.displayEdgeValues = true;
 
 		/*
 			Directed edges can only be traveres in the given direction.
 			They are drawn as a arrow, instad of a line.
 		*/
-		this.directedEdges = config.directedEdges || false;
+		if (config.directedEdges !== undefined)
+			this.directedEdges = config.directedEdges;
+		else this.directedEdges = false;
 	}
 
 	export() {
@@ -156,7 +160,20 @@ export default class GraphDrawer {
 			Sort: new Sort(this, config.sort),
 			Djikstra: new Djikstra(this, config.djikstra)
 		};
-		if (this.controlType == "Graph0") this.controllers["Graph0"].drawStatic();
+
+		this.setController(this.controlType);
+	}
+
+	setController(controllerName) {
+		this.controlType = controllerName;
+		this.nodes = [];
+		this.edges = [];
+
+		if (this.controlType == "Graph0")
+			this.controllers["Graph0"].drawStatic();
+
+		if (this.controllers[this.controlType].configure)
+			this.controllers[this.controlType].configure();
 	}
 
 	// TODO: Remove this, and implement a better interface

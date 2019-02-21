@@ -31,6 +31,10 @@ export default class Sort {
 		}
 	}
 
+	configure() {
+		this._config(this.config);
+	}
+
 	constructor(graphDrawer, config) {
 		this.gd = graphDrawer;
 		// This doesn't work on mobile, because there is no
@@ -98,7 +102,7 @@ export default class Sort {
 		// so the array position can be translated the same amount
 		this.startPositionOfMove = { x: -1, y: 1 };
 
-		this._config(config);
+		this.config = config;
 
 		if (this.gd.operatingMode == "Presentation") {
 			this.addSteppingButtons();
