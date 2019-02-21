@@ -1,3 +1,5 @@
+import Graph0 from "./Graph0";
+
 export default class Djikstra {
 	_config(config) {
 		// Parse graph to build the world.
@@ -14,6 +16,7 @@ export default class Djikstra {
 
 			for (let i = 0; i < config.graph.edges.length; i++) {
 				let edge = config.graph.edges[i];
+				edge.directed = false;
 				if (config.edgeColor) {
 					edge.strokeColor = config.edgeColor;
 				}
@@ -29,8 +32,44 @@ export default class Djikstra {
 		this.gd.dirty = true;
 	}
 
+	export() {
+		let steps = [];
+		for (let i = 0; i < this.gd.edges.length; i++) {
+			let j = i;
+		}
+
+		return steps;
+	}
+
 	mouseDownHandler(e) {
-		console.log(this.gd.nodes);
-		this.gd.dirty = true;
+		let consumed = this.joinNode(e);
+
+		return consumed;
+	}
+
+	joinNode(e) {
+		let node = this.gd.getNodeAtCursor(e).node;
+		if (node == undefined) return false;
+
+		let handler = function(newE) {
+			let node2 = this.gd.getNodeAtCursor(newE).node;
+
+			if (node2 != undefined) {
+				if (node != node2) {
+					this.gd.edges.push({
+						n1: node,
+						n2: node2,
+						v: undefined,
+						directed: true
+					});
+
+					this.gd.dirty = true;
+				}
+			}
+
+			this.gd.canvas.removeEventListener("mouseup", handler);
+		}.bind(this);
+		this.gd.canvas.addEventListener("mouseup", handler);
+		return true;
 	}
 }
