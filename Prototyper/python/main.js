@@ -14,7 +14,7 @@
         - Shared class variables
         - Class inheritance
 
-    TODO: 
+    TODO (?): 
         - Lists
         - len() function
         - operators
@@ -414,6 +414,7 @@ function parse(code) {
             let args = [];
             let current = "";
             let argumentString = expression.slice(startIndex, expression.length - 1);
+            // Parse
             for (let i = 0; i < argumentString.length; i++) {
                 let a = argumentString[i];
 
@@ -430,6 +431,7 @@ function parse(code) {
                 }
             }
 
+            // Evaluate
             for (let i = 0; i < args.length; i++) {
                 if (args[i].trim() == "") {
                     args.splice(i, 1);
@@ -618,7 +620,6 @@ function parse(code) {
             };
         }
 
-
         let open = 0;
         for (let i = 0; i < expression.length; i++) {
             if (expression[i] == "(") {
@@ -706,6 +707,7 @@ function parse(code) {
         }
     };
 
+    // Go through every line from the input and parse it as a line.
     let lines = code.split("\n");
     for (let i = 0; i < lines.length; i++) {
         let line = lines[i];
@@ -719,17 +721,6 @@ function parse(code) {
 
     return steps;
 }
-
-function util_checkIfArrayContainsAnyElement(arr, elements) {
-    for (let i = 0; i < elements.length; i++) {
-        if (arr.indexOf(elements[i]) > -1) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
 
 /*
     Examples of valid code that should run in this version
