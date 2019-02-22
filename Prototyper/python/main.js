@@ -397,6 +397,10 @@ function parse(code) {
             if (print) console.log("Is function");
             // Parse and evaluate the arguments
             let startIndex = expression.indexOf("(") + 1;
+
+            // TODO: Fixing class instantiation by only splitting at ,
+            // if the open ( value == 0
+
             let args = expression.slice(startIndex, expression.length - 1).split(",");
             for (let i = 0; i < args.length; i++) {
                 if (args[i] == "") {
