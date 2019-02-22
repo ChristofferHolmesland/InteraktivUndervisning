@@ -19,7 +19,6 @@
         - len() function
         - operators
             - is not (js !=)
-        - Class instantiation inside expression
 */
 
 let codeInput = document.getElementById("code");
@@ -336,11 +335,17 @@ function parse(code) {
             return scope.data[scope.objects.get(expression)];
         }
 
-        // Check if its a variable belongig to an object
+        // Check if its a variable belonging to an object
         if (expression.includes(".")) {
-            let s = expression.split(".");
-            let objectName = s[0];
-            let propertyName = s[1];
+
+            // To get the object name, check what is before the first .
+            // To get the propertyName, check whats after the first .
+            // It might be a property of a property, so the expression
+            // needs to be evaluated.
+            let first = expression.indexOf(".");
+            let objectName = expression.slice(0, first);
+            let propertyName = expression.slice(first + 1);
+
             // Checks if the property contains a (, which means that its
             // a function call instead of property access.
             if (!propertyName.includes("(") && scope.objects.has(objectName)) {
@@ -349,14 +354,21 @@ function parse(code) {
                 // Check that the object actually has the property
                 if (object.objects.has(propertyName)) {
                     if (print) console.log("Belongs to object");
+
                     let propertyAddr = object.objects.get(propertyName);
                     if (print) console.log(object.data[propertyAddr]);
                     return object.data[propertyAddr];
+                } 
+                // If the object doesn't have the whole propertyName,
+                // then the propertyName is undefined, or consists of
+                // a subproperty. Evaluating the propertyName as an expression
+                // relative to the object scope, will give the right value if it
+                // exists.
+                else {
+                    return evaluateExpression(object, propertyName);
                 }
             }
         }
-
-        // 1 + abc(2, 3, 4, nils()) + nils()
 
         let isOperation = true;
         let name = ""
@@ -398,12 +410,28 @@ function parse(code) {
             // Parse and evaluate the arguments
             let startIndex = expression.indexOf("(") + 1;
 
-            // TODO: Fixing class instantiation by only splitting at ,
-            // if the open ( value == 0
+            let open = 0;
+            let args = [];
+            let current = "";
+            let argumentString = expression.slice(startIndex, expression.length - 1);
+            for (let i = 0; i < argumentString.length; i++) {
+                let a = argumentString[i];
 
-            let args = expression.slice(startIndex, expression.length - 1).split(",");
+                if (a == "(") open++;
+                else if (a == ")") open--;
+
+                if (open == 0 && a == ",") {
+                    args.push(current);
+                    current = "";
+                } else current += a;
+
+                if (i == argumentString.length - 1) {
+                    args.push(current);
+                }
+            }
+
             for (let i = 0; i < args.length; i++) {
-                if (args[i] == "") {
+                if (args[i].trim() == "") {
                     args.splice(i, 1);
                     i--;
                 } else {
@@ -772,4 +800,18 @@ function util_checkIfArrayContainsAnyElement(arr, elements) {
     a.num1 = 10
 
     c = a.atleastOneOver9()
+
+    # 5
+    class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    class Line:
+        def __init__(self, p1, p2):
+            self.p1 = p1
+            self.p2 = p2
+
+    a = Line(Point(0, 0), Point(1, 1))
+    b = Line(a.p1, Point(a.p2.x, 9))
 */
