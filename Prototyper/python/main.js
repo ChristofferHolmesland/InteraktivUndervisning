@@ -17,13 +17,7 @@
     TODO: 
         - Lists
         - len() function
-        - if, elif, else
         - operators
-            - <
-            - >
-            - >=
-            - <=
-            - is (js ==)
             - is not (js !=)
         - Class instantiation inside expression
 */
@@ -59,13 +53,19 @@ function assignScope(object) {
     object.data = [];
     // Name -> Address
     object.objects = new Map();
+    // Name -> Scope
     object.functions = new Map();
+    // Name -> Scope
     object.classes = new Map();
 }
 
 function parse(code) {
     let keyWords = ["def", "return", "class", "if"];
-    let operators = ["==", "!=", "+", "-", "*", "/"];
+    let operators = [
+        "and", "or", "!",
+        "==", "!=", "<", ">", ">=", "<=", 
+        "+", "-", "*", "/"
+    ];
 
     let getNewStep = function() { 
         let newStep = {};
@@ -89,12 +89,13 @@ function parse(code) {
 
             let length = 0;
             for (let i = lineNumber + 1; i < lines.length; i++) {
-                if (lines[i].startsWith("    ")) length += 1;
-                else break;
+                if (lines[i].startsWith("    ") || lines[i].trim() == "") {
+                    length += 1;
+                } else break;
             }
 
             let start = lineNumber + 1;
-            let end = start + length + 1;
+            let end = start + length;
 
             let func = {
                 name: name,
@@ -150,33 +151,52 @@ function parse(code) {
             let lineNumbers = [];
             let expressions = [];
             let startIndent = 0;
-            let endOfIf = lineNumber;
+            let endOfIf = 0;
 
             for (let i = lineNumber; i < lines.length; i++) {
                 let t = lines[i].trim();
-                console.log(t);
                 if (t.startsWith("if")) {
-                    lineNumbers.push(i + 1);
-                    expressions[i + 1] = t.substring(3, t.length - 1);
+                    lineNumbers.push(i);
+                    expressions[i] = t.substring(3, t.length - 1);
                     startIndent = lines[i].indexOf("if");
                     continue;
                 } else if (t.startsWith("elif")) {
-                    lineNumbers.push(i + 1);
-                    expressions[i + 1] = t.substring(5, t.length - 1);
+                    lineNumbers.push(i);
+                    expressions[i] = t.substring(5, t.length - 1);
                     continue;
                 } else if (t.startsWith("else")) {
-                    lineNumbers.push(i + 1);
-                    expressions[i + 1] = "True";
+                    lineNumbers.push(i);
+                    expressions[i] = "True";
                     continue;
                 }
 
-
-                // Something is wrong here
                 let outOfIf = false;
                 for (let j = 0; j < startIndent + 4; j++) {
+                    if (lines[i].trim() == "") {
+                        // Check if it's the last line and set
+                        // endOfIf.
+                        if (i == lines.length - 1) {
+                            outOfIf = true;
+                            endOfIf = i + 1;
+                            lineNumbers.push(endOfIf);
+                        }
+
+                        break;
+                    }
+
+                    // Check if indent is ok
                     if (lines[i][j] !== " ") {
                         outOfIf = true;
-                        endOfIf += i;
+                        endOfIf = i;
+                        lineNumbers.push(endOfIf);
+                        break;
+                    }
+
+                    // If indent is ok and we're at the last line
+                    // set endOfIf
+                    if (i == lines.length - 1) {
+                        outOfIf = true;
+                        endOfIf = i + 1;
                         lineNumbers.push(endOfIf);
                         break;
                     }
@@ -184,24 +204,27 @@ function parse(code) {
                 if (outOfIf) break;
             }
 
-            for (let i = 0; i < lineNumbers.length; i++) {
+            for (let i = 0; i < lineNumbers.length - 1; i++) {
                 let l = lineNumbers[i];
                 let expr = expressions[l];
                 let evaluated = evaluateExpression(scope, expr);
 
                 if (evaluated == undefined || evaluated.type !== "Boolean") {
                     console.error("Something is wrong with the expression at line: " + l);
+                    console.error(expr);
                     console.error(evaluated);
                     continue;
                 }
 
                 if (evaluated.data == false) continue;
 
-                for (let j = l; j < lineNumbers[i + 1] - 1; j++) {
+                for (let j = l + 1; j < lineNumbers[i + 1]; j++) {
                     let r = parseLine(scope, lines[j], j, lines, false);
                     if (r !== undefined) {
-                        if (r.type !== "SkipLines") {
+                        if (r.type == "SkipLines") {
                             j += r.data;
+                        } else {
+                            return r;
                         }
                     }
                 }
@@ -211,7 +234,9 @@ function parse(code) {
 
             return {
                 type: "SkipLines",
-                data: endOfIf
+                // Subtracting 1 because the for loop surrounding parseLine
+                // increments the line number value.
+                data: lineNumbers[lineNumbers.length - 1] - lineNumbers[0] - 1
             };
         }
     };
@@ -251,6 +276,8 @@ function parse(code) {
                 if (r.type !== "SkipLines") {
                     data = r;
                     break;
+                } else if (r.type == "SkipLines") {
+                    i += r.data;
                 }
             }
         }
@@ -262,25 +289,41 @@ function parse(code) {
 
 
     let evaluateExpression = function(scope, expression) {
+        let print = false;
+
+        // Removes whitespace
         expression = expression.trim();
+
+        // If the expression starts with ( and ends with ),
+        // they can be removed, because they serve no purpose anymore
+        // Example !(true and true) will result in
+        // Operation: operand !, data (true and true)
+        // (true and true) will be parsed as a function with name ""
+        if (expression.startsWith("(") && expression.endsWith(")")) {
+            expression = expression.slice(1, expression.length - 1);
+        }
 
         // Check for base types
         if (!isNaN(Number(expression))) {
+            if (print) console.log("base type");
             return { 
                 data: Number(expression), 
                 type: "Number" 
             };
         } else if (expression.startsWith("\"") && expression.endsWith("\"")) {
+            if (print) console.log("base type");
             return {
                 data: expression.substring(1, expression.length - 1),
                 type: "String"
             };
         } else if (expression == "True") {
+            if (print) console.log("base type");
             return {
                 data: true,
                 type: "Boolean"
             };
         } else if (expression == "False") {
+            if (print) console.log("base type");
             return {
                 data: false,
                 type: "Boolean"
@@ -289,6 +332,7 @@ function parse(code) {
 
         // Check if its a variable
         if (scope.objects.has(expression)) {
+            if (print) console.log("Variable");
             return scope.data[scope.objects.get(expression)];
         }
 
@@ -304,22 +348,44 @@ function parse(code) {
                 let object = scope.data[objectAddr];
                 // Check that the object actually has the property
                 if (object.objects.has(propertyName)) {
+                    if (print) console.log("Belongs to object");
                     let propertyAddr = object.objects.get(propertyName);
+                    if (print) console.log(object.data[propertyAddr]);
                     return object.data[propertyAddr];
                 }
             }
         }
 
-        // Both operators and function calls use ( and ).
-        // To decide what kind of expression it is, everything before
-        // the first ( is assumed to be the function/class name.
-        // If the name includes an operator, it is an operation instead.
-        let name = "";
-        for (let i = 0; i < expression.length; i++) {
-            name += expression[i];
-            if (expression[i + 1] == "(") break;
+        // 1 + abc(2, 3, 4, nils()) + nils()
+
+        let isOperation = true;
+        let name = ""
+        // If the first character is !, then expression
+        // is an operation where the result expression[1:]
+        // should be inverted.
+        if (expression.startsWith("!")) isOperation = true;
+        // If the last character of the expression is a ),
+        // then the expression might be a function call
+        else if (expression[expression.length - 1] == ")") {
+            // Check if the first ( closes the last ).
+            let open = 0;
+            let foundOpen = false;
+            for (let i = 0; i < expression.length; i++) {
+                if (expression[i] == "(") {
+                    open++
+                    foundOpen = true;
+                } else if (expression[i] == ")") {
+                    open--;
+                }
+
+                if (foundOpen && open == 0) {
+                    isOperation = i != expression.length - 1;
+                    break;
+                } else if (!foundOpen) {
+                    name += expression[i];
+                }
+            }
         }
-        let isOperation = util_checkIfArrayContainsAnyElement(name, operators);
 
         /*
             Check for function call or object instantiation
@@ -328,11 +394,17 @@ function parse(code) {
             objects are accessed before global (step) objects.
         */
         if (!isOperation) {
+            if (print) console.log("Is function");
             // Parse and evaluate the arguments
             let startIndex = expression.indexOf("(") + 1;
             let args = expression.slice(startIndex, expression.length - 1).split(",");
             for (let i = 0; i < args.length; i++) {
-                args[i] = evaluateExpression(scope, args[i]);
+                if (args[i] == "") {
+                    args.splice(i, 1);
+                    i--;
+                } else {
+                    args[i] = evaluateExpression(scope, args[i]);
+                }
             }
 
             // Checks if the function belongs to class
@@ -362,11 +434,15 @@ function parse(code) {
                 return instantiateClass(c, scope, args);
             }
 
+            console.error("Returning nothing from something I thought was a function");
+            console.error(expression);
             return;
         }
 
+        if (print) console.log("Is operation");
         // The only valid expression left is an operation on two expressions
         let info = getOperationInfo(scope, expression);
+        if (print) console.log(info);
 
         if (info.operator == "+") {
             if (info.operand1.type !== info.operand2.type) return;
@@ -440,10 +516,10 @@ function parse(code) {
                 data: (info.operand1.data === info.operand2.data)
             };
         } else if (info.operator == "!=") {
-            if (info.operand.type !== info.operand2.type) {
+            if (info.operand1.type !== info.operand2.type) {
                 return {
                     type: "Boolean",
-                    data: false
+                    data: true
                 };
             }
 
@@ -456,6 +532,41 @@ function parse(code) {
                 type: "Boolean",
                 data: info.operand1 == info.operand2
             };
+        } else if (info.operator == "<") {
+            return {
+                type: "Boolean",
+                data: info.operand1.data < info.operand2.data
+            };
+        } else if (info.operator == ">") {
+            return {
+                type: "Boolean",
+                data: info.operand1.data > info.operand2.data
+            };
+        } else if (info.operator == ">=") {
+            return {
+                type: "Boolean",
+                data: info.operand1.data >= info.operand2.data
+            };
+        } else if (info.operator == "<=") {
+            return {
+                type: "Boolean",
+                data: info.operand1.data <= info.operand2.data
+            };
+        } else if (info.operator == "and") {
+            return {
+                type: "Boolean",
+                data: info.operand1.data == true && info.operand2.data == true
+            };
+        } else if (info.operator == "or") {
+            return {
+                type: "Boolean",
+                data: info.operand1.data == true || info.operand2.data == true
+            }
+        } else if (info.operator == "!") {
+            return {
+                type: "Boolean",
+                data: !info.operand.data
+            };
         }
     };
 
@@ -466,6 +577,15 @@ function parse(code) {
         if (expression.startsWith("(") && expression.endsWith(")")) {
             expression = expression.slice(1, expression.length - 1);
         }
+        // Since the ! operation only have one operand, the loop won't detect
+        // and evaluate the expression correctly
+        else if (expression.startsWith("!")) {
+            return {
+                operand: evaluateExpression(scope, expression.slice(1)),
+                operator: "!"
+            };
+        }
+
 
         let open = 0;
         for (let i = 0; i < expression.length; i++) {
@@ -625,4 +745,27 @@ function util_checkIfArrayContainsAnyElement(arr, elements) {
     c = Line(a, b)
 
     a.translate(10, 10)
+
+    # 4
+    def under10(num):
+    if num < 10:
+        return True
+    else:
+        return False
+
+    class MyNumbers:
+        def __init__(self, num1, num2):
+            self.num1 = num1
+            self.num2 = num2
+
+        def atleastOneOver9(self):
+            return !(under10(self.num1) and under10(self.num2))
+
+    a = MyNumbers(9, 3)
+
+    b = a.atleastOneOver9()
+
+    a.num1 = 10
+
+    c = a.atleastOneOver9()
 */
