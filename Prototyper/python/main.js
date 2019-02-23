@@ -66,16 +66,14 @@ function parse(code) {
         "+", "-", "*", "/"
     ];
 
-    let getNewStep = function() { 
-        let newStep = {};
-        assignScope(newStep);
-        return newStep;
+    let createGlobalScope = function() { 
+        let scope = {};
+        assignScope(scope);
+        return scope;
     };
 
+    let globalScope = createGlobalScope();
     let steps = [];
-    let currentStep = 0;
-    let storedIndexes = [];
-    steps[currentStep] = getNewStep();
 
     let handleKeyWord = function(scope, line, keyWord, lineNumber, lines) {
         if (keyWord == "def") {
@@ -330,6 +328,7 @@ function parse(code) {
         }
 
         // Check if its a variable
+        if (print) console.log(scope);
         if (scope.objects.has(expression)) {
             if (print) console.log("Variable");
             return scope.data[scope.objects.get(expression)];
@@ -363,8 +362,9 @@ function parse(code) {
                 // then the propertyName is undefined, or consists of
                 // a subproperty. Evaluating the propertyName as an expression
                 // relative to the object scope, will give the right value if it
-                // exists.
-                else {
+                // exists. It could also be an operation if the propertyName has a
+                // space in it.
+                else if (propertyName.indexOf(" ") == -1) {
                     return evaluateExpression(object, propertyName);
                 }
             }
@@ -457,14 +457,14 @@ function parse(code) {
             }
 
             // Global function
-            if (steps[currentStep].functions.has(name)) {
-                let func = steps[currentStep].functions.get(name);
+            if (globalScope.functions.has(name)) {
+                let func = globalScope.functions.get(name);
                 return callFunc(func, scope, args);
             }
 
             // Global class
-            if (steps[currentStep].classes.has(name)) {
-                let c = steps[currentStep].classes.get(name);
+            if (globalScope.classes.has(name)) {
+                let c = globalScope.classes.get(name);
                 return instantiateClass(c, scope, args);
             }
 
@@ -711,14 +711,36 @@ function parse(code) {
     let lines = code.split("\n");
     for (let i = 0; i < lines.length; i++) {
         let line = lines[i];
-        let r = parseLine(steps[currentStep], line, i, lines, true);
+        let r = parseLine(globalScope, line, i, lines, true);
         if (r !== undefined) {
             if (r.type == "SkipLines") {
                 i += r.data;
             }
+        } else {
+            if (line.trim() == "") continue;
+            
+            let copyOfScope = {
+                data: [],
+                objects: new Map()
+            };
+
+            for (let i = 0; i < globalScope.data.length; i++) {
+                copyOfScope.data[i] = JSON.parse(JSON.stringify(globalScope.data[i]));
+            }
+
+            let keys = globalScope.objects.keys();
+            for (let key of keys) {
+                copyOfScope.objects.set(
+                    key,
+                    JSON.parse(JSON.stringify((globalScope.objects.get(key))))
+                );
+            }
+
+            steps.push(copyOfScope);
         }
     }
 
+    steps.push(globalScope);
     return steps;
 }
 
@@ -726,83 +748,83 @@ function parse(code) {
     Examples of valid code that should run in this version
 
     # 1
-    def add(a, b):
-        c = a + b
-        return c + 10 + 10
+def add(a, b):
+    c = a + b
+    return c + 10 + 10
 
-    a = 2
-    b = 3
+a = 2
+b = 3
 
-    f = add((b + 3) / a, 2) 
+f = add((b + 3) / a, 2) 
 
-    # 2
-    class MyClass:
-    def __init__(self, a, b):
-        self.c = a + b
+# 2
+class MyClass:
+def __init__(self, a, b):
+    self.c = a + b
 
-    def assignF(self, a):
-        self.f = a
+def assignF(self, a):
+    self.f = a
 
-    d = MyClass(2, 9)
-    d.e = "Hei på deg"
-    d.assignF(99)
+d = MyClass(2, 9)
+d.e = "Hei på deg"
+d.assignF(99)
 
     # 3
-    class Point:
-        def __init__(self, x, y):
-            self.x = x
-            self.y = y
-
-        def translate(self, dx, dy):
-            self.x = self.x + dx
-            self.y = self.y + dy
-
-    class Line:
-        def __init__(self, from, to):
-            self.p1 = from
-            self.p2 = to
-
-    a = Point(0, 0)
-    b = Point(1, 1)
-
-    c = Line(a, b)
-
-    a.translate(10, 10)
-
-    # 4
-    def under10(num):
-    if num < 10:
-        return True
-    else:
-        return False
-
-    class MyNumbers:
-        def __init__(self, num1, num2):
-            self.num1 = num1
-            self.num2 = num2
-
-        def atleastOneOver9(self):
-            return !(under10(self.num1) and under10(self.num2))
-
-    a = MyNumbers(9, 3)
-
-    b = a.atleastOneOver9()
-
-    a.num1 = 10
-
-    c = a.atleastOneOver9()
-
-    # 5
-    class Point:
+class Point:
     def __init__(self, x, y):
         self.x = x
         self.y = y
 
-    class Line:
-        def __init__(self, p1, p2):
-            self.p1 = p1
-            self.p2 = p2
+    def translate(self, dx, dy):
+        self.x = self.x + dx
+        self.y = self.y + dy
 
-    a = Line(Point(0, 0), Point(1, 1))
-    b = Line(a.p1, Point(a.p2.x, 9))
+class Line:
+    def __init__(self, from, to):
+        self.p1 = from
+        self.p2 = to
+
+a = Point(0, 0)
+b = Point(1, 1)
+
+c = Line(a, b)
+
+a.translate(10, 10)
+
+    # 4
+def under10(num):
+if num < 10:
+    return True
+else:
+    return False
+
+class MyNumbers:
+    def __init__(self, num1, num2):
+        self.num1 = num1
+        self.num2 = num2
+
+    def atleastOneOver9(self):
+        return !(under10(self.num1) and under10(self.num2))
+
+a = MyNumbers(9, 3)
+
+b = a.atleastOneOver9()
+
+a.num1 = 10
+
+c = a.atleastOneOver9()
+
+    # 5
+class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+class Line:
+    def __init__(self, p1, p2):
+        self.p1 = p1
+        self.p2 = p2
+
+a = Line(Point(0, 0), Point(1, 1))
+b = Line(a.p1, Point(a.p2.x, 9))
 */
