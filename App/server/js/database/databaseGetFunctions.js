@@ -30,13 +30,25 @@ const get = {
             });
         });
     },
+    userInformationBySessionToken: function (db, sessionToken) {
+        let statement = `SELECT id, accessToken, name, sessionId, admin
+                        FROM Feide
+                        WHERE sessionId = '${sessionToken}'
+                        `;
+        return new Promise((resolve, reject) => {
+            db.get(statement, (err, row) => {
+                if (err) reject(customReject(err, "userInformationBySessionToken"));
+                resolve(row);
+            });
+        })
+    },
     userRightsByFeideId: function(db, feideId, courseCode, courseSemester) {
         return new Promise((resolve, reject) => {
             let statement = `SELECT level FROM UserRight 
                             WHERE feideId = ${feideId}
                             AND courseCode = '${courseCode}'
                             AND courseSemester = '${courseSemester}'`;
-            db.get(statement, (err,row) => {
+            db.get(statement, (err, row) => {
                 if (err) {
                     reject(customReject(err, "userRightsByFeideId"));
                 }
@@ -53,19 +65,28 @@ const get = {
             });
         });
     },
+    sessionHasUserByUserId: function(db, userId) {
+        return new Promise((resolve, reject) => {
+            let statement = `SELECT * FROM User_has_Session WHERE userId = ${userId}`;
+            db.get(statement, (err, row) => {
+                if (err) reject(customReject(err, "sessionHasUserByUserId"));
+                resolve(row);
+            })
+        });
+    },
     sessionsToUser: function(db, userInfo) {
         return new Promise(async (resolve, reject) => {
             let userId = await this.userId(db, userInfo).catch((err) => {
                 reject(customReject(err), "sessionsToUser");
             });
-            let statement = `SELECT Q.name, C.code
-                            FROM Session AS Q
-                            INNER JOIN User_has_Session AS UQ ON UQ.sessionId = Q.id
-                            INNER JOIN Course AS C ON Q.courseCode = C.code AND Q.courseSemester = C.semester 
-                            WHERE UQ.userId = (
-                                SELECT U.id 
-                                FROM User AS U 
-                                WHERE U.feideid = '${userId}'
+            let statement = `SELECT S.name, C.code
+                            FROM Session AS S
+                            INNER JOIN User_has_Session AS US ON US.sessionId = S.id
+                            INNER JOIN Course AS C ON S.courseCode = C.code AND S.courseSemester = C.semester 
+                            WHERE US.userId = (
+                                SELECT id 
+                                FROM User
+                                WHERE id = '${userId.id}'
                             LIMIT 1)`;
             db.all(statement, (err,rows) => {
                 if (err) reject(customReject(err, "sessionsToUser"));
@@ -165,7 +186,7 @@ const get = {
     questionTypes: function(db) {
         return new Promise((resolve, reject) => {
             let statement = `SELECT * FROM Type;`;
-            db.all(statement, (err,rows) => {
+            db.all(statement, (err, rows) => {
                 if (err) reject(customReject(err, "questionTypes"));
                 resolve(rows);
             });
@@ -205,6 +226,19 @@ const get = {
                 })
         }
     },
+    adminSubjects: function(db, feideNumber) {
+        return new Promise(async (resolve, reject) => {
+            let statement = `SELECT C.code AS subjectName, UR.level AS userRights
+                            FROM Course as C
+                            INNER JOIN UserRight as UR on UR.courseCode = C.code
+                            INNER JOIN Feide as F on UR.feideId = F.id
+                            WHERE F.id = ${feideNumber}`;
+            db.all(statement, (err, rows) => {
+                if(err) reject(customReject(err, "adminSubjects"));
+                resolve(rows);
+            });
+        })
+    },
     feideUsersByUserRightsLevel: function(db, level, courseCode, courseSemester) {
         return new Promise(async (resolve, reject) => {
             let statement = `SELECT UR.feideId, F.name
@@ -218,6 +252,29 @@ const get = {
                 resolve(rows);
             });
         });
+    },
+    userRightByFeideId: function(db, feideNumber) {
+        return new Promise(async (resolve, reject) => {
+            let statement = `SELECT UR.level
+                            FROM UserRight as UR
+                            INNER JOIN Feide as F ON UR.feideId = F.id
+                            WHERE F.id = ${feideNumber}`
+            db.all(statement, (err,rows) => {
+                if (err) reject(customReject(err, "feideUsersByUserRightsLevel"));
+                resolve(rows);
+            });
+        });
+    },
+    feideUsersInSession(db, sessionId) {
+        return new Promise(async (resolve, reject) => {
+            let statement = `SELECT *
+                            FROM User_has_Session
+                            WHERE userId != 1 AND sessionID = ${sessionId}`;
+            db.all(statement, (err, rows) => {
+                if (err) reject(customReject(err, "feideUsersInSession"));
+                resolve(rows);
+            });
+        })
     }
 };
 

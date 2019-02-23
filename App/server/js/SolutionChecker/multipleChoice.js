@@ -1,4 +1,4 @@
-const multipleChoiceChecker = function(answer, solution) {
+const check = function(answer, solution) {
     console.log(answer);
     console.log(solution);
     if (answer.length !== solution.length) return false;
@@ -8,4 +8,4 @@ const multipleChoiceChecker = function(answer, solution) {
     return true;
 }
 
-module.exports.multipleChoiceChecker = multipleChoiceChecker;
+module.exports.check = check;

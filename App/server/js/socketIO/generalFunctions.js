@@ -10,13 +10,16 @@ module.exports.listen = function(server, users, db) {
         cookie: false
     });
 
-    io.on("connection", function(socket) {
+    
+    setTimeout(function() {
+        io.emit("serverRestarted");
+    }, 5000);
 
-        socket.emit()
+    io.on("connection", async function(socket) {
 
         // On new connection, checks if user has a cookie with userId and verifies the user
-        let user = User.getUser(users, socket);
-
+        let user = await User.getUser(db, users, socket);
+        
         if(user != undefined){
             if (user.userRights > 0) require("./clientFunctions.js").client(socket, db, user, sessions);
             if (user.userRights === 1) require("./anonymousFunctions.js").anonymous(socket, db);
@@ -29,12 +32,8 @@ module.exports.listen = function(server, users, db) {
         //------------- Common functions -------------//
         //--------------------------------------------//
 
-        socket.on("test", function() {
-            console.log("no");
-        });
-
         socket.on('disconnect', function(){
-			// TODO handle socket disconnect
+            if (user) users.delete(user.sessionId);
         });
 
         socket.on("signOutRequest", function(){
@@ -61,7 +60,7 @@ module.exports.listen = function(server, users, db) {
         socket.on("loginAnonymouslyRequest", function(){
             tempKey = socket.id;
             // TODO change userrights to 1 on the line under
-            tempUser = new User(4, "Anonymous " + anonymousNames.getRandomAnimal(), tempKey, undefined);
+            tempUser = new User(1, "Anonymous " + anonymousNames.getRandomAnimal(), tempKey, undefined);
             users.set(tempKey, tempUser);
             socket.emit("loginAnonymouslyResponse");
     
@@ -73,10 +72,7 @@ module.exports.listen = function(server, users, db) {
             });
             
             require("./anonymousFunctions.js").anonymous(socket, db, sessions);
-            require("./clientFunctions.js").client(socket, db, user, sessions)
-            require("./feideFunctions.js").feide(socket, db);//TODO remove
-            require("./studentAssistantFunctions.js").studentAssistant(socket, db);//TODO remove
-            require("./adminFunctions.js").admin(socket, db, user, sessions);//TODO remove
+            require("./clientFunctions.js").client(socket, db, user, sessions);
         });
     });
 }

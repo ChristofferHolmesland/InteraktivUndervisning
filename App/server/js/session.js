@@ -16,17 +16,25 @@ class Session {
         this.courseName = courseName;
         this.questionList = questionList;
         this.sessionCode = sessionCode;
-        this.currentQuestion = 0;
+        this.currentQuestion = -1;
         this.currentUsers = 0
     }
 
     addUser(user) {
         this.userList.push(user);
         this.currentUsers++;
+        if (this.currentQuestion > -1) this.questionList[this.currentQuestion].connectedUsers++;
     }
 
-    userLeaving() {
-        this.currentUsers--;
+    userLeaving(socket) {
+        let question = this.questionList[this.currentQuestion];
+
+        if (!question.socketsAnswered[socket]) {
+            this.currentUsers--;
+            question.connectedUsers--;
+        } else {
+            this.currentUsers--;
+        }
     }
 
 }
@@ -51,6 +59,8 @@ class Question {
         this.time = time;
         this.answerList = [];
         this.sqId = sqId;
+        this.socketsAnswered = {};
+        this.connectedUsers = 0;
     }
 }
 

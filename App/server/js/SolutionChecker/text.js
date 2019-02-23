@@ -1,6 +1,6 @@
-const textChecker = function(answer, solution) {
+const check = function(answer, solution) {
     if(answer.toLowerCase() === solution.toLowerCase()) return true;
     return false;
 }
 
-module.exports.textChecker = textChecker;
+module.exports.check = check;

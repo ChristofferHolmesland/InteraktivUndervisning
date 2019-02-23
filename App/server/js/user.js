@@ -1,5 +1,6 @@
 const crypto = require("crypto");
 const cookie = require("cookie");
+const dbFunctions = require("./database/databaseFunctions.js").dbFunctions;
 
 class User {
     constructor(userRights, userName, sessionId, feide) {
@@ -34,7 +35,7 @@ class User {
     }
 
     // Checks in an map over active users if this user is logged in
-    static getUser(users, socket){
+    static async getUser(db, users, socket){
         // If the user have never connected to the website, it will not have any cookies
         if(!socket.handshake.headers.cookie) return undefined;
         
@@ -49,12 +50,39 @@ class User {
                 return user;
             }else{
                 // TODO: Try and reverify the user and either accept and add to active users or redirect to 401
-                return undefined;
+                await dbFunctions.get.userInformationBySessionToken(db, sessionId).then(async (row) => {
+                    if (row === undefined) {
+                        user = undefined;
+                        return;
+                    }
+                    user = new User(row.admin, row.name, row.sessionId, {
+                        accessToken: row.accessToken, 
+                        idNumber: row.id,
+                        userId: ""
+                    });
+                    await dbFunctions.get.userRightByFeideId(db, user.feide.idNumber).then((rows) => {
+                        if (rows.length > 0){
+                            for (let i = 0; i < rows.length; i++) {
+                                if (rows[i].level > user.userRights) user.userRights = rows[i].level;
+                                if (user.userRights === 4) break;
+                            }
+                        }
+                        users.set(sessionId, user);
+                    }).catch((err) => {
+                        user = undefined;
+                        console.log(err);
+                        return;
+                    });
+                }).catch((err) => {
+                    console.log(err);
+                    user = undefined;
+                })
+                return user;
             }
         }else if(user){ // Checks if socket is logged in as an active user
             return user;
         }
-        return undefined;
+        else return undefined;
     }
 }
 
