@@ -3,6 +3,7 @@ const solutionChecker = {
         if (type === 1) return require("./text.js").check(answer, solution);
         else if (type === 2) return require("./multipleChoice.js").check(answer, solution);
         else if (type === 3 /* Fix djikstra type */) return require("./djikstra.js").check(answer, solution);
+        else if (type === 4 /* Fix quicksort type */) return require("./quicksort.js").check(answer, solution);
         else return false;
     }
 }
