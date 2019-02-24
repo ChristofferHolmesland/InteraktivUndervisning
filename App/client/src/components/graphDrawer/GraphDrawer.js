@@ -1,12 +1,12 @@
 import Graph0 from "./controllers/Graph0.js";
 import Graph1 from "./controllers/Graph1.js";
 import Sort from "./controllers/Sort.js";
+import Djikstra from "./controllers/Djikstra.js";
 import Camera from "./Camera.js";
 
 /*
 	Adds graph drawing functionality to a canvas object.
 
-	// TODO: Support dynamic canvas size
 	// TODO: Node z index
 
 	The GraphDrawer works in three different coordinate spaces:
@@ -55,9 +55,24 @@ export default class GraphDrawer {
 				see the progress of a algorithm.
 		*/
 		this.operatingMode = config.operatingMode || "Interactive";
+
+		/*
+			This can be used to determine if the value/cost of an edge
+			is displayed next to the edge.
+		*/
+		if (config.displayEdgeValues !== undefined)
+			this.displayEdgeValues = config.displayEdgeValues;
+		else this.displayEdgeValues = true;
+
+		/*
+			Directed edges can only be traveres in the given direction.
+			They are drawn as a arrow, instad of a line.
+		*/
+		if (config.directedEdges !== undefined)
+			this.directedEdges = config.directedEdges;
+		else this.directedEdges = false;
 	}
 
-	// TODO: Remove/move this
 	export() {
 		return this.controllers[this.controlType].export();
 	}
@@ -89,7 +104,14 @@ export default class GraphDrawer {
 			}.
 		*/
 		this.nodes = [];
-		// Edges between nodes {n1, n2}.
+		/*
+			Edges between nodes 
+			{
+				n1, n2, v,
+				strokeColor (undefined => black)
+				directed (undefined => false)
+			}.
+		*/
 		this.edges = [];
 
 		// Flag which determines if the graph state should
@@ -133,11 +155,25 @@ export default class GraphDrawer {
 		this.camera = new Camera(this);
 
 		this.controllers = {
-			Graph0: new Graph0(this),
+			Graph0: new Graph0(this, config.graph),
 			Graph1: new Graph1(this),
-			Sort: new Sort(this, config.sort)
+			Sort: new Sort(this, config.sort),
+			Djikstra: new Djikstra(this, config.djikstra)
 		};
-		if (this.controlType == "Graph0") this.controllers["Graph0"].drawStatic();
+
+		this.setController(this.controlType);
+	}
+
+	setController(controllerName) {
+		this.controlType = controllerName;
+		this.nodes = [];
+		this.edges = [];
+
+		if (this.controlType == "Graph0")
+			this.controllers["Graph0"].drawStatic();
+
+		if (this.controllers[this.controlType].configure)
+			this.controllers[this.controlType].configure();
 	}
 
 	// TODO: Remove this, and implement a better interface
@@ -227,8 +263,53 @@ export default class GraphDrawer {
 			this.drawContext.beginPath();
 			this.drawContext.moveTo(cx1, cy1);
 			this.drawContext.lineTo(cx2, cy2);
+
+			if (this.edges[i].strokeColor)
+				this.drawContext.strokeStyle = this.edges[i].strokeColor;
 			this.drawContext.stroke();
+			this.drawContext.strokeStyle = "black";
 			this.drawContext.closePath();
+
+			// Draw an arrow, ref: https://stackoverflow.com/a/6333775, 20.02.2019
+			if (
+				this.directedEdges &&
+				(this.edges[i].directed == undefined ||
+					this.edges[i].directed == true)
+			) {
+				let dx = cx1 - cx2;
+				let dy = cy1 - cy2;
+				let magnitude = Math.sqrt(dx * dx + dy * dy);
+				let nx = dx / magnitude;
+				let ny = dy / magnitude;
+				let a = { x: this.edges[i].n2.x, y: this.edges[i].n2.y };
+				a.x += nx * this.edges[i].n2.r;
+				a.y += ny * this.edges[i].n2.r;
+				let b = { x: a.x, y: a.y };
+				b.x += nx * this.edges[i].n2.r;
+				b.y += ny * this.edges[i].n2.r;
+
+				let headlen = 20;
+				let angle = Math.atan2(a.y - b.y, a.x - b.x);
+				this.drawContext.beginPath();
+				this.drawContext.moveTo(b.x, b.y);
+				this.drawContext.lineTo(a.x, a.y);
+				this.drawContext.lineTo(
+					a.x - headlen * Math.cos(angle - Math.PI / 6),
+					a.y - headlen * Math.sin(angle - Math.PI / 6)
+				);
+				this.drawContext.moveTo(a.x, a.y);
+				this.drawContext.lineTo(
+					a.x - headlen * Math.cos(angle + Math.PI / 6),
+					a.y - headlen * Math.sin(angle + Math.PI / 6)
+				);
+				this.drawContext.stroke();
+			}
+
+			if (this.displayEdgeValues && this.edges[i].v !== undefined) {
+				let tx = (cx1 + cx2) / 2 + 5;
+				let ty = (cy1 + cy2) / 2 + 5;
+				this.drawContext.fillText(this.edges[i].v, tx, ty);
+			}
 		}
 		// Nodes.
 		for (let i = 0; i < this.nodes.length; i++) {
@@ -301,6 +382,7 @@ export default class GraphDrawer {
 
 	/*
 		Lets the user edit the value on a node.
+		Can also be used on edges, because they share the v property.
 	*/
 	_editNode(node) {
 		// This is the only way to open a keyboard in mobile browsers.
@@ -414,13 +496,48 @@ export default class GraphDrawer {
 	}
 
 	/*
-		Checks whether a poin (x, y) is inside a square with radius r.
+		Checks whether a point (x, y) is inside a square with radius r.
 		Top left corner of square (nx, ny).
 	*/
 	isPointInSquare(x, y, nx, ny, r) {
 		if (x < nx || x > nx + r) return false;
 		if (y < ny || y > ny + r) return false;
 		return true;
+	}
+
+	/*
+		Calculates how far a point (x, y) is from a given edge.
+	*/
+	distanceFromEdgeToPoint(edge, x, y) {
+		let p = {
+			x: x,
+			y: y
+		}
+
+		let p1 = {
+			x: edge.n1.x,
+			y: edge.n1.y
+		};
+
+		let p2 = {
+			x: edge.n2.x,
+			y: edge.n2.y
+		};
+
+		return Math.sqrt(this._distToSegmentSquared(p, p1, p2));
+	}
+
+	// ref: https://stackoverflow.com/a/1501725, 20.02.2019
+	_distToSegmentSquared(p, v, w) {
+		function sqr(x) { return x * x }
+		function dist2(v, w) { return sqr(v.x - w.x) + sqr(v.y - w.y) }
+
+		var l2 = dist2(v, w);
+		if (l2 == 0) return dist2(p, v);
+		var t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
+		t = Math.max(0, Math.min(1, t));
+		return dist2(p, { x: v.x + t * (w.x - v.x),
+						y: v.y + t * (w.y - v.y) });
 	}
 
 	// Sort the selected nodes based on x coordinate to get them in the right order

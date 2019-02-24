@@ -1,8 +1,5 @@
 /*
-	Let's the user perform a quicksort on an array.
-	// TODO: Add merge sort
-	// TODO: Parse step list to arrays
-	// TODO: Generate step list from arrays
+	Let's the user perform a quicksort or mergesort on an array.
 */
 export default class Sort {
 	_config(config) {
@@ -22,9 +19,20 @@ export default class Sort {
 		// If there are some starting steps, they are parsed
 		// and put into the world.
 		if (config.steps) {
+			this.currentStep = 0;
+			if (this.operatingMode == "Interaction") {
+				this.currentStep = config.steps.length - 1;
+			}
+
 			this.steps = config.steps;
 			this._parseSteps();
+			this.gd.dirty = true;
+			this._recalculateEdges();
 		}
+	}
+
+	configure() {
+		this._config(this.config);
 	}
 
 	constructor(graphDrawer, config) {
@@ -94,7 +102,11 @@ export default class Sort {
 		// so the array position can be translated the same amount
 		this.startPositionOfMove = { x: -1, y: 1 };
 
-		this._config(config);
+		this.config = config;
+
+		if (this.gd.operatingMode == "Presentation") {
+			this.addSteppingButtons();
+		}
 	}
 
 	/*
@@ -138,6 +150,8 @@ export default class Sort {
 			if (this.checkNodes(e)) return true;
 
 			return false;
+		} else if (this.gd.operatingMode == "Presentation") {
+			return this.checkUI(e);
 		}
 
 		return false;
@@ -215,8 +229,7 @@ export default class Sort {
 					handler: e =>  this.mobileSelectedButtons().extract(e, ai)
 				});
 			} else {
-				/* 
-				Will probably not be used
+				if (this.sortType == "Mergesort") {
 					this.clickedButtons.push({
 						data: {
 							text: "Join to array",
@@ -224,7 +237,7 @@ export default class Sort {
 						},
 						handler: e => this.mobileSelectedButtons().join(e)
 					});
-				*/
+				}
 			}
 			this._calculatePositionForClickedButtons();
 			this.gd.dirty = true;
@@ -471,6 +484,52 @@ export default class Sort {
 		return false;
 	}
 
+	addSteppingButtons() {
+		this.clickedButtons = [];
+		let relSize = 0.5;
+
+		let stepBack = () => {
+			if (this.currentStep > 0) {
+				this.currentStep -= 1;
+				this._parseSteps();
+				this.addSteppingButtons();
+			}
+		};
+
+		let stepForward = () => {
+			if (this.currentStep < this.steps.length - 1) {
+				this.currentStep += 1;
+				this._parseSteps();
+				this.addSteppingButtons();
+			}
+		};
+
+		this.clickedButtons.push({
+			data: {
+				text: "<--",
+				relSize: relSize
+			},
+			handler: stepBack
+		});
+		this.clickedButtons.push({
+			data: {
+				text: (this.currentStep + 1) + " / " + this.steps.length,
+				relSize: relSize
+			},
+			handler: () => {}
+		});
+		this.clickedButtons.push({
+			data: {
+				text: "-->",
+				relSize: relSize
+			},
+			handler: stepForward
+		});
+
+		this._calculatePositionForClickedButtons();
+		this.gd.dirty = true;
+	}
+
 	/*
 		The dirtyUpdate function is called from the GraphDrawer's update function
 		if the GraphDrawer is in the dirty state. This is called before the 
@@ -666,6 +725,44 @@ export default class Sort {
 	}
 
 	/*
+		Find which array contains nodes with the given values
+		Returns the index of the array, or -1 if values were not found.
+		If reverseOrder is true, the loop will start of the arrays, and will
+		return the most recent array, if multiple arrays share the same values.
+	*/
+	_findArrayFromNodeValues(values, reverseOrder) {
+		let loopLogic = (ai) => {
+			let nodes = this.arrays[ai].nodes;
+			if (nodes.length !== values.length) return undefined;
+
+			let bad = false;
+			for (let i = 0; i < values.length; i++) {
+				if (values[i] !== nodes[i].v) {
+					bad = true;
+					break;
+				}
+			}
+
+			if (!bad) return ai;
+			return undefined;
+		};
+
+		if (reverseOrder) {
+			for (let ai = this.arrays.length - 1; ai >= 0; ai--) {
+				let r = loopLogic(ai);
+				if (r !== undefined) return r;
+			}
+		} else {
+			for (let ai = 0; ai < this.arrays.length; ai++) {
+				let r = loopLogic(ai);
+				if (r !== undefined) return r;
+			}
+		}
+
+		return -1;
+	}
+
+	/*
 		Finds which array (ai) the node belongs in, and what
 		position (ni) the node has in the array.
 		Returns {ai, ni}.
@@ -718,7 +815,8 @@ export default class Sort {
 		if (this.arrays.length > 0) {
 			steps.push({
 				type: "Initial",
-				list: arrToList(this.arrays[0])
+				list: arrToList(this.arrays[0]),
+				position: this.arrays[0].position
 			});
 		}
 
@@ -743,6 +841,7 @@ export default class Sort {
 						// .toString() works as .isEqual() - deepequal
 						if (steps[s].list.toString() == parentList.toString()) {
 							steps[s].right = arrToList(arr);
+							steps[s].position.right = arr.position;
 							found = true;
 							break;
 						}
@@ -765,11 +864,25 @@ export default class Sort {
 						list: parentList,
 						left: arrToList(arr),
 						pivot: pivot,
-						right: undefined
+						right: undefined,
+						position: {
+							left: arr.position,
+							right: undefined
+						}
 					});
 				}
 			} else if (c.count == 2) {
 				// Arrays with two links to it, is a join.
+				steps.push({
+					type: "Merge",
+					list1: arrToList(c.parents[0]),
+					list2: arrToList(c.parents[1]),
+					merged: arrToList(arr),
+					position: {
+						x: arr.position.x,
+						y: arr.position.y
+					}
+				});
 			}
 		}
 
@@ -780,19 +893,42 @@ export default class Sort {
 		Parses the steps from a step list into arrays
 	*/
 	_parseSteps() {
+		// Reset the world
+		this.arrays = [];
+		this.gd.nodes = [];
+		this.gd.edges = [];
+
 		this.gd.dirty = true;
+
+		// If the steps were generated by a user, the position of the arrays
+		// should match what the user made. If not the arrays should be placed in 
+		// a nice way.
+		let user = this.steps[0].position != undefined;
+		let yPadding = 75;
+		let xPadding = 25;
+		let r = this.gd.nodeShape == "Circle" ? this.gd.R : this.gd.R * this.gd.SQUARE_FACTOR;
+
+		let nodesFromValueList = (list, array) => {
+			for (let i = 0; i < list.length; i++) {
+				let node = {
+					x: array.position.x + r * i,
+					y: array.position.y,
+					r: r,
+					v: list[i]
+				};
+
+				this.gd.nodes.push(node);
+				array.nodes.push(node);
+			}
+		};
 
 		// The inital array is placed centered
 		// at the top of the canvas relative 
 		// to the current camera position.
 		let parseInitial = (step) => {
-			let p = this.gd.camera.project(
-				this.gd.canvas.width / 2,
-				0
-			);
+			let p = this.gd.camera.project(this.gd.canvas.width / 2, 0);
 
 			// Add some padding between canvas top and array
-			let r = this.gd.nodeShape == "Circle" ? this.gd.R : this.gd.R * this.gd.SQUARE_FACTOR;
 			p.y += r / 2;
 
 			// Assumes same size nodes
@@ -800,43 +936,129 @@ export default class Sort {
 			p.x -= arrayWidth / 2;
 
 			let newArr = this.getNewArray(p.x, p.y);
+			nodesFromValueList(step.list, newArr);
+			this.arrays.push(newArr);
 
-			for (let i = 0; i < step.list.length; i++) {
-				let node = {
-					x: p.x + r * i,
-					y: p.y,
-					r: r,
-					v: step.list[i]
+			if (!user) {
+				return {
+					dx: 0,
+					dy: 0
 				};
-
-				this.gd.nodes.push(node);
-				newArr.nodes.push(node);
 			}
 
-			this.arrays.push(newArr);
-		};
-		
-		let parseSplit = (step) => {
-
-		};
-
-		let parseMerge = (step) => {
-
+			return {
+				dx: p.x - step.position.x,
+				dy: p.y - step.position.y
+			};
 		};
 
-		for (let i = 0; i < this.steps.length; i++) {
+		// Splits are placed under the previous split
+		let parseSplit = (step, pos) => {
+			let parent = this._findArrayFromNodeValues(step.list);
+
+			if (step.left.length > 0) {
+				let left = this.getNewArray(pos.left.x, pos.left.y);
+				nodesFromValueList(step.left, left);
+				this.arrays.push(left);
+				this.arrays[parent].links.push(left);
+			}
+
+			if (step.right.length > 0) {
+				let right = this.getNewArray(pos.right.x, pos.right.y);
+				nodesFromValueList(step.right, right);
+				this.arrays.push(right);
+				this.arrays[parent].links.push(right);
+			}
+
+			for (let i = 0; i < this.arrays[parent].nodes.length; i++) {
+				let node = this.arrays[parent].nodes[i];
+				if (node.v == step.pivot) {
+					node.pivot = true;
+					node.fillColor = this.pivotColor;
+				}
+			}
+		};
+
+		let parseMerge = (step, pos) => {
+			let merged = this.getNewArray(pos.x, pos.y);
+			nodesFromValueList(step.merged, merged);
+			this.arrays.push(merged);
+
+			let p1 = this._findArrayFromNodeValues(step.list1, true);
+			let p2 = this._findArrayFromNodeValues(step.list2, true);
+			this.arrays[p1].links.push(merged);
+			this.arrays[p2].links.push(merged);
+		};
+
+		let offset = undefined;
+		for (let i = 0; i <= this.currentStep; i++) {
 			let step = this.steps[i];
-			if (step.type == "Initial") { 
-				parseInitial(step);
+			let pos = {
+				x: 0,
+				y: 0,
+				left: {},
+				right: {}
+			};
+
+			if (step.type == "Initial") {
+				offset = parseInitial(step);
 			} else if (step.type == "Split") {
-				parseSplit(step);
+				if (user) {
+					if (step.position.left) {
+						pos.left.x = step.position.left.x + offset.x;
+						pos.left.y = step.position.left.y + offset.y;
+					}
+					if (step.position.right) {
+						pos.right.x = step.position.right.x + offset.x;
+						pos.right.y = step.position.right.y + offset.y;
+					}
+				} else {
+					let parent = this._findArrayFromNodeValues(step.list);
+					let ppos = this.arrays[parent].position;
+					pos.left.y = ppos.y + yPadding;
+					pos.left.x = ppos.x - xPadding / 2;
+					pos.right.y = ppos.y + yPadding;
+					let leftWidth = step.left.length * r;
+					pos.right.x = pos.left.x + xPadding + leftWidth;
+				}
+
+				parseSplit(step, pos);
 			} else if (step.type == "Merge") {
-				parseMerge(step);
+				// Quicksort shouldn't show the merge step
+				if (this.sortType == "Quicksort") continue;
+
+				if (user) {
+					pos.x = step.position.x + offset.x;
+					pos.y = step.position.y + offset.y;
+				} else {
+					// TODO: Fix placement of merged arrays
+
+					// The array should be centered between the two
+					// parent arrays in the x position.
+					let p1 = this._findArrayFromNodeValues(step.list1);
+					let p2 = this._findArrayFromNodeValues(step.list2);
+					let p1Width = this.arrays[p1].nodes.length * r;
+					let p2Width = this.arrays[p2].nodes.length * r;
+					let c1 = this.arrays[p1].position.x + p1Width / 2;
+					let c2 = this.arrays[p2].position.x + p2Width / 2;
+					let c = (c1 + c2) / 2;
+					let stepWidth = step.merged.length * r;
+					pos.x = c - stepWidth / 2;
+
+					let cy1 = this.arrays[p1].position.y;
+					let cy2 = this.arrays[p2].position.y;
+					let cy = (cy1 + cy2) / 2;
+					pos.y = cy + yPadding;
+				}
+
+				parseMerge(step, pos);
 			} else {
 				console.log(`Found invalid step type: ${step.type} 
 					at index ${i}, skipping.`);
 			}
-		} 
+		}
+
+		this._recalculateEdges();
 	}
 
 	/*
@@ -882,7 +1104,7 @@ export default class Sort {
 				width: bSize,
 				height: bSize
 			},
-			handler: ((e) => console.log("Delete clicked")),
+			handler: (() => console.log("Delete clicked")),
 			data: {
 				type: "Delete"
 			}
