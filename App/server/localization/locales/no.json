@@ -30,7 +30,11 @@
         "addNewQuestionBtnText": "Legg til nytt spørsmål",
         "newQuestion": "Nytt spørsmål",
         "viewLastSession": "Vis forrige økt",
-        "openLastSession": "Åpne"
+        "openLastSession": "Åpne",
+        "addCourseTitle": "Nytt fag",
+        "addCourseCourseCode": "Fag kode:",
+        "addCourseCourseSemester": "Fag semester:",
+        "addCourseCourseName": "Fag navn:"
     },
     "DisplayQuestion": {
         "question": "Spørsmål",

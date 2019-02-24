@@ -30,7 +30,11 @@
         "addNewQuestionBtnText": "Add new question",
         "newQuestion": "New question",
         "viewLastSession": "View last session",
-        "openLastSession": "Open"
+        "openLastSession": "Open",
+        "addCourseTitle": "New course",
+        "addCourseCourseCode": "Course code:",
+        "addCourseCourseSemester": "Course semester:",
+        "addCourseCourseName": "Course name:"
     },
     "DisplayQuestion": {
         "question": "Question",
