@@ -14,12 +14,12 @@
 								<b-button v-b-modal.newCourseModal>{{ getLocale.newCourseBtnText }}</b-button>
 								<b-modal id="newCourseModal" 
 										 :no-close-on-backdrop="true" 
-										 title="New course" 
+										 :title="getLocale.addCourseTitle" 
 										 style="text-align: left;"
 										 @ok="addNewCourse">
 
 										<b-form-group 	id="courseCode"
-														label="Course code"
+														:label="getLocale.addCourseCourseCode"
 														label-for="courseCodeInput">
 										<b-form-input 	id="courseCodeInput"
 														type="text"
@@ -27,7 +27,7 @@
 										</b-form-input>
 									</b-form-group>
 									<b-form-group 	id="courseSemester"
-													label="Course semester"
+													:label="getLocale.addCourseCourseSemester"
 													label-for="courseSemesterInput">
 										<b-form-input 	id="courseSemesterInput"
 														type="text"
@@ -35,7 +35,7 @@
 										</b-form-input>
 									</b-form-group>									
 									<b-form-group 	id="courseName"
-													label="Course name"
+													:label="getLocale.addCourseCourseName"
 													label-for="courseNameInput">
 										<b-form-input 	id="courseNameInput"
 														type="text"
@@ -143,7 +143,7 @@
 
 <script>
 import SelectCourse from "./SelectCourse.vue";
-import EditQuestion from "./questions/EditQuestion.vue";
+import EditQuestion from "./question/EditQuestion.vue";
 import SessionsOverview from "./startSession/SessionsOverview.vue";
 
 export default {
