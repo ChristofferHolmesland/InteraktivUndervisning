@@ -139,7 +139,14 @@ export default class GraphDrawer {
 
 		let down = function(e) {
 			e.preventDefault();
-			console.log(e);
+
+			if (e.touches !== undefined) {
+				console.log("Touch");
+				console.log(e.touches[0].clientX + "   " + e.touches[0].clientY);
+			} else {
+				console.log("Mouse");
+				console.log(e.offsetX + "    " + e.offsetY);
+			}
 
 			let consumed = this.controllers[this.controlType].mouseDownHandler(e);
 			if (consumed) return;
@@ -564,5 +571,12 @@ export default class GraphDrawer {
 		if (n1.v < n2.v) return -1;
 		if (n1.v > n2.v) return 1;
 		return 0;
+	}
+
+	// Sets x,y touch position to the same variable
+	// used by mouse events.
+	setEventOffset(e) {
+		if (e.offsetX == undefined)
+			console.log("hei");
 	}
 }
