@@ -1,34 +1,55 @@
 <template>
-<div class="client">
-	<h1>This is the client page</h1>
-	<p>Connected to the server via socket.io and sent message back. Recieved this message: {{msg}}</p>
-</div>
+	<div class="Client">
+		<h1>This is the client page</h1>
+		<b-container>
+			<b-row>
+				<b-col cols="12" lg="4">
+					<JoinSession/>
+				</b-col>
+				<b-col cols="12" lg="8">
+
+<!-- TODO: Remove GraphDrawer from this file. Currently used for testing -->
+    			<GraphDrawer 
+					@getValueResponse="printGraphDrawer" 
+					:requestAnswer="requestAnswer" 
+					controlType="Djikstra" />
+				<b-button @click="requestAnswer = !requestAnswer" >Export</b-button>
+				</b-col>
+			</b-row>
+		</b-container>
+	</div>
 </template>
 
 <script>
-	import io from 'socket.io-client';
-	import { dataBus } from '../main';
+import JoinSession from "../components/client/JoinSession.vue";
+import GraphDrawer from "../components/graphDrawer/GraphDrawer.vue";
 
-	export default {
-		name: 'client',
-		data() {
-			return {
-			msg: '',
-			socket: dataBus.socket
-			}
-    	},
-		created() {
-			this.socket.emit("clientStarted");
-		},
-		mounted() {
-			this.socket.on('clientResponse', () => {
-				this.msg = "socket io connection working";
-				this.socket.emit("clientRequest", "Client connected")
-			});
+export default {
+	name: "client",
+	data() {
+		return {
+			requestAnswer: false
+		};
+	},
+	components: {
+		JoinSession,
+		GraphDrawer
+	},
+	created() {
+		this.$socket.emit("verifyUserLevel", 1);
+	},
+	methods: {
+		printGraphDrawer: function(data) {
+			console.log(data);
+			console.log(JSON.stringify(data));
 		}
 	}
+};
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+h1 {
+	margin-top: 3rem;
+	text-align: center;
+}
 </style>

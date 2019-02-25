@@ -114,3 +114,16 @@ Rapport/*.log
 # PyCharm
 .idea
 .idea/
+
+# vue
+App/server/public
+
+# database
+*.db
+
+# Latex
+*.aux
+*.out
+*.pdf
+*.gz
+*.toc

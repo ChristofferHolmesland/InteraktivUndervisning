@@ -1,25 +1,147 @@
 {
-    "App": {
+    "AdminQuestions": {
+        "emptyQuestionList": "No questions.",
+        "newQuestion": "New question",
+        "searchQuestion": "Search for a question",
+        "newQuestionTitle": "Question title:",
+        "newQuestionText": "Question text:",
+        "newQuestionSolutionType": "Solution type:",
+        "newQuestionSolution": "Solution:",
+        "newQuestionTime": "Time:",
+        "addToSession": "Add",
+        "solutionText": "Solution: ",
+        "selectSessionText": "Select session: ",
+        "time": "Time:"
+    },
+    "AdminSessions": {
+        "newSession": "New session",
+        "newSessionTitle": "Title",
+        "selectCourse": "Select course",
+        "selectQuestions": "Add question",
+        "selectedQuestions": "Questions in session"
+    },
+    "AdminDashboard": {
+        "courseAdministrator": "Course administrators",
+        "addBtnText": "Add",
+        "courseAssistants": "Course assistants",
+        "startSession": "Start session",
+        "changeCourseTitle": "Change course",
+        "newCourseBtnText": "New",
+        "addNewQuestionBtnText": "Add new question",
+        "newQuestion": "New question",
+        "viewLastSession": "View last session",
+        "openLastSession": "Open",
+        "addCourseTitle": "New course",
+        "addCourseCourseCode": "Course code:",
+        "addCourseCourseSemester": "Course semester:",
+        "addCourseCourseName": "Course name:"
+    },
+    "DisplayQuestion": {
+        "question": "Question",
+        "solution": "Solution",
+        "answer": "Answer"
+    },
+    "Navbar": {
         "lang": "Language",
-        "user": "User",
         "profile": "Profile",
         "signOut": "Sign out",
-        "signIn": "Sign in"
+        "signIn": "Sign in",
+        "dashboard": "Dashboard",
+        "admin": "Admin",
+        "startSession": "Start session",
+        "questions": "Questions",
+        "sessions": "Sessions"
     },
     "LoginForm": {
         "anonymousButton": "Anonymous",
-        "acceptCheckbox": "Accept",
+        "acceptCheckbox": "I accept these terms and conditions",
         "loginButton": "Sign in",
         "feideList": [
             "This website will use cookies to be able to store your questions.",
-            "The quizmaster will not be able to see who answered what but will be able to see incorrect answers.",
-            "This website will store date linked to your user for you to be able to see previous quizzes.",
+            "The quizmaster will not be able to see who answered what, but will be able to see incorrect answers.",
+            "This website will store date linked to your user for you to be able to see previous sessions.",
             "You will be able to delete all data stored about you by going in to profile and pressing \"Delete data\".",
-            "To be able to sign in with Feide, you will have to accept that we use cookies and store information about you below."
+            "To be able to sign in with Feide, you will have to accept that we use cookies and store information about you below!"
         ],
         "anonymousList": [
             "If you chose to sign in anonymously we will not store cookies or save any data about you.",
-            "If you chose to sign in anonymously you will not be able to see previously attended quizzes."
+            "If you chose to sign in anonymously you will not be able to see previously attended sessions."
         ]
+    },
+    "401": {
+        "unauthorized": "Unauthorized!",
+        "textList": [
+            "The page you have requested can't be authorized for you.",
+            "Please go back and log in before trying to enter this page."
+        ],
+        "homeButton": "Go home"
+    },
+    "404": {
+        "headline": "404",
+        "text": "Uh oh! Look like something broke.",
+        "homeButton": "Go home"
+    },
+    "Session": {
+        "status": "Status: ",
+        "active": "Active",
+        "inactive": "Inactive",
+        "finished": "Finished",
+        "questionsAsked": "Question asked: ",
+        "participants": "Participants: ",
+        "correctAnswers": "Corrects answers: "
+    },
+    "Sessions": {
+
+    },
+    "DeleteUserInfo": {
+        "deleteInfoList": [
+            "By pressing ok under we will delete all the information we have on the server and database about you.",
+            "By pressing ok under you will be logged out and redirected to the home page.",
+            "This action is nonreversible!",
+            "Once deleted there is no going back!"
+        ],
+        "title": "Delete all user data!",
+        "okTitle": "Delete!",
+        "cancelTitle": "Cancel"
+    },
+    "UserInfo": {
+        "title": "User info",
+        "deleteBtnTitle": "Delete my data",
+        "userRightsTitle": "User rights",
+        "studentAssistant": "Student assistant",
+        "admin": "Administrator"
+    },
+    "UserStats": {
+        "title": "User stats",
+        "totalSessions": "Total number of sessions:",
+        "correctAnswers": "Correct answers:",
+        "incorrectAnswers": "Incorrect answers:"
+    },
+    "ClientSessionQuestion": {
+        "question": "Question",
+        "answer": "Answer",
+        "exitSessionBtnText": "Leave session",
+        "answerDontKnowBtnText": "Answer \"I don't know\"",
+        "answerBtnText": "Answer",
+        "leaveSessionBody": "By clicking ok you will leave this session.\nAll answers up to this point will be saved."
+    },
+    "ClientSessionWaitingArea": {
+        "title": "Waiting Area",
+        "sessionId": "Session ID:",
+        "leaveSession": "Leave session",
+        "beforeSession": "Joined session!\nWaiting for admin to start the session",
+        "betweenQuestionsCorrect": "You have answered and your answer was correct!\nWaiting for admin to start the next question",
+        "betweenQuestionsIncorrect": "You have answered and your answer was incorrect!\nYou can check your answer towards the solution after the session is over.\nWaiting for admin to start the next question",
+        "betweenQuestionsNotAnswered": "You answered \"I don't know\"!\nYou can check the solution after the session is over.\nWaiting for admin to start the next question",
+        "sessionFinished": "The session is over!\nAll your answers are stored and you can view them with the solution back at the dashboard if you haven't logged in as anonomously."
+    },
+    "JoinSession": {
+        "title": "Quick join session!",
+        "errorTitle": "Error joining session! Try again",
+        "joinBtn": "Join",
+        "inputPlaceholder": "Enter session code!" 
+    },
+    "clientSessionTextInput": {
+        "placeholder": "Input your answer here!"
     }
 }

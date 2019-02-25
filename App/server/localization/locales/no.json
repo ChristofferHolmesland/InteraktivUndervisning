@@ -1,24 +1,147 @@
 {
-    "App": {
+    "AdminQuestions": {
+        "emptyQuestionList": "Ingen spørsmål.",
+        "newQuestion": "Nytt spørsmål",
+        "searchQuestion": "Søk etter spørsmål",
+        "newQuestionTitle": "Spørsmål tittel:",
+        "newQuestionText": "Spørsmål tekst:",
+        "newQuestionSolutionType": "Løsnings type:",
+        "newQuestionSolution": "Løsning:",
+        "newQuestionTime": "Tid:",
+        "addToSession": "Legg til",
+        "solutionText": "Løsning: ",
+        "selectSessionText": "Velg økt: ",
+        "time": "Tid:"
+    },
+    "AdminSessions": {
+        "newSession": "Ny økt",
+        "newSessionTitle": "Tittel",
+        "selectCourse": "Velg kurs",
+        "selectQuestions": "Legg til spørsmål",
+        "selectedQuestions": "Spørsmål i økten"
+    },
+    "AdminDashboard": {
+        "courseAdministrator": "Fag adminstrator",
+        "addBtnText": "Legg til",
+        "courseAssistants": "Student assistenter",
+        "startSession": "Start økt",
+        "changeCourseTitle": "Endre fag",
+        "newCourseBtnText": "Legg til",
+        "addNewQuestionBtnText": "Legg til nytt spørsmål",
+        "newQuestion": "Nytt spørsmål",
+        "viewLastSession": "Vis forrige økt",
+        "openLastSession": "Åpne",
+        "addCourseTitle": "Nytt fag",
+        "addCourseCourseCode": "Fag kode:",
+        "addCourseCourseSemester": "Fag semester:",
+        "addCourseCourseName": "Fag navn:"
+    },
+    "DisplayQuestion": {
+        "question": "Spørsmål",
+        "solution": "Løsning",
+        "answer": "Svar"
+    },
+    "Navbar": {
         "lang": "Språk",
-        "user": "Bruker",
         "profile": "Profil",
         "signOut": "Logg ut",
-        "signIn": "Logg inn"
+        "signIn": "Logg inn",
+        "dashboard": "Dashboard",
+        "admin": "Admin",
+        "startSession": "Start økt",
+        "questions": "Spørsmål",
+        "sessions": "Økter"
     },
     "LoginForm": {
         "anonymousButton": "Anonym",
-        "acceptCheckbox": "Aksepter",
+        "acceptCheckbox": "Jeg aksepterer disse betingelsene",
         "loginButton": "Logg inn",
         "feideList": [
             "Denne nettsiden bruker cookies for å kunne lagre spørsmålene dine.",
-            "Denne nettsiden lagrer data linket til din bruker for at du skal kunne se på tidligere quizer",
-            "En kan slette all data som er lagret ved å gå inn på profil og trykke på \"Slett data\"",
+            "Quizmaster vil ikke kunne se hvem som har svart hva, men vil kunne se feil svar.",
+            "Denne nettsiden lagrer data linket til din bruker for at du skal kunne se på tidligere økter",
+            "En kan slette all data som er lagret om deg ved å gå inn på profil og trykke på \"Slett data\"",
             "For å kunne logge inn med Feide så må du akseptere at vi bruker cookies og lagrer data under!"
         ],
         "anonymousList": [
             "Hvis en velger å logge inn anonymt vil vi ikke lagre cookies eller data i etterkant.",
-            "Hvis en velger anonym innlogging vil en ikke kunne se tidligere quizer."
+            "Hvis en velger anonym innlogging vil en ikke kunne se tidligere økter."
         ]
+    },
+    "401": {
+        "unauthorized": "Uautorisert!",
+        "textList": [
+            "Denne siden kan ikke bli autorisert for deg.",
+            "Venligst gå tilbake og logg inn før du prøve å laste inn denne siden."
+        ],
+        "homeButton": "Gå hjem"
+    },
+    "404": {
+        "headline": "404",
+        "text": "Åh nei! Ser ut som noe gikk galt.",
+        "homeButton": "Go home"
+    },
+    "Session": {
+        "status": "Status: ",
+        "active": "Aktiv",
+        "inactive": "Inaktiv",
+        "finished": "Ferdig",
+        "questionsAsked": "Spørsmål: ",
+        "participants": "Deltagere: ",
+        "correctAnswers": "Riktige svar: "
+    },
+    "Sessions": {
+
+    },
+    "DeleteUserInfo": {
+        "deleteInfoList": [
+            "Ved å trykke på ok under så vil vi slette all informasjon om deg på server og i databasen.",
+            "Ved å trykke ok under så vil du bli logget ut og sendt til hjem skjermen.",
+            "Denne handlingen går ikke det ikke ann å angre på i ettertid.",
+            "Når dataen er slettet så vil vi ikke kunne få den tilbake."
+        ],
+        "title": "Slett all bruker data!",
+        "okTitle": "Slett!",
+        "cancelTitle": "Avbryt"
+    },
+    "UserInfo": {
+        "title": "Bruker informasjon",
+        "deleteBtnTitle": "Slett brukerdata",
+        "userRightsTitle": "Bruker rettigheter",
+        "studentAssistant": "Student Assistent",
+        "admin": "Administrator"
+    },
+    "UserStats": {
+        "title": "Bruker statistikk",
+        "totalSessions": "Antall økter:",
+        "correctAnswers": "Antall rett svar:",
+        "incorrectAnswers": "Antall feil svar:"
+    },
+    "ClientSessionQuestion": {
+        "question": "Spørsmål",
+        "answer": "Svar",
+        "exitSessionBtnText": "Forlat økt",
+        "answerDontKnowBtnText": "Svar: \"Jeg vet ikke\"",
+        "answerBtnText": "Send inn svar",
+        "leaveSessionBody": "Ved å klikke ok, så vil du koble deg fra denne økten.\nAlle svare frem til nå vil være lagret."
+    },
+    "ClientSessionWaitingArea": {
+        "title": "Venteområde",
+        "sessionId": "Økt ID:",
+        "leaveSession": "Forlat økt",
+        "beforeSession": "Koblet til økt!\nVenter på at admin skal starte økten",
+        "betweenQuestionsCorrect": "Du har svart og svaret ditt er riktig!\nVenter på at admin skal starte neste spørsmål",
+        "betweenQuestionsIncorrect": "Du har svart og svaret ditt er feil!\nDu kan sjekke svaret ditt mot fasiten etter økten er ferdig.\nVenter på at admin skal starte neste spørmsål",
+        "betweenQuestionsNotAnswered": "Du svarte \"Vet ikke\"!\nDu vil kunne se fasiten når økten er over.\nVenter på at admin skal starte neste spørsmål",
+        "sessionFinished": "Økten er nå over!\nAlle svarene dine er nå lagret og du kan sjekke dem mot løsningen på skrivebordet hvis du ikke har logget inn som anonym."
+    },
+    "JoinSession": {
+        "title": "Bli med i økt!",
+        "errorTitle": "Det skjedde en feil! Prøv på nytt",
+        "joinBtn": "Bli med",
+        "inputPlaceholder": "Skriv inn økt koden!"
+    },
+    "clientSessionTextInput": {
+        "placeholder": "Skriv inn svaret ditt her!"
     }
 }
