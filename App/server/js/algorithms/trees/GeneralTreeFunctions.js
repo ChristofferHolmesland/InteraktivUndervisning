@@ -1,6 +1,6 @@
 const BinaryTreeNode = require("./Tree.js").BinaryTreeNode;
 const Tree = require("./Tree.js").Tree;
-
+//console.log(Tree);
 //Converts object given by the graphDrawer to a tree object, has not been fully tested.
 //the trees should be checked if they are valid after this function is finished
 //This function is going to transform a student's and teacher's drawn tree to a tree object.
@@ -21,6 +21,7 @@ module.exports.createTreeObjectFromCanvasObjectver1 = function(treeCanvas) {
 	}
 	return listofTrees
 };
+
 
 //Checks to two tree branches whether or not they are the same.
 //Will return true if two trees are the same and false if they are not.
@@ -83,41 +84,67 @@ function checkNode(studentNode,solutionNode,checkresult) {
 	//debug consoles
 	/*console.log("Student");
 	console.log(studentNode);
+	console.log(studentNode.children);
 	console.log("Solution");
-	console.log(solutionNode);*/
+	console.log(solutionNode.children);*/
 	if (studentNode.value !== solutionNode.value) {
 		checkresult = false;
 	}
-	if (studentNode.children[0] !== undefined && checkresult) {
+	let studentParent = studentNode.parent;
+	let solutionParent = solutionNode.parent;
+	if (studentParent !== undefined && solutionParent !== undefined) {
+		if (studentParent.value !== solutionParent.value) {
+			checkresult = false
+		}
+	}else if (studentParent === undefined && solutionParent === undefined){
+
+	}else {
+		checkresult = false;
+	}
+
+	if (solutionNode.children[0] !== undefined && checkresult) {
 		checkresult = checkNode(studentNode.children[0],solutionNode.children[0],checkresult)
 	}
-	if (studentNode.children[1] !== undefined && checkresult) {
+	if (solutionNode.children[1] !== undefined && checkresult) {
 		checkresult =  checkNode(studentNode.children[1],solutionNode.children[1],checkresult)
 	}
+
 	return checkresult
 }
 
 function removeNodeFromTree(node,tree,index) {
 	let newTreeList = [];
+	//console.log(node);
+	//console.log(tree);
+	//console.log(index);
 	if (node !== undefined && tree !== undefined && index !== -1) {
-		let parent = node.parent;
-		if (node.children.length === 1) {
+		let newTree = tree.createDuplicateTree();
+		//newTree.printTree();
+		let newNode = newTree.nodes[index];
+		let parent = newNode.parent;
+		if (newNode.children.length === 1) {
+			console.log("1 children");
 			let childrenNode;
-			if (node.children[0] !== undefined) childrenNode = node.children[0];
-			else childrenNode = node.children[1];
+			if (newNode.children[0] !== undefined) childrenNode = newNode.children[0];
+			else childrenNode = newNode.children[1];
 			if (parent === undefined) {
-				tree.root = childrenNode; //current node is the root node
+				newTree.root = childrenNode;
 				childrenNode.parent = undefined;
 			} else {
-				if (parent.children[0] === node) parent.children[0] = childrenNode;
+				if (parent.children[0] === newNode) parent.children[0] = childrenNode;
 				else parent.children[1] = childrenNode;
+				//console.log(childrenNode.parent);
+				//console.log(parent);
 				childrenNode.parent = parent;
 			}
-			tree.nodes.splice(index, 1);
-		} else if (node.children.length === 2) {
+			newTree.nodes.splice(index, 1);
+			newTreeList.push(newTree);
+		} else if (newNode.children.length === 2) {
+			console.log("2 children");
 			let tempNodeArray = getBestReplacementNodes(node, tree);
 			for (let t = 0; t < tempNodeArray.length; t++) {
-				let tempNode = tempNodeArray[0];
+				let tempNode = tempNodeArray[t];
+				//console.log(tempNode);
 				let tempIndex = tree.nodes.indexOf(tempNode);
 				if (tempNode.children.length > 1) {
 					let tempParent = tempNode.parent;
@@ -128,27 +155,29 @@ function removeNodeFromTree(node,tree,index) {
 					if (tempParent.children[0] === tempNode) tempParent.children[0] = childNode;
 					else tempParent.children[1] = childNode;
 				}
-				if (node === tree.root) {
-					tree.root = tempNode;
+				let newTree = tree.createDuplicateTree();
+				if (node === newTree.root) {
+					tempNode.children = node.children;
+					tempNode.parent = undefined;
+					newTree.root = tempNode;
+					if (node.children[0] !== undefined) node.children[0].parent = tempNode;
+					if (node.children[1] !== undefined) node.children[1].parent = tempNode;
+
 				}
-				let newTree = new Tree();
-				tree.nodes[index] = tempNode;
-				tree.nodes.splice(tempIndex, 1);
-				newTree.root = tree.root;
-				newTree.nodes = tree.nodes;
+				newTree.nodes[index] = tempNode;
+				newTree.nodes.splice(tempIndex, 1);
 				newTreeList.push(newTree);
 			}
+		} else {	//no children
+			console.log("No children");
+			//if (parent.children[0] === newNode) parent.children[0] = undefined;
+			if (parent.children[0] === newNode) parent.children[0] = undefined;
+			else parent.children[1] = undefined;
+			//console.log(newTree);
+			newTree.nodes.splice(index, 1);
+			newTreeList.push(newTree);
 		}
-	} else {	//no children
-		if (parent.children[0] === node) parent.children[0] = undefined;
-		else parent.children[1] = undefined;
-		let newTree = new Tree();
-		newTree.root = tree.root;
-		tree.nodes.splice(index, 1);
-		newTree.nodes = tree.nodes;
-		newTreeList.push(newTree);
 	}
-
 	return newTreeList
 }
 module.exports.removeNodeFromTree = removeNodeFromTree;

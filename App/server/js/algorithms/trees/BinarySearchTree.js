@@ -72,7 +72,6 @@ module.exports.createBinarySearchTreeSolution = function(elements,add,existingTr
 			let treelist = [];
 			tree = existingTreeObject;
 			treelist.push(tree);
-			rootNode = tree.root;
 			for (let b=0;b<elements.length;b++) {
 				for (let t = 0; t < treelist.length; t++) {
 					let treeIndex = elements[b].indexOf(treelist[t].nodes);

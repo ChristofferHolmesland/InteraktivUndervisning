@@ -11,11 +11,11 @@ module.exports.createAVLTreeSolution = function (addedElements,existingTreeObjec
 		tree = existingTreeObject;
 		while(checkBalance(tree.root) === false) {
 			if (tree.root.children[0] !== undefined) {
-				let getLowestLeftNode = tree.getLowestNode(tree.root.children[0]);
+				let getLowestLeftNode = getLowestNode(tree.root.children[0]);
 				fixAVLCondition(getLowestLeftNode,tree);
 			}
 			if (tree.root.children[1] !== undefined) {
-				let getLowestRightNode = tree.getLowestNode(tree.root.children[1]);
+				let getLowestRightNode = getLowestNode(tree.root.children[1]);
 				//console.log(getLowestRightNode);
 				fixAVLCondition(getLowestRightNode,tree);
 			}
@@ -60,6 +60,37 @@ function checkBalance(node) {
 		}
 	}
 	return balanced
+}
+//function that obtains the closest leafNode to the given node
+function getLowestNode(node) {
+	let currentNode;
+	if (node === undefined) {
+		currentNode = this.root;
+	}else {
+		currentNode = node;
+	}
+	while (currentNode.children[0] !== undefined || currentNode.children[1] !== undefined) {
+		let leftHeight = 0;
+		let rightHeight = 0;
+		//console.log(currentNode);
+		if (currentNode.children[0] !== undefined) {
+			leftHeight = GeneralTreeFunctions.getHeight(currentNode.children[0])
+		}
+		if (currentNode.children[1] !== undefined) {
+			rightHeight = GeneralTreeFunctions.getHeight(currentNode.children[1])
+		}
+		if (leftHeight > rightHeight) {
+			currentNode = currentNode.children[0]
+		}
+		else if (rightHeight > leftHeight) {
+			currentNode = currentNode.children[1]
+		}
+		else {
+			//not sure what to do here
+			currentNode = currentNode.children[0]
+		}
+	}
+	return currentNode
 }
 
 //gets the node that is breaking the ACL condition

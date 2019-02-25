@@ -1,4 +1,4 @@
-const GeneralTreeFunctions = require("./GeneralTreeFunctions.js");
+//const GeneralTreeFunctions = require("./GeneralTreeFunctions.js");
 
 class Tree {
 	constructor(rootNode,nodes) {
@@ -28,41 +28,47 @@ class Tree {
 	printTree() {
 		console.log("Root: " );
 		console.log(this.root);
-		for (let n= 0; n<this.nodes.length;n++) {
+		for (let n= 0; n<this.nodes.length; n++) {
 			console.log(n);
 			console.log(this.nodes[n])
 		}
 	}
 
-	getLowestNode(node) {
-		let currentNode;
-		if (node === undefined) {
-			currentNode = this.root;
-		}else {
-			currentNode = node;
+	createDuplicateTree() {
+		let duplicateTree = new Tree();
+		let valueList = [];
+		for (let f=0;f<this.nodes.length;f++) {
+			valueList.push(this.nodes[f].value);
 		}
-		while (currentNode.children[0] !== undefined || currentNode.children[1] !== undefined) {
-			let leftHeight = 0;
-			let rightHeight = 0;
-			//console.log(currentNode);
-			if (currentNode.children[0] !== undefined) {
-				leftHeight = GeneralTreeFunctions.getHeight(currentNode.children[0])
+		let nodeList = [];
+		for (let e=0;e<valueList.length;e++) {
+			let newBinaryNodeCopy = new BinaryTreeNode(valueList[e]);
+			nodeList.push(newBinaryNodeCopy);
+		}
+		for (let d=0; d<this.nodes.length; d++) {
+			let orignalNode = this.nodes[d];
+			let currentNode = nodeList[valueList.indexOf(orignalNode.value)];
+			if (orignalNode.parent !== undefined) currentNode.parent = nodeList[valueList.indexOf(orignalNode.parent.value)];
+			else currentNode.parent = undefined;
+			if (orignalNode.children[0] !== undefined){
+				currentNode.children[0] = nodeList[valueList.indexOf(orignalNode.children[0].value)]
 			}
-			if (currentNode.children[1] !== undefined) {
-				rightHeight = GeneralTreeFunctions.getHeight(currentNode.children[1])
-			}
-			if (leftHeight > rightHeight) {
-				currentNode = currentNode.children[0]
-			}
-			else if (rightHeight > leftHeight) {
-				currentNode = currentNode.children[1]
-			}
-			else {
-				//not sure what to do here
-				currentNode = currentNode.children[0]
+			if (orignalNode.children[1] !== undefined){
+				currentNode.children[1] = nodeList[valueList.indexOf(orignalNode.children[1].value)]
 			}
 		}
-		return currentNode
+		duplicateTree.nodes = nodeList;
+		duplicateTree.root = nodeList[0];
+		return duplicateTree;
+	}
+
+	findNodeInNodes(node){
+		let nodeValue = node.value;
+		let index = -1;
+		for(let l=0;l<this.nodes.length;l++){
+			if (this.nodes[l].value === nodeValue) index = l;
+		}
+		return index
 	}
 }
 

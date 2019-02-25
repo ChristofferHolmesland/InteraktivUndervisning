@@ -134,56 +134,183 @@ describe('TestBinaryTrees', function () {
 	});
 
 	describe("TestCreateBinarySearchSolution", function () {
-		it("Check with no existing tree", function () {
-			let completelyNewTree = BinarySearchTreeFunctions.createBinarySearchTreeSolution(testArray,true);
-			if (testArray.length !== testtree.length) {
-				testtree.pop();	//remove extra 50
-			}
+		describe("Check create solution by adding elements",function () {
+			it("Check with no existing tree", function () {
+				let completelyNewTree = BinarySearchTreeFunctions.createBinarySearchTreeSolution(testArray,true);
+				if (testArray.length !== testtree.length) {
+					testtree.pop();	//remove extra 50
+					testtree[testtree.length-1].children = [];
+				}
+				let solutionTree = new Tree(root,testtree);
+				completelyNewTree.printTree();
+				solutionTree.printTree();
+				assert(GeneralTreeFunctions.checkStudentAnswer(completelyNewTree,solutionTree));
+				//assert(Object.is(completelyNewTree,solutionTree)); //didn't work, not sure if this means the objects does not have the same value.
+			});
 
-			let solutionTree = new Tree(root,testtree);
-			assert(GeneralTreeFunctions.checkStudentAnswer(completelyNewTree,solutionTree));
-			//assert(Object.is(completelyNewTree,solutionTree)); //didn't work, not sure if this means the objects does not have the same value.
+			it("Check with existing tree", function () {
+				let testArr2 = [66,8,88,92,4,57,68,26,74,9];
+				let root = new BinaryTreeNode(66);
+				let defNode1 = new BinaryTreeNode(8);
+				let defNode2 = new BinaryTreeNode(88);
+				let defNode3 = new BinaryTreeNode(92);
+				let defNode4 = new BinaryTreeNode(4);
+				defNode1.addParent(root);
+				defNode2.addParent(root);
+				defNode3.addParent(defNode2);
+				defNode4.addParent(defNode1);
+				let defaultTree = new Tree(root);
+				defaultTree.nodes = [root,defNode1,defNode2,defNode3,defNode4];
+				let newTree = BinarySearchTreeFunctions.createBinarySearchTreeSolution(testArr2.slice(5),true,defaultTree);
+
+				let rootSol = new BinaryTreeNode(66);
+				let defNode1Sol = new BinaryTreeNode(8);
+				let defNode2Sol = new BinaryTreeNode(88);
+				let defNode3Sol = new BinaryTreeNode(92);
+				let defNode4Sol = new BinaryTreeNode(4);
+				let defNode5Sol = new BinaryTreeNode(57);
+				let defNode6Sol = new BinaryTreeNode(68);
+				let defNode7Sol = new BinaryTreeNode(26);
+				let defNode8Sol = new BinaryTreeNode(74);
+				let defNode9Sol = new BinaryTreeNode(9);
+				defNode1Sol.addParent(rootSol);
+				defNode2Sol.addParent(rootSol);
+				defNode3Sol.addParent(defNode2Sol);
+				defNode4Sol.addParent(defNode1Sol);
+				defNode5Sol.addParent(defNode1Sol);
+				defNode6Sol.addParent(defNode2Sol);
+				defNode7Sol.addParent(defNode5Sol);
+				defNode8Sol.addParent(defNode6Sol);
+				defNode9Sol.addParent(defNode7Sol);
+				let solutionTree = new Tree(rootSol);
+				solutionTree.nodes = [rootSol,defNode1Sol,defNode2Sol,defNode3Sol,defNode4Sol,defNode5Sol,defNode6Sol,defNode7Sol,defNode8Sol,defNode9Sol];
+				assert(GeneralTreeFunctions.checkStudentAnswer(newTree,solutionTree))
+			})
 		});
 
-		it("Check with existing tree", function () {
-			let testArr2 = [66,8,88,92,4,57,68,26,74,9];
-			let root = new BinaryTreeNode(66);
-			let defNode1 = new BinaryTreeNode(8);
-			let defNode2 = new BinaryTreeNode(88);
-			let defNode3 = new BinaryTreeNode(92);
-			let defNode4 = new BinaryTreeNode(4);
-			defNode1.addParent(root);
-			defNode2.addParent(root);
-			defNode3.addParent(defNode2);
-			defNode4.addParent(defNode1);
-			let defaultTree = new Tree(root);
-			defaultTree.nodes = [root,defNode1,defNode2,defNode3,defNode4];
-			let newTree = BinarySearchTreeFunctions.createBinarySearchTreeSolution(testArr2.slice(5),true,defaultTree);
+		describe("Check create solution by removing elements", function () {
+			let startTree = new Tree();
+			let rootNode = new BinaryTreeNode(50);
+			let startNode1 = new BinaryTreeNode(16);
+			let startNode2 = new BinaryTreeNode(11);
+			let startNode3 = new BinaryTreeNode(31);
+			let startNode4 = new BinaryTreeNode(32);
+			let startNode5 = new BinaryTreeNode(63);
+			let startNode6 = new BinaryTreeNode(52);
+			let startNode7 = new BinaryTreeNode(92);
+			let startNode8 = new BinaryTreeNode(64);
+			let startNode9 = new BinaryTreeNode(5);
+			startNode1.addParent(rootNode);
+			startNode2.addParent(startNode1);
+			startNode3.addParent(startNode1);
+			startNode4.addParent(startNode3);
+			startNode5.addParent(rootNode);
+			startNode6.addParent(startNode5);
+			startNode7.addParent(startNode5);
+			startNode8.addParent(startNode7);
+			startNode9.addParent(startNode2);
+			startTree.nodes = [rootNode,startNode1,startNode2,startNode3,startNode4,startNode5,startNode6,startNode7,startNode8,startNode9];
+			startTree.root = rootNode;
+			it("Delete node 5 in order to test deleting node with 0 children",function () {
+				let solutionTree = new Tree();
+				let solutionRootNode = new BinaryTreeNode(50);
+				let solutionNode1 = new BinaryTreeNode(16);
+				let solutionNode2 = new BinaryTreeNode(11);
+				let solutionNode3 = new BinaryTreeNode(31);
+				let solutionNode4 = new BinaryTreeNode(32);
+				let solutionNode5 = new BinaryTreeNode(63);
+				let solutionNode6 = new BinaryTreeNode(52);
+				let solutionNode7 = new BinaryTreeNode(92);
+				let solutionNode8 = new BinaryTreeNode(64);
+				solutionNode1.addParent(solutionRootNode);
+				solutionNode2.addParent(solutionNode1);
+				solutionNode3.addParent(solutionNode1);
+				solutionNode4.addParent(solutionNode3);
+				solutionNode5.addParent(solutionRootNode);
+				solutionNode6.addParent(solutionNode5);
+				solutionNode7.addParent(solutionNode5);
+				solutionNode8.addParent(solutionNode7);
+				solutionTree.nodes = [solutionRootNode,solutionNode1,solutionNode2,solutionNode3,solutionNode4,solutionNode5,solutionNode6,solutionNode7,solutionNode8];
+				solutionTree.root = solutionRootNode;
+				//solutionTree.printTree();
+				let answerTree = GeneralTreeFunctions.removeNodeFromTree(startNode9,startTree,startTree.nodes.indexOf(startNode9));
+				//answerTree[0].printTree();
+				assert(GeneralTreeFunctions.checkStudentAnswer(answerTree[0],solutionTree));
+				startTree = answerTree[0];
+				//startTree.printTree();
+			});
+			it("Delete node 92 in order to test deleting node with 1 children",function () {
+				let solutionTree = new Tree();
+				let solutionRootNode = new BinaryTreeNode(50);
+				let solutionNode1 = new BinaryTreeNode(16);
+				let solutionNode2 = new BinaryTreeNode(11);
+				let solutionNode3 = new BinaryTreeNode(31);
+				let solutionNode4 = new BinaryTreeNode(32);
+				let solutionNode5 = new BinaryTreeNode(63);
+				let solutionNode6 = new BinaryTreeNode(52);
+				let solutionNode8 = new BinaryTreeNode(64);
+				solutionNode1.addParent(solutionRootNode);
+				solutionNode2.addParent(solutionNode1);
+				solutionNode3.addParent(solutionNode1);
+				solutionNode4.addParent(solutionNode3);
+				solutionNode5.addParent(solutionRootNode);
+				solutionNode6.addParent(solutionNode5);
+				solutionNode8.addParent(solutionNode5);
+				solutionTree.nodes = [solutionRootNode,solutionNode1,solutionNode2,solutionNode3,solutionNode4,solutionNode5,solutionNode6,solutionNode8];
+				solutionTree.root = solutionRootNode;
+				//solutionTree.printTree();
 
-			let rootSol = new BinaryTreeNode(66);
-			let defNode1Sol = new BinaryTreeNode(8);
-			let defNode2Sol = new BinaryTreeNode(88);
-			let defNode3Sol = new BinaryTreeNode(92);
-			let defNode4Sol = new BinaryTreeNode(4);
-			let defNode5Sol = new BinaryTreeNode(57);
-			let defNode6Sol = new BinaryTreeNode(68);
-			let defNode7Sol = new BinaryTreeNode(26);
-			let defNode8Sol = new BinaryTreeNode(74);
-			let defNode9Sol = new BinaryTreeNode(9);
-			defNode1Sol.addParent(rootSol);
-			defNode2Sol.addParent(rootSol);
-			defNode3Sol.addParent(defNode2Sol);
-			defNode4Sol.addParent(defNode1Sol);
-			defNode5Sol.addParent(defNode1Sol);
-			defNode6Sol.addParent(defNode2Sol);
-			defNode7Sol.addParent(defNode5Sol);
-			defNode8Sol.addParent(defNode6Sol);
-			defNode9Sol.addParent(defNode7Sol);
-			let solutionTree = new Tree(rootSol);
-			solutionTree.nodes = [rootSol,defNode1Sol,defNode2Sol,defNode3Sol,defNode4Sol,defNode5Sol,defNode6Sol,defNode7Sol,defNode8Sol,defNode9Sol];
-			assert(GeneralTreeFunctions.checkStudentAnswer(newTree,solutionTree))
-		})
+				let answerTree = GeneralTreeFunctions.removeNodeFromTree(startNode7,startTree,startTree.findNodeInNodes(startNode7));
+				//answerTree[0].printTree();
+				//solutionTree.printTree();
+				assert(GeneralTreeFunctions.checkStudentAnswer(answerTree[0],solutionTree));
+				startTree = answerTree[0];
+			});
+			it("Delete node 50 aka root in order to test deleting node with 2 children",function () {
+				let solutionTree1 = new Tree();
+				let solutionRootNode1 = new BinaryTreeNode(52);
+				let solutionNode11 = new BinaryTreeNode(16);
+				let solutionNode12 = new BinaryTreeNode(11);
+				let solutionNode13 = new BinaryTreeNode(31);
+				let solutionNode14 = new BinaryTreeNode(32);
+				let solutionNode15 = new BinaryTreeNode(63);
+				let solutionNode18 = new BinaryTreeNode(64);
+				solutionNode11.addParent(solutionRootNode1);
+				solutionNode12.addParent(solutionNode11);
+				solutionNode13.addParent(solutionNode11);
+				solutionNode14.addParent(solutionNode13);
+				solutionNode15.addParent(solutionRootNode1);
+				solutionNode18.addParent(solutionNode15);
+				solutionTree1.nodes = [solutionRootNode1,solutionNode11,solutionNode12,solutionNode13,solutionNode14,solutionNode15,solutionNode18];
+				solutionTree1.root = solutionRootNode1;
+
+				let solutionTree2 = new Tree();
+				let solutionRootNode2 = new BinaryTreeNode(32);
+				let solutionNode21 = new BinaryTreeNode(16);
+				let solutionNode22 = new BinaryTreeNode(11);
+				let solutionNode23 = new BinaryTreeNode(52);
+				let solutionNode24 = new BinaryTreeNode(31);
+				let solutionNode25 = new BinaryTreeNode(63);
+				let solutionNode28 = new BinaryTreeNode(64);
+				solutionNode21.addParent(solutionRootNode2);
+				solutionNode22.addParent(solutionNode21);
+				solutionNode23.addParent(solutionNode25);
+				solutionNode24.addParent(solutionNode21);
+				solutionNode25.addParent(solutionRootNode2);
+				solutionNode28.addParent(solutionNode25);
+				solutionTree2.nodes = [solutionRootNode2,solutionNode21,solutionNode22,solutionNode23,solutionNode24,solutionNode25,solutionNode28];
+				solutionTree2.root = solutionRootNode2;
+
+				let answerTree = GeneralTreeFunctions.removeNodeFromTree(rootNode,startTree,startTree.nodes.indexOf(rootNode));
+				assert(answerTree.length === 2);
+				answerTree[0].printTree();
+				answerTree[1].printTree();
+				assert(GeneralTreeFunctions.checkStudentAnswer(answerTree[1],solutionTree1));
+				assert(GeneralTreeFunctions.checkStudentAnswer(answerTree[0],solutionTree2));
+			})
+		});
 	});
+
 	describe("TestCreateAVLTree",function () {
 		let testarray = [20,5,6,9,4,3,2,30,31];
 		let solutionAVLTree = new Tree();
