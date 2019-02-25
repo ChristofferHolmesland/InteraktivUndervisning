@@ -11,7 +11,7 @@ import VueSocketIO from "vue-socket.io";
 Vue.use(BootstrapVue);
 Vue.use(
 	new VueSocketIO({
-		debug: process.env.NODE_ENV === "production" ? false : true,
+		debug: process.env.NODE_ENV === "prod" ? false : true,
 		connection: "http://localhost:8081",
 		vuex: {
 			store

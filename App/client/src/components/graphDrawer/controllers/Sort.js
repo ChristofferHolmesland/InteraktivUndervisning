@@ -162,6 +162,8 @@ export default class Sort {
 		let checkNodesMouseUp = function(newE) {
 			this.gd.canvas.removeEventListener("mouseup", checkNodesMouseUp);
 			this.gd.canvas.removeEventListener("mousemove", checkNodesMouseMove);
+			this.gd.canvas.removeEventListener("touchend", checkNodesMouseUp);
+			this.gd.canvas.removeEventListener("touchmove", checkNodesMouseMove);
 
 			// If there is just one selected node,
 			// it's value can be edited, it can be removed
@@ -288,6 +290,8 @@ export default class Sort {
 			this.selectedNodes.push(node);
 			this.gd.canvas.addEventListener("mousemove", checkNodesMouseMove);
 			this.gd.canvas.addEventListener("mouseup", checkNodesMouseUp);
+			this.gd.canvas.addEventListener("touchmove", checkNodesMouseMove);
+			this.gd.canvas.addEventListener("touchend", checkNodesMouseUp);
 		} else {
 			// Click event is not consumed if no node was clicked on
 			return false;

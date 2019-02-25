@@ -137,15 +137,16 @@ export default class GraphDrawer {
 		this.drawBuffer.height = canvas.height * 3;
 		this.drawContext = this.drawBuffer.getContext("2d");
 
-		this.canvas.addEventListener("mousedown", (function(e) {
-				let consumed = this.controllers[this.controlType].mouseDownHandler(e);
-				if (consumed) return;
+		let down = function(e) {
+			let consumed = this.controllers[this.controlType].mouseDownHandler(e);
+			if (consumed) return;
 
-				// Gesture detection
-				this.detectPanGesture(e);
-				// TODO: Figure out how to detect two-finger zooming
-				// TODO: Let desktop users zoom
-			}).bind(this));
+			// Gesture detection
+			this.detectPanGesture(e);
+		}.bind(this);
+
+		this.canvas.addEventListener("mousedown", down);
+		this.canvas.addEventListener("touchstart", down);
 
 		// Updates the GraphDrawer every <MS_PER_FRAME> milliseconds.
 		this.intervalId = setInterval((function() {
@@ -433,11 +434,17 @@ export default class GraphDrawer {
 			this.canvas.removeEventListener("mousemove", panMoveHandler);
 			this.canvas.removeEventListener("mouseup", panUpHandler);
 			this.canvas.removeEventListener("mouseleave", panUpHandler);
+			this.canvas.removeEventListener("touchmove", panMoveHandler);
+			this.canvas.removeEventListener("touchend", panUpHandler);
+			this.canvas.removeEventListener("touchleave", panUpHandler);
 		}.bind(this);
 
 		this.canvas.addEventListener("mousemove", panMoveHandler);
 		this.canvas.addEventListener("mouseup", panUpHandler);
 		this.canvas.addEventListener("mouseleave", panUpHandler);
+		this.canvas.addEventListener("touchmove", panMoveHandler);
+		this.canvas.addEventListener("touchend", panUpHandler);
+		this.canvas.addEventListener("touchleave", panUpHandler);
 	}
 
 	/*
