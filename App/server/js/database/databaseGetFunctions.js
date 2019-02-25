@@ -67,7 +67,7 @@ const get = {
     },
     sessionHasUserByUserId: function(db, userId) {
         return new Promise((resolve, reject) => {
-            let statement = `SELECT * FROM User_has_Session WHERE userId = ${userId}`;
+            let statement = `SELECT * FROM User_has_Session WHERE userId = '${userId}'`;
             db.get(statement, (err, row) => {
                 if (err) reject(customReject(err, "sessionHasUserByUserId"));
                 resolve(row);
