@@ -139,6 +139,8 @@ export default class GraphDrawer {
 
 		let down = function(e) {
 			e.preventDefault();
+			console.log(e);
+
 			let consumed = this.controllers[this.controlType].mouseDownHandler(e);
 			if (consumed) return;
 
