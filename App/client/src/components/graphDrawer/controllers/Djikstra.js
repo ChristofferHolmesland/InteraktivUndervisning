@@ -63,6 +63,7 @@ export default class Djikstra {
 
 		let handler = function(newE) {
 			newE.preventDefault();
+			this.gd.setEventOffset(newE);
 			let node2 = this.gd.getNodeAtCursor(newE).node;
 
 			if (node2 != undefined) {

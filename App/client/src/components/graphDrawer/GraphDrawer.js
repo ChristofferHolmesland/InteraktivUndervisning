@@ -139,14 +139,7 @@ export default class GraphDrawer {
 
 		let down = function(e) {
 			e.preventDefault();
-
-			if (e.touches !== undefined) {
-				console.log("Touch");
-				console.log(e.touches[0].clientX + "   " + e.touches[0].clientY);
-			} else {
-				console.log("Mouse");
-				console.log(e.offsetX + "    " + e.offsetY);
-			}
+			this.setEventOffset(e);
 
 			let consumed = this.controllers[this.controlType].mouseDownHandler(e);
 			if (consumed) return;
@@ -416,6 +409,7 @@ export default class GraphDrawer {
 
 		let panMoveHandler = function(newE) {
 			newE.preventDefault();
+			this.setEventOffset(newE);
 			let newPosition = this.camera.project(newE.offsetX, newE.offsetY);
 			let frustum = this.camera.getFrustumFront();
 
@@ -576,7 +570,11 @@ export default class GraphDrawer {
 	// Sets x,y touch position to the same variable
 	// used by mouse events.
 	setEventOffset(e) {
-		if (e.offsetX == undefined)
-			console.log("hei");
+		if (e.offsetX !== undefined && e.offsetY !== undefined) return;
+
+		let rect = this.canvas.getBoundingClientRect();
+
+		e.offsetX = e.targetTouches[0].clientX - rect.left;
+		e.offsetY = e.targetTouches[0].clientY - rect.top;
 	}
 }

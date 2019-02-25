@@ -153,6 +153,7 @@ export default class Sort {
 		// These need to be defined inside this function, so .bind(this) can be used
 		let checkNodesMouseUp = function(newE) {
 			newE.preventDefault();
+			this.gd.setEventOffset(newE);
 			this.gd.canvas.removeEventListener("mouseup", checkNodesMouseUp);
 			this.gd.canvas.removeEventListener("mousemove", checkNodesMouseMove);
 			this.gd.canvas.removeEventListener("touchend", checkNodesMouseUp);
@@ -240,6 +241,7 @@ export default class Sort {
 
 		let checkNodesMouseMove = function(newE) {
 			newE.preventDefault();
+			this.gd.setEventOffset(newE);
 			let nodeAtCursor = this.gd.getNodeAtCursor(newE).node;
 			// Checks if no node is under the cursor, or it's already in the list
 			if (nodeAtCursor == undefined || this.selectedNodes.indexOf(nodeAtCursor) != -1)
