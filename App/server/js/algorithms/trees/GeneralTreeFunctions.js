@@ -56,10 +56,7 @@ function findBestParent(node,parentNode) {
 	}
 	return bestParent;
 }
-//TODO change format if possible
-module.exports.findBestParent = function(node,parentNode) {
-	return findBestParent(node,parentNode);
-};
+module.exports.findBestParent = findBestParent;
 
 function getHeight (node) {
 	let childrenHeights = [];
@@ -78,10 +75,8 @@ function getHeight (node) {
 	}
 	return maxHeight;
 }
-//TODO change format if possible
-module.exports.getHeight = function (node) {
-	return getHeight(node);
-};
+module.exports.getHeight = getHeight;
+
 //checks two nodes from different trees and returns false if they don't have the same value
 //Eventually the function will have traversed the entire tree in a inOrder algorithm
 function checkNode(studentNode,solutionNode,checkresult) {
