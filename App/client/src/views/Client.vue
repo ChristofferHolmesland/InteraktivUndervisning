@@ -12,7 +12,10 @@
     			<GraphDrawer 
 					@getValueResponse="printGraphDrawer" 
 					:requestAnswer="requestAnswer" 
-					controlType="Djikstra" />
+					controlType="Sort"
+					sortType="Quicksort"
+					operatingMode="Presentation"
+					:steps="steps" />
 				<b-button @click="requestAnswer = !requestAnswer" >Export</b-button>
 				</b-col>
 			</b-row>
@@ -28,7 +31,42 @@ export default {
 	name: "client",
 	data() {
 		return {
-			requestAnswer: false
+			requestAnswer: false,
+			steps: [
+    {
+        type: "Initial",
+        list: [10, 9, 2, 3, 11, 7, 5],
+    },
+    {
+        type: "Split",
+        pivot: 5,
+        list: [10, 9, 2, 3, 11, 7, 5],
+        left: [2, 3],
+        right: [10, 9, 11, 7],
+    },
+    {
+        type: "Split",
+        pivot: 2,
+        list: [2, 3],
+        left: [3],
+        right: [],
+    },
+    {
+        type: "Split",
+        pivot: 10,
+        list: [10, 9, 11, 7],
+        left: [7, 9],
+        right: [11],
+    },
+    {
+        type: "Split",
+        pivot: 7,
+        list: [7, 9],
+        left: [9],
+        right: []
+    }
+]
+
 		};
 	},
 	components: {
