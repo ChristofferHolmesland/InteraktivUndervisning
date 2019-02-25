@@ -50,16 +50,19 @@ export default class Djikstra {
 	}
 
 	mouseDownHandler(e) {
+		e.preventDefault();
 		let consumed = this.joinNode(e);
 
 		return consumed;
 	}
 
 	joinNode(e) {
+		e.preventDefault();
 		let node = this.gd.getNodeAtCursor(e).node;
 		if (node == undefined) return false;
 
 		let handler = function(newE) {
+			newE.preventDefault();
 			let node2 = this.gd.getNodeAtCursor(newE).node;
 
 			if (node2 != undefined) {

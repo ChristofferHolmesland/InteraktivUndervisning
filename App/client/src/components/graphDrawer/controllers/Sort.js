@@ -36,15 +36,7 @@ export default class Sort {
 	}
 
 	constructor(graphDrawer, config) {
-		this.gd = graphDrawer;
-		// This doesn't work on mobile, because there is no
-		// mouse
-		if (this.gd.DEVICE == "Desktop") {
-			this.gd.canvas.addEventListener("mousemove", (function (e) {
-				this.mouseMoveHandler(e);
-			}).bind(this));
-		}
-	
+		this.gd = graphDrawer;	
 		/*
 			All the arrays stored as a object
 			{
@@ -160,6 +152,7 @@ export default class Sort {
 	checkNodes(e) {
 		// These need to be defined inside this function, so .bind(this) can be used
 		let checkNodesMouseUp = function(newE) {
+			newE.preventDefault();
 			this.gd.canvas.removeEventListener("mouseup", checkNodesMouseUp);
 			this.gd.canvas.removeEventListener("mousemove", checkNodesMouseMove);
 			this.gd.canvas.removeEventListener("touchend", checkNodesMouseUp);
@@ -246,6 +239,7 @@ export default class Sort {
 		}.bind(this);
 
 		let checkNodesMouseMove = function(newE) {
+			newE.preventDefault();
 			let nodeAtCursor = this.gd.getNodeAtCursor(newE).node;
 			// Checks if no node is under the cursor, or it's already in the list
 			if (nodeAtCursor == undefined || this.selectedNodes.indexOf(nodeAtCursor) != -1)
