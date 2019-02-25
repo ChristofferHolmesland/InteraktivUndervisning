@@ -6,7 +6,12 @@ module.exports.client = function(socket, db, user, sessions) {
     socket.on("quickJoinRoom", async function (sessionCode) {
         if (sessions.get(sessionCode)) {
             let userId = 1;
-            if (user.feide) userId = user.feide.token;
+            if (user.feide) userId = await dbFunctions.get.userId(db, {
+                type: "feide",
+                id: user.feide.idNumber
+            }).catch((err) => {
+                console.log(err);
+            });
 
             await dbFunctions.get.sessionHasUserByUserId(db, userId).then((row) => {
                 let session = sessions.get(sessionCode).session;
