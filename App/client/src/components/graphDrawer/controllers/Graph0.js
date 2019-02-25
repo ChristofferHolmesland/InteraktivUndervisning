@@ -116,10 +116,12 @@ export default class Graph0 {
 		Creates an edge between two nodes.
 	*/
 	joinNode(e) {
+		e.preventDefault();
 		let node = this.gd.getNodeAtCursor(e).node;
 		if (node == undefined) return false;
 
 		let handler = function(newE) {
+			newE.preventDefault();
 			let node2 = this.gd.getNodeAtCursor(newE).node;
 
 			if (node2 != undefined) {
@@ -146,17 +148,20 @@ export default class Graph0 {
 		Lets the user drag a node around.
 	*/
 	moveNode(e) {
+		e.preventDefault();
 		let node = this.gd.getNodeAtCursor(e).node;
 		if (node == undefined) return false;
 
 		let moveHandler = function(newE) {
+			newE.preventDefault();
 			let p = this.gd.camera.project(newE.offsetX, newE.offsetY);
 			node.x = p.x;
 			node.y = p.y;
 			this.gd.dirty = true;
 		}.bind(this);
 
-		let upHandler = function() {
+		let upHandler = function(newE) {
+			newE.preventDefault();
 			this.gd.canvas.removeEventListener("mousemove", moveHandler);
 			this.gd.canvas.removeEventListener("mouseup", upHandler);
 			this.gd.canvas.removeEventListener("touchmove", moveHandler);

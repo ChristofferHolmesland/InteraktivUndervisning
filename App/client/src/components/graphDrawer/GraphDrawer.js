@@ -138,6 +138,7 @@ export default class GraphDrawer {
 		this.drawContext = this.drawBuffer.getContext("2d");
 
 		let down = function(e) {
+			e.preventDefault();
 			let consumed = this.controllers[this.controlType].mouseDownHandler(e);
 			if (consumed) return;
 
@@ -405,6 +406,7 @@ export default class GraphDrawer {
 		const threshold = 5;
 
 		let panMoveHandler = function(newE) {
+			newE.preventDefault();
 			let newPosition = this.camera.project(newE.offsetX, newE.offsetY);
 			let frustum = this.camera.getFrustumFront();
 
@@ -430,7 +432,8 @@ export default class GraphDrawer {
 			currentPosition = newPosition;
 		}.bind(this);
 
-		let panUpHandler = function() {
+		let panUpHandler = function(newE) {
+			newE.preventDefault();
 			this.canvas.removeEventListener("mousemove", panMoveHandler);
 			this.canvas.removeEventListener("mouseup", panUpHandler);
 			this.canvas.removeEventListener("mouseleave", panUpHandler);
