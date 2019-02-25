@@ -301,10 +301,10 @@ describe('TestBinaryTrees', function () {
 				solutionTree2.nodes = [solutionRootNode2,solutionNode21,solutionNode22,solutionNode23,solutionNode24,solutionNode25,solutionNode28];
 				solutionTree2.root = solutionRootNode2;
 
-				let answerTree = GeneralTreeFunctions.removeNodeFromTree(rootNode,startTree,startTree.nodes.indexOf(rootNode));
-				assert(answerTree.length === 2);
+				let answerTree = GeneralTreeFunctions.removeNodeFromTree(rootNode,startTree,startTree.findNodeInNodes(rootNode));
 				answerTree[0].printTree();
 				answerTree[1].printTree();
+				assert(answerTree.length === 2);
 				assert(GeneralTreeFunctions.checkStudentAnswer(answerTree[1],solutionTree1));
 				assert(GeneralTreeFunctions.checkStudentAnswer(answerTree[0],solutionTree2));
 			})
