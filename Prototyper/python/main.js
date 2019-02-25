@@ -287,6 +287,7 @@ function parse(code) {
 
     let evaluateExpression = function(scope, expression) {
         let print = false;
+        if (print) console.log(expression);
 
         // Removes whitespace
         expression = expression.trim();
@@ -658,7 +659,11 @@ function parse(code) {
         // Check if the line is a function or class definition
         for (let k = 0; k < keyWords.length; k++) {
             if (line.startsWith(keyWords[k])) {
-                return handleKeyWord(scope, line, keyWords[k], i, lines);
+                return {
+                    type: "Keyword",
+                    keyword: keyWords[k],
+                    data: handleKeyWord(scope, line, keyWords[k], i, lines)
+                };
             }
         }
 
@@ -711,13 +716,22 @@ function parse(code) {
     let lines = code.split("\n");
     for (let i = 0; i < lines.length; i++) {
         let line = lines[i];
+        let copyScope = false;
         let r = parseLine(globalScope, line, i, lines, true);
         if (r !== undefined) {
             if (r.type == "SkipLines") {
                 i += r.data;
+            } else if (r.type == "Keyword" && r.keyword == "if") {
+                copyScope = true;
+                i += r.data;
             }
         } else {
+            copyScope = true;
+        }
+        
+        if (copyScope) {
             if (line.trim() == "") continue;
+            if (line.startsWith("    ")) continue;
             
             let copyOfScope = {
                 data: [],
