@@ -1,9 +1,21 @@
+let checkers = {
+    1: require("./text.js"),
+    2: require("./multipleChoice.js"),
+    3: require("./text.js"),
+    4: require("./text.js"),
+    5: require("./quicksort.js"),
+    6: require("./text.js"),
+    7: require("./text.js"),
+    8: require("./text.js"),
+    9: require("./text.js"),
+    10: require("./djikstra.js"),
+}
+
 const solutionChecker = {
     checkAnswer: function(answer, solution, type) {
-        if (type === 1) return require("./text.js").check(answer, solution);
-        else if (type === 2) return require("./multipleChoice.js").check(answer, solution);
-        else if (type === 3 /* Fix djikstra type */) return require("./djikstra.js").check(answer, solution);
-        else if (type === 4 /* Fix quicksort type */) return require("./quicksort.js").check(answer, solution);
+        if (checkers[type] !== undefined) {
+            checkers[type].check(answer, solution);
+        }
         else return false;
     }
 }

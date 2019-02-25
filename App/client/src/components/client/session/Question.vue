@@ -29,12 +29,12 @@
                                         />
                             <Mergesort v-if="getQuestionType === 4"
                                     :requestAnswer="requestAnswer"
-                                    @getTextResponse="getTextResponse"
+                                    @getTextResponse="getTextValue"
                                     :steps="questionInfo.object.steps"
                                     />
                             <Quicksort v-if="getQuestionType === 5"
                                 :requestAnswer="requestAnswer"
-                                @getTextResponse="getTextResponse"
+                                @getTextResponse="getTextValue"
                                 :steps="questionInfo.object.steps"
                                 />
                         </b-tab>
