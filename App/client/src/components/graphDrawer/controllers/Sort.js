@@ -20,7 +20,7 @@ export default class Sort {
 		// and put into the world.
 		if (config.steps) {
 			this.currentStep = 0;
-			if (this.operatingMode == "Interaction") {
+			if (this.gd.operatingMode == "Interaction") {
 				this.currentStep = config.steps.length - 1;
 			}
 
@@ -28,6 +28,9 @@ export default class Sort {
 			this._parseSteps();
 			this.gd.dirty = true;
 			this._recalculateEdges();
+			if (this.gd.operatingMode == "Presentation") {
+				this.addSteppingButtons();
+			}
 		}
 	}
 
@@ -103,10 +106,6 @@ export default class Sort {
 		this.startPositionOfMove = { x: -1, y: 1 };
 
 		this.config = config;
-
-		if (this.gd.operatingMode == "Presentation") {
-			this.addSteppingButtons();
-		}
 	}
 
 	/*

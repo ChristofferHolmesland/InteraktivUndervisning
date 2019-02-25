@@ -92,6 +92,12 @@ module.exports = function(unsortedList, typePivot) {
         reset: function() {
             currentStep = 0;
             return steps[currentStep];
+        },
+        getSteps: function() {
+            return steps;
+        },
+        setSteps: function(steps) {
+            steps = steps;
         }
     }
 }
