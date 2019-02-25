@@ -135,7 +135,7 @@ describe('TestBinaryTrees', function () {
 
 	describe("TestCreateBinarySearchSolution", function () {
 		it("Check with no existing tree", function () {
-			let completelyNewTree = BinarySearchTreeFunctions.createBinarySearchTreeSolution(testArray);
+			let completelyNewTree = BinarySearchTreeFunctions.createBinarySearchTreeSolution(testArray,true);
 			if (testArray.length !== testtree.length) {
 				testtree.pop();	//remove extra 50
 			}
@@ -158,7 +158,7 @@ describe('TestBinaryTrees', function () {
 			defNode4.addParent(defNode1);
 			let defaultTree = new Tree(root);
 			defaultTree.nodes = [root,defNode1,defNode2,defNode3,defNode4];
-			let newTree = BinarySearchTreeFunctions.createBinarySearchTreeSolution(testArr2.slice(5),defaultTree);
+			let newTree = BinarySearchTreeFunctions.createBinarySearchTreeSolution(testArr2.slice(5),true,defaultTree);
 
 			let rootSol = new BinaryTreeNode(66);
 			let defNode1Sol = new BinaryTreeNode(8);
@@ -232,7 +232,7 @@ describe('TestBinaryTrees', function () {
 			assert(GeneralTreeFunctions.checkStudentAnswer(createdTree,solutionTree));
 		});
 		it("Create an AVL tree using only an existing tree", function () {
-			let defaultBSTTree = BinarySearchTreeFunctions.createBinarySearchTreeSolution(testarray);
+			let defaultBSTTree = BinarySearchTreeFunctions.createBinarySearchTreeSolution(testarray,true);
 			let fullyRotatedTree = AVLFunctions.createAVLTreeSolution([],defaultBSTTree);
 			assert(GeneralTreeFunctions.checkStudentAnswer(fullyRotatedTree,solutionAVLTree));
 		});

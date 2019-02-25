@@ -46,23 +46,45 @@ module.exports.checkBinarySearchTreeCriteria = function (tree) {
 //Creates a tree object based on added elements to the tree.
 //The function will either create a new tree instance or add the elements to a given tree.
 //Is going to be used to create a Binary Search tree object for the teacher's solution.
-module.exports.createBinarySearchTreeSolution = function(addedElements,existingTreeObject) {
+module.exports.createBinarySearchTreeSolution = function(elements,add,existingTreeObject) {
 	let tree;
-	let a = 0;
 	let rootNode;
-	if (existingTreeObject !== undefined) {	//there is an existing tree
-		tree = existingTreeObject;
-		rootNode = tree.root;
-	}else {	//existing tree is not given
-		rootNode = new BinaryTreeNode(addedElements[0]);
-		tree = new Tree(rootNode);
-		a++;
-	}
-	for (a;a<addedElements.length;a++) {
-		let node = new BinaryTreeNode(addedElements[a]);
-		let bestParent = GeneralTreeFunctions.findBestParent(node,rootNode);
-		node.addParent(bestParent);
-		tree.nodes.push(node);
+	if (add) {
+		console.log("Adding\n");
+		let a = 0;
+		if (existingTreeObject !== undefined) {	//there is an existing tree
+			tree = existingTreeObject;
+			rootNode = tree.root;
+		} else {	//existing tree is not given
+			rootNode = new BinaryTreeNode(elements[0]);
+			tree = new Tree(rootNode);
+			a++;
+		}
+		for (a; a < elements.length; a++) {
+			let node = new BinaryTreeNode(elements[a]);
+			let bestParent = GeneralTreeFunctions.findBestParent(node, rootNode);
+			node.addParent(bestParent);
+			tree.nodes.push(node);
+		}
+	}else if(!add){
+		console.log("Removing\n");
+		if (existingTreeObject !== undefined) {
+			let treelist = [];
+			tree = existingTreeObject;
+			treelist.push(tree);
+			rootNode = tree.root;
+			for (let b=0;b<elements.length;b++) {
+				for (let t = 0; t < treelist.length; t++) {
+					let treeIndex = elements[b].indexOf(treelist[t].nodes);
+					if (treeIndex !== -1) {
+						let removedNode = tree.nodes[treeIndex];
+						treelist = GeneralTreeFunctions.removeNodeFromTree(removedNode);
+					}
+				}
+			}
+		}else {
+			console.log("Non-existent tree cannot have removed entries.")
+		}
 	}
 	return tree
 };

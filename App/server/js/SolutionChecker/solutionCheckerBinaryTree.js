@@ -9,7 +9,8 @@ const BinaryTreeChecker = function (answerTree,solution,type) {
 		result = false;
 	}
 	if (BinaryTreeFunctions.checkTreeCriteria(treeList)) {
-		if (type === 4) result = GeneralTreeFunctions.checkStudentAnswer(treeList[0], solution);
+		result = true;
+		if (type !== 8) result = GeneralTreeFunctions.checkStudentAnswer(treeList[0], solution);
 	}else {
 			result = false
 		}
