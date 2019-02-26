@@ -30,8 +30,8 @@
 										@click="changeQuestion($event)">
 						{{question.question.text}} | {{question.correctAnswer}} %
 					</b-list-group-item>
-					<div v-if="getSession.questions.length < 15">
-						<b-list-group-item v-for="index in 20" :key="index + getSession.questions.length">
+					<div v-if="getQuestionslength < 10">
+						<b-list-group-item v-for="index in (10 - getQuestionslength)" :key="index + getQuestionslength">
 							<p> </p>
 						</b-list-group-item>
 					</div>
@@ -52,7 +52,7 @@
 							>
 							<b-card 
 									style="cursor: pointer; min-width: 100px; min-height: 100px;"
-									v-on:click="changeAnswer($event)"
+									@click="changeAnswer($event)"
 									:id="index"
 									no-body>
 								Answer {{index}}
@@ -69,25 +69,17 @@
 import DisplayQuestion from "../question/DisplayQuestion.vue";
 
 export default {
-	name: "session",
-	props: ["sessionId"],
+	name: "Session",
+	props: {
+		session: Object
+	},
 	data() {
 		return {
-			session: Object,
-			selectedQuestion: Number,
-			selectedAnswer: Number,
-			incorrectAnswers: Array,
-			showAnswer: Boolean
+			selectedQuestion: 0,
+			selectedAnswer: 0,
+			incorrectAnswers: [],
+			showAnswer:  false,
 		};
-	},
-	sockets: {
-		getSessionResponse(data) {
-			this.session = data;
-			this.selectedQuestion = 0;
-			this.selectedAnswer = 0;
-			this.incorrectAnswers = [];
-			this.showAnswer = false;
-		}
 	},
 	computed: {
 		getSession() {
@@ -125,6 +117,10 @@ export default {
 			if (!this.getSession.questions[this.selectedQuestion].answerList) return false;
 			if (this.getSession.questions[this.selectedQuestion].answerList.length > 0) return true;
 			return false;
+		},
+		getQuestionslength() {
+			if (!this.session.questions) return 0;
+			return this.session.questions.length;
 		}
 	},
 	methods: {
@@ -134,6 +130,14 @@ export default {
 		},
 		changeQuestion(event) {
 			this.selectedQuestion = event.target.id;
+		}
+	},
+	watch: {
+		session: function(newSession, oldSession){
+			this.selectedQuestion = 0;
+			this.selectedAnswer = 0;
+			this.incorrectAnswers = [];
+			this.showAnswer = false;
 		}
 	},
 	components: {

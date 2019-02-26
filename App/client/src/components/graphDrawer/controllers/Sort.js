@@ -988,7 +988,7 @@ export default class Sort {
 			this.arrays[p1].links.push(merged);
 			this.arrays[p2].links.push(merged);
 		};
-
+console.log(this.steps);
 		let offset = undefined;
 		for (let i = 0; i <= this.currentStep; i++) {
 			let step = this.steps[i];

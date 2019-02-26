@@ -13,7 +13,11 @@
 											:solution="resultInfo.solution"/>
 							<MultipleChoiceSolution v-if="resultInfo.question.type === 2"
 													:solutions="resultInfo.solution"
-													:choices="resultInfo.question.object.multipleChoices"/>
+													:choices="resultInfo.question.object.multipleChoices"
+                                                    />
+                            <QuicksortSolution  v-if="resultInfo.question.type === 5"
+                                                :solution="resultInfo.solution"
+                                                />
 						</b-tab>
 						<b-tab :title="getLocale.answer" v-if="resultInfo.answerList.length > 0">
 							<TextAnswer v-if="resultInfo.question.type === 1"
@@ -21,6 +25,9 @@
 							<MultipleChoiceAnswer v-if="resultInfo.question.type === 2" 
 											:answers="resultInfo.answerList[selectedAnswer].answerObject"
 											:choices="resultInfo.question.object.multipleChoices"/>
+                            <QuicksortAnswer    v-if="resultInfo.question.type === 5"
+                                                :answer="resultInfo.answerList[selectedAnswer].answerObject"
+                                                />
 						</b-tab>
 					</b-tabs>
 				</b-card>
@@ -34,6 +41,12 @@ import MultipleChoiceAnswer from "./questionResultScreenAnswer/MultipleChoice.vu
 import MultipleChoiceSolution from "./questionResultScreenSolution/MultipleChoice.vue"
 import TextAnswer from "./questionResultScreenAnswer/Text.vue";
 import TextSolution from "./questionResultScreenSolution/Text.vue"
+// Shellsort
+// Shellsort
+// Mergesort
+// Mergesort
+import QuicksortAnswer from "./questionResultScreenAnswer/Quicksort.vue";
+import QuicksortSolution from "./questionResultScreenSolution/Quicksort.vue"
 
 export default {
     name: "DisplayQuestion",
@@ -60,7 +73,9 @@ export default {
         TextSolution,
         TextAnswer,
         MultipleChoiceSolution,
-        MultipleChoiceAnswer
+        MultipleChoiceAnswer,
+        QuicksortAnswer,
+        QuicksortSolution
     }
 }
 </script>

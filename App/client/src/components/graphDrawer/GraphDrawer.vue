@@ -1,6 +1,6 @@
 <template>
     <div>
-        <canvas id="canvas" width="600" height="600" style="background-color: #fff;"/>
+        <canvas id="canvas" :width="width" :height="height" style="background-color: #fff;"/>
     </div>
 </template>
 
@@ -24,7 +24,15 @@
             // Quicksort or Mergesort
             sortType: String,
             // Interactive or Presentation
-            operatingMode: String
+            operatingMode: String,
+            width: {
+                default: 600,
+                type: Number
+            },
+            height: {
+                default: 600,
+                type: Number
+            }
         },
         watch: {
             requestAnswer: function() {
