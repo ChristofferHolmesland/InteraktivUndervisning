@@ -78,7 +78,6 @@ describe('TestBinaryTrees', function () {
 			assert(BinaryTreeFunctions.checkTreeCriteria(testTree1));
 			assert(BinaryTreeFunctions.checkTreeCriteria(testTree2));
 		});
-
 		it("checkBinaryTreeFalseConditions", function () {
 			let nodeex = new BinaryTreeNode(100);
 			node2.children.push(nodeex);
@@ -95,7 +94,6 @@ describe('TestBinaryTrees', function () {
 			assert(BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(testTree1));
 			assert(BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(testTree2));
 		});
-
 		it("checkBinarySearchTreeFalseConditions", function () {
 			let wrongNode = new BinaryTreeNode(50);
 			node32.children[0] = wrongNode;
@@ -111,7 +109,6 @@ describe('TestBinaryTrees', function () {
 		it("Compare the Tree Objects", function () {
 			assert(GeneralTreeFunctions.checkStudentAnswer(testTree1,testTree2))
 		});
-
 		it("testAddParent", function () {
 			let node10 = new BinaryTreeNode(50);
 			node10.addParent(node9);
@@ -119,7 +116,6 @@ describe('TestBinaryTrees', function () {
 			assert(Object.is(node9.children[1],node10));
 			testtree.push(node10)
 		});
-
 		it("Check failure condition", function () {
 			if (testTree1.nodes.length === testTree2.nodes.length) {
 				let node10 = new BinaryTreeNode(50);
@@ -147,7 +143,6 @@ describe('TestBinaryTrees', function () {
 				assert(GeneralTreeFunctions.checkStudentAnswer(completelyNewTree,solutionTree));
 				//assert(Object.is(completelyNewTree,solutionTree)); //didn't work, not sure if this means the objects does not have the same value.
 			});
-
 			it("Check with existing tree", function () {
 				let testArr2 = [66,8,88,92,4,57,68,26,74,9];
 				let root = new BinaryTreeNode(66);
@@ -307,7 +302,33 @@ describe('TestBinaryTrees', function () {
 				assert(answerTree.length === 2);
 				assert(GeneralTreeFunctions.checkStudentAnswer(answerTree[1],solutionTree1));
 				assert(GeneralTreeFunctions.checkStudentAnswer(answerTree[0],solutionTree2));
-			})
+			});
+
+			describe("Testing  getBestReplacementNodes for tasks requiring only clicking on the best replacement nodes",function () {
+				let rootNode = new BinaryTreeNode(23);
+				let testTree = new Tree(rootNode);
+				let testNode1 = new BinaryTreeNode(2);
+				let testNode2 = new BinaryTreeNode(44);
+				let testNode3 = new BinaryTreeNode(26);
+				let testNode4 = new BinaryTreeNode(37);
+				let testNode5 = new BinaryTreeNode(50);
+				testNode1.addParent(rootNode);
+				testNode2.addParent(rootNode);
+				testNode3.addParent(testNode2);
+				testNode4.addParent(testNode3);
+				testNode5.addParent(testNode2);
+				testTree.nodes = [rootNode,testNode1,testNode2,testNode3,testNode4,testNode5];
+				it("Get replacement nodes when deleting node 44",function () {
+					let nodelist = GeneralTreeFunctions.getBestReplacementNodes(testNode2);
+					console.log(nodelist);
+					assert(nodelist[0] === testNode4 && nodelist[1] === testNode5);
+				});
+				it("Get replacement nodes when deleting root ",function () {
+					let nodelist = GeneralTreeFunctions.getBestReplacementNodes(rootNode);
+					console.log(nodelist);
+					assert(nodelist[0] === testNode1 && nodelist[1] === testNode3);
+				})
+			});
 		});
 	});
 
@@ -333,7 +354,6 @@ describe('TestBinaryTrees', function () {
 		solutionNode7.addParent(solutionRootNode);
 		solutionNode8.addParent(solutionNode7);
 		solutionAVLTree.nodes = [solutionRootNode,solutionNode1,solutionNode2,solutionNode3,solutionNode4,solutionNode5,solutionNode6,solutionNode7,solutionNode8];
-
 		it("Create an AVL tree using only an array of elements", function () {
 			let createdTree = AVLFunctions.createAVLTreeSolution(testarray);
 			//createdTree.printTree();
@@ -363,7 +383,6 @@ describe('TestBinaryTrees', function () {
 			let fullyRotatedTree = AVLFunctions.createAVLTreeSolution([],defaultBSTTree);
 			assert(GeneralTreeFunctions.checkStudentAnswer(fullyRotatedTree,solutionAVLTree));
 		});
-
 		it("Create an AVL tree using both an existing tree and and an array of elements",function () {
 			let addedElements = [92,60,58,8,55];
 			let startTree = solutionAVLTree;
