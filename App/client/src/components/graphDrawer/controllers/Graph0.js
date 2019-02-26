@@ -155,19 +155,20 @@ export default class Graph0 {
 		if (node == undefined) return false;
 
 		let moveHandler = function(newE) {
+			if (node == undefined) return;
+
 			newE.preventDefault();
 			this.gd.setEventOffset(newE);
 			let p = this.gd.camera.project(newE.offsetX, newE.offsetY);
 			node.x = p.x;
 			node.y = p.y;
 			this.gd.dirty = true;
-			console.log("Move handler");
 		}.bind(this);
 
 		let upHandler = function(newE) {
 			newE.preventDefault();
 			this.gd.setEventOffset(newE);
-			console.log("Removing event listener");
+			node = undefined;
 			this.gd.canvas.removeEventListener("mousemove", moveHandler);
 			this.gd.canvas.removeEventListener("mouseup", upHandler);
 			this.gd.canvas.removeEventListener("touchmove", moveHandler);
