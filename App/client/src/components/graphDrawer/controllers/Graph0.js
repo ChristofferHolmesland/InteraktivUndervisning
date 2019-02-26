@@ -44,7 +44,7 @@ export default class Graph0 {
 	}
 
 	mouseDownHandler(e) {
-		// UI 
+		// UI
 		let consumed = this.detectUIInput(e);
 		if (consumed) return consumed;
 
@@ -161,11 +161,13 @@ export default class Graph0 {
 			node.x = p.x;
 			node.y = p.y;
 			this.gd.dirty = true;
+			console.log("Move handler");
 		}.bind(this);
 
 		let upHandler = function(newE) {
 			newE.preventDefault();
 			this.gd.setEventOffset(newE);
+			console.log("Removing event listener");
 			this.gd.canvas.removeEventListener("mousemove", moveHandler);
 			this.gd.canvas.removeEventListener("mouseup", upHandler);
 			this.gd.canvas.removeEventListener("touchmove", moveHandler);
