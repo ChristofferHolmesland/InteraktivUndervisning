@@ -401,22 +401,25 @@ export default class GraphDrawer {
 		This let's the user move the camera around the world.
 	*/
 	detectPanGesture(e) {
-		let currentPosition = this.camera.project(e.offsetX, e.offsetY);
+		let currentPosition = { x: e.offsetX, y: e.offsetY };
 		// How much the camera moves relative to how far the mouse is dragged.
-		const velocityFactor = 0.85;
+		const velocityFactor = 0.95;
 		// How much the mouse must be moved before panning starts.
-		const threshold = 5;
+		let threshold = 5;
+		let hasMoved = false;
 
 		let panMoveHandler = function(newE) {
 			newE.preventDefault();
 			this.setEventOffset(newE);
-			let newPosition = this.camera.project(newE.offsetX, newE.offsetY);
+			let newPosition = { x: newE.offsetX, y: newE.offsetY };
 			let frustum = this.camera.getFrustumFront();
 
 			// Calculates the difference in position between last frame and this frame.
 			let dX = velocityFactor * (newPosition.x - currentPosition.x);
 			let dY = velocityFactor * (newPosition.y - currentPosition.y);
-			if (dX > threshold || dX < threshold)
+
+			if (dX > threshold || dX < -threshold) {
+				dX -= Math.sign(dX) * threshold;
 				// The camera won't put it's center close enough to the world edge,
 				// to render anything outside the world.
 				this.camera.translateX(
@@ -424,15 +427,22 @@ export default class GraphDrawer {
 					frustum.Width / 2,
 					this.drawBuffer.width - frustum.Width / 2
 				);
-			if (dY > threshold || dY < threshold)
+				hasMoved = true;
+			}
+			if (dY > threshold || dY < -threshold) {
+				dY -= Math.sign(dY) * threshold;
 				this.camera.translateY(
 					-dY,
 					frustum.Height / 2,
 					this.drawBuffer.height - frustum.Height / 2
 				);
+				hasMoved = true;
+			}
 
 			this.dirty = true;
-			currentPosition = newPosition;
+			currentPosition.x = newPosition.x;
+			currentPosition.y = newPosition.y;
+			if (hasMoved) threshold = 0;
 		}.bind(this);
 
 		let panUpHandler = function(newE) {
