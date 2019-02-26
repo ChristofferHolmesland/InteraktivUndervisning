@@ -884,6 +884,31 @@ export default class Sort {
 			}
 		}
 
+		// Add everything as a final step
+		let edges = [];
+		for (let i = 0; i < this.gd.edges.length; i++) {
+			edges.push({
+				n1: this.gd.edges[i].n1.v,
+				n2: this.gd.edges[i].n2.v
+			});
+		}
+
+		let nodes = [];
+		for (let i = 0; i < this.gd.nodes.length; i++) {
+			let node = this.gd.nodes[i];
+			nodes.push({
+				v: node.v,
+				x: node.x,
+				y: node.y
+			});
+		}
+
+		steps.push({
+			type: "Final",
+			nodes: nodes,
+			edges: edges
+		});
+
 		return steps;
 	}
 
@@ -988,6 +1013,45 @@ export default class Sort {
 			this.arrays[p1].links.push(merged);
 			this.arrays[p2].links.push(merged);
 		};
+
+		let parseFinal = (step, pos) => {
+			this.gd.nodes = [];
+			this.gd.edges = [];
+
+			for (let i = 0; i < step.nodes.length; i++) {
+				let node = step.nodes[i];
+				let newNode = {
+					r: this.gd.R,
+					v: node.v,
+					x: node.x + pos.dx,
+					y: node.y + pos.dy
+				};
+				this.gd.nodes.push(newNode);
+			}
+
+			let findIndex = (val) => {
+				for (let i = 0; i < this.gd.nodes.length; i++) {
+					if (this.gd.nodes[i].v == val) return i;
+				}
+
+				return -1;
+			}
+
+			for (let i = 0; i < step.edges.length; i++) {
+				let edge = step.edges[i];
+
+				let i1 = findIndex(edge.n1.v);
+				let i2 = findIndex(edge.n2.v);
+
+				let newEdge = {
+					n1: this.gd.nodes[i1],
+					n2: this.gd.nodes[i2]
+				};
+
+				this.gd.edges.push(newEdge);
+			}
+		};
+
 		let offset = undefined;
 		for (let i = 0; i <= this.currentStep; i++) {
 			let step = this.steps[i];
@@ -1000,19 +1064,13 @@ export default class Sort {
 
 			if (step.type == "Initial") {
 				offset = parseInitial(step);
-				console.log("offset")
-				console.log(offset)
 			} else if (step.type == "Split") {
 				if (user) {
 					if (step.position.left) {
-						console.log("left")
-						console.log(step.position.left);
 						pos.left.x = step.position.left.x + offset.dx;
 						pos.left.y = step.position.left.y + offset.dy;
 					}
-					if (step.position.right) {
-						console.log("right")
-						console.log(step.position.right);
+					if (step.position.right) {;
 						pos.right.x = step.position.right.x + offset.dx;
 						pos.right.y = step.position.right.y + offset.dy;
 					}
@@ -1056,6 +1114,14 @@ export default class Sort {
 				}
 
 				parseMerge(step, pos);
+			} else if (step.type == "Final") {
+				if (offset == undefined) {
+					pos = {
+						dx: 0,
+						dy: 0
+					};
+				}
+				parseFinal(step, pos);
 			} else {
 				console.log(`Found invalid step type: ${step.type} 
 					at index ${i}, skipping.`);
