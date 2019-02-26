@@ -146,6 +146,7 @@ export default class GraphDrawer {
 
 			// Gesture detection
 			this.detectPanGesture(e);
+			this.detectZoomGesture(e);
 		}.bind(this);
 
 		this.canvas.addEventListener("mousedown", down);
@@ -178,12 +179,6 @@ export default class GraphDrawer {
 
 		if (this.controllers[this.controlType].configure)
 			this.controllers[this.controlType].configure();
-	}
-
-	// TODO: Remove this, and implement a better interface
-	set zoomLevel(newZoom) {
-		this.camera.zoomLevel = newZoom;
-		this.dirty = true;
 	}
 
 	/*
@@ -397,10 +392,81 @@ export default class GraphDrawer {
 	}
 
 	/*
+		Can be called to let the user zoom using two fingers.
+	*/
+	detectZoomGesture(e) {
+		if (e.targetTouches == undefined) return;
+		if (e.targetTouches.length < 2) return;
+
+		let getFingers = function(evt) {
+			let rect = this.canvas.getBoundingClientRect();
+
+			let f1 = {
+				x: evt.targetTouches[0].clientX - rect.left,
+				y: evt.targetTouches[0].clientY - rect.top
+			};
+
+			let f2 = {
+				x: evt.targetTouches[1].clientX - rect.left,
+				y: evt.targetTouches[1].clientY - rect.top
+			};
+
+			return [f1, f2];
+		}.bind(this);
+
+		let previousFingers = getFingers(e);
+
+		let zoomHandler = function(newE) {
+			let newFingers = getFingers(newE);
+
+			let dF0x = newFingers[0].x - previousFingers[0].x;
+			let dF0y = newFingers[0].y - previousFingers[0].y;
+			let dF1x = newFingers[1].x - previousFingers[1].x;
+			let dF1y = newFingers[1].y - previousFingers[1].y;
+
+			if (
+				Math.sign(dF0x) !== Math.sign(dF1x) &&
+				Math.sign(dF0y) !== Math.sign(dF1y)
+			) {
+				let pdist = Math.hypot(
+					previousFingers[1].x - previousFingers[0].x,
+					previousFingers[1].y - previousFingers[0].y
+				);
+				let ndist = Math.hypot(
+					newFingers[1].x - newFingers[0].x,
+					newFingers[1].y - newFingers[0].y
+				);
+
+				// Zoom out
+				if (pdist > ndist) this.gd.camera.changeZoom(-0.1);
+				// Zoom in
+				else if (pdist < ndist) this.gd.camera.changeZoom(0.1);
+			}
+
+			this.gd.dirty = true;
+			previousFingers = newFingers;
+		}.bind(this);
+
+		let zoomStopHandler = function() {
+			this.canvas.removeEventListener("touchmove", zoomHandler);
+			this.canvas.removeEventListener("touchend", zoomStopHandler);
+			this.canvas.removeEventListener("touchleave", zoomStopHandler);
+		}.bind(this);
+
+		this.canvas.addEventListener("touchmove", zoomHandler);
+		this.canvas.addEventListener("touchend", zoomStopHandler);
+		this.canvas.addEventListener("touchleave", zoomStopHandler);
+	}
+
+	/*
 		Can be called to determine if the event e is the start of a panning gesture.
 		This let's the user move the camera around the world.
 	*/
 	detectPanGesture(e) {
+		if (e.touches !== undefined) {
+			if (e.touches.length > 1) return;
+		}
+
 		let currentPosition = { x: e.offsetX, y: e.offsetY };
 		// How much the camera moves relative to how far the mouse is dragged.
 		const velocityFactor = 0.95;
