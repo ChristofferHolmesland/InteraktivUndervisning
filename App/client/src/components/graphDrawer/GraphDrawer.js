@@ -137,15 +137,20 @@ export default class GraphDrawer {
 		this.drawBuffer.height = canvas.height * 3;
 		this.drawContext = this.drawBuffer.getContext("2d");
 
-		this.canvas.addEventListener("mousedown", (function(e) {
-				let consumed = this.controllers[this.controlType].mouseDownHandler(e);
-				if (consumed) return;
+		let down = function(e) {
+			e.preventDefault();
+			this.setEventOffset(e);
 
-				// Gesture detection
-				this.detectPanGesture(e);
-				// TODO: Figure out how to detect two-finger zooming
-				// TODO: Let desktop users zoom
-			}).bind(this));
+			let consumed = this.controllers[this.controlType].mouseDownHandler(e);
+			if (consumed) return;
+
+			// Gesture detection
+			this.detectPanGesture(e);
+			this.detectZoomGesture(e);
+		}.bind(this);
+
+		this.canvas.addEventListener("mousedown", down);
+		this.canvas.addEventListener("touchstart", down);
 
 		// Updates the GraphDrawer every <MS_PER_FRAME> milliseconds.
 		this.intervalId = setInterval((function() {
@@ -174,12 +179,6 @@ export default class GraphDrawer {
 
 		if (this.controllers[this.controlType].configure)
 			this.controllers[this.controlType].configure();
-	}
-
-	// TODO: Remove this, and implement a better interface
-	set zoomLevel(newZoom) {
-		this.camera.zoomLevel = newZoom;
-		this.dirty = true;
 	}
 
 	/*
@@ -393,24 +392,115 @@ export default class GraphDrawer {
 	}
 
 	/*
+		Can be called to let the user zoom using two fingers.
+	*/
+	detectZoomGesture(e) {
+		if (e.targetTouches == undefined) return;
+		if (e.targetTouches.length < 2) return;
+
+		let getFingers = function(evt) {
+			let rect = this.canvas.getBoundingClientRect();
+
+			let f1 = {
+				x: evt.targetTouches[0].clientX - rect.left,
+				y: evt.targetTouches[0].clientY - rect.top
+			};
+
+			let f2 = {
+				x: evt.targetTouches[1].clientX - rect.left,
+				y: evt.targetTouches[1].clientY - rect.top
+			};
+
+			return [f1, f2];
+		}.bind(this);
+
+		let previousFingers = getFingers(e);
+
+		let zoomHandler = function(newE) {
+			let newFingers = getFingers(newE);
+
+			let dF0x = newFingers[0].x - previousFingers[0].x;
+			let dF0y = newFingers[0].y - previousFingers[0].y;
+			let dF1x = newFingers[1].x - previousFingers[1].x;
+			let dF1y = newFingers[1].y - previousFingers[1].y;
+
+			if (
+				Math.sign(dF0x) !== Math.sign(dF1x) &&
+				Math.sign(dF0y) !== Math.sign(dF1y)
+			) {
+				let pdist = Math.hypot(
+					previousFingers[1].x - previousFingers[0].x,
+					previousFingers[1].y - previousFingers[0].y
+				);
+				let ndist = Math.hypot(
+					newFingers[1].x - newFingers[0].x,
+					newFingers[1].y - newFingers[0].y
+				);
+
+				let ax = (newFingers[0].x + newFingers[1].x) / 2;
+				let ay = (newFingers[0].y + newFingers[1].y) / 2;
+
+				// Zoom out
+				if (pdist > ndist) this.camera.changeZoom(0.05, ax, ay);
+				// Zoom in
+				else if (pdist < ndist) this.camera.changeZoom(-0.05, ax, ay);
+			}
+
+			this.dirty = true;
+			previousFingers = newFingers;
+		}.bind(this);
+
+		let zoomStopHandler = function() {
+			setTimeout((function() {
+				this.isZooming = false;
+			}).bind(this), this.FPS / 4 * this.MS_PER_FRAME);
+			this.canvas.removeEventListener("touchmove", zoomHandler);
+			this.canvas.removeEventListener("touchend", zoomStopHandler);
+			this.canvas.removeEventListener("touchcancel", zoomStopHandler);
+			this.canvas.removeEventListener("touchleave", zoomStopHandler);
+		}.bind(this);
+
+		this.isZooming = true;
+		this.canvas.addEventListener("touchmove", zoomHandler);
+		this.canvas.addEventListener("touchend", zoomStopHandler);
+		this.canvas.addEventListener("touchcancel", zoomStopHandler);
+		this.canvas.addEventListener("touchleave", zoomStopHandler);
+	}
+
+	/*
 		Can be called to determine if the event e is the start of a panning gesture.
 		This let's the user move the camera around the world.
 	*/
 	detectPanGesture(e) {
-		let currentPosition = this.camera.project(e.offsetX, e.offsetY);
+		// Detect if the user is trying to zoom
+		if (e.touches !== undefined) {
+			if (e.touches.length > 1) return;
+			if (e.targetTouches.length > 1) return;
+			if (e.changedTouches.length > 1) return;
+		}
+
+		if (this.isZooming == true) return;
+
+		let currentPosition = { x: e.offsetX, y: e.offsetY };
 		// How much the camera moves relative to how far the mouse is dragged.
-		const velocityFactor = 0.85;
+		let velocityFactor = 0.95;
+		velocityFactor *= this.camera.zoomLevel;
 		// How much the mouse must be moved before panning starts.
-		const threshold = 5;
+		let threshold = 5;
+		let hasMoved = false;
 
 		let panMoveHandler = function(newE) {
-			let newPosition = this.camera.project(newE.offsetX, newE.offsetY);
+			newE.preventDefault();
+			this.setEventOffset(newE);
+			let newPosition = { x: newE.offsetX, y: newE.offsetY };
 			let frustum = this.camera.getFrustumFront();
 
 			// Calculates the difference in position between last frame and this frame.
 			let dX = velocityFactor * (newPosition.x - currentPosition.x);
 			let dY = velocityFactor * (newPosition.y - currentPosition.y);
-			if (dX > threshold || dX < threshold)
+
+			if (dX > threshold || dX < -threshold) {
+				dX -= Math.sign(dX) * threshold;
 				// The camera won't put it's center close enough to the world edge,
 				// to render anything outside the world.
 				this.camera.translateX(
@@ -418,26 +508,42 @@ export default class GraphDrawer {
 					frustum.Width / 2,
 					this.drawBuffer.width - frustum.Width / 2
 				);
-			if (dY > threshold || dY < threshold)
+				hasMoved = true;
+			}
+			if (dY > threshold || dY < -threshold) {
+				dY -= Math.sign(dY) * threshold;
 				this.camera.translateY(
 					-dY,
 					frustum.Height / 2,
 					this.drawBuffer.height - frustum.Height / 2
 				);
+				hasMoved = true;
+			}
 
 			this.dirty = true;
-			currentPosition = newPosition;
+			currentPosition.x = newPosition.x;
+			currentPosition.y = newPosition.y;
+			if (hasMoved) threshold = 0;
 		}.bind(this);
 
-		let panUpHandler = function() {
+		let panUpHandler = function(newE) {
+			newE.preventDefault();
 			this.canvas.removeEventListener("mousemove", panMoveHandler);
 			this.canvas.removeEventListener("mouseup", panUpHandler);
 			this.canvas.removeEventListener("mouseleave", panUpHandler);
+			this.canvas.removeEventListener("touchmove", panMoveHandler);
+			this.canvas.removeEventListener("touchend", panUpHandler);
+			this.canvas.removeEventListener("touchcancel", panUpHandler);
+			this.canvas.removeEventListener("touchleave", panUpHandler);
 		}.bind(this);
 
 		this.canvas.addEventListener("mousemove", panMoveHandler);
 		this.canvas.addEventListener("mouseup", panUpHandler);
 		this.canvas.addEventListener("mouseleave", panUpHandler);
+		this.canvas.addEventListener("touchmove", panMoveHandler);
+		this.canvas.addEventListener("touchend", panUpHandler);
+		this.canvas.addEventListener("touchcancel", panUpHandler);
+		this.canvas.addEventListener("touchleave", panUpHandler);
 	}
 
 	/*
@@ -529,15 +635,22 @@ export default class GraphDrawer {
 
 	// ref: https://stackoverflow.com/a/1501725, 20.02.2019
 	_distToSegmentSquared(p, v, w) {
-		function sqr(x) { return x * x }
-		function dist2(v, w) { return sqr(v.x - w.x) + sqr(v.y - w.y) }
+		function sqr(x) {
+			return x * x;
+		}
+
+		function dist2(v, w) {
+			return sqr(v.x - w.x) + sqr(v.y - w.y);
+		}
 
 		var l2 = dist2(v, w);
 		if (l2 == 0) return dist2(p, v);
 		var t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
 		t = Math.max(0, Math.min(1, t));
-		return dist2(p, { x: v.x + t * (w.x - v.x),
-						y: v.y + t * (w.y - v.y) });
+		return dist2(p, {
+			x: v.x + t * (w.x - v.x),
+			y: v.y + t * (w.y - v.y)
+		});
 	}
 
 	// Sort the selected nodes based on x coordinate to get them in the right order
@@ -552,5 +665,24 @@ export default class GraphDrawer {
 		if (n1.v < n2.v) return -1;
 		if (n1.v > n2.v) return 1;
 		return 0;
+	}
+
+	// Sets x,y touch position to the same variable
+	// used by mouse events.
+	setEventOffset(e) {
+		if (e.offsetX !== undefined && e.offsetY !== undefined) return;
+
+		let rect = this.canvas.getBoundingClientRect();
+
+		if (e.targetTouches !== undefined && e.targetTouches.length > 0) {
+			e.offsetX = e.targetTouches[0].clientX - rect.left;
+			e.offsetY = e.targetTouches[0].clientY - rect.top;
+		} else if (e.changedTouches !== undefined && e.changedTouches.length > 0) {
+			e.offsetX = e.changedTouches[0].clientX - rect.left;
+			e.offsetY = e.changedTouches[0].clientY - rect.top;
+		} else {
+			e.offsetX = -1;
+			e.offsetY = -1;
+		}
 	}
 }

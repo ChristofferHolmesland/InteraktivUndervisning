@@ -50,16 +50,20 @@ export default class Djikstra {
 	}
 
 	mouseDownHandler(e) {
+		e.preventDefault();
 		let consumed = this.joinNode(e);
 
 		return consumed;
 	}
 
 	joinNode(e) {
+		e.preventDefault();
 		let node = this.gd.getNodeAtCursor(e).node;
 		if (node == undefined) return false;
 
 		let handler = function(newE) {
+			newE.preventDefault();
+			this.gd.setEventOffset(newE);
 			let node2 = this.gd.getNodeAtCursor(newE).node;
 
 			if (node2 != undefined) {
@@ -76,8 +80,12 @@ export default class Djikstra {
 			}
 
 			this.gd.canvas.removeEventListener("mouseup", handler);
+			this.gd.canvas.removeEventListener("touchend", handler);
+			this.gd.canvas.removeEventListener("touchcancel", handler);
 		}.bind(this);
 		this.gd.canvas.addEventListener("mouseup", handler);
+		this.gd.canvas.addEventListener("touchend", handler);
+		this.gd.canvas.addEventListener("touchcancel", handler);
 		return true;
 	}
 }

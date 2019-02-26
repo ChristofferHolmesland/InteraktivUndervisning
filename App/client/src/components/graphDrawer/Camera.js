@@ -3,6 +3,8 @@ export default class Camera {
 		this.gd = graphDrawer;
 		this.canvas = graphDrawer.canvas;
 		this.zoomLevel = 1;
+		this.minZoomLevel = 0.3;
+		this.maxZoomLevel = 2.5;
 		// The camera starts centered on the world.
 		this.centerX = this.gd.drawBuffer.width / 2;
 		this.centerY = this.gd.drawBuffer.height / 2;
@@ -12,7 +14,23 @@ export default class Camera {
 		this.viewportWidth = this.canvas.width;
 		this.viewportHeight = this.canvas.height;
 	}
-	
+
+	changeZoom(dZ, canvasX, canvasY) {
+		let oldWorld = this.project(canvasX, canvasY);
+
+		this.zoomLevel += dZ;
+		if (this.zoomLevel < this.minZoomLevel)
+			this.zoomLevel = this.minZoomLevel;
+		if (this.zoomLevel > this.maxZoomLevel)
+			this.zoomLevel = this.maxZoomLevel;
+
+		// Translate camera center so the point (canvasX, canvasY) has the
+		// same relative position as before.
+		let newWorld = this.project(canvasX, canvasY);
+		this.centerX += oldWorld.x - newWorld.x;
+		this.centerY += oldWorld.y - newWorld.y;
+	}
+
 	/* 
 		Determines if an object is inside the camera frustum.
 		Returns true if the object was culled (removed).

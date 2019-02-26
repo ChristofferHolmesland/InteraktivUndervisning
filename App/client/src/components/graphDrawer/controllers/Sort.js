@@ -39,15 +39,7 @@ export default class Sort {
 	}
 
 	constructor(graphDrawer, config) {
-		this.gd = graphDrawer;
-		// This doesn't work on mobile, because there is no
-		// mouse
-		if (this.gd.DEVICE == "Desktop") {
-			this.gd.canvas.addEventListener("mousemove", (function (e) {
-				this.mouseMoveHandler(e);
-			}).bind(this));
-		}
-	
+		this.gd = graphDrawer;	
 		/*
 			All the arrays stored as a object
 			{
@@ -159,8 +151,13 @@ export default class Sort {
 	checkNodes(e) {
 		// These need to be defined inside this function, so .bind(this) can be used
 		let checkNodesMouseUp = function(newE) {
+			newE.preventDefault();
+			this.gd.setEventOffset(newE);
 			this.gd.canvas.removeEventListener("mouseup", checkNodesMouseUp);
 			this.gd.canvas.removeEventListener("mousemove", checkNodesMouseMove);
+			this.gd.canvas.removeEventListener("touchend", checkNodesMouseUp);
+			this.gd.canvas.removeEventListener("touchcancel", checkNodesMouseUp);
+			this.gd.canvas.removeEventListener("touchmove", checkNodesMouseMove);
 
 			// If there is just one selected node,
 			// it's value can be edited, it can be removed
@@ -243,6 +240,8 @@ export default class Sort {
 		}.bind(this);
 
 		let checkNodesMouseMove = function(newE) {
+			newE.preventDefault();
+			this.gd.setEventOffset(newE);
 			let nodeAtCursor = this.gd.getNodeAtCursor(newE).node;
 			// Checks if no node is under the cursor, or it's already in the list
 			if (nodeAtCursor == undefined || this.selectedNodes.indexOf(nodeAtCursor) != -1)
@@ -287,6 +286,9 @@ export default class Sort {
 			this.selectedNodes.push(node);
 			this.gd.canvas.addEventListener("mousemove", checkNodesMouseMove);
 			this.gd.canvas.addEventListener("mouseup", checkNodesMouseUp);
+			this.gd.canvas.addEventListener("touchmove", checkNodesMouseMove);
+			this.gd.canvas.addEventListener("touchend", checkNodesMouseUp);
+			this.gd.canvas.addEventListener("touchcancel", checkNodesMouseUp);
 		} else {
 			// Click event is not consumed if no node was clicked on
 			return false;
@@ -649,6 +651,7 @@ export default class Sort {
 
 		// Render selected buttons (Mobile)
 		for (let i = 0; i < this.clickedButtons.length; i++) {
+			
 			let btn = this.clickedButtons[i];
 			this.gd.staticContext.beginPath();
 

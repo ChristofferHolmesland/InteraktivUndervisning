@@ -7,7 +7,8 @@ export default class Graph0 {
 	_config(config) {
 		// Decides what kind of data should be returned when exporting.
 		// Values: Graph or Tree.
-		this.exportType = config.exportType;
+		if (config == undefined) this.exportType = "Graph0";
+		else this.exportType = config.exportType;
 	}
 
 	configure() {
@@ -43,7 +44,7 @@ export default class Graph0 {
 	}
 
 	mouseDownHandler(e) {
-		// UI 
+		// UI
 		let consumed = this.detectUIInput(e);
 		if (consumed) return consumed;
 
@@ -116,10 +117,13 @@ export default class Graph0 {
 		Creates an edge between two nodes.
 	*/
 	joinNode(e) {
+		e.preventDefault();
 		let node = this.gd.getNodeAtCursor(e).node;
 		if (node == undefined) return false;
 
 		let handler = function(newE) {
+			newE.preventDefault();
+			this.gd.setEventOffset(newE);
 			let node2 = this.gd.getNodeAtCursor(newE).node;
 
 			if (node2 != undefined) {
@@ -135,8 +139,12 @@ export default class Graph0 {
 			}
 
 			this.gd.canvas.removeEventListener("mouseup", handler);
+			this.gd.canvas.removeEventListener("touchend", handler);
+			this.gd.canvas.removeEventListener("touchcancel", handler);
 		}.bind(this);
 		this.gd.canvas.addEventListener("mouseup", handler);
+		this.gd.canvas.addEventListener("touchend", handler);
+		this.gd.canvas.addEventListener("touchcancel", handler);
 		return true;
 	}
 
@@ -144,23 +152,37 @@ export default class Graph0 {
 		Lets the user drag a node around.
 	*/
 	moveNode(e) {
+		e.preventDefault();
 		let node = this.gd.getNodeAtCursor(e).node;
 		if (node == undefined) return false;
 
 		let moveHandler = function(newE) {
+			if (node == undefined) return;
+
+			newE.preventDefault();
+			this.gd.setEventOffset(newE);
 			let p = this.gd.camera.project(newE.offsetX, newE.offsetY);
 			node.x = p.x;
 			node.y = p.y;
 			this.gd.dirty = true;
 		}.bind(this);
 
-		let upHandler = function() {
+		let upHandler = function(newE) {
+			newE.preventDefault();
+			this.gd.setEventOffset(newE);
+			node = undefined;
 			this.gd.canvas.removeEventListener("mousemove", moveHandler);
 			this.gd.canvas.removeEventListener("mouseup", upHandler);
+			this.gd.canvas.removeEventListener("touchmove", moveHandler);
+			this.gd.canvas.removeEventListener("touchend", upHandler);
+			this.gd.canvas.removeEventListener("touchcancel", upHandler);
 		}.bind(this);
 
 		this.gd.canvas.addEventListener("mousemove", moveHandler);
 		this.gd.canvas.addEventListener("mouseup", upHandler);
+		this.gd.canvas.addEventListener("touchmove", moveHandler);
+		this.gd.canvas.addEventListener("touchend", upHandler);
+		this.gd.canvas.addEventListener("touchcancel", upHandler);
 		return true;
 	}
 
@@ -197,6 +219,8 @@ export default class Graph0 {
 
 		let buttonIndex = Math.floor(e.offsetX / (this.gd.canvas.width / this.buttons.length));
 		this.currentState = this.buttons[buttonIndex];
+		this.drawStatic();
+		this.gd.dirty = true;
 		return true;
 	}
 
@@ -213,6 +237,10 @@ export default class Graph0 {
 		this.gd.staticContext.beginPath();
 		for (let i = 0; i < this.buttons.length; i++) {
 			this.gd.staticContext.fillStyle = "white";
+			if (this.currentState == this.buttons[i]) {
+				this.gd.staticContext.fillStyle = "lavender";
+			}
+
 			this.gd.staticContext.fillRect(
 				i * buttonWidth,
 				this.gd.staticBuffer.height - buttonHeight,
