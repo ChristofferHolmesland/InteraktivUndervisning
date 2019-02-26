@@ -140,9 +140,11 @@ export default class Graph0 {
 
 			this.gd.canvas.removeEventListener("mouseup", handler);
 			this.gd.canvas.removeEventListener("touchend", handler);
+			this.gd.canvas.removeEventListener("touchcancel", handler);
 		}.bind(this);
 		this.gd.canvas.addEventListener("mouseup", handler);
 		this.gd.canvas.addEventListener("touchend", handler);
+		this.gd.canvas.addEventListener("touchcancel", handler);
 		return true;
 	}
 
@@ -173,12 +175,14 @@ export default class Graph0 {
 			this.gd.canvas.removeEventListener("mouseup", upHandler);
 			this.gd.canvas.removeEventListener("touchmove", moveHandler);
 			this.gd.canvas.removeEventListener("touchend", upHandler);
+			this.gd.canvas.removeEventListener("touchcancel", upHandler);
 		}.bind(this);
 
 		this.gd.canvas.addEventListener("mousemove", moveHandler);
 		this.gd.canvas.addEventListener("mouseup", upHandler);
 		this.gd.canvas.addEventListener("touchmove", moveHandler);
 		this.gd.canvas.addEventListener("touchend", upHandler);
+		this.gd.canvas.addEventListener("touchcancel", upHandler);
 		return true;
 	}
 
