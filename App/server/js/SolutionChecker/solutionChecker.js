@@ -9,12 +9,12 @@ let checkers = {
     8: require("./text.js"),
     9: require("./text.js"),
     10: require("./djikstra.js"),
-}
+};
 
 const solutionChecker = {
     checkAnswer: function(answer, solution, type) {
         if (checkers[type] !== undefined) {
-            checkers[type].check(answer, solution);
+            return checkers[type].check(answer, solution);
         }
         else return false;
     }

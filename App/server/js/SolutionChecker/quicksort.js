@@ -1,37 +1,30 @@
 const check = function(answer, solution) {
     for (let i = 0; i < solution.length; i++) {
-        if (solution[i].type !== "split") solution.splice(i, 1);
+        if (solution[i].type !== "Split"){
+            solution.splice(i, 1);
+            i--;
+        }
     }
+    answer.splice(0, 1);
 
     if (answer.length !== solution.length) return false;
 
-    let solutionIndex = 1;
-    let answerIndex = 1;
+    let solutionIndex = 0;
+    let answerIndex = 0;
 
     do {
         let solutionStep = solution[solutionIndex];
         let answerStep = answer[answerIndex];
+        if (!compareTwoLists(solutionStep.list, answerStep.list)) return false;
+        if (!compareTwoLists(solutionStep.left, answerStep.left)) return false;
+        if (!compareTwoLists(solutionStep.right, answerStep.right)) return false;
+        if (answerStep.pivot.length > 1) return false;
+        if (solutionStep.pivot !== answerStep.pivot[0]) return false;
 
-        if(solutionStep.type === "split") {
-            /*
-                type: "Split",
-                list: unsortedList,
-                pivot: pivot,
-                left: left,
-                right: right
-            */
-
-            if (!compareTwoLists(solutionStep.list, answerStep.list)) return false;
-            if (!compareTwoLists(solutionStep.left, answerStep.left)) return false;
-            if (!compareTwoLists(solutionStep.right, answerStep.right)) return false;
-            if (solutionStep.pivot !== answerStep.pivot) return false;
-
-            answerIndex++;
-        } else {
-            solutionStep++;
-        }
+        answerIndex++;
+        solutionIndex++;
     }
-    while(solutionStep < solution.length);
+    while(solutionIndex < solution.length);
 
     return true;
 }

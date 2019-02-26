@@ -12,6 +12,9 @@ import GraphDrawer from "../../../graphDrawer/GraphDrawer.vue";
 
 export default {
     name: "QuicksortSolution",
+    created() {
+        
+    },
     props: {
         solution: Array
     },

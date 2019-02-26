@@ -848,12 +848,11 @@ export default class Sort {
 				}
 
 				if (!found) {
-					let pivot = undefined;
+					let pivot = [];
 					if (this.sortType == "Quicksort") {
 						for (let n = 0; n < c.parents[0].nodes.length; n++) {
 							if (c.parents[0].nodes[n].pivot) {
-								pivot = c.parents[0].nodes[n].v;
-								break;
+								pivot.push(c.parents[0].nodes[n].v);
 							}
 						}
 					}
@@ -976,6 +975,7 @@ export default class Sort {
 					node.fillColor = this.pivotColor;
 				}
 			}
+			console.log(this.gd.nodes);
 		};
 
 		let parseMerge = (step, pos) => {
@@ -988,7 +988,6 @@ export default class Sort {
 			this.arrays[p1].links.push(merged);
 			this.arrays[p2].links.push(merged);
 		};
-console.log(this.steps);
 		let offset = undefined;
 		for (let i = 0; i <= this.currentStep; i++) {
 			let step = this.steps[i];
@@ -1001,15 +1000,21 @@ console.log(this.steps);
 
 			if (step.type == "Initial") {
 				offset = parseInitial(step);
+				console.log("offset")
+				console.log(offset)
 			} else if (step.type == "Split") {
 				if (user) {
 					if (step.position.left) {
-						pos.left.x = step.position.left.x + offset.x;
-						pos.left.y = step.position.left.y + offset.y;
+						console.log("left")
+						console.log(step.position.left);
+						pos.left.x = step.position.left.x + offset.dx;
+						pos.left.y = step.position.left.y + offset.dy;
 					}
 					if (step.position.right) {
-						pos.right.x = step.position.right.x + offset.x;
-						pos.right.y = step.position.right.y + offset.y;
+						console.log("right")
+						console.log(step.position.right);
+						pos.right.x = step.position.right.x + offset.dx;
+						pos.right.y = step.position.right.y + offset.dy;
 					}
 				} else {
 					let parent = this._findArrayFromNodeValues(step.list);
@@ -1027,8 +1032,8 @@ console.log(this.steps);
 				if (this.sortType == "Quicksort") continue;
 
 				if (user) {
-					pos.x = step.position.x + offset.x;
-					pos.y = step.position.y + offset.y;
+					pos.x = step.position.x + offset.dx;
+					pos.y = step.position.y + offset.dy;
 				} else {
 					// TODO: Fix placement of merged arrays
 
