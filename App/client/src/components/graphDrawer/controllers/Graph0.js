@@ -7,7 +7,8 @@ export default class Graph0 {
 	_config(config) {
 		// Decides what kind of data should be returned when exporting.
 		// Values: Graph or Tree.
-		this.exportType = config.exportType;
+		if (config == undefined) this.exportType = "Graph0";
+		else this.exportType = config.exportType;
 	}
 
 	configure() {
@@ -211,6 +212,8 @@ export default class Graph0 {
 
 		let buttonIndex = Math.floor(e.offsetX / (this.gd.canvas.width / this.buttons.length));
 		this.currentState = this.buttons[buttonIndex];
+		this.drawStatic();
+		this.gd.dirty = true;
 		return true;
 	}
 
@@ -227,6 +230,10 @@ export default class Graph0 {
 		this.gd.staticContext.beginPath();
 		for (let i = 0; i < this.buttons.length; i++) {
 			this.gd.staticContext.fillStyle = "white";
+			if (this.currentState == this.buttons[i]) {
+				this.gd.staticContext.fillStyle = "lavender";
+			}
+
 			this.gd.staticContext.fillRect(
 				i * buttonWidth,
 				this.gd.staticBuffer.height - buttonHeight,

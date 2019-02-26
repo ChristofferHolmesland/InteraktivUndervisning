@@ -12,9 +12,8 @@
     			<GraphDrawer 
 					@getValueResponse="printGraphDrawer" 
 					:requestAnswer="requestAnswer" 
-					controlType="Sort"
-					sortType="Quicksort"
-					operatingMode="Presentation"
+					controlType="Graph0"
+					operatingMode="Interactive"
 					:steps="steps" />
 				<b-button @click="requestAnswer = !requestAnswer" >Export</b-button>
 				</b-col>
