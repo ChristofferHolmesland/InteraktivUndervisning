@@ -81,9 +81,11 @@ module.exports.createBinarySearchTreeSolution = function(elements,add,existingTr
 					if (treeIndex !== -1) {
 						let removedNode = currentTree.nodes[treeIndex];
 						newTreeList = GeneralTreeFunctions.removeNodeFromTree(removedNode,currentTree,treeIndex);
+						if (newTreeList[1] !== undefined) newTreeList[1].printTree();
 						if (newTreeList.length > 1) {
 							treelist.splice(t,1,newTreeList[0],newTreeList[1]);
 							t++;
+							//console.log(treelist);
 						}else {
 							treelist.splice(t,1,newTreeList[0]);
 						}

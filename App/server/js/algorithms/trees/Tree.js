@@ -115,6 +115,21 @@ class BinaryTreeNode {
 			this.parent = undefined;
 		}
 	}
+
+	get childrenAmount(){
+		let amount = 0;
+		let leftChild = this.children[0];
+		let rightChild = this.children[1];
+		if (this.children.length === 2){
+			//console.log(this.children);
+			if (leftChild !== undefined) amount++;
+			if (rightChild !== undefined) amount++
+		}else {
+			amount = this.children.length;
+		}
+		//console.log(amount);
+		return amount;
+	}
 }
 
 module.exports.Tree = Tree;

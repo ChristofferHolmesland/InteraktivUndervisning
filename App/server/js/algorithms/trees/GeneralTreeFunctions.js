@@ -122,7 +122,7 @@ function removeNodeFromTree(node,tree,index) {
 		//newTree.printTree();
 		let newNode = newTree.nodes[index];
 		let parent = newNode.parent;
-		if (newNode.children.length === 1) {
+		if (newNode.childrenAmount === 1) {
 			console.log("1 children");
 			let childrenNode;
 			if (newNode.children[0] !== undefined) childrenNode = newNode.children[0];
@@ -139,9 +139,11 @@ function removeNodeFromTree(node,tree,index) {
 			}
 			newTree.nodes.splice(index, 1);
 			newTreeList.push(newTree);
-		} else if (newNode.children.length === 2) {
+		} else if (newNode.childrenAmount === 2) {
 			console.log("2 children");
+			//console.log(newNode);
 			let tempNodeArray = getBestReplacementNodes(newNode, newTree);
+			//console.log(tempNodeArray);
 			for (let t = 0; t < tempNodeArray.length; t++) {
 				let newSubTree = newTree.createDuplicateTree();
 				let tempIndex = newSubTree.findNodeInNodesUsingNode(tempNodeArray[t]);
@@ -151,7 +153,7 @@ function removeNodeFromTree(node,tree,index) {
 				if (tempNode.parent.children[0] === tempNode) tempNode.parent.children[0] = undefined;	//may cause problems with children amount
 				if (tempNode.parent.children[1] === tempNode) tempNode.parent.children[1] = undefined;
 
-				if (tempNode.children.length > 0) {
+				if (tempNode.childrenAmount > 0) {
 					let childNode;
 					if (tempNode.children[0] !== undefined) childNode = tempNode.children[0];
 					else childNode = tempNode.children[1];
@@ -217,7 +219,7 @@ module.exports.removeNodeFromTree = removeNodeFromTree;
 //the node should have 2 children when used
 function getBestReplacementNodes(node) {
 	let replacementNodes = [];
-	if (node.children.length > 1) {
+	if (node.childrenAmount > 1) {
 		let leftChild = node.children[0];
 		let rightChild = node.children[1];
 		if (leftChild !== undefined) {
