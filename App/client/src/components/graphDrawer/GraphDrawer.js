@@ -437,10 +437,13 @@ export default class GraphDrawer {
 					newFingers[1].y - newFingers[0].y
 				);
 
+				let ax = (newFingers[0].x + newFingers[1].x) / 2;
+				let ay = (newFingers[0].y + newFingers[1].y) / 2;
+
 				// Zoom out
-				if (pdist > ndist) this.camera.changeZoom(0.05);
+				if (pdist > ndist) this.camera.changeZoom(0.05, ax, ay);
 				// Zoom in
-				else if (pdist < ndist) this.camera.changeZoom(-0.05);
+				else if (pdist < ndist) this.camera.changeZoom(-0.05, ax, ay);
 			}
 
 			this.dirty = true;
