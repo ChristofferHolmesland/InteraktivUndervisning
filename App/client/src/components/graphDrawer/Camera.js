@@ -16,27 +16,19 @@ export default class Camera {
 	}
 
 	changeZoom(dZ, canvasX, canvasY) {
-		let worldOld = this.project(canvasX, canvasY);
+		let oldWorld = this.project(canvasX, canvasY);
 
 		this.zoomLevel += dZ;
-		if (this.zoomLevel < this.minZoomLevel) this.zoomLevel = this.minZoomLevel;
-		if (this.zoomLevel > this.maxZoomLevel) this.zoomLevel = this.maxZoomLevel;
+		if (this.zoomLevel < this.minZoomLevel)
+			this.zoomLevel = this.minZoomLevel;
+		if (this.zoomLevel > this.maxZoomLevel)
+			this.zoomLevel = this.maxZoomLevel;
 
 		// Translate camera center so the point (canvasX, canvasY) has the
 		// same relative position as before.
-		let canvasNew = this.unproject(worldOld.x, worldOld.y);
-		let frustum = this.getFrustumFront();
-		this.translateX(
-			canvasNew.x - canvasX,
-			frustum.Width / 2,
-			this.gd.drawBuffer.width - frustum.Width / 2
-		);
-
-		this.camera.translateY(
-			canvasNew.y - canvasY,
-			frustum.Height / 2,
-			this.gd.drawBuffer.height - frustum.Height / 2
-		);
+		let newWorld = this.project(canvasX, canvasY);
+		this.centerX += oldWorld.x - newWorld.x;
+		this.centerY += oldWorld.y - newWorld.y;
 	}
 
 	/* 
