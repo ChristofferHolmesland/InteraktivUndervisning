@@ -451,12 +451,16 @@ export default class GraphDrawer {
 		}.bind(this);
 
 		let zoomStopHandler = function() {
+			setTimeout((function() {
+				this.isZooming = false;
+			}).bind(this), 2 * this.MS_PER_FRAME);
 			this.canvas.removeEventListener("touchmove", zoomHandler);
 			this.canvas.removeEventListener("touchend", zoomStopHandler);
 			this.canvas.removeEventListener("touchcancel", zoomStopHandler);
 			this.canvas.removeEventListener("touchleave", zoomStopHandler);
 		}.bind(this);
 
+		this.isZooming = true;
 		this.canvas.addEventListener("touchmove", zoomHandler);
 		this.canvas.addEventListener("touchend", zoomStopHandler);
 		this.canvas.addEventListener("touchcancel", zoomStopHandler);
@@ -474,6 +478,8 @@ export default class GraphDrawer {
 			if (e.targetTouches.length > 1) return;
 			if (e.changedTouches.length > 1) return;
 		}
+
+		if (this.isZooming == true) return;
 
 		let currentPosition = { x: e.offsetX, y: e.offsetY };
 		// How much the camera moves relative to how far the mouse is dragged.
