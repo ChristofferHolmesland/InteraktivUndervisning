@@ -280,10 +280,11 @@ module.exports.admin = function(socket, db, user, sessions) {
 		let currentUsers = session.currentUsers;
 
 		session.currentQuestion++;
-		session.questionList[session.currentQuestion].connectedUsers = currentUsers;
 		
 		if (session.currentQuestion < session.questionList.length){
+
 			let question = session.questionList[session.currentQuestion];
+			question.connectedUsers = currentUsers;
 
 			question.timeStarted = Date.now();
 
