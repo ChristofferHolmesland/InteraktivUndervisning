@@ -14,7 +14,7 @@ export default class Camera {
 		this.viewportWidth = this.canvas.width;
 		this.viewportHeight = this.canvas.height;
 	}
-	
+
 	changeZoom(dZ) {
 		this.zoomLevel += dZ;
 		if (this.zoomLevel < this.minZoomLevel) this.zoomLevel = this.minZoomLevel;
