@@ -81,9 +81,11 @@ export default class Djikstra {
 
 			this.gd.canvas.removeEventListener("mouseup", handler);
 			this.gd.canvas.removeEventListener("touchend", handler);
+			this.gd.canvas.removeEventListener("touchcancel", handler);
 		}.bind(this);
 		this.gd.canvas.addEventListener("mouseup", handler);
 		this.gd.canvas.addEventListener("touchend", handler);
+		this.gd.canvas.addEventListener("touchcancel", handler);
 		return true;
 	}
 }

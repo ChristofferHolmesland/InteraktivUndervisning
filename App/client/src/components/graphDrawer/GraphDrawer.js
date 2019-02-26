@@ -450,11 +450,13 @@ export default class GraphDrawer {
 		let zoomStopHandler = function() {
 			this.canvas.removeEventListener("touchmove", zoomHandler);
 			this.canvas.removeEventListener("touchend", zoomStopHandler);
+			this.canvas.removeEventListener("touchcancel", zoomStopHandler);
 			this.canvas.removeEventListener("touchleave", zoomStopHandler);
 		}.bind(this);
 
 		this.canvas.addEventListener("touchmove", zoomHandler);
 		this.canvas.addEventListener("touchend", zoomStopHandler);
+		this.canvas.addEventListener("touchcancel", zoomStopHandler);
 		this.canvas.addEventListener("touchleave", zoomStopHandler);
 	}
 
@@ -518,6 +520,7 @@ export default class GraphDrawer {
 			this.canvas.removeEventListener("mouseleave", panUpHandler);
 			this.canvas.removeEventListener("touchmove", panMoveHandler);
 			this.canvas.removeEventListener("touchend", panUpHandler);
+			this.canvas.removeEventListener("touchcancel", panUpHandler);
 			this.canvas.removeEventListener("touchleave", panUpHandler);
 		}.bind(this);
 
@@ -526,6 +529,7 @@ export default class GraphDrawer {
 		this.canvas.addEventListener("mouseleave", panUpHandler);
 		this.canvas.addEventListener("touchmove", panMoveHandler);
 		this.canvas.addEventListener("touchend", panUpHandler);
+		this.canvas.addEventListener("touchcancel", panUpHandler);
 		this.canvas.addEventListener("touchleave", panUpHandler);
 	}
 
