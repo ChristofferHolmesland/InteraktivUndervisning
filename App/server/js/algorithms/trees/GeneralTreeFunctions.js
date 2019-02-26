@@ -144,29 +144,34 @@ function removeNodeFromTree(node,tree,index) {
 			let tempNodeArray = getBestReplacementNodes(newNode, newTree);
 			for (let t = 0; t < tempNodeArray.length; t++) {
 				let newSubTree = newTree.createDuplicateTree();
-				let tempIndex = newSubTree.findNodeInNodes(tempNodeArray[t]);
+				let tempIndex = newSubTree.findNodeInNodesUsingNode(tempNodeArray[t]);
 				let tempNode = newSubTree.nodes[tempIndex];
-
+				let tempParent = tempNode.parent;
+				//Set the parent to be undefined in the direction of the tempNode
 				if (tempNode.parent.children[0] === tempNode) tempNode.parent.children[0] = undefined;	//may cause problems with children amount
 				if (tempNode.parent.children[1] === tempNode) tempNode.parent.children[1] = undefined;
+
 				if (tempNode.children.length > 0) {
-					let tempParent = tempNode.parent;
 					let childNode;
 					if (tempNode.children[0] !== undefined) childNode = tempNode.children[0];
 					else childNode = tempNode.children[1];
 					childNode.parent = tempParent;
 					if (tempParent.children[0] === tempNode) tempParent.children[0] = childNode;
 					else tempParent.children[1] = childNode;
+					//console.log(childNode);
 				}
+				let newSubNode = newSubTree.nodes[newSubTree.findNodeInNodesUsingNode(newNode)];
+				tempNode.children = newSubNode.children;
 				if (newNode.value === newSubTree.root.value) {
-					let newSubNode = newSubTree.nodes[newSubTree.findNodeInNodes(newNode)];
-					//console.log(newSubNode);
-					tempNode.children = newSubNode.children;
 					tempNode.parent = undefined;
 					newSubTree.root = tempNode;
-					if (newSubNode.children[0] !== undefined) newSubNode.children[0].parent = tempNode;
-					if (newSubNode.children[1] !== undefined) newSubNode.children[1].parent = tempNode;
+				}else {
+					tempNode.parent = newSubNode.parent;
+					if (newSubNode.parent.children[0] === newSubNode) newSubNode.parent.children[0] = tempNode;
+					else newSubNode.parent.children[1] = tempNode;
 				}
+				if (newSubNode.children[0] !== undefined) newSubNode.children[0].parent = tempNode;
+				if (newSubNode.children[1] !== undefined) newSubNode.children[1].parent = tempNode;
 
 				newSubTree.nodes[index] = tempNode;
 				newSubTree.nodes.splice(tempIndex, 1);
@@ -177,7 +182,6 @@ function removeNodeFromTree(node,tree,index) {
 			//if (parent.children[0] === newNode) parent.children[0] = undefined;
 			if (parent.children[0] === newNode) parent.children[0] = undefined;
 			else parent.children[1] = undefined;
-			//console.log(newTree);
 			newTree.nodes.splice(index, 1);
 			newTreeList.push(newTree);
 		}

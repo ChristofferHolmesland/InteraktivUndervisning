@@ -49,6 +49,7 @@ module.exports.checkBinarySearchTreeCriteria = function (tree) {
 module.exports.createBinarySearchTreeSolution = function(elements,add,existingTreeObject) {
 	let tree;
 	let rootNode;
+	let treelist = [];
 	if (add) {
 		console.log("Adding\n");
 		let a = 0;
@@ -66,18 +67,26 @@ module.exports.createBinarySearchTreeSolution = function(elements,add,existingTr
 			node.addParent(bestParent);
 			tree.nodes.push(node);
 		}
+		treelist.push(tree);
 	}else if(!add){
 		console.log("Removing\n");
 		if (existingTreeObject !== undefined) {
-			let treelist = [];
 			tree = existingTreeObject;
 			treelist.push(tree);
 			for (let b=0;b<elements.length;b++) {
 				for (let t = 0; t < treelist.length; t++) {
-					let treeIndex = elements[b].indexOf(treelist[t].nodes);
+					let currentTree = treelist[t];
+					let newTreeList = [];
+					let treeIndex = currentTree.findNodeInNodesUsingValue(elements[b]);
 					if (treeIndex !== -1) {
-						let removedNode = tree.nodes[treeIndex];
-						treelist = GeneralTreeFunctions.removeNodeFromTree(removedNode);
+						let removedNode = currentTree.nodes[treeIndex];
+						newTreeList = GeneralTreeFunctions.removeNodeFromTree(removedNode,currentTree,treeIndex);
+						if (newTreeList.length > 1) {
+							treelist.splice(t,1,newTreeList[0],newTreeList[1]);
+							t++;
+						}else {
+							treelist.splice(t,1,newTreeList[0]);
+						}
 					}
 				}
 			}
@@ -85,7 +94,7 @@ module.exports.createBinarySearchTreeSolution = function(elements,add,existingTr
 			console.log("Non-existent tree cannot have removed entries.")
 		}
 	}
-	return tree
+	return treelist
 };
 
 
