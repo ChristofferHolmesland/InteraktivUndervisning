@@ -438,12 +438,12 @@ export default class GraphDrawer {
 				);
 
 				// Zoom out
-				if (pdist > ndist) this.gd.camera.changeZoom(-0.1);
+				if (pdist > ndist) this.camera.changeZoom(-0.1);
 				// Zoom in
-				else if (pdist < ndist) this.gd.camera.changeZoom(0.1);
+				else if (pdist < ndist) this.camera.changeZoom(0.1);
 			}
 
-			this.gd.dirty = true;
+			this.dirty = true;
 			previousFingers = newFingers;
 		}.bind(this);
 
