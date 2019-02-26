@@ -453,7 +453,7 @@ export default class GraphDrawer {
 		let zoomStopHandler = function() {
 			setTimeout((function() {
 				this.isZooming = false;
-			}).bind(this), 2 * this.MS_PER_FRAME);
+			}).bind(this), this.FPS / 4 * this.MS_PER_FRAME);
 			this.canvas.removeEventListener("touchmove", zoomHandler);
 			this.canvas.removeEventListener("touchend", zoomStopHandler);
 			this.canvas.removeEventListener("touchcancel", zoomStopHandler);
