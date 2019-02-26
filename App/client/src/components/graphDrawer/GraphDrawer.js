@@ -465,13 +465,17 @@ export default class GraphDrawer {
 		This let's the user move the camera around the world.
 	*/
 	detectPanGesture(e) {
+		// Detect if the user is trying to zoom
 		if (e.touches !== undefined) {
 			if (e.touches.length > 1) return;
+			if (e.targetTouches.length > 1) return;
+			if (e.changedTouches.length > 1) return;
 		}
 
 		let currentPosition = { x: e.offsetX, y: e.offsetY };
 		// How much the camera moves relative to how far the mouse is dragged.
-		const velocityFactor = 0.95;
+		let velocityFactor = 0.95;
+		velocityFactor *= this.camera.zoomLevel;
 		// How much the mouse must be moved before panning starts.
 		let threshold = 5;
 		let hasMoved = false;
