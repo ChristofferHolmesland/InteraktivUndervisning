@@ -168,6 +168,7 @@ export default class Graph0 {
 		}.bind(this);
 
 		let upHandler = function(newE) {
+			console.log(newE);
 			newE.preventDefault();
 			this.gd.setEventOffset(newE);
 			node = undefined;

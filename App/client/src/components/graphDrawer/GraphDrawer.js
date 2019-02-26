@@ -661,7 +661,15 @@ export default class GraphDrawer {
 
 		let rect = this.canvas.getBoundingClientRect();
 
-		e.offsetX = e.targetTouches[0].clientX - rect.left;
-		e.offsetY = e.targetTouches[0].clientY - rect.top;
+		if (e.targetTouches.length > 0) {
+			e.offsetX = e.targetTouches[0].clientX - rect.left;
+			e.offsetY = e.targetTouches[0].clientY - rect.top;
+		} else if (e.changedTouches.length > 0) {
+			e.offsetX = e.changedTouches[0].clientX - rect.left;
+			e.offsetY = e.changedTouches[0].clientY - rect.top;
+		} else {
+			e.offsetX = -1;
+			e.offsetY = -1;
+		}
 	}
 }
