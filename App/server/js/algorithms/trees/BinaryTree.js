@@ -15,7 +15,7 @@ module.exports.checkTreeCriteria = function(tree) {
 			break;
 		}
 		//A tree node in a binary tree structures can only have up to 2 children. A left child or/and a right child.
-		if (treeNodes[i].children.length > 2) {
+		if (treeNodes[i].childrenAmount > 2) {
 			checkresult = false;
 			break;
 		}

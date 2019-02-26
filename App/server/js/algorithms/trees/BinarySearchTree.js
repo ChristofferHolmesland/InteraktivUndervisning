@@ -8,7 +8,7 @@ module.exports.checkBinarySearchTreeCriteria = function (tree) {
 	let treeNodes = tree.nodes;
 	//Normal Tree rules
 	let checkresult = true;
-	if (treeNodes.length === 0) {
+	if (treeNodes.childrenAmount === 0) {
 		checkresult = false;
 		return checkresult;
 	}
@@ -20,7 +20,7 @@ module.exports.checkBinarySearchTreeCriteria = function (tree) {
 			break;
 		}
 		//A tree node in a binary tree structures can only have up to 2 children. A left child or/and a right child.
-		if (currentNode.children.length > 2) {
+		if (currentNode.childrenAmount > 2) {
 			checkresult = false;
 			break;
 		}

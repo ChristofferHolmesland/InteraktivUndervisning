@@ -62,7 +62,7 @@ module.exports.findBestParent = findBestParent;
 function getHeight (node) {
 	let childrenHeights = [];
 	let maxHeight = 0;
-	if (node !== undefined) {
+	if (node !== undefined) {	//changing this to childrenAmount leads to errors in the test, must be investigated once working on AVL trees.
 		for (let i = 0; i < node.children.length; i++) {
 			childrenHeights.push(getHeight(node.children[i]));
 		}
