@@ -159,7 +159,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 	});
 
 	socket.on("initializeSession", function(sessionId){
-		if(currentSession != undefined) socket.emit("initializeSessionErrorResponse", "error1")
+		if(currentSession != undefined) socket.emit("initializeSessionErrorResponse", "You are already running a session with the code: " + currentSession.session.id);
 		dbFunctions.get.sessionById(db, sessionId).then(async (sessionInformation) => {
 			let sessionCode = generalFunctions.calculateSessionCode(sessions);
 			socket.join(sessionCode);
@@ -174,14 +174,15 @@ module.exports.admin = function(socket, db, user, sessions) {
 			currentSession = {session: new session(sessionInformation.id, sessionInformation.name,
 											sessionInformation.status, [], sessionInformation.courseSemester,
 											sessionInformation.courseName, questionList, sessionCode),
-								adminSocket: socket}
+								adminSocket: socket,
+								adminId: user.feide.idNumber}
 			
 			sessions.set(sessionCode, currentSession);
 			
 			socket.emit("initializeSessionResponse", sessionCode);
 		}).catch((err) => {
 			console.log(err);
-			socket.emit("initializeSessionErrorResponse", "error2");
+			socket.emit("initializeSessionErrorResponse", "Something went wrong, please try again later!");
 		});
 	});
 
@@ -198,8 +199,6 @@ module.exports.admin = function(socket, db, user, sessions) {
 				});
 			}
 
-			console.log(response);
-
 			socket.emit("sessionOverviewResponse", response);
 		}).catch((err) => {
 			console.log(err);
@@ -207,8 +206,19 @@ module.exports.admin = function(socket, db, user, sessions) {
 		});
 	});
 	
-	socket.on("startSessionWaitingRoom", function() {
-		socket.emit("startSessionWaitingRoomResponse");
+	socket.on("startSessionWaitingRoom", function(sessionCode) {
+		if (sessions.get(sessionCode) === undefined) {
+			socket.emit("startSessionError");
+		}
+		else {
+			if (currentSession === undefined || currentSession.adminId === user.feide.idNumber){
+				currentSession = sessions.get(sessionCode);
+				currentSession.adminSocket = socket;
+				socket.join(sessionCode);
+			}
+			socket.emit("startSessionWaitingRoomResponse");
+			socket.emit("updateParticipantCount", currentSession.session.currentUsers);
+		}
 	});
 
 	socket.on("startSession", function(sessionCode) {
@@ -342,7 +352,6 @@ module.exports.admin = function(socket, db, user, sessions) {
 					time: q.time,
 					objects: JSON.parse(q.object)
 				});
-				if (i === questions.length - 1) console.log(result[result.length - 1]);
 			}
 			socket.emit("sendAllQuestionsWithinCourse", result);
 		});
