@@ -215,9 +215,87 @@ module.exports.admin = function(socket, db, user, sessions) {
 				currentSession = sessions.get(sessionCode);
 				currentSession.adminSocket = socket;
 				socket.join(sessionCode);
+				console.log(currentSession.session.questionList[currentSession.session.currentQuestion])
 			}
-			socket.emit("startSessionWaitingRoomResponse");
-			socket.emit("updateParticipantCount", currentSession.session.currentUsers);
+			if (currentSession.session.currentQuestion > -1) {
+				let session = currentSession.session;
+				let currentUsers = session.currentUsers;
+		
+				if (session.currentQuestion < session.questionList.length){
+					let question = session.questionList[session.currentQuestion];
+					question.connectedUsers = currentUsers;
+					
+					let timeLeft = question.time;
+					if (question.time > 0)
+						timeLeft = question.time - ((Date.now() - question.timeStarted) / 1000);
+
+					let safeQuestion = {
+						"text": question.text,
+						"description": question.description,
+						"object": question.object,
+						"type": question.type,
+						"time": timeLeft,
+						"participants": session.currentUsers
+					}
+
+					socket.emit("nextQuestion", safeQuestion)
+
+					if (session.currentQuestion > -1) {
+						let numAnswers = question.answerList.length;
+						let participants = question.connectedUsers;
+						if(numAnswers === participants) {
+							let answerList = [];
+							if (question.answerList) answerList = question.answerList;
+					
+							let filteredAnswerList = [];
+							let correctAnswer = 0;
+							let incorrectAnswer = 0;
+							let didntKnow = 0;
+							
+							for (let i = 0; i < answerList.length; i++) {
+								let answer = answerList[i];
+								let filteredAnswer = {};
+								if (answer.result === 0) {
+									filteredAnswer.answerObject = answer.answerObject;
+									filteredAnswerList.push(filteredAnswer)
+									incorrectAnswer++;
+								};
+								if (answer.result === -1) didntKnow++; 
+								if (answer.result === 1) correctAnswer++;
+							}
+					
+							let response = {
+								question: {
+									text: question.text,
+									description: question.description,
+									object: question.object,
+									type: question.type
+								},
+								solution: question.solution,
+								answerList: filteredAnswerList,
+								correctAnswer: correctAnswer,
+								incorrectAnswer: incorrectAnswer,
+								didntKnow: didntKnow,
+								users: answerList.length
+							};
+
+							socket.emit("goToQuestionResultScreen", response);
+						}
+						else {
+							socket.emit("updateNumberOfAnswers", numAnswers, participants);
+						}
+					}
+				} else {
+					socket.to(session.sessionCode).emit("answerResponse", "sessionFinished");
+					socket.emit("endSessionScreen");
+
+					sessions.delete(session.sessionCode);
+				}
+			}
+			else {
+				socket.emit("startSessionWaitingRoomResponse");
+				socket.emit("updateParticipantCount", currentSession.session.currentUsers);
+			}
 		}
 	});
 
@@ -242,6 +320,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 			"time": firstQuestion.time,
 			"participants": currentSession.session.currentUsers
 		}
+		console.log(currentSession.session.questionList[currentSession.session.currentQuestion]);
 
 		io.to(sessionCode).emit("nextQuestion", safeFirstQuestion);
 	});
