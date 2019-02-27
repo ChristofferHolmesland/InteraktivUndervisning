@@ -19,14 +19,11 @@ export default class Sort {
 		// If there are some starting steps, they are parsed
 		// and put into the world.
 		if (config.steps) {
-			this.currentStep = config.steps.length - 1;
-
+			this.gd.currentStep = config.steps.length - 1;
 			this.steps = config.steps;
-			this._parseSteps();
-			this.gd.dirty = true;
-			this._recalculateEdges();
 			if (this.gd.operatingMode == "Presentation") {
-				this.addSteppingButtons();
+				this.gd.addSteppingButtons();
+				this.gd.drawStatic();
 			}
 		}
 	}
@@ -36,7 +33,7 @@ export default class Sort {
 	}
 
 	constructor(graphDrawer, config) {
-		this.gd = graphDrawer;	
+		this.gd = graphDrawer;
 		/*
 			All the arrays stored as a object
 			{
@@ -482,52 +479,6 @@ export default class Sort {
 		return false;
 	}
 
-	addSteppingButtons() {
-		this.clickedButtons = [];
-		let relSize = 0.5;
-
-		let stepBack = () => {
-			if (this.currentStep > 0) {
-				this.currentStep -= 1;
-				this._parseSteps();
-				this.addSteppingButtons();
-			}
-		};
-
-		let stepForward = () => {
-			if (this.currentStep < this.steps.length - 1) {
-				this.currentStep += 1;
-				this._parseSteps();
-				this.addSteppingButtons();
-			}
-		};
-
-		this.clickedButtons.push({
-			data: {
-				text: "<--",
-				relSize: relSize
-			},
-			handler: stepBack
-		});
-		this.clickedButtons.push({
-			data: {
-				text: (this.currentStep + 1) + " / " + this.steps.length,
-				relSize: relSize
-			},
-			handler: () => {}
-		});
-		this.clickedButtons.push({
-			data: {
-				text: "-->",
-				relSize: relSize
-			},
-			handler: stepForward
-		});
-
-		this._calculatePositionForClickedButtons();
-		this.gd.dirty = true;
-	}
-
 	/*
 		The dirtyUpdate function is called from the GraphDrawer's update function
 		if the GraphDrawer is in the dirty state. This is called before the 
@@ -938,7 +889,7 @@ export default class Sort {
 	/*
 		Parses the steps from a step list into arrays
 	*/
-	_parseSteps() {
+	parseSteps() {
 		// Reset the world
 		this.arrays = [];
 		this.gd.nodes = [];
@@ -1092,7 +1043,7 @@ export default class Sort {
 		};
 
 		let offset = undefined;
-		for (let i = 0; i <= this.currentStep; i++) {
+		for (let i = 0; i <= this.gd.currentStep; i++) {
 			let step = this.steps[i];
 			let pos = {
 				x: 0,

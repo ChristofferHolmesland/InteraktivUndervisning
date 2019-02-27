@@ -91,6 +91,15 @@ export default class GraphDrawer {
 		// Size of the font in px.
 		this.fontHeight = 10;
 
+		// Which step of the presentation the user is currently on
+		// Should be used by the controller to decide on what to display
+		this.currentStep = -1;
+		// Buttons used to change step in presentation mode.
+		this.steppingButtons = [];
+		// Decides how much of the assigned button space should be used
+		// by a button.
+		this.relSize = 0.6;
+
 		this._config(config);
 
 		/*
@@ -141,10 +150,15 @@ export default class GraphDrawer {
 			e.preventDefault();
 			this.setEventOffset(e);
 
-			let consumed = this.controllers[this.controlType].mouseDownHandler(e);
+			// Check if the user is stepping.
+			let consumed = this.checkSteppingButtons(e);
 			if (consumed) return;
 
-			// Gesture detection
+			// Let the controller handle the click.
+			consumed = this.controllers[this.controlType].mouseDownHandler(e);
+			if (consumed) return;
+
+			// Gesture detection.
 			this.detectPanGesture(e);
 			this.detectZoomGesture(e);
 		}.bind(this);
@@ -218,6 +232,40 @@ export default class GraphDrawer {
 			this.canvas.width,
 			this.canvas.height
 		);
+	}
+
+	/*
+		Draws the stepping buttons to the buffer.
+		Must be called by a controller.
+	*/
+	drawStatic() {
+		for (let i = 0; i < this.steppingButtons.length; i++) {
+			let btn = this.steppingButtons[i];
+			this.staticContext.beginPath();
+
+			// Button
+			this.staticContext.rect(
+				btn.position.x,
+				btn.position.y,
+				btn.position.width,
+				btn.position.height
+			);
+			this.staticContext.fill();
+			this.staticContext.stroke();
+
+			// Text
+			this.staticContext.fillStyle = "black";
+			let textWidth = this.staticContext.measureText(btn.data.text).width;
+			let xPadding = (btn.position.width - textWidth) / 2;
+			let yPadding = (btn.position.height + this.fontHeight) / 2;
+			this.staticContext.fillText(
+				btn.data.text,
+				btn.position.x + xPadding,
+				btn.position.y + yPadding
+			);
+			this.staticContext.fillStyle = "white";
+			this.staticContext.closePath();
+		}
 	}
 
 	/*
@@ -695,6 +743,87 @@ export default class GraphDrawer {
 		} else {
 			e.offsetX = -1;
 			e.offsetY = -1;
+		}
+	}
+
+	checkSteppingButtons(e) {
+		for (let i = 0; i < this.steppingButtons.length; i++) {
+			let btn = this.steppingButtons[i];
+			if (this.isPointInSquare(e.offsetX, e.offsetY, btn.position.x,
+									btn.position.y, btn.position.width)) {
+				btn.handler(e);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	addSteppingButtons() {
+		this.steppingButtons = [];
+		let numOfSteps = this.controllers[this.controlType].steps.length;
+
+		let stepBack = () => {
+			if (this.currentStep > 0) {
+				this.currentStep -= 1;
+				this.controllers[this.controlType].parseSteps();
+				this.addSteppingButtons();
+			}
+		};
+
+		let stepForward = () => {
+			if (this.currentStep < numOfSteps - 1) {
+				this.currentStep += 1;
+				this.controllers[this.controlType].parseSteps();
+				this.addSteppingButtons();
+			}
+		};
+
+		this.steppingButtons.push({
+			data: {
+				text: "<--",
+				relSize: this.relSize
+			},
+			handler: stepBack
+		});
+		this.steppingButtons.push({
+			data: {
+				text: this.currentStep + 1 + " / " + numOfSteps,
+				relSize: this.relSize
+			},
+			handler: () => {}
+		});
+		this.steppingButtons.push({
+			data: {
+				text: "-->",
+				relSize: this.relSize
+			},
+			handler: stepForward
+		});
+
+		this.calculateSteppingButtonsPosition();
+		this.dirty = true;
+	}
+
+	calculateSteppingButtonsPosition() {
+		let numBtns = this.steppingButtons.length;
+		// Every button get an equal amount of screen size
+		let maxButtonWidth = this.staticBuffer.width / numBtns;
+		let maxButtonHeight = this.staticBuffer.height / 10;
+		for (let i = 0; i < numBtns; i++) {
+			let btn = this.steppingButtons[i];
+			//  Sets the button size to the allocated size * relative button size
+			let btnWidth = maxButtonWidth * btn.data.relSize;
+			let btnHeight = maxButtonHeight * btn.data.relSize;
+			// Centers the button inside the allocated space
+			let xPadding = (maxButtonWidth - btnWidth) / 2;
+			let yPadding = (maxButtonHeight - btnHeight) / 2;
+
+			btn.position = {
+				x: i * maxButtonWidth + xPadding,
+				y: this.staticBuffer.height - maxButtonHeight + yPadding,
+				width: btnWidth,
+				height: btnHeight
+			};
 		}
 	}
 }
