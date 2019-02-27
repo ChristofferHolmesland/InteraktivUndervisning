@@ -57,10 +57,10 @@ module.exports = function(unsortedList, typePivot) {
 
         steps.push({
             type: "Merge",
-            leftSorted: leftSorted,
-            rightSorted: rightSorted,
+            list1: leftSorted,
+            list2: rightSorted,
             pivot: pivot,
-            sorted: sorted
+            merged: sorted
         })
 
         return sorted

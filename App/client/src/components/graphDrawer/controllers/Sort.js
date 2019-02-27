@@ -19,10 +19,7 @@ export default class Sort {
 		// If there are some starting steps, they are parsed
 		// and put into the world.
 		if (config.steps) {
-			this.currentStep = 0;
-			if (this.gd.operatingMode == "Interaction") {
-				this.currentStep = config.steps.length - 1;
-			}
+			this.currentStep = config.steps.length - 1;
 
 			this.steps = config.steps;
 			this._parseSteps();
@@ -889,7 +886,7 @@ export default class Sort {
 
 		// Add everything as a final step
 		let edges = [];
-		for (let i = 0; i < this.gd.edges.length; i++) {
+		for (let i = 0; i < this.gd.edges.length; i++) {
 			edges.push({
 				n1: this.gd.edges[i].n1.v,
 				n2: this.gd.edges[i].n2.v
@@ -906,10 +903,33 @@ export default class Sort {
 			});
 		}
 
+		let arrs = [];
+		for (let i = 0; i < this.arrays.length; i++) {
+			let arr = this.arrays[i];
+
+			let links = [];
+			for (let j = 0; j < arr.links.length; j++) {
+				links.push(this.arrays.indexOf(arr.links[j]));
+			}
+
+			let pivots = [];
+			for (let j = 0; j < arr.nodes.length; j++) {
+				if (arr.nodes[j].pivot) {
+					pivots.push(j);
+				}
+			}
+
+			arrs.push({
+				nodes: arrToList(arr),
+				position: arr.position,
+				links: links,
+				pivots: pivots
+			});
+		}
+
 		steps.push({
-			type: "Final",
-			nodes: nodes,
-			edges: edges
+			type: "Complete",
+			arrays: arrs
 		});
 
 		return steps;
@@ -1003,7 +1023,6 @@ export default class Sort {
 					node.fillColor = this.pivotColor;
 				}
 			}
-			console.log(this.gd.nodes);
 		};
 
 		let parseMerge = (step, pos) => {
@@ -1013,45 +1032,62 @@ export default class Sort {
 
 			let p1 = this._findArrayFromNodeValues(step.list1, true);
 			let p2 = this._findArrayFromNodeValues(step.list2, true);
-			this.arrays[p1].links.push(merged);
-			this.arrays[p2].links.push(merged);
+
+			// Quicksort solutions will merge to lists and a pivot node
+			if (step.pivot) {
+				// Find array which contains the pivot node
+				for (let i = 0; i < this.arrays.length; i++) {
+					let nodes = this.arrays[i].nodes;
+					let found = false;
+					for (let j = 0; j < nodes.length; j++) {
+						if (nodes[j].pivot && nodes[j].v == step.pivot) {
+							this.arrays[i].links.push(merged);
+							found = true;
+							break;
+						}
+					}
+
+					if (found) break;
+				}
+			}
+
+			if (p1 > -1) this.arrays[p1].links.push(merged);
+			if (p2 > -1) this.arrays[p2].links.push(merged);
 		};
 
-		let parseFinal = (step, pos) => {
+		let parseComplete = (step, pos) => {
 			this.gd.nodes = [];
 			this.gd.edges = [];
 
-			for (let i = 0; i < step.nodes.length; i++) {
-				let node = step.nodes[i];
-				let newNode = {
-					r: this.gd.R,
-					v: node.v,
-					x: node.x + pos.dx,
-					y: node.y + pos.dy
+			for (let i = 0; i < step.arrays.length; i++) {
+				let arr = step.arrays[i];
+
+				let newArr = {
+					position: {
+						x: arr.position.x + pos.dx,
+						y: arr.position.y + pos.dy
+					},
+					nodes: [],
+					links: []
 				};
-				this.gd.nodes.push(newNode);
+				nodesFromValueList(arr.nodes, newArr);
+				this.arrays.push(newArr);
 			}
 
-			let findIndex = (val) => {
-				for (let i = 0; i < this.gd.nodes.length; i++) {
-					if (this.gd.nodes[i].v == val) return i;
+			for (let i = 0; i < this.arrays.length; i++) {
+				let arr = this.arrays[i];
+
+				let stepArray = step.arrays[i];
+				for (let j = 0; j < stepArray.links.length; j++) {
+					let index = stepArray.links[j];
+					arr.links.push(this.arrays[index]);
 				}
 
-				return -1;
-			}
-
-			for (let i = 0; i < step.edges.length; i++) {
-				let edge = step.edges[i];
-
-				let i1 = findIndex(edge.n1.v);
-				let i2 = findIndex(edge.n2.v);
-
-				let newEdge = {
-					n1: this.gd.nodes[i1],
-					n2: this.gd.nodes[i2]
-				};
-
-				this.gd.edges.push(newEdge);
+				for (let j = 0; j < stepArray.pivots.length; j++) {
+					let index = stepArray.pivots[j];
+					arr.nodes[index].pivot = true;
+					arr.nodes[index].fillColor = this.pivotColor;
+				}
 			}
 		};
 
@@ -1068,6 +1104,8 @@ export default class Sort {
 			if (step.type == "Initial") {
 				offset = parseInitial(step);
 			} else if (step.type == "Split") {
+				if (offset == undefined) continue;
+
 				if (user) {
 					if (step.position.left) {
 						pos.left.x = step.position.left.x + offset.dx;
@@ -1089,44 +1127,70 @@ export default class Sort {
 
 				parseSplit(step, pos);
 			} else if (step.type == "Merge") {
+				if (offset == undefined) continue;
+
 				// Quicksort shouldn't show the merge step
-				if (this.sortType == "Quicksort") continue;
+				//if (this.sortType == "Quicksort") continue;
+				if (step.list1 == undefined || step.list2 == undefined) {
+					console.log("Continue because something is undefined");
+					console.log(step);
+					continue;
+				}
 
 				if (user) {
 					pos.x = step.position.x + offset.dx;
 					pos.y = step.position.y + offset.dy;
 				} else {
-					// TODO: Fix placement of merged arrays
-
 					// The array should be centered between the two
 					// parent arrays in the x position.
-					let p1 = this._findArrayFromNodeValues(step.list1);
-					let p2 = this._findArrayFromNodeValues(step.list2);
-					let p1Width = this.arrays[p1].nodes.length * r;
-					let p2Width = this.arrays[p2].nodes.length * r;
-					let c1 = this.arrays[p1].position.x + p1Width / 2;
-					let c2 = this.arrays[p2].position.x + p2Width / 2;
-					let c = (c1 + c2) / 2;
-					let stepWidth = step.merged.length * r;
-					pos.x = c - stepWidth / 2;
+					let p1 = this._findArrayFromNodeValues(step.list1, true);
+					let p2 = this._findArrayFromNodeValues(step.list2, true);
 
-					let cy1 = this.arrays[p1].position.y;
-					let cy2 = this.arrays[p2].position.y;
-					let cy = (cy1 + cy2) / 2;
-					pos.y = cy + yPadding;
+					let ps = [];
+					if (p1 > -1) ps.push(this.arrays[p1]);
+					if (p2 > -1) ps.push(this.arrays[p2]);
+					// Quicksort solutions will merge to lists and a pivot node
+					if (step.pivot) {
+						for (let i = 0; i < this.arrays.length; i++) {
+							let nodes = this.arrays[i].nodes;
+							let found = false;
+							for (let j = 0; j < nodes.length; j++) {
+								if (nodes[j].pivot && nodes[j].v == step.pivot) {
+									ps.push(this.arrays[i]);
+									found = true;
+									break;
+								}
+							}
+
+							if (found) break;
+						}
+					}
+
+					let cx = 0;
+					let maxY = 0;
+					for (let i = 0; i < ps.length; i++) {
+						let width = ps[i].nodes.length * r;
+						cx += ps[i].position.x + width / 2;
+
+						if (ps[i].position.y > maxY) maxY = ps[i].position.y;
+					}
+					cx /= ps.length;
+					let stepWidth = step.merged.length * r;
+					pos.x = cx - stepWidth / 2;
+					pos.y = maxY + yPadding;
 				}
 
 				parseMerge(step, pos);
-			} else if (step.type == "Final") {
+			} else if (step.type == "Complete") {
 				if (offset == undefined) {
 					pos = {
 						dx: 0,
 						dy: 0
 					};
 				}
-				parseFinal(step, pos);
+				parseComplete(step, pos);
 			} else {
-				console.log(`Found invalid step type: ${step.type} 
+				console.error(`Found invalid step type: ${step.type} 
 					at index ${i}, skipping.`);
 			}
 		}
