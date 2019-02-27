@@ -49,6 +49,19 @@
 </template>
 
 <script>
+<<<<<<< HEAD
+	import Session from "./Session.vue";
+	import EditSession from "./EditSession.vue";
+	import SelectCourse from "../SelectCourse.vue";
+	export default {
+		name: 'Sessions',
+		data() {
+			return {
+				sessionsList: {},
+				selectedSession: undefined,
+				searchText: "",
+				sessionsListLength: 0
+=======
 import Session from "./Session.vue";
 import EditSession from "./EditSession.vue";
 import SelectCourse from "../SelectCourse.vue";
@@ -75,12 +88,30 @@ export default {
 				this.sessionsList = data;
 				this.selectedSession = data[0].id;
 				this.$socket.emit("getSession", this.selectedSession)
+>>>>>>> dev
 			}
 		},
 		addNewSessionDone() {
 			let c = this.$store.getters.getSelectedCourse.split(" ");
 			this.$socket.emit("getSessions", {code: c[0], semester: c[1]});
 		},
+<<<<<<< HEAD
+		sockets: {
+			getSessionsResponse(data) {
+				if(data.length != 0){
+					this.sessionsList = data;
+					this.selectedSession = data[0];
+        			this.$socket.emit("getSession", this.getSelectedSessionId)
+				} else {
+					this.sessionsList = {};
+					this.selectedSession = undefined;
+				}
+			},
+			addNewSessionDone() {
+				let c = this.$store.getters.getSelectedCourse.split(" ");
+				this.$socket.emit("getSessions", {code: c[0], semester: c[1]});
+			}
+=======
 		getSessionResponse(data) {
 			this.session = data;
 		}
@@ -94,6 +125,7 @@ export default {
 		changeSelected(event) {
 			this.selectedSession = event.target.id;
 			this.$socket.emit("getSession", this.selectedSession)
+>>>>>>> dev
 		},
 		addNewSessionHandler: function(newSession) {
 			this.$socket.emit("addNewSession", newSession);
