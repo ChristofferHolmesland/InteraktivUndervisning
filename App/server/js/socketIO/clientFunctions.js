@@ -3,6 +3,12 @@ const dbFunctions = require("../database/databaseFunctions.js").dbFunctions;
 
 module.exports.client = function(socket, db, user, sessions) {
 
+    socket.on("verifySessionExists", function(sessionCode) {
+        if (socket.rooms[sessionCode] === undefined) {
+            socket.emit("verifySessionExistsError");
+        }
+    });
+
     socket.on("quickJoinRoom", async function (sessionCode) {
         if (sessions.get(sessionCode)) {
             let userId = 1;
