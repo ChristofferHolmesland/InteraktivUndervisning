@@ -928,7 +928,7 @@ export default class Sort {
 		}
 
 		steps.push({
-			type: "Final",
+			type: "Complete",
 			arrays: arrs
 		});
 
@@ -1032,11 +1032,30 @@ export default class Sort {
 
 			let p1 = this._findArrayFromNodeValues(step.list1, true);
 			let p2 = this._findArrayFromNodeValues(step.list2, true);
-			this.arrays[p1].links.push(merged);
-			this.arrays[p2].links.push(merged);
+
+			// Quicksort solutions will merge to lists and a pivot node
+			if (step.pivot) {
+				// Find array which contains the pivot node
+				for (let i = 0; i < this.arrays.length; i++) {
+					let nodes = this.arrays[i].nodes;
+					let found = false;
+					for (let j = 0; j < nodes.length; j++) {
+						if (nodes[j].pivot && nodes[j].v == step.pivot) {
+							this.arrays[i].links.push(merged);
+							found = true;
+							break;
+						}
+					}
+
+					if (found) break;
+				}
+			}
+
+			if (p1 > -1) this.arrays[p1].links.push(merged);
+			if (p2 > -1) this.arrays[p2].links.push(merged);
 		};
 
-		let parseFinal = (step, pos) => {
+		let parseComplete = (step, pos) => {
 			this.gd.nodes = [];
 			this.gd.edges = [];
 
@@ -1111,43 +1130,67 @@ export default class Sort {
 				if (offset == undefined) continue;
 
 				// Quicksort shouldn't show the merge step
-				if (this.sortType == "Quicksort") continue;
+				//if (this.sortType == "Quicksort") continue;
+				if (step.list1 == undefined || step.list2 == undefined) {
+					console.log("Continue because something is undefined");
+					console.log(step);
+					continue;
+				}
 
 				if (user) {
 					pos.x = step.position.x + offset.dx;
 					pos.y = step.position.y + offset.dy;
 				} else {
-					// TODO: Fix placement of merged arrays
-
 					// The array should be centered between the two
 					// parent arrays in the x position.
-					let p1 = this._findArrayFromNodeValues(step.list1);
-					let p2 = this._findArrayFromNodeValues(step.list2);
-					let p1Width = this.arrays[p1].nodes.length * r;
-					let p2Width = this.arrays[p2].nodes.length * r;
-					let c1 = this.arrays[p1].position.x + p1Width / 2;
-					let c2 = this.arrays[p2].position.x + p2Width / 2;
-					let c = (c1 + c2) / 2;
-					let stepWidth = step.merged.length * r;
-					pos.x = c - stepWidth / 2;
+					let p1 = this._findArrayFromNodeValues(step.list1, true);
+					let p2 = this._findArrayFromNodeValues(step.list2, true);
 
-					let cy1 = this.arrays[p1].position.y;
-					let cy2 = this.arrays[p2].position.y;
-					let cy = (cy1 + cy2) / 2;
-					pos.y = cy + yPadding;
+					let ps = [];
+					if (p1 > -1) ps.push(this.arrays[p1]);
+					if (p2 > -1) ps.push(this.arrays[p2]);
+					// Quicksort solutions will merge to lists and a pivot node
+					if (step.pivot) {
+						for (let i = 0; i < this.arrays.length; i++) {
+							let nodes = this.arrays[i].nodes;
+							let found = false;
+							for (let j = 0; j < nodes.length; j++) {
+								if (nodes[j].pivot && nodes[j].v == step.pivot) {
+									ps.push(this.arrays[i]);
+									found = true;
+									break;
+								}
+							}
+
+							if (found) break;
+						}
+					}
+
+					let cx = 0;
+					let maxY = 0;
+					for (let i = 0; i < ps.length; i++) {
+						let width = ps[i].nodes.length * r;
+						cx += ps[i].position.x + width / 2;
+
+						if (ps[i].position.y > maxY) maxY = ps[i].position.y;
+					}
+					cx /= ps.length;
+					let stepWidth = step.merged.length * r;
+					pos.x = cx - stepWidth / 2;
+					pos.y = maxY + yPadding;
 				}
 
 				parseMerge(step, pos);
-			} else if (step.type == "Final") {
+			} else if (step.type == "Complete") {
 				if (offset == undefined) {
 					pos = {
 						dx: 0,
 						dy: 0
 					};
 				}
-				parseFinal(step, pos);
+				parseComplete(step, pos);
 			} else {
-				console.log(`Found invalid step type: ${step.type} 
+				console.error(`Found invalid step type: ${step.type} 
 					at index ${i}, skipping.`);
 			}
 		}
