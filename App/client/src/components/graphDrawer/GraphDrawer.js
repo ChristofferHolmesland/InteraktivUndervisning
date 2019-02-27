@@ -295,6 +295,10 @@ export default class GraphDrawer {
 					b.y += halfWidth;
 				}
 
+				// TODO: When the nodeshape is square, the arrows
+				// are placed on the line, but not close to
+				// the last node.
+
 				let headlen = 15;
 				let angle = Math.atan2(a.y - b.y, a.x - b.x);
 				this.drawContext.beginPath();

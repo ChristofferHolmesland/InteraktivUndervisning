@@ -125,6 +125,9 @@ module.exports = function(list, limit) {
         reset: function() {
             currentStep = 0;
             return steps[currentStep];
+        },
+        getSteps: function() {
+            return steps;
         }
     }
 };
