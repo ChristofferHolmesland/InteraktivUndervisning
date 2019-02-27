@@ -9,6 +9,21 @@ export default class Graph0 {
 		// Values: Graph or Tree.
 		if (config == undefined) this.exportType = "Graph0";
 		else this.exportType = config.exportType;
+
+		if (config == undefined) this.subType == undefined;
+		else {
+			this.subType = config.subType;
+			this.nextLetter = "A";
+
+			this.startNodeColor = config.startNodeColor;
+			this.endNodeColor = config.endNodeColor;
+
+			if (this.subType == "Dijkstra") {
+				this.buttons.push("Mark");
+				this.stateHandlers.Mark = this.markNode.bind(this);
+				this.drawStatic();
+			}
+		}
 	}
 
 	configure() {
@@ -30,7 +45,7 @@ export default class Graph0 {
 			Remove: this.removeNode,
 			Join: this.joinNode,
 			Move: this.moveNode,
-			Edit: this.editNode
+			Edit: this.editNode,
 		}
 
 		// Binds the "this" context to the GraphDrawer object.
@@ -59,11 +74,17 @@ export default class Graph0 {
 	addNode(e) {
 		let p = this.gd.camera.project(e.offsetX, e.offsetY);
 
+		let v = 0;
+		if (this.subType == "Dijkstra") {
+			v = this.nextLetter;
+			this._incrementNextLetter();
+		}
+
 		let node = {
 			x: p.x,
 			y: p.y,
 			r: this.gd.nodeShape == "Circle" ? this.gd.R : this.gd.R * this.gd.SQUARE_FACTOR,
-			v: 0
+			v: v
 		}
 
 		//this._editNode(node);
@@ -111,6 +132,29 @@ export default class Graph0 {
 		}
 
 		return false;
+	}
+
+	/*
+		Marks a node as start or end, used by the dijkstra subtype.
+	*/
+	markNode(e) {
+		e.preventDefault();
+		let node = this.gd.getNodeAtCursor(e).node;
+		if (node == undefined) return false;
+
+		if (node.marked == undefined) {
+			node.marked = "Start";
+			node.fillColor = this.startNodeColor;
+		} else if (node.marked == "Start") {
+			node.marked = "End";
+			node.fillColor = this.endNodeColor;
+		} else if (node.marked == "End") {
+			node.marked = undefined;
+			node.fillColor = undefined;
+		}
+
+		this.gd.dirty = true;
+		return true;
 	}
 
 	/*
@@ -306,5 +350,25 @@ export default class Graph0 {
 		}
 
 		return tree;
+	}
+
+	_incrementNextLetter() {
+		let nextChar = (c) => {
+			if (c.charCodeAt(0) >= 90) return "A";
+			else return String.fromCharCode(c.charCodeAt(0) + 1);
+		};
+
+		for (let i = this.nextLetter.length - 1; i > -1; i--) {
+			let n = nextChar(this.nextLetter[i]);
+			this.nextLetter =
+				this.nextLetter.slice(0, i) + n + this.nextLetter.slice(i + 1);
+
+			if (n !== "A") return;
+
+			if (i == 0) {
+				this.nextLetter = "A" + this.nextLetter;
+				return;
+			}
+		}
 	}
 }

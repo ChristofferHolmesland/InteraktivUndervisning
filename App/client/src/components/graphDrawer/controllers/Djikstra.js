@@ -1,19 +1,29 @@
 export default class Djikstra {
 	_config(config) {
 		// Parse graph to build the world.
-		if (config.graph) {
-			this.to = config.to;
-			this.from = config.from;
+		console.log("Config graph");
+		console.log(config);
+		console.log(config.graph);
+		if (config.graph !== undefined) {
+			this.to = undefined;
+			this.from = undefined;
 
-			for (let i = 0; i < config.graph.nodes.length; i++) {
-				let node = config.graph.nodes[i];
-				if (node.v == this.from.v) node.fillColor = config.startColor;
-				else if (node.v == this.to.v) node.fillColor = config.endColor;
+			let graph = config.graph.graph;
+
+			for (let i = 0; i < graph.nodes.length; i++) {
+				let node = graph.nodes[i];
+				if (node.marked == "Start") {
+					this.from = node;
+					node.fillColor = config.startColor;
+				} else if (node.marked == "End") {
+					this.to = node;
+					node.fillColor = config.endColor;
+				}
 				this.gd.nodes.push(node);
 			}
 
-			for (let i = 0; i < config.graph.edges.length; i++) {
-				let edge = config.graph.edges[i];
+			for (let i = 0; i < graph.edges.length; i++) {
+				let edge = graph.edges[i];
 				edge.directed = false;
 				if (config.edgeColor) {
 					edge.strokeColor = config.edgeColor;

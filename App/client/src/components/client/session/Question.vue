@@ -37,6 +37,11 @@
                                 @getTextResponse="getTextValue"
                                 :steps="questionInfo.object.steps"
                                 />
+                            <Dijkstra v-if="getQuestionType === 10"
+                                :requestAnswer="requestAnswer"
+                                @getTextResponse="getTextValue"
+                                :steps="questionInfo.object.steps"
+                                />
                         </b-tab>
                         <b-tab :title="updateTimer" v-if="interval !== undefined" disabled></b-tab>
                     </b-tabs>
@@ -59,6 +64,7 @@
     import ArraySort from "./questionTypes/sorting/ArraySort.vue";
     import Mergesort from "./questionTypes/sorting/Mergesort.vue";
     import Quicksort from "./questionTypes/sorting/Quicksort.vue";
+    import Dijkstra from "./questionTypes/Dijkstra.vue";
     
 	export default {
 		name: "Question",
@@ -138,7 +144,8 @@
             MultipleChoice,
             ArraySort,
             Mergesort,
-            Quicksort
+            Quicksort,
+            Dijkstra
         }
 	};
 </script>

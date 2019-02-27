@@ -1,5 +1,5 @@
 const check = function(answer, solution) {
-    let steps = solution.getSteps();
+    let steps = solution;
     
     let distanceSteps = [];
     for (let i = 0; i < steps.length; i++) {

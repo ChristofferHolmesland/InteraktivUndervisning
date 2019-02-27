@@ -61,6 +61,22 @@ function generateSolution(question) {
 		// manipulate it.
 		question.objects.steps = [steppingFunctions.reset()];
 	}
+	else if (solutionType == 10) {
+		let algo = algorithms.graphs.dijkstra;
+		let from = undefined;
+		let to = undefined;
+		for (let i = 0; i < question.objects.graph.nodes.length; i++) {
+			let node = question.objects.graph.nodes[i];
+			if (node.marked == "Start") from = node;
+			else if (node.marked == "End") to = node;
+		}
+
+		let stepper = algo(question.objects.graph, from, to);
+		console.log(stepper.getSteps());
+		question.objects.solution = stepper.getSteps();
+		question.objects.steps = [stepper.reset()];
+	}
+
 	return question;
 }
 
@@ -197,8 +213,6 @@ module.exports.admin = function(socket, db, user, sessions) {
 					text: sessionList[i].name
 				});
 			}
-
-			console.log(response);
 
 			socket.emit("sessionOverviewResponse", response);
 		}).catch((err) => {
@@ -350,6 +364,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 
 	socket.on("addNewQuestion", function(question) {
 		question = generateSolution(question);
+		console.log(question);
 
 		dbFunctions.insert.question(db, question.text, question.description, question.solution, question.time,
 			question.solutionType, question.courseCode, question.objects);

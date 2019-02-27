@@ -27,6 +27,12 @@
             sortType: String,
             // Interactive or Presentation
             operatingMode: String,
+            // Graph or Tree
+            exportType: String,
+            // Dijkstra or undefined
+            subType: String,
+            // The graph to perform dijkstra on
+            graph: Object,
             width: {
                 default: 600,
                 type: Number
@@ -55,6 +61,20 @@
                 operatingMode: this.operatingMode,
                 displayEdgeValues: true,
                 directedEdges: true,
+
+                dijkstra: {
+                    startColor: "LightGreen",
+                    endColor: "LightCoral",
+                    edgeColor: "LightGray",
+                    graph: this.graph
+                },
+
+                graph: {
+                    exportType: this.exportType,
+                    subType: this.subType,
+                    startNodeColor: "LightGreen",
+                    endNodeColor: "LightCoral"
+                },
                 
                 sort: {
                     sortType: this.sortType,
