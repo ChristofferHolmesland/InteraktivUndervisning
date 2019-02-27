@@ -38,6 +38,11 @@ module.exports = function(graph, from, to) {
             }
         }
 
+        // Edges from GraphDrawer have their edge values as a string
+        for (let i = 0; i < graph.edges.length; i++) {
+            graph.edges[i].v = Number(graph.edges[i].v);
+        }
+
         let current = from;
         current.distance = undefined;
 
@@ -52,7 +57,6 @@ module.exports = function(graph, from, to) {
                     current = current.previous;
                 }
 
-                console.log("Adding path");
                 steps.push({
                     type: "Path",
                     path: path
@@ -69,13 +73,11 @@ module.exports = function(graph, from, to) {
                     let distance = edge.v;
                     if (current.distance) distance += current.distance;
 
-                    console.log(`Distance (n2) ${current.v}(${distance}) < ${edge.n2.v}(${edge.n2.distance})`);
                     if (distance < edge.n2.distance) {
                         edge.n2.distance = distance;
                         edge.n2.previous = current;
                     }
 
-                    console.log("Adding distance: " + current.v + "  - >  " + edge.n2.v);
                     steps.push({
                         type: "Distance",
                         current: current.v,
@@ -87,14 +89,11 @@ module.exports = function(graph, from, to) {
                     let distance = edge.v;
                     if (current.distance) distance += current.distance;
 
-                    console.log(`Distance (n1) ${distance} < ${edge.n2.distance}`);
                     if (distance < edge.n1.distance) {
                         edge.n1.distance = distance;
                         edge.n1.previous = current;
                     }
 
-
-                    console.log("Adding distance: " + current.v + "  - >  " + edge.n1.v);
                     steps.push({
                         type: "Distance",
                         current: current.v,
@@ -109,13 +108,11 @@ module.exports = function(graph, from, to) {
             let nodeIndex = 0
             let minDistance = unvisited[0].distance; 
             for (let i = 1; i < unvisited.length; i++) {
-                console.log(`Comparing ${unvisited[i].v}(${unvisited[i].distance}) and ${minDistance}`)
                 if (unvisited[i].distance < minDistance) {
                     nodeIndex = i;
                     minDistance = unvisited[i].distance;
                 }
             }
-            console.log("Setting current to " + unvisited[nodeIndex].v);
             current = unvisited[nodeIndex];
         } while (unvisited.length > 0);
     }

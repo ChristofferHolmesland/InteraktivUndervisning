@@ -62,7 +62,6 @@ function generateSolution(question) {
 		question.objects.steps = [steppingFunctions.reset()];
 	}
 	else if (solutionType == 10) {
-		console.log("Start of solution generation");
 		let algo = algorithms.graphs.dijkstra;
 		let from = undefined;
 		let to = undefined;
@@ -71,16 +70,8 @@ function generateSolution(question) {
 			if (node.marked == "Start") from = node;
 			else if (node.marked == "End") to = node;
 		}
-		console.log("FROM");
-		console.log(from);
-		console.log("TO");
-		console.log(to);
 
-		console.log("GENERATING STEPS");
 		let stepper = algo(question.objects.graph, from, to);
-		console.log("Steps");
-		console.log(stepper.getSteps());
-		console.log("STEPS end");
 		question.solution = stepper.getSteps();
 		question.objects.steps = [stepper.reset()];
 	}
