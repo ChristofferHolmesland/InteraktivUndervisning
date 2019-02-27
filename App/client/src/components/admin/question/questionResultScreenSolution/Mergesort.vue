@@ -1,7 +1,7 @@
 <template>
-<GraphDrawer    id="QuicksortSolution"
+<GraphDrawer    id="MergesortSolution"
                 controlType="Sort"
-                sortType="Quicksort"
+                sortType="Mergesort"
                 operatingMode="Presentation"
                 :steps="solution"
                 :height="400"
@@ -13,7 +13,7 @@
 import GraphDrawer from "../../../graphDrawer/GraphDrawer.vue";
 
 export default {
-    name: "QuicksortSolution",
+    name: "MergesortSolution",
     props: {
         solution: Array
     },

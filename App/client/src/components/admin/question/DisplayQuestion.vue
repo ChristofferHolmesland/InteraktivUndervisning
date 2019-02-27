@@ -11,11 +11,15 @@
 						<b-tab :title="getLocale.solution">
                             <div v-if="tabIndex === 1">
                                 <TextSolution v-if="resultInfo.question.type === 1"
-                                                :solution="resultInfo.solution"/>
+                                                :solution="resultInfo.solution"
+                                                />
                                 <MultipleChoiceSolution v-if="resultInfo.question.type === 2"
                                                         :solutions="resultInfo.solution"
                                                         :choices="resultInfo.question.object.multipleChoices"
                                                         />
+                                <MergesortSolution  v-if="resultInfo.question.type === 4"
+                                                    :solution="resultInfo.solution"
+                                                    />
                                 <QuicksortSolution  v-if="resultInfo.question.type === 5"
                                                     :solution="resultInfo.solution"
                                                     />
@@ -24,10 +28,15 @@
 						<b-tab :title="getLocale.answer" v-if="resultInfo.answerList.length > 0">
                             <div v-if="tabIndex === 2">
                                 <TextAnswer v-if="resultInfo.question.type === 1"
-                                                :answer="resultInfo.answerList[selectedAnswer].answerObject"/>
+                                                :answer="resultInfo.answerList[selectedAnswer].answerObject"
+                                                />
                                 <MultipleChoiceAnswer v-if="resultInfo.question.type === 2" 
                                                 :answers="resultInfo.answerList[selectedAnswer].answerObject"
-                                                :choices="resultInfo.question.object.multipleChoices"/>
+                                                :choices="resultInfo.question.object.multipleChoices"
+                                                />
+                                <MergesortAnswer    v-if="resultInfo.question.type === 4"
+                                                    :answer="resultInfo.solution"
+                                                    />
                                 <QuicksortAnswer    v-if="resultInfo.question.type === 5"
                                                     :answer="resultInfo.answerList[selectedAnswer].answerObject"
                                                     />
@@ -47,8 +56,8 @@ import TextAnswer from "./questionResultScreenAnswer/Text.vue";
 import TextSolution from "./questionResultScreenSolution/Text.vue"
 // Shellsort
 // Shellsort
-// Mergesort
-// Mergesort
+import MergesortAnswer from "./questionResultScreenAnswer/Mergesort.vue";
+import MergesortSolution from "./questionResultScreenSolution/Mergesort.vue"
 import QuicksortAnswer from "./questionResultScreenAnswer/Quicksort.vue";
 import QuicksortSolution from "./questionResultScreenSolution/Quicksort.vue"
 
@@ -81,6 +90,8 @@ export default {
         TextAnswer,
         MultipleChoiceSolution,
         MultipleChoiceAnswer,
+        MergesortAnswer,
+        MergesortSolution,
         QuicksortAnswer,
         QuicksortSolution
     }

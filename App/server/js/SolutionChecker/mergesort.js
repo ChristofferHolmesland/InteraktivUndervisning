@@ -7,6 +7,7 @@ const check = function(answer, solution) {
     }
     
     answer.splice(0, 1);
+    answer.splice(answer.length - 1, 1);
 
     if (answer.length !== solution.length) return false;
 
@@ -19,8 +20,6 @@ const check = function(answer, solution) {
         if (!compareTwoLists(solutionStep.list, answerStep.list)) return false;
         if (!compareTwoLists(solutionStep.left, answerStep.left)) return false;
         if (!compareTwoLists(solutionStep.right, answerStep.right)) return false;
-        if (answerStep.pivot.length > 1) return false;
-        if (solutionStep.pivot !== answerStep.pivot[0]) return false;
 
         answerIndex++;
         solutionIndex++;
