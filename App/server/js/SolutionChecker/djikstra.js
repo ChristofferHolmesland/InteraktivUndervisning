@@ -1,10 +1,5 @@
 const check = function(answer, solution) {
     let steps = solution;
-    
-    console.log("Solution Checker start");
-    console.log(solution);
-    console.log("Answer");
-    console.log(answer);
 
     let distanceSteps = [];
     for (let i = 0; i < steps.length; i++) {
@@ -24,7 +19,7 @@ const check = function(answer, solution) {
                 let found = false;
                 for (let k = 0; k < distanceSteps.length; k++) {
                     let step2 = distanceSteps[k];
-                    if (step2.current.v == current && step2.node.v == node.v) {
+                    if (step2.current.v == current.v && step2.node.v == node.v) {
                         found = true;
                         distanceSteps.splice(k, 1);
                         break;
@@ -35,9 +30,8 @@ const check = function(answer, solution) {
                 break;
             }
         }
-
-        return true;
     }
+    return true;
 }
 
 module.exports.check = check;
