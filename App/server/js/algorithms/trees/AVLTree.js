@@ -42,6 +42,7 @@ module.exports.createAVLTreeSolution = function (elements,add,existingTreeObject
 		if (existingTreeObject !== undefined) {
 			tree = existingTreeObject;
 			//Balance any Tree given that is not an AVL Tree
+			console.log(checkBalance(tree.root));
 			while (checkBalance(tree.root) === false) {
 				if (tree.root.children[0] !== undefined) {
 					let getLowestLeftNode = getLowestNode(tree.root.children[0]);
@@ -67,7 +68,11 @@ module.exports.createAVLTreeSolution = function (elements,add,existingTreeObject
 						treelist.splice(t,1,newTreeList[0],newTreeList[1]);
 						t++;
 						//console.log(treelist);
-					}else {
+					}
+					else if (newTreeList.length === 0) {
+
+					}
+					else {
 						treelist.splice(t,1,newTreeList[0]);
 					}
 				}
@@ -88,10 +93,12 @@ function checkBalance(node) {
 		leftHeight = GeneralTreeFunctions.getHeight(node.children[0]);
 		balanced = checkBalance(node.children[0]);
 	}
+	if (!balanced) return balanced;
 	if (node.children[1] !== undefined) {
 		rightHeight = GeneralTreeFunctions.getHeight(node.children[1]);
 		balanced = checkBalance(node.children[1]);
 	}
+	if (!balanced) return balanced;
 	if (balanced) {
 		if (Math.abs(leftHeight - rightHeight) > 1) {
 			balanced = false;
@@ -159,7 +166,7 @@ function getNodeHeight(node) {
 }
 
 //rotates the tree towards the right, used when there are to many children on the left side of the subtree
-function rotationLeft(node,tree,double) {
+function rotationLeft(node,tree) {
 	let leftChild = node.children[0];
 	let parent = node.parent;
 	if (parent !== undefined) {
@@ -174,7 +181,7 @@ function rotationLeft(node,tree,double) {
 			leftChild.children[1].parent = node;
 		}
 	}
-	if(leftChild.children[1] !== undefined && double) {
+	if(leftChild.children[1] !== undefined) {
 		leftChild.children[1].parent = node;
 	}
 	let subNode = leftChild.children[1];
@@ -185,7 +192,7 @@ function rotationLeft(node,tree,double) {
 }
 
 //rotates the tree towards the left, used when there are to many children on the right side of the subtree
-function rotationRight(node,tree,double) {
+function rotationRight(node,tree) {
 	let rightChild = node.children[1];
 	let parent = node.parent;
 	if(parent !== undefined) {
@@ -200,7 +207,7 @@ function rotationRight(node,tree,double) {
 			rightChild.children[0].parent = node;
 		}
 	}
-	if(rightChild.children[0] !== undefined && double) {
+	if(rightChild.children[0] !== undefined) {
 		rightChild.children[0].parent = node;
 	}
 	let subNode = rightChild.children[0];
@@ -218,12 +225,12 @@ function fixAVLCondition(node,tree,add) {
 			if (node.value > respNode.children[1].value) {
 				//right rotation
 				console.log("Right");
-				rotationRight(respNode, tree, false);
+				rotationRight(respNode, tree);
 			} else if (node.value < respNode.children[1].value) {
 				//dobbel left rotation
 				console.log("Dobbel left");
-				rotationLeft(respNode.children[1], tree, false);
-				rotationRight(respNode, tree, true);
+				rotationLeft(respNode.children[1], tree);
+				rotationRight(respNode, tree);
 			} else {
 				console.log("How could this happen!");
 			}
@@ -232,12 +239,12 @@ function fixAVLCondition(node,tree,add) {
 			//left rotation
 			if (node.value < respNode.children[0].value) {
 				console.log("Left");
-				rotationLeft(respNode, tree, false);
+				rotationLeft(respNode, tree);
 			} else if (node.value > respNode.children[0].value) {
 				//dobbel right rotation
 				console.log("Dobbel right");
-				rotationRight(respNode.children[0], tree, false);
-				rotationLeft(respNode, tree, true);
+				rotationRight(respNode.children[0], tree);
+				rotationLeft(respNode, tree);
 			} else {
 				console.log("How could this happen!");
 			}
@@ -250,25 +257,28 @@ function fixAVLCondition(node,tree,add) {
 		let rootRightBalance = 0;
 		if (respNode.children[0] !== undefined) rootLeftBalance = getNodeHeight(respNode.children[0]);
 		if (respNode.children[1] !== undefined) rootRightBalance = getNodeHeight(respNode.children[1]);
+		console.log("Balance");
+		console.log(rootLeftBalance);
+		console.log(rootRightBalance);
 		if(respBalance < -1){
-			if (rootLeftBalance <= 0){
-				console.log("Right");
-				rotationRight(respNode, tree,false);
-			}else if(rootLeftBalance > 0) {
+			if (rootRightBalance <= 0){
+				console.log(respNode);
+				rotationRight(respNode, tree);
+			}else if(rootRightBalance > 0) {
 				console.log("dobbel left");
-				rotationLeft(respNode.children[1], tree, false);
-				rotationRight(respNode, tree, true);
+				rotationLeft(respNode.children[1], tree);
+				rotationRight(respNode, tree);
 			}else {
 				console.log("How could this happen!");
 			}
 		}else if(respBalance > 1){
-			if (rootRightBalance >= 0) {
+			if (rootLeftBalance >= 0) {
 				console.log("Left");
-				rotationLeft(respNode, tree,false);
-			}else if (rootRightBalance < 0) {
+				rotationLeft(respNode, tree);
+			}else if (rootLeftBalance < 0) {
 				console.log("dobbel right");
-				rotationRight(respNode.children[0], tree, false);
-				rotationLeft(respNode, tree, true);
+				rotationRight(respNode.children[0], tree);
+				rotationLeft(respNode, tree);
 			}else {
 				console.log("How could this happen!");
 			}
@@ -280,9 +290,9 @@ function fixAVLCondition(node,tree,add) {
 
 function removeNodeFromAVLTree(node,tree,index) {
 	let newTreeList = [];
-	//console.log(node);
-	//console.log(tree);
-	//console.log(index);
+	/*console.log(node);
+	console.log(tree);
+	console.log(index);*/
 	if (node !== undefined && tree !== undefined && index !== -1) {
 		let newTree = tree.createDuplicateTree();
 		//newTree.printTree();
@@ -345,7 +355,7 @@ function removeNodeFromAVLTree(node,tree,index) {
 
 				newSubTree.nodes[index] = tempNode;
 				newSubTree.nodes.splice(tempIndex, 1);
-				newSubTree.printTree();
+				//newSubTree.printTree();
 				fixAVLCondition(tempNode,newSubTree,false);
 				newTreeList.push(newSubTree);
 			}
