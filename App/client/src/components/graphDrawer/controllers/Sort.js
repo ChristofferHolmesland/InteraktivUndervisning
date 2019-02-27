@@ -19,10 +19,7 @@ export default class Sort {
 		// If there are some starting steps, they are parsed
 		// and put into the world.
 		if (config.steps) {
-			this.currentStep = 0;
-			if (this.gd.operatingMode == "Interaction") {
-				this.currentStep = config.steps.length - 1;
-			}
+			this.currentStep = config.steps.length - 1;
 
 			this.steps = config.steps;
 			this._parseSteps();
@@ -889,7 +886,7 @@ export default class Sort {
 
 		// Add everything as a final step
 		let edges = [];
-		for (let i = 0; i < this.gd.edges.length; i++) {
+		for (let i = 0; i < this.gd.edges.length; i++) {
 			edges.push({
 				n1: this.gd.edges[i].n1.v,
 				n2: this.gd.edges[i].n2.v
@@ -906,10 +903,33 @@ export default class Sort {
 			});
 		}
 
+		let arrs = [];
+		for (let i = 0; i < this.arrays.length; i++) {
+			let arr = this.arrays[i];
+
+			let links = [];
+			for (let j = 0; j < arr.links.length; j++) {
+				links.push(this.arrays.indexOf(arr.links[j]));
+			}
+
+			let pivots = [];
+			for (let j = 0; j < arr.nodes.length; j++) {
+				if (arr.nodes[j].pivot) {
+					pivots.push(j);
+				}
+			}
+
+			arrs.push({
+				nodes: arrToList(arr),
+				position: arr.position,
+				links: links,
+				pivots: pivots
+			});
+		}
+
 		steps.push({
 			type: "Final",
-			nodes: nodes,
-			edges: edges
+			arrays: arrs
 		});
 
 		return steps;
@@ -1003,7 +1023,6 @@ export default class Sort {
 					node.fillColor = this.pivotColor;
 				}
 			}
-			console.log(this.gd.nodes);
 		};
 
 		let parseMerge = (step, pos) => {
@@ -1021,37 +1040,35 @@ export default class Sort {
 			this.gd.nodes = [];
 			this.gd.edges = [];
 
-			for (let i = 0; i < step.nodes.length; i++) {
-				let node = step.nodes[i];
-				let newNode = {
-					r: this.gd.R,
-					v: node.v,
-					x: node.x + pos.dx,
-					y: node.y + pos.dy
+			for (let i = 0; i < step.arrays.length; i++) {
+				let arr = step.arrays[i];
+
+				let newArr = {
+					position: {
+						x: arr.position.x + pos.dx,
+						y: arr.position.y + pos.dy
+					},
+					nodes: [],
+					links: []
 				};
-				this.gd.nodes.push(newNode);
+				nodesFromValueList(arr.nodes, newArr);
+				this.arrays.push(newArr);
 			}
 
-			let findIndex = (val) => {
-				for (let i = 0; i < this.gd.nodes.length; i++) {
-					if (this.gd.nodes[i].v == val) return i;
+			for (let i = 0; i < this.arrays.length; i++) {
+				let arr = this.arrays[i];
+
+				let stepArray = step.arrays[i];
+				for (let j = 0; j < stepArray.links.length; j++) {
+					let index = stepArray.links[j];
+					arr.links.push(this.arrays[index]);
 				}
 
-				return -1;
-			}
-
-			for (let i = 0; i < step.edges.length; i++) {
-				let edge = step.edges[i];
-
-				let i1 = findIndex(edge.n1.v);
-				let i2 = findIndex(edge.n2.v);
-
-				let newEdge = {
-					n1: this.gd.nodes[i1],
-					n2: this.gd.nodes[i2]
-				};
-
-				this.gd.edges.push(newEdge);
+				for (let j = 0; j < stepArray.pivots.length; j++) {
+					let index = stepArray.pivots[j];
+					arr.nodes[index].pivot = true;
+					arr.nodes[index].fillColor = this.pivotColor;
+				}
 			}
 		};
 
@@ -1068,6 +1085,8 @@ export default class Sort {
 			if (step.type == "Initial") {
 				offset = parseInitial(step);
 			} else if (step.type == "Split") {
+				if (offset == undefined) continue;
+
 				if (user) {
 					if (step.position.left) {
 						pos.left.x = step.position.left.x + offset.dx;
@@ -1089,6 +1108,8 @@ export default class Sort {
 
 				parseSplit(step, pos);
 			} else if (step.type == "Merge") {
+				if (offset == undefined) continue;
+
 				// Quicksort shouldn't show the merge step
 				if (this.sortType == "Quicksort") continue;
 
