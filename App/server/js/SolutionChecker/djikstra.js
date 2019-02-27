@@ -1,6 +1,11 @@
 const check = function(answer, solution) {
     let steps = solution;
     
+    console.log("Solution Checker start");
+    console.log(solution);
+    console.log("Answer");
+    console.log(answer);
+
     let distanceSteps = [];
     for (let i = 0; i < steps.length; i++) {
         if (steps[i].type == "Distance") {
