@@ -78,7 +78,6 @@ export default {
 			selectedQuestion: 0,
 			selectedAnswer: 0,
 			incorrectAnswers: [],
-			showAnswer:  false,
 		};
 	},
 	computed: {
@@ -112,7 +111,6 @@ export default {
 		getAnswerListSize() {
 			if (!this.getSession) return false;
 			if (!this.getSession.questions) return false;
-			if (!this.selectedQuestion) return false;
 			if (!this.getSession.questions[this.selectedQuestion]) return false;
 			if (!this.getSession.questions[this.selectedQuestion].answerList) return false;
 			if (this.getSession.questions[this.selectedQuestion].answerList.length > 0) return true;
@@ -126,10 +124,9 @@ export default {
 	methods: {
 		changeAnswer(event) {
 			this.selectedAnswer = Number(event.target.id);
-			this.showAnswer = true;
 		},
 		changeQuestion(event) {
-			this.selectedQuestion = event.target.id;
+			this.selectedQuestion = Number(event.target.id);
 		}
 	},
 	watch: {
@@ -137,7 +134,6 @@ export default {
 			this.selectedQuestion = 0;
 			this.selectedAnswer = 0;
 			this.incorrectAnswers = [];
-			this.showAnswer = false;
 		}
 	},
 	components: {
