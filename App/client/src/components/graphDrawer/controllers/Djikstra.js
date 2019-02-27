@@ -1,9 +1,17 @@
 export default class Djikstra {
 	_config(config) {
+		// Save steps if they exists.
+		if (config.steps) {
+			this.currentStep = config.steps.length - 1;
+			this.steps = config.steps;
+			this._parseSteps();
+			this.gd.dirty = true;
+			if (this.gd.operatingMode == "Presentation") {
+				this.addSteppingButtons();
+			}
+		}
+
 		// Parse graph to build the world.
-		console.log("Config graph");
-		console.log(config);
-		console.log(config.graph);
 		if (config.graph !== undefined) {
 			this.to = undefined;
 			this.from = undefined;
@@ -97,5 +105,13 @@ export default class Djikstra {
 		this.gd.canvas.addEventListener("touchend", handler);
 		this.gd.canvas.addEventListener("touchcancel", handler);
 		return true;
+	}
+
+	_parseSteps() {
+
+	}
+
+	addSteppingButtons() {
+		
 	}
 }
