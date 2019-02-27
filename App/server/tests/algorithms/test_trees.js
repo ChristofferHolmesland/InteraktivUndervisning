@@ -228,7 +228,7 @@ describe('TestBinaryTrees', function () {
 				solutionTree.nodes = [solutionRootNode,solutionNode1,solutionNode2,solutionNode3,solutionNode4,solutionNode5,solutionNode6,solutionNode7,solutionNode8];
 				solutionTree.root = solutionRootNode;
 				//solutionTree.printTree();
-				let answerTree = GeneralTreeFunctions.removeNodeFromTree(startNode9,startTree,startTree.nodes.indexOf(startNode9));
+				let answerTree = BinarySearchTreeFunctions.removeNodeFromBSTTree(startNode9,startTree,startTree.nodes.indexOf(startNode9));
 				//answerTree[0].printTree();
 				assert(GeneralTreeFunctions.checkStudentAnswer(answerTree[0],solutionTree));
 				startTree = answerTree[0];
@@ -255,7 +255,7 @@ describe('TestBinaryTrees', function () {
 				solutionTree.root = solutionRootNode;
 				//solutionTree.printTree();
 
-				let answerTree = GeneralTreeFunctions.removeNodeFromTree(startNode7,startTree,startTree.findNodeInNodesUsingNode(startNode7));
+				let answerTree = BinarySearchTreeFunctions.removeNodeFromBSTTree(startNode7,startTree,startTree.findNodeInNodesUsingNode(startNode7));
 				answerTree[0].printTree();
 				//solutionTree.printTree();
 				assert(GeneralTreeFunctions.checkStudentAnswer(answerTree[0],solutionTree));
@@ -296,10 +296,10 @@ describe('TestBinaryTrees', function () {
 				solutionTree2.nodes = [solutionRootNode2,solutionNode21,solutionNode22,solutionNode23,solutionNode24,solutionNode25,solutionNode28];
 				solutionTree2.root = solutionRootNode2;
 
-				let answerTree = GeneralTreeFunctions.removeNodeFromTree(rootNode,startTree,startTree.findNodeInNodesUsingNode(rootNode));
+				let answerTree = BinarySearchTreeFunctions.removeNodeFromBSTTree(rootNode,startTree,startTree.findNodeInNodesUsingNode(rootNode));
 				answerTree[0].printTree();
 				answerTree[1].printTree();
-				assert(answerTree.length === 2);
+				assert.ok(answerTree.length === 2);
 				assert(GeneralTreeFunctions.checkStudentAnswer(answerTree[1],solutionTree1));
 				assert(GeneralTreeFunctions.checkStudentAnswer(answerTree[0],solutionTree2));
 			});
@@ -321,12 +321,12 @@ describe('TestBinaryTrees', function () {
 				it("Get replacement nodes when deleting node 44",function () {
 					let nodelist = GeneralTreeFunctions.getBestReplacementNodes(testNode2);
 					console.log(nodelist);
-					assert(nodelist[0] === testNode4 && nodelist[1] === testNode5);
+					assert.ok(nodelist[0] === testNode4 && nodelist[1] === testNode5);
 				});
 				it("Get replacement nodes when deleting root ",function () {
 					let nodelist = GeneralTreeFunctions.getBestReplacementNodes(rootNode);
 					console.log(nodelist);
-					assert(nodelist[0] === testNode1 && nodelist[1] === testNode3);
+					assert.ok(nodelist[0] === testNode1 && nodelist[1] === testNode3);
 				})
 			});
 
@@ -349,7 +349,7 @@ describe('TestBinaryTrees', function () {
 					parentNode.children[0] = undefined;
 					let treeList = BinarySearchTreeFunctions.createBinarySearchTreeSolution(removedEntries,false,testTree);
 
-					assert(treeList.length === 1);
+					assert.ok(treeList.length === 1);
 					assert(GeneralTreeFunctions.checkStudentAnswer(treeList[0],SolutionTree));
 
 					removedEntries.pop();
@@ -363,7 +363,7 @@ describe('TestBinaryTrees', function () {
 					//SolutionTree.printTree();
 					let treeList2 = BinarySearchTreeFunctions.createBinarySearchTreeSolution(removedEntries,false,testTree);
 
-					assert(treeList2.length === 1);
+					assert.ok(treeList2.length === 1);
 					//treeList2[0].printTree();
 					assert(GeneralTreeFunctions.checkStudentAnswer(treeList2[0],SolutionTree));
 				});
@@ -395,7 +395,7 @@ describe('TestBinaryTrees', function () {
 					let solutionTree2 = new Tree(solutionRoot2);
 					solutionTree2.nodes = [solutionRoot2,node12,node22,node32,node42];
 					let resultTreeList = BinarySearchTreeFunctions.createBinarySearchTreeSolution(removeElements,false,newStartTree);
-					assert(resultTreeList.length === 2);
+					assert.ok(resultTreeList.length === 2);
 					assert(GeneralTreeFunctions.checkStudentAnswer(resultTreeList[0],solutionTree2));
 					assert(GeneralTreeFunctions.checkStudentAnswer(resultTreeList[1],solutionTree1));
 				});
@@ -417,7 +417,7 @@ describe('TestBinaryTrees', function () {
 						solutionNode4.addParent(solutionNode3);
 						solutionTree.nodes = [solutionRoot,solutionNode1,solutionNode2,solutionNode3,solutionNode4];
 						let treeList = BinarySearchTreeFunctions.createBinarySearchTreeSolution(firstTestArray,false,startTree);
-						assert(treeList.length === 2);
+						assert.ok(treeList.length === 2);
 						treeList[1].printTree();
 						assert(GeneralTreeFunctions.checkStudentAnswer(treeList[0],solutionTree));
 						assert(GeneralTreeFunctions.checkStudentAnswer(treeList[1],solutionTree));
@@ -432,7 +432,7 @@ describe('TestBinaryTrees', function () {
 						let solutionTree3 = BinarySearchTreeFunctions.createBinarySearchTreeSolution(solList3,true)[0];
 						let solutionTree4 = BinarySearchTreeFunctions.createBinarySearchTreeSolution(solList4,true)[0];
 						let resultTrees = BinarySearchTreeFunctions.createBinarySearchTreeSolution(secondTestArray,false,startTree);
-						assert(resultTrees.length === 10);
+						assert.ok(resultTrees.length === 10);
 						for (let l=0;l<resultTrees.length;l++) {
 							console.log("Tree " + l);
 							resultTrees[l].printTree();
@@ -470,7 +470,7 @@ describe('TestBinaryTrees', function () {
 		solutionNode8.addParent(solutionNode7);
 		solutionAVLTree.nodes = [solutionRootNode,solutionNode1,solutionNode2,solutionNode3,solutionNode4,solutionNode5,solutionNode6,solutionNode7,solutionNode8];
 		it("Create an AVL tree using only an array of elements", function () {
-			let createdTree = AVLFunctions.createAVLTreeSolution(testarray);
+			let createdTree = AVLFunctions.createAVLTreeSolution(testarray,true)[0];
 			//createdTree.printTree();
 			let solutionRootNode = new BinaryTreeNode(testarray[2]);
 			let solutionTree = new Tree(solutionRootNode);
@@ -495,7 +495,7 @@ describe('TestBinaryTrees', function () {
 		});
 		it("Create an AVL tree using only an existing tree", function () {
 			let defaultBSTTree = BinarySearchTreeFunctions.createBinarySearchTreeSolution(testarray,true)[0];
-			let fullyRotatedTree = AVLFunctions.createAVLTreeSolution([],defaultBSTTree);
+			let fullyRotatedTree = AVLFunctions.createAVLTreeSolution([],true,defaultBSTTree)[0];
 			assert(GeneralTreeFunctions.checkStudentAnswer(fullyRotatedTree,solutionAVLTree));
 		});
 		it("Create an AVL tree using both an existing tree and and an array of elements",function () {
@@ -531,8 +531,66 @@ describe('TestBinaryTrees', function () {
 			solutionNode13.addParent(solutionNode10);
 			solutionTree.root = rootNode;
 			solutionTree.nodes = [rootNode,solutionNode1,solutionNode2,solutionNode3,solutionNode4,solutionNode5,solutionNode6,solutionNode7,solutionNode8,solutionNode9,solutionNode10,solutionNode11,solutionNode12,solutionNode13];
-			let createdAVLTree = AVLFunctions.createAVLTreeSolution(addedElements,startTree);
+			let createdAVLTree = AVLFunctions.createAVLTreeSolution(addedElements,true,startTree)[0];
 			assert(GeneralTreeFunctions.checkStudentAnswer(createdAVLTree,solutionTree));
+		});
+
+		describe("Check Remove AVL Tree", function () {
+			describe("Testing RemoveFunction",function () {
+				let listEntries = [80,34,83,4,85,82,88];
+				let startTree = AVLFunctions.createAVLTreeSolution(listEntries,true)[0];
+				it("Remove a node with no children, the tree should be re-balanced after node deletion",function () {
+					let chosenBinaryNode = startTree.getNodeWithValue(4);
+					let solutionTree = BinarySearchTreeFunctions.createBinarySearchTreeSolution([83,80,34,82,85,88],true)[0];
+					let resultTreeList = AVLFunctions.removeNodeFromAVLTree(chosenBinaryNode,startTree,startTree.findNodeInNodesUsingNode(chosenBinaryNode));
+					assert.ok(resultTreeList.length === 1);
+					//resultTreeList[0].printTree();
+					assert(GeneralTreeFunctions.checkStudentAnswer(resultTreeList[0],solutionTree))
+				});
+				it("Remove a node with no children, the tree should be re-balanced after node deletion",function () {
+					let chosenBinaryNode = startTree.getNodeWithValue(34);
+					let solutionTree = BinarySearchTreeFunctions.createBinarySearchTreeSolution([83,80,4,82,85,88],true)[0];
+					let resultTreeList = AVLFunctions.removeNodeFromAVLTree(chosenBinaryNode,startTree,startTree.findNodeInNodesUsingNode(chosenBinaryNode));
+					assert.ok(resultTreeList.length === 1);
+					//resultTreeList[0].printTree();
+					assert(GeneralTreeFunctions.checkStudentAnswer(resultTreeList[0],solutionTree))
+				});
+				it("Remove a node with no children, the tree should be re-balanced after node deletion",function () {
+					let chosenBinaryNode = startTree.getNodeWithValue(83);
+					let solutionTree = BinarySearchTreeFunctions.createBinarySearchTreeSolution([80,34,4,85,82,88],true)[0];
+					let resultTreeList = AVLFunctions.removeNodeFromAVLTree(chosenBinaryNode,startTree,startTree.findNodeInNodesUsingNode(chosenBinaryNode));
+					assert.ok(resultTreeList.length === 2);
+					//resultTreeList[0].printTree();
+					assert(GeneralTreeFunctions.checkStudentAnswer(resultTreeList[0],solutionTree))
+				});
+			});
+
+			/*describe("Remove a single element and re-balance the AVL tree", function () {
+				let listEntries = [80,34,83,4,85,82,88];
+				let startTree = AVLFunctions.createAVLTreeSolution(listEntries,true)[0];
+				it("Deleting 1 element with no children",function () {
+					let solutionTree = BinarySearchTreeFunctions.createBinarySearchTreeSolution([82,80,34,83,85,88],true)[0];
+					//solutionTree.printTree();
+					let resultTreeList = AVLFunctions.createAVLTreeSolution([4],false,startTree);
+					assert.ok(resultTreeList.length === 1);
+					resultTreeList[0].printTree();
+					assert(GeneralTreeFunctions.checkStudentAnswer(resultTreeList[0],solutionTree))
+
+				});
+				it("Deleting 1 element with 1 child",function () {
+					let solutionTree = BinarySearchTreeFunctions.createBinarySearchTreeSolution([82,80,4,83,85,88],true)[0];
+					//solutionTree.printTree();
+					let resultTreeList = AVLFunctions.createAVLTreeSolution([34],false,startTree);
+					resultTreeList[0].printTree();
+					assert.ok(resultTreeList.length === 1);
+					assert(GeneralTreeFunctions.checkStudentAnswer(resultTreeList[0],solutionTree));
+				});
+				it("Deleting 1 element with 2 children",function () {
+					let solutionTree = BinarySearchTreeFunctions.createBinarySearchTreeSolution([80,34,3,85,82,88],true)[0];
+					solutionTree.printTree();
+					let resultTreeList = AVLFunctions.createAVLTreeSolution([83],false,)
+				})
+			});*/
 		});
 	});
 });

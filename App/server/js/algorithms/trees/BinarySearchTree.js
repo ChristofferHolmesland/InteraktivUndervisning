@@ -80,7 +80,7 @@ module.exports.createBinarySearchTreeSolution = function(elements,add,existingTr
 					let treeIndex = currentTree.findNodeInNodesUsingValue(elements[b]);
 					if (treeIndex !== -1) {
 						let removedNode = currentTree.nodes[treeIndex];
-						newTreeList = GeneralTreeFunctions.removeNodeFromTree(removedNode,currentTree,treeIndex);
+						newTreeList = removeNodeFromBSTTree(removedNode,currentTree,treeIndex);
 						if (newTreeList.length > 1) {
 							treelist.splice(t,1,newTreeList[0],newTreeList[1]);
 							t++;
@@ -97,5 +97,82 @@ module.exports.createBinarySearchTreeSolution = function(elements,add,existingTr
 	}
 	return treelist
 };
+
+function removeNodeFromBSTTree(node,tree,index) {
+	let newTreeList = [];
+	//console.log(node);
+	//console.log(tree);
+	//console.log(index);
+	if (node !== undefined && tree !== undefined && index !== -1) {
+		let newTree = tree.createDuplicateTree();
+		//newTree.printTree();
+		let newNode = newTree.nodes[index];
+		let parent = newNode.parent;
+		if (newNode.childrenAmount === 1) {
+			console.log("1 children");
+			let childrenNode;
+			if (newNode.children[0] !== undefined) childrenNode = newNode.children[0];
+			else childrenNode = newNode.children[1];
+			if (parent === undefined) {
+				newTree.root = childrenNode;
+				childrenNode.parent = undefined;
+			} else {
+				if (parent.children[0] === newNode) parent.children[0] = childrenNode;
+				else parent.children[1] = childrenNode;
+				//console.log(childrenNode.parent);
+				//console.log(parent);
+				childrenNode.parent = parent;
+			}
+			newTree.nodes.splice(index, 1);
+			newTreeList.push(newTree);
+		} else if (newNode.childrenAmount === 2) {
+			console.log("2 children");
+			let tempNodeArray = GeneralTreeFunctions.getBestReplacementNodes(newNode, newTree);
+			for (let t = 0; t < tempNodeArray.length; t++) {
+				let newSubTree = newTree.createDuplicateTree();
+				let tempIndex = newSubTree.findNodeInNodesUsingNode(tempNodeArray[t]);
+				let tempNode = newSubTree.nodes[tempIndex];
+				let tempParent = tempNode.parent;
+				//Set the parent to be undefined in the direction of the tempNode
+
+				if (tempNode.childrenAmount > 0) {
+					let childNode;
+					if (tempNode.children[0] !== undefined) childNode = tempNode.children[0];
+					else childNode = tempNode.children[1];
+					childNode.parent = tempParent;
+					if (tempParent.children[0] === tempNode) tempParent.children[0] = childNode;
+					else tempParent.children[1] = childNode;
+				}else {
+					if (tempParent.children[0] === tempNode) tempParent.children[0] = undefined;	//may cause problems with children amount
+					if (tempParent.children[1] === tempNode) tempParent.children[1] = undefined;
+				}
+				let newSubNode = newSubTree.nodes[newSubTree.findNodeInNodesUsingNode(newNode)];
+				tempNode.children = newSubNode.children;
+				if (newNode.value === newSubTree.root.value) {
+					tempNode.parent = undefined;
+					newSubTree.root = tempNode;
+				}else {
+					tempNode.parent = newSubNode.parent;
+					if (newSubNode.parent.children[0] === newSubNode) newSubNode.parent.children[0] = tempNode;
+					else newSubNode.parent.children[1] = tempNode;
+				}
+				if (newSubNode.children[0] !== undefined) newSubNode.children[0].parent = tempNode;
+				if (newSubNode.children[1] !== undefined) newSubNode.children[1].parent = tempNode;
+
+				newSubTree.nodes[index] = tempNode;
+				newSubTree.nodes.splice(tempIndex, 1);
+				newTreeList.push(newSubTree);
+			}
+		} else {	//no children
+			console.log("No children");
+			if (parent.children[0] === newNode) parent.children[0] = undefined;
+			else parent.children[1] = undefined;
+			newTree.nodes.splice(index, 1);
+			newTreeList.push(newTree);
+		}
+	}
+	return newTreeList
+}
+module.exports.removeNodeFromBSTTree = removeNodeFromBSTTree;
 
 
