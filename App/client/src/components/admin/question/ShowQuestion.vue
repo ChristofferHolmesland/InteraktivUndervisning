@@ -9,12 +9,18 @@
         </b-container>
         <p>{{getLocale.solutionText}}</p>
         <p v-if="question.solutionType === 1">{{question.solution}}</p>
+        <GraphDrawer    v-if="question.solutionType === 4"
+                        controlType="Sort"
+                        sortType="Mergesort"
+                        :steps="question.solution"
+                        operatingMode="Presentation"
+                        />
         <GraphDrawer    v-if="question.solutionType === 5"
                         controlType="Sort"
                         sortType="Quicksort"
                         :steps="question.solution"
                         operatingMode="Presentation"
-        />
+                        />
     </b-modal>
 </template>
 

@@ -27,11 +27,11 @@
                                         :requestAnswer="requestAnswer"
                                         @getTextResponse="getTextValue"
                                         />
-                            <Mergesort v-if="getQuestionType === 4"
-                                    :requestAnswer="requestAnswer"
-                                    @getTextResponse="getTextValue"
-                                    :steps="questionInfo.object.steps"
-                                    />
+                            <Mergesort  v-if="getQuestionType === 4"
+                                        :requestAnswer="requestAnswer"
+                                        @getTextResponse="getTextValue"
+                                        :steps="questionInfo.object.steps"
+                                        />
                             <Quicksort v-if="getQuestionType === 5"
                                 :requestAnswer="requestAnswer"
                                 @getTextResponse="getTextValue"
