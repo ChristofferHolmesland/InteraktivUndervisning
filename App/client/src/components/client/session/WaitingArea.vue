@@ -62,6 +62,20 @@ export default {
 				return this.text + this.emptyLocaleElement;
 			else return this.text;
 		}
+	},
+	watch: {
+		localeElement: function(newElement, oldElement) {	
+			if (this.newElement !== "sessionFinished") {
+				if (this.interval !== undefined) clearInterval(this.interval);
+				this.interval = setInterval(() => {
+					if (this.emptyLocaleElement === "...")
+						this.emptyLocaleElement = "";
+					else this.emptyLocaleElement += ".";
+				}, 500);
+			}
+
+			this.text = this.getLocale[this.localeElement];
+		}
 	}
 };
 </script>

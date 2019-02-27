@@ -19,11 +19,11 @@
                                 v-model="selectedQuestion"
                                 @change="selectedQuestionChanged($event)"
                                 multiple 
-                                :select-size="100" >
+                                :select-size="10" >
                 </b-form-select>
             </b-form-group>
-            <b-form-group>
-                {{ getLocale.selectedQuestions }}
+            {{ getLocale.selectedQuestions }}
+            <b-form-group style="overflow-y: scroll; max-height: 200px;">
                 <b-list-group-item class="border-0" :key="item.value" v-for="item in getCurrentQuestions">
                     {{ item.text }}
                 </b-list-group-item>

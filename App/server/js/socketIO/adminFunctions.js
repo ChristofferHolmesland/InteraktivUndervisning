@@ -26,38 +26,42 @@ let courseListRequestHandler = function(socket, db, user, sessions) {
 
 var currentSession = undefined;
 
-function generateAlgorithmSteps(question) {
-    // Determine sorting function
-    let sorter = undefined;
-    if (question.solutionType === 4) {
-        sorter = algorithms.sorting.mergesort;
-    } else if (question.solutionType === 5) {
-        sorter = algorithms.sorting.quicksort;
-    }
-
-    // Check if the array contains numbers and remove whitespace
-    let isNumbers = true;
-    let elements = question.objects.startingArray.split(",");
-    for (let i = 0; i < elements.length; i++) {
-        elements[i] = elements[i].trim();
-        if (isNaN(Number(elements[i]))) isNumbers = false;
-    }
-    // This is done in a seperate loop, because an array of strings
-    // might contain some elements which are numbers.
-    if (isNumbers) {
-        for (let i = 0; i < elements.length; i++) {
-            elements[i] = Number(elements[i]);
-        }
-    }
-
-    let steppingFunctions = sorter(elements);
-    // Store all the steps in the solution
-    question.objects.startingArray = undefined;
-    question.solution = steppingFunctions;
-    // Assign the first step to the objects, so the user can
-    // manipulate it.
-    question.objects.steps = [steppingFunctions.reset()];
-    return question;
+function generateSolution(question) {
+	let solutionType = question.solutionType;
+	
+	if (solutionType === 1 || solutionType === 2) {
+		return question;
+	}
+	else if (solutionType >= 3 && solutionType <= 5) {
+		// Determine sorting function
+		let sorter = undefined;
+		if (solutionType === 4) sorter = algorithms.sorting.mergesort;
+		else if (solutionType === 5) sorter = algorithms.sorting.quicksort;
+	
+		// Check if the array contains numbers and remove whitespace
+		let isNumbers = true;
+		let elements = question.objects.startingArray.split(",");
+		for (let i = 0; i < elements.length; i++) {
+			elements[i] = elements[i].trim();
+			if (isNaN(Number(elements[i]))) isNumbers = false;
+		}
+		// This is done in a seperate loop, because an array of strings
+		// might contain some elements which are numbers.
+		if (isNumbers) {
+			for (let i = 0; i < elements.length; i++) {
+				elements[i] = Number(elements[i]);
+			}
+		}
+	
+		let steppingFunctions = sorter(elements);
+		// Store all the steps in the solution
+		//question.objects.startingArray = undefined;
+		question.solution = steppingFunctions.getSteps();
+		// Assign the first step to the objects, so the user can
+		// manipulate it.
+		question.objects.steps = [steppingFunctions.reset()];
+	}
+	return question;
 }
 
 module.exports.admin = function(socket, db, user, sessions) {
@@ -276,10 +280,11 @@ module.exports.admin = function(socket, db, user, sessions) {
 		let currentUsers = session.currentUsers;
 
 		session.currentQuestion++;
-		session.questionList[session.currentQuestion].connectedUsers = currentUsers;
 		
 		if (session.currentQuestion < session.questionList.length){
+
 			let question = session.questionList[session.currentQuestion];
+			question.connectedUsers = currentUsers;
 
 			question.timeStarted = Date.now();
 
@@ -336,26 +341,23 @@ module.exports.admin = function(socket, db, user, sessions) {
 					solution: JSON.parse(q.solution),
 					time: q.time,
 					objects: JSON.parse(q.object)
-				})
+				});
+				if (i === questions.length - 1) console.log(result[result.length - 1]);
 			}
 			socket.emit("sendAllQuestionsWithinCourse", result);
 		});
 	});
 
 	socket.on("addNewQuestion", function(question) {
-
-        // If the question being added is of type Quicksort or Mergesort.
-        // The algorithm should generate the solution steps before inserting it into
-        // the database.
-        if (question.solutionType === 4 || question.solutionType === 5) {
-            question = generateAlgorithmSteps(question);
-        }
+		question = generateSolution(question);
 
 		dbFunctions.insert.question(db, question.text, question.description, question.solution, question.time,
 			question.solutionType, question.courseCode, question.objects);
 	});
 
 	socket.on("updateQuestion", function(question) {
+		question = generateSolution(question);
+
 		dbFunctions.update.question(db, question.id, question.text, question.description, question.objects, question.solution, question.solutionType, question.time);
 	});
 

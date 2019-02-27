@@ -69,7 +69,7 @@ export default {
 
 		},
 		changeAnswer(event) {
-			this.selectedAnswer = event.target.id;
+			this.selectedAnswer = Number(event.target.id);
 		},
 
 	},

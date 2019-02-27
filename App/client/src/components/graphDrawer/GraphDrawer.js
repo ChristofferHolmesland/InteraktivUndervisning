@@ -165,7 +165,7 @@ export default class GraphDrawer {
 			Sort: new Sort(this, config.sort),
 			Djikstra: new Djikstra(this, config.djikstra)
 		};
-
+		
 		this.setController(this.controlType);
 	}
 

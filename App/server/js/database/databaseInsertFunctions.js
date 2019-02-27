@@ -39,6 +39,12 @@ const insert = {
 		return createPromise(db, statement, "courseAdmin");
 	},
 	question: function(db, questionText, questionDescription, questionSolution, time, Type, courseCode, questionObject) {
+		console.log("test");
+		console.log(questionSolution);
+		console.log("test");
+		console.log(JSON.stringify(questionSolution));
+		console.log("test");
+
 		if (questionObject === undefined) {
 			return this._questionNoObject(db, questionText, questionDescription, questionSolution, time, Type, courseCode);
 		}

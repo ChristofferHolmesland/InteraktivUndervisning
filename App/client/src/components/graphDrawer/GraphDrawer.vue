@@ -26,7 +26,15 @@
             // Quicksort or Mergesort
             sortType: String,
             // Interactive or Presentation
-            operatingMode: String
+            operatingMode: String,
+            width: {
+                default: 600,
+                type: Number
+            },
+            height: {
+                default: 600,
+                type: Number
+            }
         },
         watch: {
             requestAnswer: function() {
