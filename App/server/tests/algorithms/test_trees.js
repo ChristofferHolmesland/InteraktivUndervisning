@@ -433,7 +433,9 @@ describe('TestBinaryTrees', function () {
 						let solutionTree4 = BinarySearchTreeFunctions.createBinarySearchTreeSolution(solList4,true)[0];
 						let resultTrees = BinarySearchTreeFunctions.createBinarySearchTreeSolution(secondTestArray,false,startTree);
 						assert(resultTrees.length === 10);
-						for (let l=0;l<resultTrees.length;l++){
+						for (let l=0;l<resultTrees.length;l++) {
+							console.log("Tree " + l);
+							resultTrees[l].printTree();
 							if(l === 0 || l === 4)	assert(GeneralTreeFunctions.checkStudentAnswer(resultTrees[l],solutionTree1));
 							else if(l === 1 || l === 5 || l === 6) assert(GeneralTreeFunctions.checkStudentAnswer(resultTrees[l],solutionTree2));
 							else if(l === 2 || l === 7) assert(GeneralTreeFunctions.checkStudentAnswer(resultTrees[l],solutionTree3));

@@ -145,13 +145,12 @@ function removeNodeFromTree(node,tree,index) {
 			let tempNodeArray = getBestReplacementNodes(newNode, newTree);
 			//console.log(tempNodeArray);
 			for (let t = 0; t < tempNodeArray.length; t++) {
+				debugger;
 				let newSubTree = newTree.createDuplicateTree();
 				let tempIndex = newSubTree.findNodeInNodesUsingNode(tempNodeArray[t]);
 				let tempNode = newSubTree.nodes[tempIndex];
 				let tempParent = tempNode.parent;
 				//Set the parent to be undefined in the direction of the tempNode
-				if (tempNode.parent.children[0] === tempNode) tempNode.parent.children[0] = undefined;	//may cause problems with children amount
-				if (tempNode.parent.children[1] === tempNode) tempNode.parent.children[1] = undefined;
 
 				if (tempNode.childrenAmount > 0) {
 					let childNode;
@@ -161,6 +160,9 @@ function removeNodeFromTree(node,tree,index) {
 					if (tempParent.children[0] === tempNode) tempParent.children[0] = childNode;
 					else tempParent.children[1] = childNode;
 					//console.log(childNode);
+				}else {
+					if (tempParent.children[0] === tempNode) tempParent.children[0] = undefined;	//may cause problems with children amount
+					if (tempParent.children[1] === tempNode) tempParent.children[1] = undefined;
 				}
 				let newSubNode = newSubTree.nodes[newSubTree.findNodeInNodesUsingNode(newNode)];
 				tempNode.children = newSubNode.children;
