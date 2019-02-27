@@ -33,6 +33,18 @@ module.exports.listen = function(server, users, db) {
         //--------------------------------------------//
 
         socket.on('disconnect', function(){
+            sessions.forEach(tempSession => {
+                let adminId = tempSession.adminId;
+                if (user.feide.idNumber === adminId) {
+                    tempSession.closeTimeout = setTimeout((function(sessionCode, adminSocket) {
+                        let session = sessions.get(sessionCode);
+                        if (session.adminSocket.id === adminSocket) {
+                            io.sockets.in(sessionCode).emit("answerResponse", "sessionFinished");
+                            sessions.delete(sessionCode);
+                        }
+                    }).bind(this, tempSession.session.sessionCode, tempSession.adminSocket.id), 1000*60*5); // 5 min timeout
+                }
+            });
             if (user) users.delete(user.sessionId);
         });
 

@@ -215,7 +215,6 @@ module.exports.admin = function(socket, db, user, sessions) {
 				currentSession = sessions.get(sessionCode);
 				currentSession.adminSocket = socket;
 				socket.join(sessionCode);
-				console.log(currentSession.session.questionList[currentSession.session.currentQuestion])
 			}
 			if (currentSession.session.currentQuestion > -1) {
 				let session = currentSession.session;
@@ -320,7 +319,6 @@ module.exports.admin = function(socket, db, user, sessions) {
 			"time": firstQuestion.time,
 			"participants": currentSession.session.currentUsers
 		}
-		console.log(currentSession.session.questionList[currentSession.session.currentQuestion]);
 
 		io.to(sessionCode).emit("nextQuestion", safeFirstQuestion);
 	});
