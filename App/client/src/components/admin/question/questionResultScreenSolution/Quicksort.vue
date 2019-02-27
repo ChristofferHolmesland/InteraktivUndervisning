@@ -4,6 +4,8 @@
                 sortType="Quicksort"
                 operatingMode="Presentation"
                 :steps="solution"
+                :height="400"
+                :width="500"
                 />
 </template>
 

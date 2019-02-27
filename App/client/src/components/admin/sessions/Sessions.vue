@@ -38,11 +38,7 @@
 				</b-container>
 			</b-col>
 			<b-col lg="8">
-<<<<<<< HEAD
-				<Session :sessionId="getSelectedSessionId" v-if="selectedSession !== undefined"/>
-=======
 				<Session :session="session" v-if="showSession"/>
->>>>>>> dev
 			</b-col>
 		</b-row>
 	</b-container>
@@ -75,6 +71,11 @@ export default {
 				this.sessionsList = data;
 				this.selectedSession = data[0].id;
 				this.$socket.emit("getSession", this.selectedSession)
+			}
+			else {
+				this.sessionsList = [];
+				this.selectedSession = 0;
+				this.session = {};
 			}
 		},
 		addNewSessionDone() {
