@@ -1,6 +1,6 @@
 const BinaryTreeNode = require("./Tree.js").BinaryTreeNode;
 const Tree = require("./Tree.js").Tree;
-//console.log(Tree);
+
 //Converts object given by the graphDrawer to a tree object, has not been fully tested.
 //the trees should be checked if they are valid after this function is finished
 //This function is going to transform a student's and teacher's drawn tree to a tree object.
@@ -26,7 +26,7 @@ module.exports.createTreeObjectFromCanvasObjectver1 = function(treeCanvas) {
 //Checks to two tree branches whether or not they are the same.
 //Will return true if two trees are the same and false if they are not.
 // Is going to be used to check a students answer with the solution!
-module.exports.checkStudentAnswer = function (studentTree,solutionTree) {
+function checkStudentAnswer(studentTree,solutionTree) {
 	let checkresult = true;
 	if (studentTree.nodes.length === solutionTree.nodes.length) {
 		checkresult = checkNode(studentTree.root,solutionTree.root,checkresult);
@@ -36,9 +36,10 @@ module.exports.checkStudentAnswer = function (studentTree,solutionTree) {
 	//should probably be done in recursive function
 
 	return checkresult
-};
+}
+module.exports.checkStudentAnswer = checkStudentAnswer;
 
-//Traverses the tree looking for the best existing node to add a new given node.
+//Traverses the tree looking for the best existing node to add the new given node.
 //parentNode should initially be the root node.
 function findBestParent(node,parentNode) {
 	let bestParent = parentNode;
@@ -59,6 +60,7 @@ function findBestParent(node,parentNode) {
 }
 module.exports.findBestParent = findBestParent;
 
+//this function returns the maximum height of the given node
 function getHeight (node) {
 	let childrenHeights = [];
 	let maxHeight = 0;
@@ -155,4 +157,19 @@ function getBestReplacementNodes(node) {
 	}
 	return replacementNodes
 }
+
+//function created to remove duplicate solution trees.
+function removeDuplicateTreeResult(treelist) {
+	let newTreelist = [];
+	newTreelist.push(treelist[0]);
+	for (let l=1;l<treelist.length;l++){
+		for (let o=0;o<newTreelist.length;o++){
+			if (!checkStudentAnswer(newTreelist[l],newTreelist[0]))	{
+				newTreelist.push(newTreelist[l]);
+			}
+		}
+	}
+	return newTreelist
+}
+
 module.exports.getBestReplacementNodes = getBestReplacementNodes;

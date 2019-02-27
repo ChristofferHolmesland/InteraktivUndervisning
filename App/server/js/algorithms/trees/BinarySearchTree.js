@@ -84,7 +84,6 @@ module.exports.createBinarySearchTreeSolution = function(elements,add,existingTr
 						if (newTreeList.length > 1) {
 							treelist.splice(t,1,newTreeList[0],newTreeList[1]);
 							t++;
-							//console.log(treelist);
 						}else {
 							treelist.splice(t,1,newTreeList[0]);
 						}
@@ -98,6 +97,8 @@ module.exports.createBinarySearchTreeSolution = function(elements,add,existingTr
 	return treelist
 };
 
+//removes an existing node in a given tree.
+//The operations done on the tree is dependent on how many children the deleted node has.
 function removeNodeFromBSTTree(node,tree,index) {
 	let newTreeList = [];
 	//console.log(node);
@@ -105,7 +106,6 @@ function removeNodeFromBSTTree(node,tree,index) {
 	//console.log(index);
 	if (node !== undefined && tree !== undefined && index !== -1) {
 		let newTree = tree.createDuplicateTree();
-		//newTree.printTree();
 		let newNode = newTree.nodes[index];
 		let parent = newNode.parent;
 		if (newNode.childrenAmount === 1) {
@@ -119,8 +119,6 @@ function removeNodeFromBSTTree(node,tree,index) {
 			} else {
 				if (parent.children[0] === newNode) parent.children[0] = childrenNode;
 				else parent.children[1] = childrenNode;
-				//console.log(childrenNode.parent);
-				//console.log(parent);
 				childrenNode.parent = parent;
 			}
 			newTree.nodes.splice(index, 1);
@@ -133,7 +131,7 @@ function removeNodeFromBSTTree(node,tree,index) {
 				let tempIndex = newSubTree.findNodeInNodesUsingNode(tempNodeArray[t]);
 				let tempNode = newSubTree.nodes[tempIndex];
 				let tempParent = tempNode.parent;
-				//Set the parent to be undefined in the direction of the tempNode
+
 
 				if (tempNode.childrenAmount > 0) {
 					let childNode;
