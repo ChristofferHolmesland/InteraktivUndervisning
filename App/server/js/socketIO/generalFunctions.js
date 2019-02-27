@@ -46,8 +46,8 @@ module.exports.listen = function(server, users, db) {
                         }).bind(this, tempSession.session.sessionCode, tempSession.adminSocket.id), 1000*60*5); // 5 min timeout
                     }
                 });
-            }
-            
+            }            
+
             if (user) users.delete(user.sessionId);
         });
 

@@ -4,8 +4,70 @@ const dbFunctions = require("../database/databaseFunctions.js").dbFunctions;
 module.exports.client = function(socket, db, user, sessions) {
 
     socket.on("verifySessionExists", function(sessionCode) {
-        if (socket.rooms[sessionCode] === undefined) {
+        let session = sessions.get(sessionCode);
+        if (session === undefined) {
             socket.emit("verifySessionExistsError");
+        }
+        else {
+            if (user !== undefined) {
+                if (user.feide !== undefined) {
+                    session = session.session;
+                    let userList = session.userList;
+                    for (let i = 0; i < userList.length; i++) {
+                        if (user.feide.idNumber === userList[i].feide.idNumber) {
+                            socket.join(sessionCode);
+                            console.log(session);
+                            if (session.currentQuestion > -1) {
+                                let answerList = session.questionList[session.currentQuestion].answerList;
+                                let answered = false;
+                                let answer = {}
+                                for (let j = 0; j < answerList.length; j++) {
+                                    console.log(answerList[j]);
+                                }
+
+                                if (answered) {
+                                    
+                                }
+
+                                else {
+                                    let question = session.questionList[session.currentQuestion];
+                    
+                                    let timeLeft = question.time - ((Date.now() - question.timeStarted) / 1000)
+                    
+                                    let safeQuestion = {
+                                        "text": question.text,
+                                        "description": question.description,
+                                        "object": question.object,
+                                        "type": question.type,
+                                        "time": timeLeft,
+                                        "participants": session.currentUsers
+                                    }
+                    
+                                    socket.emit("nextQuestion", safeQuestion);
+
+                                    let adminSocket = sessions.get(sessionCode).adminSocket;
+                        
+                                    adminSocket.emit("updateParticipantCount", session.currentUsers);
+                    
+                                    let numAnswers = question.answerList.length;
+                                    let participants = question.connectedUsers;
+                            
+                                    adminSocket.emit("updateNumberOfAnswers", numAnswers, participants);
+                                }
+                            } else {
+
+                            } 
+                            break;
+                        }
+                    }
+                }
+            }
+            else if (socket.rooms[sessionCode] === undefined) {
+                socket.emit("verifySessionExistsError");
+            }
+            else {
+                socket.emit("verifySessionExistsError");
+            }
         }
     });
 
