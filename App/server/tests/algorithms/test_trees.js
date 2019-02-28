@@ -89,6 +89,84 @@ describe('TestBinaryTrees', function () {
 		})
 	});
 
+	describe('TestCompareNode',function () {
+		it("Test nodes with only value",function () {
+			let binaryNode1 = new BinaryTreeNode(5);
+			let binaryNode2 = new BinaryTreeNode(5);
+			assert(binaryNode1.compareNodes(binaryNode2));
+			assert(binaryNode2.compareNodes(binaryNode1));
+		});
+		it("Failure test for different values", function () {
+			let binaryNode1 = new BinaryTreeNode(5);
+			let binaryNode2 = new BinaryTreeNode(6);
+			assert(!binaryNode1.compareNodes(binaryNode2));
+			assert(!binaryNode2.compareNodes(binaryNode1));
+		});
+		it("Test with parent nodes",function () {
+			let binaryNode1 = new BinaryTreeNode(3);
+			let binaryNode2 = new BinaryTreeNode(4);
+			binaryNode2.addParent(binaryNode1);
+			let binaryNode3 = new BinaryTreeNode(3);
+			let binaryNode4 = new BinaryTreeNode(4);
+			binaryNode4.addParent(binaryNode3);
+			assert(binaryNode2.compareNodes(binaryNode4));
+			assert(binaryNode4.compareNodes(binaryNode2));
+		});
+		it("Test with different parent nodes",function () {
+			let binaryNode1 = new BinaryTreeNode(3);
+			let binaryNode2 = new BinaryTreeNode(4);
+			binaryNode2.addParent(binaryNode1);
+			let binaryNode3 = new BinaryTreeNode(3);
+			let binaryNode4 = new BinaryTreeNode(4);
+			binaryNode3.addParent(binaryNode4);
+			assert(!binaryNode2.compareNodes(binaryNode3));
+			assert(!binaryNode3.compareNodes(binaryNode2));
+		});
+		it("Test with children nodes",function () {
+			let binaryNode1 = new BinaryTreeNode(3);
+			let binaryNode2 = new BinaryTreeNode(4);
+			let binaryNode3 = new BinaryTreeNode(5);
+			binaryNode1.addParent(binaryNode2);
+			binaryNode3.addParent(binaryNode2);
+			let binaryNode4 = new BinaryTreeNode(3);
+			let binaryNode5 = new BinaryTreeNode(4);
+			let binaryNode6 = new BinaryTreeNode(5);
+			binaryNode4.addParent(binaryNode5);
+			binaryNode6.addParent(binaryNode5);
+			assert(binaryNode2.compareNodes(binaryNode5));
+			assert(binaryNode5.compareNodes(binaryNode2));
+		});
+		it("Test with only 1 child",function () {
+			let binaryNode2 = new BinaryTreeNode(4);
+			let binaryNode3 = new BinaryTreeNode(5);
+			binaryNode3.addParent(binaryNode2);
+			let binaryNode5 = new BinaryTreeNode(4);
+			let binaryNode6 = new BinaryTreeNode(5);
+			binaryNode6.addParent(binaryNode5);
+			assert(binaryNode2.compareNodes(binaryNode5));
+			assert(binaryNode5.compareNodes(binaryNode2));
+		});
+		it("Test with different children",function () {
+			let binaryNode2 = new BinaryTreeNode(4);
+			let binaryNode3 = new BinaryTreeNode(3);
+			binaryNode3.addParent(binaryNode2);
+			let binaryNode5 = new BinaryTreeNode(4);
+			let binaryNode6 = new BinaryTreeNode(5);
+			binaryNode6.addParent(binaryNode5);
+			assert(!binaryNode2.compareNodes(binaryNode5));
+			assert(!binaryNode5.compareNodes(binaryNode2));
+		});
+		it("Test with undefined children",function () {
+			let binaryNode2 = new BinaryTreeNode(4);
+			binaryNode2.children[0] = undefined;
+			let binaryNode5 = new BinaryTreeNode(4);
+			let binaryNode6 = new BinaryTreeNode(5);
+			binaryNode6.addParent(binaryNode5);
+			assert(!binaryNode2.compareNodes(binaryNode5));
+			assert(!binaryNode5.compareNodes(binaryNode2));
+		})
+	});
+
 	describe('TestBinarySearchConditions', function () {
 		it("checkBinarySearchTreeTrueConditions", function () {
 			assert(BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(testTree1));
@@ -138,8 +216,8 @@ describe('TestBinaryTrees', function () {
 					testtree[testtree.length-1].children = [];
 				}
 				let solutionTree = new Tree(root,testtree);
-				completelyNewTree.printTree();
-				solutionTree.printTree();
+				//completelyNewTree.printTree();
+				//solutionTree.printTree();
 				assert(GeneralTreeFunctions.checkStudentAnswer(completelyNewTree,solutionTree));
 				//assert(Object.is(completelyNewTree,solutionTree)); //didn't work, not sure if this means the objects does not have the same value.
 			});
@@ -256,7 +334,7 @@ describe('TestBinaryTrees', function () {
 				//solutionTree.printTree();
 
 				let answerTree = BinarySearchTreeFunctions.removeNodeFromBSTTree(startNode7,startTree,startTree.findNodeInNodesUsingNode(startNode7));
-				answerTree[0].printTree();
+				//answerTree[0].printTree();
 				//solutionTree.printTree();
 				assert(GeneralTreeFunctions.checkStudentAnswer(answerTree[0],solutionTree));
 				startTree = answerTree[0];
@@ -297,8 +375,8 @@ describe('TestBinaryTrees', function () {
 				solutionTree2.root = solutionRootNode2;
 
 				let answerTree = BinarySearchTreeFunctions.removeNodeFromBSTTree(rootNode,startTree,startTree.findNodeInNodesUsingNode(rootNode));
-				answerTree[0].printTree();
-				answerTree[1].printTree();
+				//answerTree[0].printTree();
+				//answerTree[1].printTree();
 				assert.ok(answerTree.length === 2);
 				assert(GeneralTreeFunctions.checkStudentAnswer(answerTree[1],solutionTree1));
 				assert(GeneralTreeFunctions.checkStudentAnswer(answerTree[0],solutionTree2));
@@ -418,7 +496,7 @@ describe('TestBinaryTrees', function () {
 						solutionTree.nodes = [solutionRoot,solutionNode1,solutionNode2,solutionNode3,solutionNode4];
 						let treeList = BinarySearchTreeFunctions.createBinarySearchTreeSolution(firstTestArray,false,startTree);
 						assert.ok(treeList.length === 2);
-						treeList[1].printTree();
+						//treeList[1].printTree();
 						assert(GeneralTreeFunctions.checkStudentAnswer(treeList[0],solutionTree));
 						assert(GeneralTreeFunctions.checkStudentAnswer(treeList[1],solutionTree));
 					});
@@ -435,7 +513,7 @@ describe('TestBinaryTrees', function () {
 						assert.ok(resultTrees.length === 10);
 						for (let l=0;l<resultTrees.length;l++) {
 							console.log("Tree " + l);
-							resultTrees[l].printTree();
+							//resultTrees[l].printTree();
 							if(l === 0 || l === 4)	assert(GeneralTreeFunctions.checkStudentAnswer(resultTrees[l],solutionTree1));
 							else if(l === 1 || l === 5 || l === 6) assert(GeneralTreeFunctions.checkStudentAnswer(resultTrees[l],solutionTree2));
 							else if(l === 2 || l === 7) assert(GeneralTreeFunctions.checkStudentAnswer(resultTrees[l],solutionTree3));
@@ -491,8 +569,8 @@ describe('TestBinaryTrees', function () {
 			solutionNode31.addParent(solutionNode30);
 			solutionNode9.addParent(solutionNode20);
 			solutionTree.nodes = [solutionRootNode,solutionNode4,solutionNode3,solutionNode2,solutionNode5,solutionNode20,solutionNode9,solutionNode30,solutionNode31];
-			createdTree.printTree();
-			solutionTree.printTree();
+			//createdTree.printTree();
+			//solutionTree.printTree();
 			assert(GeneralTreeFunctions.checkStudentAnswer(createdTree,solutionTree));
 		});
 		it("Create an AVL tree using only an existing tree", function () {
@@ -588,10 +666,10 @@ describe('TestBinaryTrees', function () {
 				it("Deleting 1 element with 1 child",function () {
 					let listEntries2 = [26,15,14,79,41,96,100];
 					let startTree3 = BinarySearchTreeFunctions.createBinarySearchTreeSolution(listEntries2,true)[0];
-					startTree3.printTree();
+					//startTree3.printTree();
 					let solutionTree = BinarySearchTreeFunctions.createBinarySearchTreeSolution([79,26,14,41,96,100],true)[0];
 					let resultTreeList = AVLFunctions.createAVLTreeSolution([15],false,startTree3);
-					resultTreeList[0].printTree();
+					//resultTreeList[0].printTree();
 					assert.ok(resultTreeList.length === 1);
 					assert(GeneralTreeFunctions.checkStudentAnswer(resultTreeList[0],solutionTree));
 				});
@@ -628,12 +706,21 @@ describe('TestBinaryTrees', function () {
 					let solutionTree = BinarySearchTreeFunctions.createBinarySearchTreeSolution([21,10,92,6,20,46,100],true)[0];
 					let resultTreeList = AVLFunctions.createAVLTreeSolution(removedElements,false,startTree);
 					assert.ok(resultTreeList.length === 10);
-					resultTreeList[0].printTree();
+					//resultTreeList[0].printTree();
 					for (let l=0;l<resultTreeList.length;l++){
 						assert(GeneralTreeFunctions.checkStudentAnswer(resultTreeList[l],solutionTree));
 					}
+					//Removing Duplicates
+					let noDuplicates = GeneralTreeFunctions.removeDuplicateTreeResult(resultTreeList);
+					//resultTreeList[0].printTree();
+					assert.ok(noDuplicates.length === 1);
+					assert(GeneralTreeFunctions.checkStudentAnswer(resultTreeList[0],noDuplicates[0]));
 				})
 			});
 		});
 	});
+
+	describe("Test createTreeObjectFromCanvasObject",function () {
+
+	})
 });

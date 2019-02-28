@@ -103,43 +103,24 @@ function checkNode(studentNode,solutionNode,checkresult) {
 	}else {
 		checkresult = false;
 	}
-
-	if ((solutionNode.children[0] !== undefined || studentNode.children[0] !== undefined) && checkresult) {
+	//The traverse lower into the tree, to check the children nodes
+	if ((solutionNode.children[0] !== undefined && studentNode.children[0] !== undefined) && checkresult) {
 		checkresult = checkNode(studentNode.children[0],solutionNode.children[0],checkresult)
 	}
-	if ((solutionNode.children[1] !== undefined || studentNode.children[1] !== undefined) && checkresult) {
-		checkresult =  checkNode(studentNode.children[1],solutionNode.children[1],checkresult)
+	if ((solutionNode.children[1] !== undefined && studentNode.children[1] !== undefined) && checkresult) {
+		checkresult = checkNode(studentNode.children[1],solutionNode.children[1],checkresult)
+	}
+	//The childrens do not match
+	if ((solutionNode.children[0] !== undefined && studentNode.children[0] === undefined) || (solutionNode.children[0] === undefined && studentNode.children[0] !== undefined)) {
+		checkresult = false
+	}
+	if ((solutionNode.children[1] !== undefined && studentNode.children[1] === undefined) || (solutionNode.children[1] === undefined && studentNode.children[1] !== undefined)) {
+		checkresult =  false
 	}
 
 	return checkresult
 }
 
-
-
-/*function getBestReplacementNodes(node,tree) {
-	let replacementNodes = [];
-	if (node.value > tree.root.value) {
-		//node is in the rightSubTree
-		let rightChild = node.children[1];
-		while(rightChild.children[0] !== undefined) rightChild = rightChild.children[0];
-		replacementNodes.push(rightChild);
-	}else if(node.value < tree.root.value) {
-		//node is in the leftSubTree
-		let leftChild = node.children[0];
-		while (leftChild.children[1] !== undefined) leftChild = leftChild.children[1];
-		replacementNodes.push(leftChild)
-	}else {
-		//node is the root!
-		console.log("The node is the root node");
-		let leftChild = node.children[0];
-		let rightChild = node.children[1];
-		while(leftChild.children[1] !== undefined) leftChild = leftChild.children[1];
-		while(rightChild.children[0] !== undefined) rightChild = rightChild.children[0];
-		replacementNodes.push(leftChild);
-		replacementNodes.push(rightChild);
-	}
-	return replacementNodes
-}*/
 //the node should have 2 children when used
 function getBestReplacementNodes(node) {
 	let replacementNodes = [];
@@ -157,19 +138,19 @@ function getBestReplacementNodes(node) {
 	}
 	return replacementNodes
 }
+module.exports.getBestReplacementNodes = getBestReplacementNodes;
 
 //function created to remove duplicate solution trees.
 function removeDuplicateTreeResult(treelist) {
-	let newTreelist = [];
-	newTreelist.push(treelist[0]);
-	for (let l=1;l<treelist.length;l++){
-		for (let o=0;o<newTreelist.length;o++){
-			if (!checkStudentAnswer(newTreelist[l],newTreelist[0]))	{
-				newTreelist.push(newTreelist[l]);
+	let newTreeList = [];
+	newTreeList.push(treelist[0]);
+	if (treelist.length > 1) {
+		for (let l = 1; l < treelist.length; l++) {
+			for (let o = 0; o < newTreeList.length; o++) {
+				if (!checkStudentAnswer(treelist[l], newTreeList[o])) newTreeList.push(treelist[l]);
 			}
 		}
 	}
-	return newTreelist
+	return newTreeList
 }
-
-module.exports.getBestReplacementNodes = getBestReplacementNodes;
+module.exports.removeDuplicateTreeResult = removeDuplicateTreeResult;

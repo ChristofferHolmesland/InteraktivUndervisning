@@ -89,7 +89,7 @@ class Tree {
 }
 
 class BinaryTreeNode {
-	constructor(value, parentNode,children) {
+	constructor(value, parentNode, children) {
 		this.value = value;
 		this.parent = parentNode;
 		if (children !== undefined) {
@@ -98,6 +98,7 @@ class BinaryTreeNode {
 			this.children = []
 		}
 	}
+
 	addParent(parentNode) {
 		this.parent = parentNode;
 		//left child
@@ -116,20 +117,47 @@ class BinaryTreeNode {
 		}
 	}
 
-	get childrenAmount(){
+	get childrenAmount() {
 		let amount = 0;
 		let leftChild = this.children[0];
 		let rightChild = this.children[1];
-		if (this.children.length === 2){
+		if (this.children.length === 1 || this.children.length === 2) {
 			//console.log(this.children);
 			if (leftChild !== undefined) amount++;
 			if (rightChild !== undefined) amount++
-		}else {
+		}
+		else {
 			amount = this.children.length;
 		}
 		//console.log(amount);
 		return amount;
 	}
+
+	compareNodes(node) {
+		let parent = undefined;
+		//check that the nodes have the same value
+		if (node.value !== this.value) return false;
+		//check that the parents have the same value
+		if (node.parent !== undefined) parent = node.parent;
+		if ((parent !== undefined && this.parent === undefined) || (parent === undefined && this.parent !== undefined)) return false;
+		if (parent !== undefined && this.parent !== undefined) if (parent.value !== this.parent.value) return false;
+
+		//check that the nodes have the same children
+		console.log(node.childrenAmount);
+		console.log(this.childrenAmount);
+		if (node.childrenAmount !== this.childrenAmount) return false;
+		else {
+			let children = node.children;
+			for (let c = 0; c < this.childrenAmount; c++) {
+				if (children[c] !== undefined && this.children[c] !== undefined) {
+					if (children[c].value !== this.children[c].value) return false;
+				} else if (children[c] === undefined && this.children[c] === undefined) {
+				} else return false
+			}
+		}
+		return true
+	}
+
 }
 
 module.exports.Tree = Tree;
