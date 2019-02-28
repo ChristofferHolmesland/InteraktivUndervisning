@@ -239,6 +239,13 @@ export default class GraphDrawer {
 		Must be called by a controller.
 	*/
 	drawStatic() {
+		this.staticContext.clearRect(
+			0,
+			0,
+			this.staticBuffer.width,
+			this.staticBuffer.height
+		);
+
 		for (let i = 0; i < this.steppingButtons.length; i++) {
 			let btn = this.steppingButtons[i];
 			this.staticContext.beginPath();
@@ -311,8 +318,9 @@ export default class GraphDrawer {
 			this.drawContext.moveTo(cx1, cy1);
 			this.drawContext.lineTo(cx2, cy2);
 
-			if (this.edges[i].strokeColor)
+			if (this.edges[i].strokeColor) {
 				this.drawContext.strokeStyle = this.edges[i].strokeColor;
+			}
 			this.drawContext.stroke();
 			this.drawContext.strokeStyle = "black";
 			this.drawContext.closePath();
@@ -361,7 +369,11 @@ export default class GraphDrawer {
 					a.x - headlen * Math.cos(angle + Math.PI / 6),
 					a.y - headlen * Math.sin(angle + Math.PI / 6)
 				);
+				if (this.edges[i].strokeColor) {
+					this.drawContext.strokeStyle = this.edges[i].strokeColor;
+				}
 				this.drawContext.stroke();
+				this.drawContext.strokeStyle = "black";
 			}
 
 			if (this.displayEdgeValues && this.edges[i].v !== undefined) {
@@ -771,7 +783,7 @@ export default class GraphDrawer {
 		};
 
 		let stepForward = () => {
-			if (this.currentStep < numOfSteps - 1) {
+			if (this.currentStep < numOfSteps - 1) {	
 				this.currentStep += 1;
 				this.controllers[this.controlType].parseSteps();
 				this.addSteppingButtons();
@@ -787,7 +799,7 @@ export default class GraphDrawer {
 		});
 		this.steppingButtons.push({
 			data: {
-				text: this.currentStep + 1 + " / " + numOfSteps,
+				text: (this.currentStep + 1) + " / " + numOfSteps,
 				relSize: this.relSize
 			},
 			handler: () => {}
@@ -802,6 +814,7 @@ export default class GraphDrawer {
 
 		this.calculateSteppingButtonsPosition();
 		this.dirty = true;
+		this.drawStatic();
 	}
 
 	calculateSteppingButtonsPosition() {

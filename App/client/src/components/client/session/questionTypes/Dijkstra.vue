@@ -23,6 +23,7 @@ export default {
 	},
 	methods: {
 		gotGraphDrawer: function(result) {
+			console.log("Got response from graphdrawer, sending it to parent");
 			this.$emit("getTextResponse", result);
 		}
 	},
@@ -37,6 +38,7 @@ export default {
 	},
 	watch: {
 		requestAnswer: function() {
+			console.log("Dijkstra got request for getting answer");
 			this.requestAnswerFromGraphDrawer = !this.requestAnswerFromGraphDrawer;
 		}
 	}

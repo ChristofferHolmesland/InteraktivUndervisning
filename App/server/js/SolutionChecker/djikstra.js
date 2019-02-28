@@ -1,6 +1,13 @@
 const check = function(answer, solution) {
     let steps = solution;
 
+    // Remove Initial step from the answer
+    // (can't use splice because the answer object is stored in the db)
+    let copyOfAnswer = [];
+    for (let i = 1; i < answer.length; i++) {
+        copyOfAnswer.push(answer[i]);
+    }
+
     let distanceSteps = [];
     for (let i = 0; i < steps.length; i++) {
         if (steps[i].type == "Distance") {
@@ -8,29 +15,30 @@ const check = function(answer, solution) {
         }
     }
 
-    for (let i = 0; answer.length; i++) {
-        let a = answer[i];
-        let current = a.current;
-        let node = a.node;
+    for (let i = 0; i < copyOfAnswer.length; i++) {
+        let a = copyOfAnswer[i];
+        let current = a.current.v;
+        let node = a.node.v;
 
-        for (let j = 0; j < distanceSteps.length; i++) {
+        let outerFound = false;
+        for (let j = 0; j < distanceSteps.length; j++) {
             let step = distanceSteps[j];
-            if (step.current.v == current.v) {
-                let found = false;
-                for (let k = 0; k < distanceSteps.length; k++) {
-                    let step2 = distanceSteps[k];
-                    if (step2.current.v == current.v && step2.node.v == node.v) {
-                        found = true;
-                        distanceSteps.splice(k, 1);
-                        break;
-                    }
-                }
+            if (step.current == current && step.node == node) {
+                outerFound = true;
+                distanceSteps.splice(j, 1);
+                break;
+            }
 
-                if (!found) return false;
+            if (step.current !== current) {
                 break;
             }
         }
+
+        if (!outerFound) {
+            return false;
+        }
     }
+
     return true;
 }
 

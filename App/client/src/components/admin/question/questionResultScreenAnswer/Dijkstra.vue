@@ -16,6 +16,9 @@ export default {
     props: {
         answer: Array
     },
+    created() {
+        console.log(this.answer)
+    },
     components: {
         GraphDrawer
     }

@@ -100,6 +100,7 @@
         },
 		methods: {
             questionAnswered() {
+                console.log("Asking question object for the answer");
                 this.requestAnswer = !this.requestAnswer;
             },
             questionNotAnswered() {
@@ -107,6 +108,7 @@
             },
             //This is the function that sends the answerobject to the server
             getTextValue(inputText) {
+                console.log("Got answer from child component");
 				this.$socket.emit("questionAnswered", inputText, this.sessionCode);
             },
             exitSession() {

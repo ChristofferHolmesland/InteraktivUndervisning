@@ -24,6 +24,7 @@ export default class Sort {
 			if (this.gd.operatingMode == "Presentation") {
 				this.gd.addSteppingButtons();
 				this.gd.drawStatic();
+				this.parseSteps();
 			}
 		}
 	}
@@ -595,6 +596,12 @@ export default class Sort {
 			this.gd.staticContext.stroke();
 
 			this.gd.staticContext.closePath();
+		}
+
+		// If the operatingMode is Presentation, the stepping buttons
+		// should be drawn.
+		if (this.gd.operatingMode == "Presentation") {
+			this.gd.drawStatic();
 		}
 
 		// Render selected buttons (Mobile)

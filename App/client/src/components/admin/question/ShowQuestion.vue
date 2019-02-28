@@ -21,6 +21,11 @@
                         :steps="question.solution"
                         operatingMode="Presentation"
                         />
+        <GraphDrawer    v-if="question.solutionType === 10"
+                        controlType="Dijkstra"
+                        operatingMode="Presentation"
+                        :steps="question.solution"
+                        />
     </b-modal>
 </template>
 

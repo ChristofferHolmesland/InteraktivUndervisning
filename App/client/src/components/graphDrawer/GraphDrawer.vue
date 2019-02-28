@@ -44,6 +44,7 @@
         },
         watch: {
             requestAnswer: function() {
+                console.log("sending export from graphdrawer to parent");
                 this.$emit("getValueResponse", this.graphDrawer.export());
             }
         },
@@ -66,7 +67,8 @@
                     startColor: "LightGreen",
                     endColor: "LightCoral",
                     edgeColor: "LightGray",
-                    graph: this.graph
+                    graph: this.graph,
+                    steps: this.steps
                 },
 
                 graph: {
