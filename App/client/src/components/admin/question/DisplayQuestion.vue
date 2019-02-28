@@ -23,6 +23,9 @@
                                 <QuicksortSolution  v-if="resultInfo.question.type === 5"
                                                     :solution="resultInfo.solution"
                                                     />
+                                <DijkstraSolution v-if="resultInfo.question.type === 10"
+                                                    :solution="resultInfo.solution"
+                                                    />
                             </div>
 						</b-tab>
 						<b-tab :title="getLocale.answer" v-if="resultInfo.answerList.length > 0">
@@ -38,6 +41,9 @@
                                                     :answer="resultInfo.solution"
                                                     />
                                 <QuicksortAnswer    v-if="resultInfo.question.type === 5"
+                                                    :answer="resultInfo.answerList[selectedAnswer].answerObject"
+                                                    />
+                                <DijkstraAnswer     v-if="resultInfo.question.type === 10"
                                                     :answer="resultInfo.answerList[selectedAnswer].answerObject"
                                                     />
                             </div>
@@ -60,6 +66,9 @@ import MergesortAnswer from "./questionResultScreenAnswer/Mergesort.vue";
 import MergesortSolution from "./questionResultScreenSolution/Mergesort.vue"
 import QuicksortAnswer from "./questionResultScreenAnswer/Quicksort.vue";
 import QuicksortSolution from "./questionResultScreenSolution/Quicksort.vue"
+
+import DijkstraAnswer from "./questionResultScreenAnswer/Dijkstra.vue";
+import DijkstraSolution from "./questionResultScreenSolution/Dijkstra.vue";
 
 export default {
     name: "DisplayQuestion",
@@ -93,7 +102,9 @@ export default {
         MergesortAnswer,
         MergesortSolution,
         QuicksortAnswer,
-        QuicksortSolution
+        QuicksortSolution,
+        DijkstraAnswer,
+        DijkstraSolution
     }
 }
 </script>

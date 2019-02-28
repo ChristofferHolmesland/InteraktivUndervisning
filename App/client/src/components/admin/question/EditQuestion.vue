@@ -45,7 +45,10 @@
                     </b-row>
                 </b-col>
             </b-form-group>
-            <!-- TODO Make it possible to add graph objects to question
+            <!-- TODO Make it possible to add objects to question
+                            - Graphs
+                            - Images
+                            - Tables
             <b-form-group id="objects"
                 label="Objects"
                 label-for="objectsInput">
@@ -119,11 +122,26 @@
                                 v-model="newQuestion.objects.startingArray">
                 </b-form-input>
             </b-form-group>
+            <b-form-group 	
+                    id="dijkstraSolution"
+                    label="Draw the graph, and mark start (green) and end (red) nodes"
+                    v-if="newQuestion.solutionType === 10">
+                <GraphDrawer 
+                    @getValueResponse="gotGraphDrawerObject" 
+                    :requestAnswer="requestGraphDrawerObject" 
+                    controlType="Graph0"
+                    subType="Dijkstra"
+                    exportType="Graph"
+                    operatingMode="Interactive"
+                    />
+            </b-form-group>
         </b-form>
     </b-modal>
 </template>
 
 <script>
+    import GraphDrawer from "../../graphDrawer/GraphDrawer.vue";
+
 	export default {
         data() {
             return {
@@ -136,11 +154,16 @@
                     time: 0,
                     objects: {
                         multipleChoices: [],
-                        startingArray: ""
+                        startingArray: "",
+                        graph: undefined
                     }
                 },
-                solutionTypes: []
+                solutionTypes: [],
+                requestGraphDrawerObject: false
             }
+        },
+        components: {
+            GraphDrawer
         },
         props: {
             elementRef: String,
@@ -151,7 +174,7 @@
             this.$socket.emit("getQuestionTypes");
         },
         methods: {
-            callOkHandler: function() {
+            returnToOkHandler: function() {
                 this.okHandler(this.newQuestion);
                 this.newQuestion = {
                     id: -1,
@@ -162,9 +185,21 @@
                     time: 0,
                     objects: {
                         multipleChoices: [],
-                        startingArray: ""
+                        startingArray: "",
+                        graphs: undefined
                     }
                 };
+            },
+            gotGraphDrawerObject(result) {
+                this.newQuestion.objects.graph = result;
+                this.returnToOkHandler();
+            },
+            callOkHandler: function() {
+                if (this.newQuestion.solutionType == 10) {
+                    this.requestGraphDrawerObject = !this.requestGraphDrawerObject;
+                } else {
+                    this.returnToOkHandler();
+                }
             },
             objectsInputChanged(newObject) {
                 if (newObject == undefined) return;
@@ -183,6 +218,7 @@
 			    else return {};
             },
             getSolutionTypes: function() {
+                console.log(this.solutions);
                 return this.solutionTypes;
             },
             getQuestionObjects: function() {
@@ -198,6 +234,14 @@
                         value: "graph",
                         text: "Graph"
                     },
+                    {
+                        value: "table",
+                        text: "Table"
+                    },
+                    {
+                        value: "image",
+                        text: "Image"
+                    }
                 ]
             },
             timeInput: {

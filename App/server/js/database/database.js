@@ -107,9 +107,21 @@ module.exports.getDB = function setupDatabase() {
                 reject(err);
             })
 
-
-            // TODO add more questionTypes
-            let questionTypes = ["Text", "Multiple choice", "ArraySort", "MergeSort", "QuickSort"];
+            let questionTypes = [
+                "Text", 
+                "Multiple choice", 
+                "Shellsort", 
+                "MergeSort", 
+                "QuickSort",
+                "BinaryTree",
+                "BinarySearchTree",
+                "AVLTree",
+                "Graph",
+                "Dijkstra",
+                "BellmanFord",
+                "BreadthFirstSearch",
+                "Python"
+            ];
             
             await dbFunctions.get.questionTypes(db).then(async (rows) => {
                 for(let i = 0; i < questionTypes.length; i++) {

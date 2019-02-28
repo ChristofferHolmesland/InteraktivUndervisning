@@ -14,7 +14,7 @@
 					:requestAnswer="requestAnswer" 
 					controlType="Sort"
 					sortType="Quicksort"
-					operatingMode="Interactive"
+					operatingMode="Presentation"
 					:steps="steps" />
 				<b-button @click="requestAnswer = !requestAnswer" >Export</b-button>
 				</b-col>

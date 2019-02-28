@@ -136,6 +136,9 @@ module.exports.client = function(socket, db, user, sessions) {
             }
         }
 
+        console.log("Storing answer object");
+        console.log(answerObject);
+
         let information = {
             answer: answerObject, 
             userId: 1, 
