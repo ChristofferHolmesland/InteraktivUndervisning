@@ -44,7 +44,6 @@
         },
         watch: {
             requestAnswer: function() {
-                console.log("sending export from graphdrawer to parent");
                 this.$emit("getValueResponse", this.graphDrawer.export());
             }
         },

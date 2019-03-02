@@ -70,11 +70,11 @@ class User {
                         users.set(sessionId, user);
                     }).catch((err) => {
                         user = undefined;
-                        console.log(err);
+                        console.error(err);
                         return;
                     });
                 }).catch((err) => {
-                    console.log(err);
+                    console.error(err);
                     user = undefined;
                 })
                 return user;

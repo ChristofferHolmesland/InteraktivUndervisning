@@ -100,9 +100,7 @@ export default {
 			this.$socket.emit("addNewSession", newSession);
 		},
 		courseChanged: function(newCourse) {
-
 			let c = newCourse.split(" ");
-			console.log(c);
 			this.$socket.emit("getSessions", {code: c[0], semester: c[1]});
 		}
 	},

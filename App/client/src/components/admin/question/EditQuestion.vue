@@ -218,7 +218,6 @@
 			    else return {};
             },
             getSolutionTypes: function() {
-                console.log(this.solutions);
                 return this.solutionTypes;
             },
             getQuestionObjects: function() {

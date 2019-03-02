@@ -14,7 +14,6 @@ let checkers = {
 const solutionChecker = {
     checkAnswer: function(answer, solution, type) {
         if (checkers[type] !== undefined) {
-            console.log("Calling check function on solution checker");
             return checkers[type].check(answer, solution);
         }
         else return false;
