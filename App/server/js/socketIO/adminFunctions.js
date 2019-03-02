@@ -20,7 +20,7 @@ let courseListRequestHandler = function(socket, db, user, sessions) {
 		}
 		socket.emit("courseListResponse", result);
 	}).catch((err) => {
-		console.log(err);
+		console.error(err);
 	});
 }
 
@@ -89,7 +89,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 		dbFunctions.get.allSessionWithinCourse(db, course.code, course.semester).then((sessions) => {
 			socket.emit("getSessionsResponse", sessions);
 		}).catch((err) => {
-			console.log(err);
+			console.error(err);
 		});
 	});
 
@@ -195,7 +195,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 			
 			socket.emit("initializeSessionResponse", sessionCode);
 		}).catch((err) => {
-			console.log(err);
+			console.error(err);
 			socket.emit("initializeSessionErrorResponse", "error2");
 		});
 	});
@@ -215,7 +215,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 
 			socket.emit("sessionOverviewResponse", response);
 		}).catch((err) => {
-			console.log(err);
+			console.error(err);
 			socket.emit("sessionOverviewErrorResponse");
 		});
 	});
@@ -355,7 +355,8 @@ module.exports.admin = function(socket, db, user, sessions) {
 					time: q.time,
 					objects: JSON.parse(q.object)
 				});
-				if (i === questions.length - 1) console.log(result[result.length - 1]);
+				// TODO: Remove this?
+				//if (i === questions.length - 1) console.log(result[result.length - 1]);
 			}
 			socket.emit("sendAllQuestionsWithinCourse", result);
 		});
@@ -363,8 +364,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 
 	socket.on("addNewQuestion", function(question) {
 		question = generateSolution(question);
-		console.log(question);
-
+		
 		dbFunctions.insert.question(db, question.text, question.description, question.solution, question.time,
 			question.solutionType, question.courseCode, question.objects);
 	});

@@ -1090,8 +1090,6 @@ export default class Sort {
 				// Quicksort shouldn't show the merge step
 				//if (this.sortType == "Quicksort") continue;
 				if (step.list1 == undefined || step.list2 == undefined) {
-					console.log("Continue because something is undefined");
-					console.log(step);
 					continue;
 				}
 

@@ -34,7 +34,7 @@ module.exports.feide = function(socket, db, user){
                 if (correct === undefined) result.totalCorrectAnswers = 0;
                 else result.totalCorrectAnswers = correct;
             }).catch((err) => {
-                console.log(err);
+                console.error(err);
                 result.totalCorrectAnswers = "Not available at this time."
             });
 
@@ -43,20 +43,20 @@ module.exports.feide = function(socket, db, user){
                 if (incorrect === undefined) result.totalIncorrectAnswers = 0;
                 else result.totalIncorrectAnswers = incorrect;
             }).catch((err) => {
-                console.log(err);
+                console.error(err);
                 result.totalIncorrectAnswers = "Not available at this time."
             });
 
             await dbFunctions.get.amountAnswersForUserByResult(db, {id: user.feide.idNumber, type: "feide"}, -1).then((incorrect) => {
                 if (incorrect !== undefined) result.totalIncorrectAnswers += incorrect;
             }).catch((err) => {
-                console.log(err);
+                console.error(err);
                 result.totalIncorrectAnswers = "Not available at this time."
             });
 
             socket.emit("getUserStatsResponse", result);
         }).catch((err) => {
-            console.log(err);
+            console.error(err);
         });
     });
 }
@@ -72,7 +72,7 @@ async function sendUserInfo(db, socket, user) {
     await dbFunctions.get.adminSubjects(db, user.feide.idNumber).then((adminSubjects) => {
         response.adminSubjects = adminSubjects
     }).catch((err) => {
-        console.log(err);
+        console.error(err);
     });
 
     socket.emit("clientLoginInfoResponse", response);
