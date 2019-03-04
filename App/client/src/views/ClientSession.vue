@@ -15,6 +15,7 @@ import Question from "../components/client/session/Question.vue";
 
 export default {
 	name: "ClientSession",
+	props: ["sessionCode"],
 	data() {
 		return {
 			sessionState: 0,
@@ -24,8 +25,8 @@ export default {
 	},
 	created() {
 		this.$socket.emit("verifyUserLevel", 1);
+		this.$socket.emit("verifySessionExists", this.sessionCode);
 	},
-	props: ["sessionCode"],
 	computed: {
 		getSessionState() {
 			return this.sessionState;
@@ -46,6 +47,9 @@ export default {
 		finishSessionResponse(localeElement) {
 			this.localeElement = localeElement;
 			this.sessionState = 0;
+		},
+		verifySessionExistsError() {
+			this.$router.push("/client");
 		}
 	},
 	components: {

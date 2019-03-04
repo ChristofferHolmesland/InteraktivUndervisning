@@ -174,7 +174,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 	});
 
 	socket.on("initializeSession", function(sessionId){
-		if(currentSession != undefined) socket.emit("initializeSessionErrorResponse", "error1")
+		if(currentSession != undefined) socket.emit("initializeSessionErrorResponse", "You are already running a session with the code: " + currentSession.session.id);
 		dbFunctions.get.sessionById(db, sessionId).then(async (sessionInformation) => {
 			let sessionCode = generalFunctions.calculateSessionCode(sessions);
 			socket.join(sessionCode);
@@ -183,20 +183,22 @@ module.exports.admin = function(socket, db, user, sessions) {
 			let questionList = [];
 			for(let i = 0; i < questions.length; i++){
 				let tempQuestion = questions[i];
+				tempQuestion.resultScreen = false;
 				questionList.push(new question(tempQuestion.id, tempQuestion.text, tempQuestion.description, JSON.parse(tempQuestion.object), JSON.parse(tempQuestion.solution), tempQuestion.type, tempQuestion.time, tempQuestion.sqId));
 			}
 
 			currentSession = {session: new session(sessionInformation.id, sessionInformation.name,
 											sessionInformation.status, [], sessionInformation.courseSemester,
 											sessionInformation.courseName, questionList, sessionCode),
-								adminSocket: socket}
+								adminSocket: socket,
+								adminId: user.feide.idNumber}
 			
 			sessions.set(sessionCode, currentSession);
 			
 			socket.emit("initializeSessionResponse", sessionCode);
 		}).catch((err) => {
 			console.error(err);
-			socket.emit("initializeSessionErrorResponse", "error2");
+			socket.emit("initializeSessionErrorResponse", "Something went wrong, please try again later!");
 		});
 	});
 
@@ -220,8 +222,96 @@ module.exports.admin = function(socket, db, user, sessions) {
 		});
 	});
 	
-	socket.on("startSessionWaitingRoom", function() {
-		socket.emit("startSessionWaitingRoomResponse");
+	socket.on("startSessionWaitingRoom", function(sessionCode) {
+		if (sessions.get(sessionCode) === undefined) {
+			socket.emit("startSessionError");
+		}
+		else {
+			if (currentSession === undefined || currentSession.adminId === user.feide.idNumber){
+				currentSession = sessions.get(sessionCode);
+				currentSession.adminSocket = socket;
+				socket.join(sessionCode);
+			}
+			if (currentSession.session.currentQuestion > -1) {
+				let session = currentSession.session;
+				let currentUsers = session.currentUsers;
+		
+				if (session.currentQuestion < session.questionList.length){
+					let question = session.questionList[session.currentQuestion];
+					question.connectedUsers = currentUsers;
+					
+					let timeLeft = question.time;
+					if (question.time > 0)
+						timeLeft = question.time - ((Date.now() - question.timeStarted) / 1000);
+
+					let safeQuestion = {
+						"text": question.text,
+						"description": question.description,
+						"object": question.object,
+						"type": question.type,
+						"time": timeLeft,
+						"participants": session.currentUsers
+					}
+
+					socket.emit("nextQuestion", safeQuestion)
+
+					if (session.currentQuestion > -1) {
+						let numAnswers = question.answerList.length;
+						let participants = question.connectedUsers;
+						if(numAnswers === participants) {
+							let answerList = [];
+							if (question.answerList) answerList = question.answerList;
+					
+							let filteredAnswerList = [];
+							let correctAnswer = 0;
+							let incorrectAnswer = 0;
+							let didntKnow = 0;
+							
+							for (let i = 0; i < answerList.length; i++) {
+								let answer = answerList[i];
+								let filteredAnswer = {};
+								if (answer.result === 0) {
+									filteredAnswer.answerObject = answer.answerObject;
+									filteredAnswerList.push(filteredAnswer)
+									incorrectAnswer++;
+								};
+								if (answer.result === -1) didntKnow++; 
+								if (answer.result === 1) correctAnswer++;
+							}
+					
+							let response = {
+								question: {
+									text: question.text,
+									description: question.description,
+									object: question.object,
+									type: question.type
+								},
+								solution: question.solution,
+								answerList: filteredAnswerList,
+								correctAnswer: correctAnswer,
+								incorrectAnswer: incorrectAnswer,
+								didntKnow: didntKnow,
+								users: answerList.length
+							};
+
+							socket.emit("goToQuestionResultScreen", response);
+						}
+						else {
+							socket.emit("updateNumberOfAnswers", numAnswers, participants);
+						}
+					}
+				} else {
+					socket.to(session.sessionCode).emit("answerResponse", "sessionFinished");
+					socket.emit("endSessionScreen");
+
+					sessions.delete(session.sessionCode);
+				}
+			}
+			else {
+				socket.emit("startSessionWaitingRoomResponse");
+				socket.emit("updateParticipantCount", currentSession.session.currentUsers);
+			}
+		}
 	});
 
 	socket.on("startSession", function(sessionCode) {
@@ -250,9 +340,13 @@ module.exports.admin = function(socket, db, user, sessions) {
 	});
 
 	socket.on("forceNextQuestion", function() {
-		let question = currentSession.session.questionList[currentSession.session.currentQuestion];
+		let session = currentSession.session;
+		let question = session.questionList[session.currentQuestion];
+		question.resultScreen = true;
 		let answerList = [];
 		if (question.answerList) answerList = question.answerList;
+		console.log("test");
+		console.log(question);
 
 		let filteredAnswerList = [];
 		let correctAnswer = 0;

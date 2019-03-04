@@ -41,6 +41,9 @@ export default {
 		},
 		endSessionScreen() {
 			this.state = 4;
+		},
+		startSessionError() {
+			this.$router.push("/admin");
 		}
 	},
 	components: {

@@ -133,7 +133,8 @@
         "betweenQuestionsCorrect": "You have answered and your answer was correct!\nWaiting for admin to start the next question",
         "betweenQuestionsIncorrect": "You have answered and your answer was incorrect!\nYou can check your answer towards the solution after the session is over.\nWaiting for admin to start the next question",
         "betweenQuestionsNotAnswered": "You answered \"I don't know\"!\nYou can check the solution after the session is over.\nWaiting for admin to start the next question",
-        "sessionFinished": "The session is over!\nAll your answers are stored and you can view them with the solution back at the dashboard if you haven't logged in as anonomously."
+        "sessionFinished": "The session is over!\nAll your answers are stored and you can view them with the solution back at the dashboard if you haven't logged in as anonomously.",
+        "waitingForAdmin": "Waiting for admin to start the next question"
     },
     "JoinSession": {
         "title": "Quick join session!",
