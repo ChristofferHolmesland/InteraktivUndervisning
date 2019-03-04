@@ -1,8 +1,21 @@
+let checkers = {
+    1: require("./text.js"),
+    2: require("./multipleChoice.js"),
+    3: require("./text.js"),
+    4: require("./mergesort.js"),
+    5: require("./quicksort.js"),
+    6: require("./solutionCheckerBinaryTree.js"),
+    7: require("./solutionCheckerBinaryTree.js"),
+    8: require("./solutionCheckerBinaryTree.js"),
+    9: require("./text.js"),
+    10: require("./djikstra.js"),
+};
+
 const solutionChecker = {
     checkAnswer: function(answer, solution, type) {
-        if (type === 1) return require("./solutionCheckerText.js").textChecker(answer, solution);
-        else if (type === 2) return require("./solutionCheckerMultipleChoice.js").multipleChoiceChecker(answer, solution);
-        else if (type === 6 || type=== 7 || type === 8) return require("./solutionCheckerBinaryTree.js").BinaryTreeChecker(answer,solution);   //not sure if trees are going to be type 3 or 4, 3 = BinaryTree & 4 = BinarySearchTree||AVLTree
+        if (checkers[type] !== undefined) {
+            return checkers[type].check(answer, solution);
+        }
         else return false;
     }
 };

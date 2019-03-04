@@ -19,7 +19,6 @@ export default {
         let that = this;
         dataBus.$on("localeLoaded", function(){
             that.locale = dataBus.locale["401"];
-            console.log(that.locale);
         });
     },
     methods: {

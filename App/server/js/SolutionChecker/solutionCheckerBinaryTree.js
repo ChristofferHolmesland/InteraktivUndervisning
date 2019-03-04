@@ -1,7 +1,7 @@
 const BinaryTreeFunctions = require("../algorithms/trees/BinaryTree.js");
 const GeneralTreeFunctions = require("../algorithms/trees/GeneralTreeFunctions.js");
 
-const BinaryTreeChecker = function (answerTree,type,solution) {
+const check = function (answerTree,type,solution) {
 	//assuming the solution is created and is given as a parameter.
 	//Pretty sure that there is no reason to check the BinarySearchTree and AVL conditions, since the only way to  result = true is when the answer===solution.
 	let result = false;
@@ -21,4 +21,4 @@ const BinaryTreeChecker = function (answerTree,type,solution) {
 	return result
 };
 
-module.exports.BinaryTreeChecker = BinaryTreeChecker;
+module.exports.check = check;

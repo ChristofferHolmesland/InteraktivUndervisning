@@ -26,7 +26,9 @@
                         <b-col>
                             <b-form-input   id="questionTimeInput"
                                             type="time"
-                                            v-model="timeInput">
+                                            v-model="timeInput"
+                                            min="00:00"
+                                            max="10:00">
                             </b-form-input>
                         </b-col>
                     </b-row>
@@ -36,13 +38,17 @@
                                             type="range"
                                             v-model="newQuestion.time"
                                             min="0"
-                                            max="600">
+                                            max="600"
+                                            step="15">
                             </b-form-input>
                         </b-col>
                     </b-row>
                 </b-col>
             </b-form-group>
-            <!-- TODO Make it possible to add graph objects to question
+            <!-- TODO Make it possible to add objects to question
+                            - Graphs
+                            - Images
+                            - Tables
             <b-form-group id="objects"
                 label="Objects"
                 label-for="objectsInput">
@@ -107,11 +113,35 @@
                     </b-row>
                 </b-col>
             </b-form-group>
+            <b-form-group 	id="sortingSolution"
+                            label="Starting array (elements seperated by ,)"
+                            label-for="solutionInput"
+                            v-if="newQuestion.solutionType === 4 || newQuestion.solutionType === 5">
+                <b-form-input 	id="solutionInput"
+                                type="text"
+                                v-model="newQuestion.objects.startingArray">
+                </b-form-input>
+            </b-form-group>
+            <b-form-group 	
+                    id="dijkstraSolution"
+                    label="Draw the graph, and mark start (green) and end (red) nodes"
+                    v-if="newQuestion.solutionType === 10">
+                <GraphDrawer 
+                    @getValueResponse="gotGraphDrawerObject" 
+                    :requestAnswer="requestGraphDrawerObject" 
+                    controlType="Graph0"
+                    subType="Dijkstra"
+                    exportType="Graph"
+                    operatingMode="Interactive"
+                    />
+            </b-form-group>
         </b-form>
     </b-modal>
 </template>
 
 <script>
+    import GraphDrawer from "../../graphDrawer/GraphDrawer.vue";
+
 	export default {
         data() {
             return {
@@ -122,10 +152,18 @@
               		solutionType: "",
                     solution: "",
                     time: 0,
-                    objects: {multipleChoices: []}
+                    objects: {
+                        multipleChoices: [],
+                        startingArray: "",
+                        graph: undefined
+                    }
                 },
-                solutionTypes: []
+                solutionTypes: [],
+                requestGraphDrawerObject: false
             }
+        },
+        components: {
+            GraphDrawer
         },
         props: {
             elementRef: String,
@@ -136,8 +174,32 @@
             this.$socket.emit("getQuestionTypes");
         },
         methods: {
-            callOkHandler: function() {
+            returnToOkHandler: function() {
                 this.okHandler(this.newQuestion);
+                this.newQuestion = {
+                    id: -1,
+                    text: "",
+                    description: "", 
+              		solutionType: "",
+                    solution: "",
+                    time: 0,
+                    objects: {
+                        multipleChoices: [],
+                        startingArray: "",
+                        graphs: undefined
+                    }
+                };
+            },
+            gotGraphDrawerObject(result) {
+                this.newQuestion.objects.graph = result;
+                this.returnToOkHandler();
+            },
+            callOkHandler: function() {
+                if (this.newQuestion.solutionType == 10) {
+                    this.requestGraphDrawerObject = !this.requestGraphDrawerObject;
+                } else {
+                    this.returnToOkHandler();
+                }
             },
             objectsInputChanged(newObject) {
                 if (newObject == undefined) return;
@@ -171,6 +233,14 @@
                         value: "graph",
                         text: "Graph"
                     },
+                    {
+                        value: "table",
+                        text: "Table"
+                    },
+                    {
+                        value: "image",
+                        text: "Image"
+                    }
                 ]
             },
             timeInput: {
@@ -182,7 +252,19 @@
                 },
                 set: function(newTime) {
                     let time = newTime.split(":");
-                    this.newQuestion.time = Number(time[0]) * 60 + Number(time[1]);
+
+                    let h = Number(time[0]);
+                    let s = Number(time[1]);
+
+                    if (h > 10) {
+                        h = 10;
+                        s = 0;
+                    } else if (h < 0) {
+                        h = 0;
+                        s = 0;
+                    }
+
+                    this.newQuestion.time = h * 60 + s;
                 }
             }
         },
@@ -192,11 +274,9 @@
             }
         },
         watch: {
-            newQuestion: {
-                solution: function() {
-                    if (this.newQuestion.solutionType === 1) this.newQuestion.solution = "";
-                    else if (this.newQuestion.solutionType === 2) this.newQuestion.solution = [];
-                }
+            "newQuestion.solutionType": function() {
+                if (this.solutionType === 1) this.newQuestion.solution = "";
+                else if (this.solutionType === 2) this.newQuestion.solution = [];
             }
         },
     }

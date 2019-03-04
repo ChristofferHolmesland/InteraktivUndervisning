@@ -20,6 +20,30 @@
         created() {
             this.selectedCourse = this.$store.getters.getSelectedCourse;
         },
+        watch: {
+            _watcherSelectedCourse: function(newCourse, oldCourse) {
+                if (newCourse != oldCourse) {
+                    this.selectedCourse = newCourse;
+                }
+            },
+            getCourseOptions: function(newList, oldList) {
+                let changed = false;
+                if (newList.length !== oldList.length) changed = true;
+                else {
+                    for (let i = 0; i < newList.length; i++) {
+                        if (newList[i] !== oldList[i]) {
+                            changed = true;
+                            break;
+                        }
+                    }
+                }
+                if (changed) {
+                    if (oldList.length > 0 && newList.length > oldList.length)
+                        this.selectedCourseChanged(newList[newList.length - 1].value);
+                    else this.selectedCourseChanged(newList[0].value);
+                }
+            }
+        },
         methods: {
             selectedCourseChanged(event) {
                 this.$store.commit("setSelectedCourse", event);
@@ -32,6 +56,9 @@
         computed: {
             getCourseOptions: function() {
                 return this.$store.getters.getCourseOptions;
+            },
+            _watcherSelectedCourse() {
+                return this.$store.getters.getSelectedCourse;
             }
         }
     }

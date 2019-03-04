@@ -10,10 +10,7 @@ export default new Vuex.Store({
 			feideId: "",
 			userRights: ""
 		},
-		adminSubjects: [
-			{ subjectName: "DAT110", userRights: 3 },
-			{ subjectName: "DAT200", userRights: 4 }
-		],
+		adminSubjects: [],
 		loggedIn: false,
 		locale: {
 			locale: undefined,
@@ -27,6 +24,7 @@ export default new Vuex.Store({
 			state.selectedCourse = data;
 		},
 		setCourseList(state, data) {
+			if (data.length === 0) return;
 			state.selectedCourse = data[0].value;
 			state.courseList = data;
 		},
@@ -40,8 +38,10 @@ export default new Vuex.Store({
 				state.user.feideId = "";
 				state.user.userRights = 0;
 				state.loggedIn = false;
+				state.adminSubjects = [];
 				return;
 			}
+			if (data.adminSubjects) state.adminSubjects = data.adminSubjects;
 			if (data.username) state.user.username = data.username;
 			if (data.feideId) state.user.feideId = data.feideId;
 			if (data.userRights) state.user.userRights = data.userRights;
@@ -62,7 +62,10 @@ export default new Vuex.Store({
 			if (data.userRights) response.userRights = state.user.userRights;
 			if (data.loggedIn) response.loggedIn = state.loggedIn;
 			if (data.adminSubjects) {
-				if (state.user.userRights > 1 && state.adminSubjects.length > 0) {
+				if (
+					state.user.userRights > 1 &&
+					state.adminSubjects.length > 0
+				) {
 					response.adminSubjects = state.adminSubjects;
 				}
 			}

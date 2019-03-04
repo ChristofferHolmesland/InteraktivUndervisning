@@ -1,4 +1,8 @@
-function quicksort(unsortedList, typePivot) {
+module.exports = function(unsortedList, typePivot) {
+    if (typePivot === undefined) {
+        typePivot = 3;
+    }
+
     currentStep = 0;
     let steps = [
     ]
@@ -53,10 +57,10 @@ function quicksort(unsortedList, typePivot) {
 
         steps.push({
             type: "Merge",
-            leftSorted: leftSorted,
-            rightSorted: rightSorted,
+            list1: leftSorted,
+            list2: rightSorted,
             pivot: pivot,
-            sorted: sorted
+            merged: sorted
         })
 
         return sorted
@@ -67,6 +71,9 @@ function quicksort(unsortedList, typePivot) {
     return {
         isSorted: function() {
             return currentStep === steps.length - 1;
+        },
+        get: function() {
+            return steps[currentStep];
         },
         step: function() {
             if (currentStep < steps.length - 1)
@@ -85,6 +92,12 @@ function quicksort(unsortedList, typePivot) {
         reset: function() {
             currentStep = 0;
             return steps[currentStep];
+        },
+        getSteps: function() {
+            return steps;
+        },
+        setSteps: function(steps) {
+            steps = steps;
         }
     }
 }

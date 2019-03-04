@@ -12,8 +12,8 @@ const update = {
 		let statement = `UPDATE Question 
 						 SET text = '${questionText}', 
     					 description = '${questionDescription}', 
-    					 object = '${questionObject}', 
-    					 solution = '${questionSolution}',
+    					 object = '${JSON.stringify(questionObject)}', 
+    					 solution = '${JSON.stringify(questionSolution)}',
     					 time = ${time}, 
     					 questionType = ${questionType} 
 						 WHERE id = ${id};`;
@@ -35,6 +35,12 @@ const update = {
 						 AND courseSemester = '${courseSemester}'
 						 AND courseCode = '${courseCode}'`;
 		return createPromise(db, statement, "userRightsLevelByFeideId");
+	},
+	feideSessionId: function(db, id, sessionId) {
+		let statement = `UPDATE Feide
+						SET sessionId = '${sessionId}'
+						WHERE id = '${id}'`;
+		return createPromise(db, statement, "feideSessionId");
 	}
 };
 

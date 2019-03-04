@@ -128,7 +128,6 @@
 				this.$refs.addQuestionToSessionModal.$refs.innerModal.show();
 			},
 			addNewQuestionHandler: function(newQuestion) {
-				console.log(newQuestion);
 				if (newQuestion.time === 0) newQuestion.time = -1;
 				this.$socket.emit("addNewQuestion", Object.assign({}, newQuestion, {courseCode: this.$store.getters.getSelectedCourse.split(" ")[0]}));
 				this.$socket.emit("getAllQuestionsWithinCourse", this.$store.getters.getSelectedCourse.split(" ")[0]);

@@ -1,4 +1,4 @@
-function countingSort(list, max) {
+module.exports = function(list, max) {
     let counter = new Array(max);
 
     for(let i = 0; i < list.length; i++){

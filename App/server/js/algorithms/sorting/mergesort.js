@@ -10,6 +10,10 @@
         limit: List size before insertion sort is performed
 */
 module.exports = function(list, limit) {
+    if (limit == undefined) {
+        limit = 1;
+    }
+
     let currentStep = 0;
     let steps = [
         {
@@ -101,6 +105,9 @@ module.exports = function(list, limit) {
         isSorted: function() {
             return currentStep == steps.length - 1;
         },
+        get: function() {
+            return steps[currentStep];
+        },
         step: function() {
             if (currentStep < steps.length - 1)
                 currentStep++;
@@ -118,6 +125,9 @@ module.exports = function(list, limit) {
         reset: function() {
             currentStep = 0;
             return steps[currentStep];
+        },
+        getSteps: function() {
+            return steps;
         }
     }
 };

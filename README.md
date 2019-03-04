@@ -1,4 +1,18 @@
 # Interaktiv Undervisning
+Interaktiv Undervisning is a web application which lets lecturers ask students questions.
+
+There are many question types to pick from
+1. Text
+2. Multiple-choice
+3. Sorting algorithms
+4. Datastuctures
+5. Python references
+
+The students answer the questions using the GraphDrawer tool. GraphDrawer makes it possible to visually modify datastructures (trees, graphs, ...), or perform algorithms (quicksort, mergesort, djikstra, ...).
+
+The application tries to automatically correct answers. The lecturer will be shown percentages for how many people answered corret. Uncorrect answers can be viewed by the lecturer to show the class where the mistake happened.
+
+Lecturers need to login using their FEIDE account. Students can use their FEIDE account if they want to see statistics from their previous sessions, or login anonymously if they don't want that information.
 
 ## Table of Contents
 1. [Installing / Getting Started](#Installing-/-Getting-Started)
@@ -18,56 +32,43 @@
 ## Installing / Getting Started 
 ### Requirements 
 - [NodeJS](https://nodejs.org/en/)
+- [Dataporten](https://docs.feide.no/) API keys
 
 ### Installation
 - ```git clone https://github.com/ChristofferHolmesland/InteraktivUndervisning.git```
-- ```cd InteraktivUndervisning/App```
+- ```cd InteraktivUndervisning/App/client```
+- ```npm install```
+- ```npm run build```
+- ```cd ../server```
 - ```npm install```
 
 ### Start Commands
-```
-# Copy /env/default.env to /env/<env_name>.env and fill in your keys
-# Set environment variable NODE_ENV=<env_name>
-# Powershell command: $env:NODE_ENV = "<env_name>"
-node server/main.js
-```
+Before the server can be started, environment variables need to be placed in an environment file.
+Copy ```server/env/default.env``` and fill in your keys. Set the NODE_ENV environment variable to match
+the filename of the new file, before starting the server.
+- ```node server/server.js```
 
 ## Developing
-### Dev Requirements
-- [NodeJS](https://nodejs.org/en/)
-- [nodemon]() If you want to autorefresh the server on changes.
+The application is split into two parts, client and server.
 
-### Dev Installation
-Use the same installation guide from [here](#Installation)
-And then run the following commands:
-```
-cd InteraktivUndervisning/App/client
-npm install
-```
+### Client
+The client interface is built using [VueJS](https://vuejs.org/) with VueX and vue-router. The pages are styled using bootstrap-vue, and server communication is done using vue-socket.io.
 
-### Dev Start Commands
-- ```cd InteraktivUndervisning/App/client```
-- Here you can change the client files.
-- When you are finsihed editing the client file, use the command:
-- ```npm run build```
-- This will build the client project in production mode and output the client to the server/public folder
-- or you can use these two commands:
-- ```npm run buildDev``` This will use the dev environment so that you can use the vue ispect extension
-- ```npm run buildDevWatch``` This will do the same as the one over, but it will also auto build on any changes in the client folder.
-
-- When you want to run the server you will use this command from the server folder:
-- ```node server.js```
-- You can also use the last command on the client in combination with nodemon:
-- ```nodemon server.js```
+### Server
+The server is built using NodeJS, ExpressJS and SocketIO.
 
 ## Configuration
 
 ## Tests
+Tests are written in [Mocha](https://mochajs.org/), and can be ran using:
+- ```cd InteraktivUndervisning/App/server```
+- ```npm run test```
+
 
 ## Style guide
-ESLint with prettier plugin
+This project uses [Prettier/ESLint](https://prettier.io/docs/en/eslint.html).
 
 ## Database
-SQLite 3, the schema can be found in the App/server/js/database/database.js file.
+SQLite3, with the [sqlite3](https://www.npmjs.com/package/sqlite3) package.
 
 ## Licensing

@@ -17,7 +17,7 @@ export default {
 	data() {
 		return {
 			localeLoaded: false
-		}
+		};
 	},
 	components: {
 		Navbar
@@ -34,10 +34,10 @@ export default {
 		unauthorizedAccess() {
 			this.$router.push("/401");
 		},
-		deleteCookie(cookieId){
-			document.cookie = cookieId + "=;expires=Thu, 01 Jan 1970 00:00:01 GMT;"	
+		deleteCookie(cookieId) {
+			document.cookie = "sessionId=; Max-Age=0;";
 		},
-		clientLoginInfoResponse(userData){
+		clientLoginInfoResponse(userData) {
 			this.$store.commit("userChange", userData);
 
 			if (userData.userRights > 2) {
@@ -46,7 +46,10 @@ export default {
 		},
 		courseListResponse(courseList) {
 			this.$store.commit("setCourseList", courseList);
+		},
+		serverRestarted() {
+			location.reload(true);
 		}
 	}
-}
+};
 </script>

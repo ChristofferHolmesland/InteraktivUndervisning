@@ -4,7 +4,7 @@
             <b-row>
                 <b-col>
                     <b-tabs>
-                        <b-tab :title="getLocale.question" active>
+                        <b-tab :title="getLocale.question">
                             <b-card :title="getQuestionInfo.text" >
                                 <p v-if="getQuestionInfo.description !== undefined">
                                     {{ getQuestionInfo.description }}
@@ -12,7 +12,7 @@
                                 <!-- TODO add code to include question object if it is there -->
                             </b-card>
                         </b-tab>
-                        <b-tab :title="getLocale.answer">
+                        <b-tab :title="getLocale.answer" active>
                             <TextInput :requestAnswer="requestAnswer"
                                     @getTextResponse="getTextValue"
                                     v-if="getQuestionType === 1"
@@ -27,6 +27,21 @@
                                         :requestAnswer="requestAnswer"
                                         @getTextResponse="getTextValue"
                                         />
+                            <Mergesort  v-if="getQuestionType === 4"
+                                        :requestAnswer="requestAnswer"
+                                        @getTextResponse="getTextValue"
+                                        :steps="questionInfo.object.steps"
+                                        />
+                            <Quicksort v-if="getQuestionType === 5"
+                                :requestAnswer="requestAnswer"
+                                @getTextResponse="getTextValue"
+                                :steps="questionInfo.object.steps"
+                                />
+                            <Dijkstra v-if="getQuestionType === 10"
+                                :requestAnswer="requestAnswer"
+                                @getTextResponse="getTextValue"
+                                :steps="questionInfo.object.steps"
+                                />
                         </b-tab>
                         <b-tab :title="updateTimer" v-if="interval !== undefined" disabled></b-tab>
                     </b-tabs>
@@ -47,6 +62,9 @@
 	import TextInput from "./questionTypes/TextInput.vue";
     import MultipleChoice from "./questionTypes/MultipleChoice.vue";
     import ArraySort from "./questionTypes/sorting/ArraySort.vue";
+    import Mergesort from "./questionTypes/sorting/Mergesort.vue";
+    import Quicksort from "./questionTypes/sorting/Quicksort.vue";
+    import Dijkstra from "./questionTypes/Dijkstra.vue";
     
 	export default {
 		name: "Question",
@@ -89,7 +107,6 @@
             },
             //This is the function that sends the answerobject to the server
             getTextValue(inputText) {
-            	console.log(inputText);
 				this.$socket.emit("questionAnswered", inputText, this.sessionCode);
             },
             exitSession() {
@@ -125,7 +142,10 @@
 		components: {
 			TextInput,
             MultipleChoice,
-            ArraySort
+            ArraySort,
+            Mergesort,
+            Quicksort,
+            Dijkstra
         }
-	}
+	};
 </script>

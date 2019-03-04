@@ -1,5 +1,7 @@
 <template>
-    <b-modal @show="show" :id="elementId" :ref="elementRef" :no-close-on-backdrop="true" :title="getLocale.newSession" @ok="callOkHandler" style="text-align: left;">
+    <b-modal @show="show" :id="elementId" :ref="elementRef" 
+            :no-close-on-backdrop="true" :title="getLocale.newSession" 
+            @ok="callOkHandler" style="text-align: left;">
         <b-form>
             <b-form-group 	id="sessionTitle"
                             :label="getLocale.newSessionTitle"
@@ -9,28 +11,19 @@
                                 v-model="newSession.title">
                 </b-form-input>
             </b-form-group>
-            
-            <!--         TODO: Decide if we want this
-            <b-form-group 	id="course"
-                            :label="getLocale.selectCourse"
-                            label-for="courseSelect">
-                <b-form-select 	id="courseSelect"
-                                :options="getCourseOptions"
-                                v-model="newSession.course"
-                                @change="selectedCourseChanged($event)">
-                </b-form-select> -->
-            </b-form-group>
             <b-form-group 	id="questions"
                             :label="getLocale.selectQuestions"
                             label-for="questionsSelect">
                 <b-form-select 	id="questionsSelect"
                                 :options="getPossibleQuestions"
                                 v-model="selectedQuestion"
-                                @change="selectedQuestionChanged($event)">
+                                @change="selectedQuestionChanged($event)"
+                                multiple 
+                                :select-size="10" >
                 </b-form-select>
             </b-form-group>
-            <b-form-group>
-                {{ getLocale.selectedQuestions }}
+            {{ getLocale.selectedQuestions }}
+            <b-form-group style="overflow-y: scroll; max-height: 200px;">
                 <b-list-group-item class="border-0" :key="item.value" v-for="item in getCurrentQuestions">
                     {{ item.text }}
                 </b-list-group-item>
@@ -51,7 +44,7 @@
                 },
                 courseOptions: [],
                 possibleQuestions: [],
-                selectedQuestion: -1
+                selectedQuestion: []
             }
         },
         props: {
@@ -61,30 +54,24 @@
         },
         methods: {
             show() {
-                let c = event.split(" ");
+                this.newSession.course = this.$store.getters.getSelectedCourse;
+                let c = this.$store.getters.getSelectedCourse.split(" ");
                 this.$socket.emit("getQuestionsInCourse", {code: c[0], semester: c[1]});
             },
             callOkHandler: function() {
                 this.okHandler(this.newSession);
             },
             selectedQuestionChanged: function(event) {
-                let selectedQuestionText = "";
-                for (let i = 0; i < this.possibleQuestions.length; i++) {
-                    let pq = this.possibleQuestions[i];
-                    if (pq.value == event) {
-                        selectedQuestionText = pq.text;
-                        break;
-                    }
-                }
+                for (let i = 0; i < event.length; i++){
+                    let selectedQuestionText = "";
+                    let index = this.possibleQuestions.findIndex(pq => pq.value === event[i]);
+                    selectedQuestionText = this.possibleQuestions[index].text;
 
-                this.newSession.questions.push({
-                    id: event,
-                    text: selectedQuestionText
-                });
-            },
-            selectedCourseChanged: function(event) {
-                let c = event.split(" ");
-                this.$socket.emit("getQuestionsInCourse", {code: c[0], semester: c[1]});
+                    this.newSession.questions.push({
+                        id: event[i],
+                        text: selectedQuestionText
+                    });
+                }
             }
         },
         computed: {
