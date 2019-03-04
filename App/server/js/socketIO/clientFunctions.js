@@ -16,7 +16,6 @@ module.exports.client = function(socket, db, user, sessions) {
                     for (let i = 0; i < userList.length; i++) {
                         if (user.feide.idNumber === userList[i].feide.idNumber) {
                             socket.join(sessionCode);
-                            console.log(session);
                             if (session.currentQuestion > -1) {
                                 let answerList = session.questionList[session.currentQuestion].answerList;
                                 let answered = false;
@@ -31,28 +30,35 @@ module.exports.client = function(socket, db, user, sessions) {
 
                                 else {
                                     let question = session.questionList[session.currentQuestion];
-                    
-                                    let timeLeft = question.time - ((Date.now() - question.timeStarted) / 1000)
-                    
-                                    let safeQuestion = {
-                                        "text": question.text,
-                                        "description": question.description,
-                                        "object": question.object,
-                                        "type": question.type,
-                                        "time": timeLeft,
-                                        "participants": session.currentUsers
-                                    }
-                    
-                                    socket.emit("nextQuestion", safeQuestion);
 
-                                    let adminSocket = sessions.get(sessionCode).adminSocket;
+                                    console.log(question);
+
+                                    if (question.resultScreen) {
+                                        socket.emit("answerResponse", "waitingForAdmin")
+                                    }
+                                    else {                    
+                                        let timeLeft = question.time - ((Date.now() - question.timeStarted) / 1000)
                         
-                                    adminSocket.emit("updateParticipantCount", session.currentUsers);
-                    
-                                    let numAnswers = question.answerList.length;
-                                    let participants = question.connectedUsers;
+                                        let safeQuestion = {
+                                            "text": question.text,
+                                            "description": question.description,
+                                            "object": question.object,
+                                            "type": question.type,
+                                            "time": timeLeft,
+                                            "participants": session.currentUsers
+                                        }
+                        
+                                        socket.emit("nextQuestion", safeQuestion);
+    
+                                        let adminSocket = sessions.get(sessionCode).adminSocket;
                             
-                                    adminSocket.emit("updateNumberOfAnswers", numAnswers, participants);
+                                        adminSocket.emit("updateParticipantCount", session.currentUsers);
+                        
+                                        let numAnswers = question.answerList.length;
+                                        let participants = question.connectedUsers;
+                                
+                                        adminSocket.emit("updateNumberOfAnswers", numAnswers, participants);
+                                    }
                                 }
                             } else {
 
@@ -240,6 +246,8 @@ module.exports.client = function(socket, db, user, sessions) {
             if(numAnswers === participants) {
                 let answerList = [];
                 if (question.answerList) answerList = question.answerList;
+
+                question.resultScreen = true;
         
                 let filteredAnswerList = [];
                 let correctAnswer = 0;

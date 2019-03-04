@@ -133,7 +133,8 @@
         "betweenQuestionsCorrect": "Du har svart og svaret ditt er riktig!\nVenter på at admin skal starte neste spørsmål",
         "betweenQuestionsIncorrect": "Du har svart og svaret ditt er feil!\nDu kan sjekke svaret ditt mot fasiten etter økten er ferdig.\nVenter på at admin skal starte neste spørmsål",
         "betweenQuestionsNotAnswered": "Du svarte \"Vet ikke\"!\nDu vil kunne se fasiten når økten er over.\nVenter på at admin skal starte neste spørsmål",
-        "sessionFinished": "Økten er nå over!\nAlle svarene dine er nå lagret og du kan sjekke dem mot løsningen på skrivebordet hvis du ikke har logget inn som anonym."
+        "sessionFinished": "Økten er nå over!\nAlle svarene dine er nå lagret og du kan sjekke dem mot løsningen på skrivebordet hvis du ikke har logget inn som anonym.",
+        "waitingForAdmin": "Venter på at admin skal starte neste spørsmål"
     },
     "JoinSession": {
         "title": "Bli med i økt!",

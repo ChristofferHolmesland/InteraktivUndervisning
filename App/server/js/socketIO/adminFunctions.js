@@ -168,6 +168,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 			let questionList = [];
 			for(let i = 0; i < questions.length; i++){
 				let tempQuestion = questions[i];
+				tempQuestion.resultScreen = false;
 				questionList.push(new question(tempQuestion.id, tempQuestion.text, tempQuestion.description, JSON.parse(tempQuestion.object), JSON.parse(tempQuestion.solution), tempQuestion.type, tempQuestion.time, tempQuestion.sqId));
 			}
 
@@ -324,9 +325,13 @@ module.exports.admin = function(socket, db, user, sessions) {
 	});
 
 	socket.on("forceNextQuestion", function() {
-		let question = currentSession.session.questionList[currentSession.session.currentQuestion];
+		let session = currentSession.session;
+		let question = session.questionList[session.currentQuestion];
+		question.resultScreen = true;
 		let answerList = [];
 		if (question.answerList) answerList = question.answerList;
+		console.log("test");
+		console.log(question);
 
 		let filteredAnswerList = [];
 		let correctAnswer = 0;
