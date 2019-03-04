@@ -146,9 +146,12 @@ function removeDuplicateTreeResult(treelist) {
 	newTreeList.push(treelist[0]);
 	if (treelist.length > 1) {
 		for (let l = 1; l < treelist.length; l++) {
+			let noDuplicate = true;
 			for (let o = 0; o < newTreeList.length; o++) {
-				if (!checkStudentAnswer(treelist[l], newTreeList[o])) newTreeList.push(treelist[l]);
+				if (checkStudentAnswer(treelist[l], newTreeList[o])) noDuplicate = false;
+
 			}
+			if (noDuplicate) newTreeList.push(treelist[l]);
 		}
 	}
 	return newTreeList

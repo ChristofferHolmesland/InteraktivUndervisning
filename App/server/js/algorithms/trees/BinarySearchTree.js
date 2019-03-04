@@ -90,6 +90,7 @@ module.exports.createBinarySearchTreeSolution = function(elements,add,existingTr
 					}
 				}
 			}
+			if (treelist.length > 1)	treelist = GeneralTreeFunctions.removeDuplicateTreeResult(treelist);
 		}else {
 			console.log("Non-existent tree cannot have removed entries.")
 		}

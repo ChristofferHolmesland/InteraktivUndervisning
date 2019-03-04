@@ -13,7 +13,7 @@ class Tree {
 	changeRoot (node) {
 		if (node !== this.root) {
 			let oldIndex = this.nodes.indexOf(node);
-			console.log(oldIndex);
+			//console.log(oldIndex);
 			let tempRoot = this.root;
 			this.root = node;
 			this.nodes[0] = node;
@@ -143,8 +143,6 @@ class BinaryTreeNode {
 		if (parent !== undefined && this.parent !== undefined) if (parent.value !== this.parent.value) return false;
 
 		//check that the nodes have the same children
-		console.log(node.childrenAmount);
-		console.log(this.childrenAmount);
 		if (node.childrenAmount !== this.childrenAmount) return false;
 		else {
 			let children = node.children;

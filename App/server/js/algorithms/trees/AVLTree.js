@@ -72,6 +72,9 @@ module.exports.createAVLTreeSolution = function (elements,add,existingTreeObject
 					}
 				}
 			}
+			if (treelist.length > 1)	treelist = GeneralTreeFunctions.removeDuplicateTreeResult(treelist);
+		}else {
+			console.log("Non-existent tree cannot have removed entries.")
 		}
 	}
 	return treelist
