@@ -84,7 +84,7 @@ module.exports.client = function(socket, db, user, sessions) {
                 type: "feide",
                 id: user.feide.idNumber
             }).catch((err) => {
-                console.log(err);
+                console.error(err);
             });
 
             await dbFunctions.get.sessionHasUserByUserId(db, userId).then((row) => {
@@ -125,7 +125,7 @@ module.exports.client = function(socket, db, user, sessions) {
                     adminSocket.emit("updateNumberOfAnswers", numAnswers, participants);
                 }
             }).catch((err) => {
-                console.log(err);
+                console.error(err);
             });
         } else {
             socket.emit("sessionInActive", sessionCode);
@@ -221,7 +221,7 @@ module.exports.client = function(socket, db, user, sessions) {
             dbFunctions.get.userIdByFeideId(db, user.feide.idNumber).then(async (userId) => {
                 information.userId = userId.id;
             }).catch((err) => {
-                console.log(err);
+                console.error(err);
             });
         }
         
@@ -284,7 +284,7 @@ module.exports.client = function(socket, db, user, sessions) {
                 adminSocket.emit("goToQuestionResultScreen", response);
             }
         }).catch((err) => {
-            console.log(err);
+            console.error(err);
         });
     }
 }

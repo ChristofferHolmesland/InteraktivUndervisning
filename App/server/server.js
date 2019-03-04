@@ -61,7 +61,7 @@ require('./js/database/database').getDB().then(function(value) {
     /*if (process.env.NODE_ENV === "dev"){
         const dummydata = require('./tools/insertDummyData');
         dummydata.InsertData(db).catch(function(err) {
-            console.log(err);
+            console.error(err);
             process.exit(1);
         });
     }*/
@@ -72,7 +72,7 @@ require('./js/database/database').getDB().then(function(value) {
     });
     require('./js/socketIO/generalFunctions').listen(server, users, db);
 }).catch(function (err) {
-    console.log(err);
+    console.error(err);
     process.exit(1);
 });
 
@@ -108,10 +108,10 @@ app.get('/login/callback/feide', passport.authenticate('passport-openid-connect'
             if (id === undefined) {
                 dbFunctions.insert.feide(db, idNumber, accessToken, userName, sessionId, admin).then(() => {
                     dbFunctions.insert.feideUser(db, userId, idNumber).catch((err) => {
-                        console.log(err);
+                        console.error(err);
                     });
                 }).catch((err) => {
-                    console.log(err);
+                    console.error(err);
                 });
             }else {
 				dbFunctions.update.feideSessionId(db, idNumber, sessionId);
@@ -124,9 +124,9 @@ app.get('/login/callback/feide', passport.authenticate('passport-openid-connect'
             }
             res.cookie("sessionId", sessionId, cookieOptions).redirect("/client");
         }).catch((err) => {
-            console.log(err)
+            console.error(err)
         });
     }).catch((err) => {
-        console.log(err);
+        console.error(err);
     });
 });
