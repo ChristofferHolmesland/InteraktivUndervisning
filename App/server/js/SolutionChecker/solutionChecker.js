@@ -4,9 +4,9 @@ let checkers = {
     3: require("./text.js"),
     4: require("./mergesort.js"),
     5: require("./quicksort.js"),
-    6: require("./text.js"),
-    7: require("./text.js"),
-    8: require("./text.js"),
+    6: require("./solutionCheckerBinaryTree.js"),
+    7: require("./solutionCheckerBinaryTree.js"),
+    8: require("./solutionCheckerBinaryTree.js"),
     9: require("./text.js"),
     10: require("./djikstra.js"),
 };
@@ -18,6 +18,6 @@ const solutionChecker = {
         }
         else return false;
     }
-}
+};
 
 module.exports.solutionChecker = solutionChecker;
