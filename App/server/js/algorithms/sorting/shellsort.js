@@ -65,6 +65,9 @@ module.exports = function (k,list) {
 		reset: function() {
 			currentStep = 0;
 			return steps[currentStep];
+		},
+		getSteps: function() {
+			return steps;
 		}
 	}
 };
