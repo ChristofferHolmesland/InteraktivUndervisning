@@ -9,18 +9,19 @@ The results of the game session was to be stored for the instructor. The instruc
 The primary target for the application was mobile devices, however it was decided that the application would be more suited as a web application supporting use off both computer and mobile devices. 
 
 \subsection{Goals}
-Introduce the chosen goals for the project.
-%Have to decide on some common goals based upon the tasks given to use by the bachelor thesis. Whether or not we use the list structure or not is dependent on these goals.
+Here we have listed some of our goals, where the main goals were part of the bachelor thesis description, and the sub-goals are some of the primary goals we added to make a more complete application.
 \subsubsection{Main Goals}
 \begin{itemize}
-\item Goal 1
-\item Goal 2
-\item Goal 3
+\item Allow students to answer questions about a datastructure using a drawing tool with automated solution checking.
+\item Allow users to participate in the sessions using a mobile phone or a computer.
+\item Support at least 90\% of browsers
 \end{itemize}
 \subsubsection{Sub Goals}
 \begin{itemize}
 \item Allow students to store their data using their Feide user as identifier.
-\item SubGoal 1 
+\item Allow lecturer to see wrong answers after the session is over.
+\item Allow students to check their answer toward the solution after the session is over.
+\item Make the application scalable for new courses and question types.
 \end{itemize}
 
 \subsection{Motivation}
@@ -31,4 +32,8 @@ Other game-based learning applications like Kahoot has seen a lot of use in scho
 Lastly Kahoot is only limited to multi-choice questions, which are too limiting in how we formulate the questions. In algorithms and data structures having only multi-choice questions is too limiting, and instead 'we' have focused on given the instructor ample of ways to structure the questions. This is done so that the instructor can easily choose a response type depending on what the instructor believes will give the best learning experience for participants.
 
 \subsection{Workflow}
-Give a summary for technical tools used, and the decision for why they were used in this project. vue.js for templating, server side with js, why js?: node.js, most supported?
+When developing a web app, one crucial step is to make sure that the users will be able to use your application. To make sure that the tools we used where supported, we used caniuse.com with some of the HTML elements to make sure that a high enough percentage of users would be able to use our application. This website allows you to search up a feature, and see statistics about which version of a browser supports it, the global percentage of supported installed versions. It also gives information about known issues in the different versions and also the same information about subfeatures. When developing this web application we had a goal to support at least 90\% of installed browsers. This goal was accomplished, and the features that are not supported is for browser versions that are outdated, and where the user should update to the newest version. All our features should work if using the latest version of the largest browsers, e.g., google chrome, firefox, edge, opera.
+\\[11pt]
+With previous experience using git and working with a combination of kanban and scrum. The choice was easy when we decided what version control management system we wanted to use. We started a project on GitHub using git as the version control manager. On GitHub, we split the project into sub-components as far as it was possible to make sure that we knew what had to be done at any moment. Using kanban also made it easier to take a new task when a task was finished with another. In combination with kanban on GitHub, we also wrote down sprints each week where we delegated work between each other. Where we weren't very strict on finishing each sprint, but the task where usually the preferred amount of work to get done for a week. We also set up a long term plan for when larger blocks of the project should be finished.
+\\[11pt]
+When choosing languages for writing the application, we had a few languages to choose from, but with previous experience with a full-stack application in javascript with node.js the last semester this ended up being our choice for the server side language. When choosing the language, we also made sure that a node.js server would be able to serve all features required for our application. For the client, we knew that we needed HTML, js, and CSS, but we wanted to use frameworks to make the development easier. So we choose vue.js as a framework for making HTML and js. For CSS we used bootstrap in combination with standard CSS.
