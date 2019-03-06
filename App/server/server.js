@@ -80,7 +80,12 @@ app.post('/login/feide', passport.authenticate('passport-openid-connect', {"succ
 app.get('/login/callback/feide', passport.authenticate('passport-openid-connect', {callback: true}), function(req, res) {
     // Reads information from the scope request to feide
     let accessToken = req.user.token.access_token;
+
+    // Only uses first and last name, no middle names or multiple last names
     let userName = req.user.data.name;
+    userName = userName.split(" ");
+    userName = userName[0].concat(" ", userName[userName.length - 1]);
+
     let userId = req.user.token.id_token;
 
     let temp = req.user.data["connect-userid_sec"][0];
