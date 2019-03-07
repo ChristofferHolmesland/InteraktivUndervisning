@@ -157,3 +157,22 @@ function removeDuplicateTreeResult(treelist) {
 	return newTreeList
 }
 module.exports.removeDuplicateTreeResult = removeDuplicateTreeResult;
+
+//create a step for the solution
+//the description describe what action caused the change to the solution tree,
+//treeType specifies the treetype currently being modified,
+//treeArray contains all known trees currently being used in the solutionmaker
+function createStepArray(description,treeType,treeArray) {
+	let newArray = [];
+	//console.log(treeArray);
+	for (let t=0;t<treeArray.length;t++){
+		newArray.push(treeArray[t].createDuplicateTree());
+	}
+
+	return {
+		type: description,
+		treeType:treeType,
+		treeInfo: newArray
+	};
+}
+module.exports.createStepArray = createStepArray;

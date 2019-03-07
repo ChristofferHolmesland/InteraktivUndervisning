@@ -23,6 +23,9 @@
                                 <QuicksortSolution  v-if="resultInfo.question.type === 5"
                                                     :solution="resultInfo.solution"
                                                     />
+                                <TreeSolution       v-if="resultInfo.question.type === 6 || resultInfo.question.type === 7 || resultInfo.question.type === 8"
+                                                    :solution="resultInfo.solution"
+                                                    />
                                 <DijkstraSolution v-if="resultInfo.question.type === 10"
                                                     :solution="resultInfo.solution"
                                                     />
@@ -69,6 +72,7 @@ import QuicksortSolution from "./questionResultScreenSolution/Quicksort.vue"
 
 import DijkstraAnswer from "./questionResultScreenAnswer/Dijkstra.vue";
 import DijkstraSolution from "./questionResultScreenSolution/Dijkstra.vue";
+import TreeSolution from "./questionResultScreenSolution/Tree.vue";
 
 export default {
     name: "DisplayQuestion",
@@ -95,6 +99,7 @@ export default {
         }
     },
     components: {
+		TreeSolution,
         TextSolution,
         TextAnswer,
         MultipleChoiceSolution,

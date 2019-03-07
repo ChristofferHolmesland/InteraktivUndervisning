@@ -1,12 +1,12 @@
 <template>
     <div id="Tree">
         <b-container>
-            <!--Not sure what control type to use here -->
             <GraphDrawer
                     @getValueResponse="gotGraphDrawer"
                     :requestAnswer = requestAnswerFromGraphDrawer
                     controlType="Graph0"
                     operationMode="Interactive"
+                    exportType="Tree"
             />
         </b-container>
     </div>
@@ -27,13 +27,13 @@
                 this.$emit("getTextResponse",result);
 			}
         },
-		components: {
-			GraphDrawer
-		},
 		watch: {
 			requestAnswer: function() {
 				this.requestAnswerFromGraphDrawer = !this.requestAnswerFromGraphDrawer;
 			}
+		},
+		components: {
+			GraphDrawer
 		}
 	}
 </script>

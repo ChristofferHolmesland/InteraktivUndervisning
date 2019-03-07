@@ -9,7 +9,7 @@
                                 v-model="newQuestion.text">
                 </b-form-input>
             </b-form-group>
-            <b-form-group 	id="questionText"
+            <b-form-group   id="questionText"
                             :label="getLocale.newQuestionText"
                             label-for="questionTextInput">
                 <b-form-input 	id="questionTextInput"
@@ -121,6 +121,19 @@
                                 type="text"
                                 v-model="newQuestion.objects.startingArray">
                 </b-form-input>
+            </b-form-group>
+            <b-form-group
+                    id="Tree"
+                    label="Draw the tree, or give an array to build the solution tree"
+                    v-if="newQuestion.solutionType === 6"
+                    >
+                <GraphDrawer
+                    @getValueResponse="gotGraphDrawerObject"
+                    :requestAnswer="requestGraphDrawerObject"
+                    control-type="Graph0"
+                    export-type="Graph"
+                    operationMode="Interactive"
+                />
             </b-form-group>
             <b-form-group 	
                     id="dijkstraSolution"
@@ -240,6 +253,10 @@
                     {
                         value: "image",
                         text: "Image"
+                    },
+                    {
+                    	value: "tree",
+                        text: "Tree"
                     }
                 ]
             },
