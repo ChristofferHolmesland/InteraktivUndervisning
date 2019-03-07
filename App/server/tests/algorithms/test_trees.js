@@ -886,13 +886,105 @@ describe('TestBinaryTrees', function () {
 	});
 
 	describe("Testing createAVLTree",function () {
-		/*it("",function () {
+		let addedNodes = [57,71,96,54];
+		let rootNode = new BinaryTreeNode(71);
+		let treeDone = new Tree(rootNode);
+		let node1 = new BinaryTreeNode(57);
+		let node2 = new BinaryTreeNode(96);
+		let node3 = new BinaryTreeNode(54);
+		node1.addParent(rootNode);
+		node2.addParent(rootNode);
+		node3.addParent(node1);
+		treeDone.nodes = [rootNode,node1,node2,node3];
+		it("testing adding nodes to the createAVLSolution function without giving an existing tree",function () {
+			let initialTree = new Tree(new BinaryTreeNode(57));
+			let step1Add = AVLFunctions.createAVLTree([57,71],true)[0];
+			let step2Add = BinarySearchTreeFunctions.createBinarySearchTree([57,71,96],true)[0];
+			let step2Rotate =  AVLFunctions.createAVLTree([57,71,96], true)[0];
+			let step3Add = AVLFunctions.createAVLTree([57,71,96,54],true)[0];
+			let solutionsteps = AVLFunctions.createAVLTreeSolution(addedNodes,true);
+			for(let i=0;i<solutionsteps.length;i++) {
+				if (i === 0)	assert(GeneralTreeFunctions.checkStudentAnswer(solutionsteps[i].treeInfo[0],initialTree));
+				else if(i === 1)	assert(GeneralTreeFunctions.checkStudentAnswer(solutionsteps[i].treeInfo[0],step1Add));
+				else if(i === 2)	assert(GeneralTreeFunctions.checkStudentAnswer(solutionsteps[i].treeInfo[0],step2Add));
+				else if(i === 3)	assert(GeneralTreeFunctions.checkStudentAnswer(solutionsteps[i].treeInfo[0],step2Rotate));
+				else if(i === 4)	assert(GeneralTreeFunctions.checkStudentAnswer(solutionsteps[i].treeInfo[0],step3Add));
+				else if(i === 5 && i === solutionsteps.length-1)	assert(GeneralTreeFunctions.checkStudentAnswer(solutionsteps[i].treeInfo[0],treeDone));
 
+				else assert(false)
+			}
 		});
+		it("testing adding nodes to the createAVLSolution function where an existing tree is given",function () {
+			let startTree = treeDone.createDuplicateTree();
+			let startTreeStep4 = AVLFunctions.createAVLTree([37,92,43],true,startTree)[0];
+			let addedElements = [37,92,43,86];
+			let initialTree = startTree.createDuplicateTree();
+			let step1Add = BinarySearchTreeFunctions.createBinarySearchTree([37],true,startTree)[0];
+			let step1Rotation = AVLFunctions.createAVLTree([37],true, startTree)[0];
+			let step2Add = AVLFunctions.createAVLTree([37,92],true, startTree)[0];
+			let step3Add = AVLFunctions.createAVLTree([37,92,43],true, startTree)[0];
+			let step4Add = BinarySearchTreeFunctions.createBinarySearchTree([86],true,startTreeStep4)[0];
+			let step4Rotation = AVLFunctions.createAVLTree(addedElements,true,startTree)[0];
+			let solutionObject = AVLFunctions.createAVLTreeSolution(addedElements,true,startTree);
 
-		it("",function () {
-
-		})*/
+			for(let j=0;j<solutionObject.length;j++) {
+				if(j===0)	assert(GeneralTreeFunctions.checkStudentAnswer(solutionObject[j].treeInfo[0],initialTree));
+				else if(j===1)	assert(GeneralTreeFunctions.checkStudentAnswer(solutionObject[j].treeInfo[0],step1Add));
+				else if(j===2)	assert(GeneralTreeFunctions.checkStudentAnswer(solutionObject[j].treeInfo[0],step1Rotation));
+				else if(j===3)	assert(GeneralTreeFunctions.checkStudentAnswer(solutionObject[j].treeInfo[0],step2Add));
+				else if(j===4)	assert(GeneralTreeFunctions.checkStudentAnswer(solutionObject[j].treeInfo[0],step3Add));
+				else if(j===5)	assert(GeneralTreeFunctions.checkStudentAnswer(solutionObject[j].treeInfo[0],step4Add));
+				else if(j===6)	assert(GeneralTreeFunctions.checkStudentAnswer(solutionObject[j].treeInfo[0],step4Rotation));
+				else if(j===7 && j === solutionObject.length-1)	assert(GeneralTreeFunctions.checkStudentAnswer(solutionObject[j].treeInfo[0],step4Rotation));
+				else assert(false);
+			}
+		});
+		it("testing removing nodes to the createAVLSolution function, remove 3 nodes with diffrent children amount and rotation used",function () {
+			let startElements = [80,5,68,21,6,95];
+			let unbalancedTree = BinarySearchTreeFunctions.createBinarySearchTree(startElements,true)[0];
+			let balancedTree = AVLFunctions.createAVLTree([],true,unbalancedTree)[0];
+			let removedNodes = [80,5,6];
+			let solutionObject = AVLFunctions.createAVLTreeSolution(removedNodes,false,unbalancedTree);
+			let initialTree = unbalancedTree.createDuplicateTree();
+			let step1Remove = AVLFunctions.createAVLTree([80],false,balancedTree);
+			let step2Remove = AVLFunctions.createAVLTree([80,5],false,balancedTree);
+			let rootSubNode = new BinaryTreeNode(21);
+			let step3RemoveSubTree = new Tree(rootSubNode);
+			let nodeSub1 = new BinaryTreeNode(68);
+			let nodeSub2 = new BinaryTreeNode(95);
+			nodeSub1.addParent(rootSubNode);
+			nodeSub2.addParent(nodeSub1);
+			step3RemoveSubTree.nodes = [rootSubNode,nodeSub1,nodeSub2];
+			let rootSubNode2 = new BinaryTreeNode(21);
+			let step3RemoveSubTree2 = new Tree(rootSubNode2);
+			let nodeSub21 = new BinaryTreeNode(95);
+			let nodeSub22 = new BinaryTreeNode(68);
+			nodeSub21.addParent(rootSubNode2);
+			nodeSub22.addParent(nodeSub21);
+			step3RemoveSubTree2.nodes = [rootSubNode2,nodeSub1,nodeSub2];
+			let step3Remove = [step3RemoveSubTree,step3RemoveSubTree2];
+			let step3Rotate = AVLFunctions.createAVLTree(removedNodes,false,balancedTree);
+			let step1Rotation = BinarySearchTreeFunctions.createBinarySearchTree([80,5,21,6,68,95],true)[0];
+			//console.log(solutionObject);
+			console.log(step3Rotate);
+			for (let k=0;k<solutionObject.length;k++) {
+				for(let l=0;l<solutionObject[k].treeInfo.length;l++) {
+					if(k === 0)	assert(GeneralTreeFunctions.checkStudentAnswer(solutionObject[k].treeInfo[l],initialTree));
+					else if(k === 1 && l === 0)	assert(GeneralTreeFunctions.checkStudentAnswer(solutionObject[k].treeInfo[l],step1Rotation));
+					else if(k === 2 && l === 0)	assert(GeneralTreeFunctions.checkStudentAnswer(solutionObject[k].treeInfo[l],balancedTree));
+					else if(k === 3 && l === 0)	assert(GeneralTreeFunctions.checkStudentAnswer(solutionObject[k].treeInfo[l],step1Remove[l]));
+					else if(k === 3 && l === 1)	assert(GeneralTreeFunctions.checkStudentAnswer(solutionObject[k].treeInfo[l],step1Remove[l]));
+					else if(k === 4 && l === 0)	assert(GeneralTreeFunctions.checkStudentAnswer(solutionObject[k].treeInfo[l],step2Remove[l]));
+					else if(k === 4 && l === 1)	assert(GeneralTreeFunctions.checkStudentAnswer(solutionObject[k].treeInfo[l],step2Remove[l]));
+					else if(k === 5 && l === 0)	assert(GeneralTreeFunctions.checkStudentAnswer(solutionObject[k].treeInfo[l],step3Remove[l]));
+					else if(k === 5 && l === 1)	assert(GeneralTreeFunctions.checkStudentAnswer(solutionObject[k].treeInfo[l],step3Remove[l]));
+					else if(k === 6 && l === 0)	assert(GeneralTreeFunctions.checkStudentAnswer(solutionObject[k].treeInfo[l],step3Rotate[0]));
+					else if(k === 6 && l === 1) assert(GeneralTreeFunctions.checkStudentAnswer(solutionObject[k].treeInfo[l],step3Rotate[0]));
+					else if(k === 7 && l === 0 && k === solutionObject.length-1)	assert(GeneralTreeFunctions.checkStudentAnswer(solutionObject[k].treeInfo[l],step3Rotate[l]));
+					else assert(false);
+				}
+			}
+		});
 	});
 
 	describe("Test createTreeObjectFromCanvasObject",function () {

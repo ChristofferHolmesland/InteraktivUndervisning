@@ -54,7 +54,7 @@ module.exports.createBinarySearchTree = function(elements,add,existingTreeObject
 		console.log("Adding\n");
 		let a = 0;
 		if (existingTreeObject !== undefined) {	//there is an existing tree
-			tree = existingTreeObject;
+			tree = existingTreeObject.createDuplicateTree();
 			rootNode = tree.root;
 		} else {	//existing tree is not given
 			rootNode = new BinaryTreeNode(elements[0]);
@@ -71,7 +71,7 @@ module.exports.createBinarySearchTree = function(elements,add,existingTreeObject
 	}else if(!add){
 		console.log("Removing\n");
 		if (existingTreeObject !== undefined) {
-			tree = existingTreeObject;
+			tree = existingTreeObject.createDuplicateTree();
 			treelist.push(tree);
 			for (let b=0;b<elements.length;b++) {
 				for (let t = 0; t < treelist.length; t++) {
@@ -108,9 +108,9 @@ module.exports.createBinarySearchTreeSolution = function(elements, add, existing
 		console.log("Adding\n");
 		let a = 0;
 		if (existingTreeObject !== undefined) {	//there is an existing tree
-			tree = existingTreeObject;
+			tree = existingTreeObject.createDuplicateTree();
 			rootNode = tree.root;
-			let stepInital = GeneralTreeFunctions.createStepArray("Initial","BST",[existingTreeObject]);
+			let stepInital = GeneralTreeFunctions.createStepArray("Initial","BST",[tree]);
 			steps.push(stepInital);
 		} else {	//existing tree is not given
 			rootNode = new BinaryTreeNode(elements[0]);
@@ -137,9 +137,10 @@ module.exports.createBinarySearchTreeSolution = function(elements, add, existing
 	}else if(!add){
 		console.log("Removing\n");
 		if (existingTreeObject !== undefined) {
-			tree = existingTreeObject;
+			tree = existingTreeObject.createDuplicateTree()
+			;
 			treelist.push(tree);
-			let stepInital = GeneralTreeFunctions.createStepArray("Initial","BST",[existingTreeObject]);
+			let stepInital = GeneralTreeFunctions.createStepArray("Initial","BST",[tree]);
 			steps.push(stepInital);
 			for (let b=0;b<elements.length;b++) {
 				for (let t = 0; t < treelist.length; t++) {

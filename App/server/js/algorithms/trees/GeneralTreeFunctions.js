@@ -27,6 +27,10 @@ module.exports.createTreeObjectFromCanvasObjectver1 = function(treeCanvas) {
 //Will return true if two trees are the same and false if they are not.
 // Is going to be used to check a students answer with the solution!
 function checkStudentAnswer(studentTree,solutionTree) {
+	/*console.log("Student");
+	console.log(studentTree);
+	console.log("Solution");
+	console.log(solutionTree);*/
 	let checkresult = true;
 	if (studentTree.nodes.length === solutionTree.nodes.length) {
 		checkresult = checkNode(studentTree.root,solutionTree.root,checkresult);
