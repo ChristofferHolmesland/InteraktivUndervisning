@@ -5,12 +5,12 @@ The following features of Python are supported:
 \begin{enumerate}
     \item Variables of the following types: Number, String, Boolean, and Object.
     \item Functions can be defined using the \code{def} keyword. They can either belong to the global scope, or to a class. Functions can return something using the \code{return} keyword.
-    \item Classes can be defined using the \code{class} keyword. If a function with the \code{__init__} is defined inside the class, it will be called when a new instance of the class is instantiated.
+    \item Classes can be defined using the \code{class} keyword. If a function with the \code{\_\_init\_\_} name is defined inside the class, it will be called when a new instance of the class is instantiated.
     \item If statements can be used with the \code{if} keyword. Elif and else statements are also supported.
     \item The following mathematical operators are supported: +, -, /, *.
     \item The following comparison operators are supported: and, or, !, ==, !=, <, >, >=, <=.
     \item Expressions can be grouped and seperated using parenthesis.
-    \item Lines starting with a # are treated as comments, and will be skipped by the interpreter.
+    \item Lines starting with a \# are treated as comments, and will be skipped by the interpreter.
 \end{enumerate}
 Significant Python features missing from this interpreter:
 \begin{enumerate}
@@ -35,7 +35,6 @@ A function is an object with a \code{name}, a list of arguments \code{args}, a l
     \item Every line found in the functions \code{code} list is parsed using \code{parseLine}. If a \code{return} statement is found before reaching the end, the function will stop parsing, before reaching the end.
     \item The scope of the function is restored to an empty state and data is returned if a return statement was found.
 \end{enumerate}
-\\[11pt]
 A class is an object with a \code{name} and a list of the code lines belonging to the class \code{code}. A class should also be a scope. When a class is defined, the code is also parsed using the \code{parseLine} function. This is done so that any functions within the class is defined in the scope of the class. When the interpreter is instantiating an instance of the class, the \code{instantiateClass} function is called. \code{instantiateClass} will first create a new object which contains all the functions from the class. If the class has a constructor it is called. Finally, the object is returned to the called of \code{instantiateClass}.
 !! Write about expression evaluation !!
 !! Write about operators !!
