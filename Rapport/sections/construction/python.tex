@@ -1,0 +1,44 @@
+\subsection{Python}
+Python is the programming language used in the DAT100 course at UiS. Students are often struggeling to understand the difference between value type and reference type variables. To make it easier for them to learn, a Python interpreter was implemented which evaluates Python code step by step. Together with the GraphDrawer, the interpreter can be used to ask questions about Python code. The student is able to see whether a variable is value or reference type, and they can see when the value or reference changes. Before implementing a custom interpreter, using the offical Python interpreter was considered. Because of the size of CPython, and the limited time available for this project, it was decided that implementing a custom interpreter was the better option.
+\\[11pt]
+The following features of Python are supported:
+\begin{enumerate}
+    \item Variables of the following types: Number, String, Boolean, and Object.
+    \item Functions can be defined using the \code{def} keyword. They can either belong to the global scope, or to a class. Functions can return something using the \code{return} keyword.
+    \item Classes can be defined using the \code{class} keyword. If a function with the \code{__init__} is defined inside the class, it will be called when a new instance of the class is instantiated.
+    \item If statements can be used with the \code{if} keyword. Elif and else statements are also supported.
+    \item The following mathematical operators are supported: +, -, /, *.
+    \item The following comparison operators are supported: and, or, !, ==, !=, <, >, >=, <=.
+    \item Expressions can be grouped and seperated using parenthesis.
+    \item Lines starting with a # are treated as comments, and will be skipped by the interpreter.
+\end{enumerate}
+Significant Python features missing from this interpreter:
+\begin{enumerate}
+    \item The standard library.
+    \item Lists and dictionaries.
+    \item Inner classes and functions.
+    \item Shared class variables.
+    \item Class inheritance.
+    \item Loops.
+\end{enumerate}
+Every operator has the same priority, which means that expressions are always evaluated left to right. This makes some expressions not behave like expected. The following statement results in an error: \code{if 1 + 1 == 2:}, because it is evaluated as \code{1 + (1 == 2)}. To prevent this from happening, parenthesis should be used to order the expressions. The correct statement would be: \code{if (1 + 1) == 2:}.
+
+\subsubsection{Interpreter}
+There are three main functions in the interpreter. \code{parseLine} which tries to figure out what the meaning of a code line is. \code{parseLine} is also responsible for deciding which line to parse next. A line can either be a variable assignment which is handled  by the \code{parseLine} function, an expression which is handled by the \code{evaluateExpression} function, or a statement which is handled by the \code{handleKeyword} function. A statement is anything which starts with one of the keywords. An expression is something which can be evaluated to a value.
+!! Insert fancy image showing the path code goes trough the interpreter !!
+\\[11pt]
+An important feature of the interpreter is the scope objects. A scope is an object which stores information about the variables, classes, functions and data inside the scope. Functions are scopes because they can contain private variables. Classes are also scopes, because they can contain functions. Before code can be parsed, a global scope is created. Anything which doesn't belong to a specific scope, is placed in the global scope. Scope data is an array where the index is the address of the stored data, and the value is the stored data. Because the interpreter is implemented in JavaScript, there is no need to seperate value and references types in this array because JavaScript and Python behave the same way. Scope variables are a mapping from variable names to data addresses. Scope functions/classes are mappings from function/class names to function/class objects. Because the interpreter should save the state of the program as steps, the \code{parseLine} function returns an object containing information about the state. If the state was anything other than a function or class definition, the current state is saved as a step.
+\\[11pt]
+A function is an object with a \code{name}, a list of arguments \code{args}, a list of the code lines belonging to the function \code{code}. A function should also be a scope. The name is used to identify the function. The arguments are used to make sure that when the function is called, the right amount of arguments are passed. The code is stored so the function can be evaluated when it is called. After a function has been defined, the \code{handleKeyword} function returns a state of type \code{"SkipLines"} which tells the caller which lines have already been handled. The interpreter uses the \code{callFunc} function to call Python functions. When a function is called, three things happen in the following order:
+\begin{enumerate}
+    \item The function arguments are added as local variables. Local variables mean they belong to the function scope. The arguments need to be in the same order as they were defined, because named arguments are not implemented.
+    \item Every line found in the functions \code{code} list is parsed using \code{parseLine}. If a \code{return} statement is found before reaching the end, the function will stop parsing, before reaching the end.
+    \item The scope of the function is restored to an empty state and data is returned if a return statement was found.
+\end{enumerate}
+\\[11pt]
+A class is an object with a \code{name} and a list of the code lines belonging to the class \code{code}. A class should also be a scope. When a class is defined, the code is also parsed using the \code{parseLine} function. This is done so that any functions within the class is defined in the scope of the class. When the interpreter is instantiating an instance of the class, the \code{instantiateClass} function is called. \code{instantiateClass} will first create a new object which contains all the functions from the class. If the class has a constructor it is called. Finally, the object is returned to the called of \code{instantiateClass}.
+!! Write about expression evaluation !!
+!! Write about operators !!
+
+\subsubsection{Questions}
+!! TODO: Write this :=) !!
