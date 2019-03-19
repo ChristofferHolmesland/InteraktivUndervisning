@@ -142,8 +142,8 @@ export default class GraphDrawer {
 		// Offscreen canvas used for drawing. This draws
 		// in world space and the camera converts it to canvas space.
 		this.drawBuffer = document.createElement("CANVAS");
-		this.drawBuffer.width = canvas.width * 3;
-		this.drawBuffer.height = canvas.height * 3;
+		this.drawBuffer.width = canvas.width * 5;
+		this.drawBuffer.height = canvas.height * 5;
 		this.drawContext = this.drawBuffer.getContext("2d");
 
 		let down = function(e) {
@@ -445,6 +445,7 @@ export default class GraphDrawer {
 				this.controllers[this.controlType].dirtyUpdate();
 			}
 
+			this.moveGraphInsideWorld();
 			this.draw();
 			this.switchBuffers();
 			this.dirty = false;
@@ -768,6 +769,56 @@ export default class GraphDrawer {
 			}
 		}
 		return false;
+	}
+
+	moveGraphInsideWorld() {
+		let dx = 0;
+		let dy = 0;
+		let maxX = this.drawBuffer.width;
+		let maxY = this.drawBuffer.height;
+
+		// Find the nodes which are the furthest away
+		// from the world border.
+		for (let i = 0; i < this.nodes.length; i++) {
+			let n = this.nodes[i];
+
+			if (n.x > maxX) {
+				// Cant move the graph if there are nodes outside both edges
+				if (Math.sign(dx) == 1) return;
+
+				let ndx = maxX - n.x;
+				if (ndx > dx) dx = ndx;
+			}
+
+			if (n.y > maxY) {
+				if (Math.sign(dy) == 1) return;
+				let ndy = maxY - n.y;
+				if (ndy > dy) dy = ndy;
+			}
+
+			if (n.x < 0) {
+				if (Math.sign(dx) == -1) return;
+				let ndx = maxX - n.x;
+				if (ndx > dx) dx = ndx;
+			}
+
+			if (n.y < 0) {
+				if (Math.sign(dy) == -1) return;
+				let ndy = maxY - n.y;
+				if (ndy > dy) dy = ndy;
+			}
+		}
+
+		if (dx !== 0 || dy !== 0) {
+			this.camera.centerX += dx;
+			this.camera.centerY += dy;
+
+			for (let i = 0; i < this.nodes.length; i++) {
+				let n = this.nodes[i];
+				n.x += dx;
+				n.y += dy;
+			}
+		}
 	}
 
 	centerCameraOnGraph() {
