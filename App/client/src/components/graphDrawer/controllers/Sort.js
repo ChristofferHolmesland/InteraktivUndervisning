@@ -19,13 +19,13 @@ export default class Sort {
 		// If there are some starting steps, they are parsed
 		// and put into the world.
 		if (config.steps) {
-			this.gd.currentStep = config.steps.length - 1;
 			this.steps = config.steps;
 			if (this.gd.operatingMode == "Presentation") {
 				this.gd.addSteppingButtons();
 				this.gd.drawStatic();
-				this.parseSteps();
+				this.gd.currentStep = config.steps.length - 1;
 			}
+			this.parseSteps();
 		}
 	}
 
