@@ -22,7 +22,6 @@ The GraphDrawer constructor takes two arguments, \code{canvas} and \code{config}
     \item \code{displayEdgeValues}, enables the \code{v} (value) property of edges. The value will be drawn next to the edge, and can be modified if the \code{operatingMode} is set to \code{"Interactive"}. If no value is given, \code{displayEdgeValues} is set to \code{true}.
     \item \code{directedEdges}, enables drawing of edges as arrows instead of lines. If it is set to \code{true} then all edges which does not have the \code{directed} property set to \code{false} will be drawn as an arrow instead. If no value is given, \code{directedEdges} is set to \code{false}.
 \end{enumerate}
-\\[11pt]
 Developers can add or remove features from the GraphDrawer by creating controller objects. Controller objects are used to modify the user interaction, and the world presentation. They can interrupt the GraphDrawer at pre-determined states. It is also possible to create their own interrupts by creating timers (\code{setTimeout}, \code{setInterval}) or by adding event handlers to the canvas object. The controller interface is simple by design and only requries two methods. There are also some optional methods which can be implemented to add more functionality.
 !!Insert GraphDrawer lifecycle diagram!!
 \begin{enumerate}
