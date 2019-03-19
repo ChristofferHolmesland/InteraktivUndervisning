@@ -960,14 +960,14 @@ export default class Sort {
 		let parseSplit = (step, pos) => {
 			let parent = this._findArrayFromNodeValues(step.list);
 
-			if (step.left.length > 0) {
+			if (step.left !== undefined && step.left.length > 0) {
 				let left = this.getNewArray(pos.left.x, pos.left.y);
 				nodesFromValueList(step.left, left);
 				this.arrays.push(left);
 				this.arrays[parent].links.push(left);
 			}
 
-			if (step.right.length > 0) {
+			if (step.right !== undefined && step.right.length > 0) {
 				let right = this.getNewArray(pos.right.x, pos.right.y);
 				nodesFromValueList(step.right, right);
 				this.arrays.push(right);
