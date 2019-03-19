@@ -929,6 +929,8 @@ export default class Sort {
 		// The inital array is placed centered
 		// at the top of the canvas relative 
 		// to the current camera position.
+		// If this is not the first time parseInitial is ran,
+		// it will be placed at the position of the first run instead.
 		let parseInitial = (step) => {
 			let p = this.gd.camera.project(this.gd.canvas.width / 2, 0);
 
@@ -938,6 +940,13 @@ export default class Sort {
 			// Assumes same size nodes
 			let arrayWidth = step.list.length * r;
 			p.x -= arrayWidth / 2;
+
+			if (this._initialArrayPosition == undefined) {
+				this._initialArrayPosition = { x: p.x, y: p.y };
+			} else {
+				p.x = (p.x - this._initialArrayPosition.x);
+				p.y = (p.y - this._initialArrayPosition.y);
+			}
 
 			let newArr = this.getNewArray(p.x, p.y);
 			nodesFromValueList(step.list, newArr);
