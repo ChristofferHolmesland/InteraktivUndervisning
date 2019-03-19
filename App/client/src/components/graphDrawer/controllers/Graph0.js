@@ -26,7 +26,13 @@ export default class Graph0 {
 		}
 
 		if (config.steps) {
-			
+			this.steps = config.steps;
+			if (this.gd.operatingMode == "Presentation") {
+				this.gd.addSteppingButtons();
+				this.gd.drawStatic();
+				this.gd.currentStep = config.steps.length - 1;
+			}
+			this.parseSteps();
 		}
 	}
 
@@ -310,6 +316,60 @@ export default class Graph0 {
 		}
 		this.gd.staticContext.stroke();
 		this.gd.staticContext.closePath();
+	}
+
+	parseSteps() {
+		this.gd.nodes = [];
+		this.gd.edges = [];
+		this.gd.dirty = true;
+
+		let parseComplete = (step) => {
+			for (let i = 0; i < step.nodes.length; i++) {
+				let n = step.nodes[i];
+				this.gd.nodes.push({
+					x: n.x,
+					y: n.y,
+					v: n.v,
+					r: n.r
+				});
+			}
+
+			for (let i = 0; i < step.edges.length; i++) {
+				let e = step.edges[i];
+				let n1 = undefined;
+				let n2 = undefined;
+
+				for (let j = 0; j < this.gd.nodes.length; j++) {
+					let n = this.gd.nodes[j];
+					if (n.v == e.n1) n1 = n;
+					else if (n.v == e.n2) n2 = n;
+
+					if (n1 && n2) break;
+				}
+
+				if (n1 && n2) {
+					this.gd.edges.push({
+						n1: n1,
+						n2: n2
+					});
+				} else {
+					console.error(`Found edge with non-existing node: ${e}`);
+				}
+			}
+		}
+
+		for (let i = 0; i <= this.gd.currentStep; i++) {
+			let step = this.steps[i];
+
+			if (step.type == "Complete") {
+				parseComplete(step);
+			} else {
+				console.error(`Found invalid step type: ${step.type} 
+					at index ${i}, skipping.`);
+			}
+		}
+
+		this.gd.centerCameraOnGrpah();
 	}
 
 	export() {
