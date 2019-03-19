@@ -24,6 +24,10 @@ export default class Graph0 {
 				this.drawStatic();
 			}
 		}
+
+		if (config.steps) {
+			
+		}
 	}
 
 	configure() {
