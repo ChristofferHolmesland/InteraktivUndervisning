@@ -770,6 +770,19 @@ export default class GraphDrawer {
 		return false;
 	}
 
+	centerCameraOnGraph() {
+		let tx = 0;
+		let ty = 0;
+
+		for (let i = 0; i < this.nodes.length; i++) {
+			tx += this.nodes[i].x;
+			ty += this.nodes[i].y;
+		}
+
+		this.camera.centerX = tx / this.nodes.length;
+		this.camera.centerY = ty / this.nodes.length;
+	}
+
 	addSteppingButtons() {
 		this.steppingButtons = [];
 		let numOfSteps = this.controllers[this.controlType].steps.length;
