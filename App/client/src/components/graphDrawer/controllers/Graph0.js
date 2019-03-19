@@ -7,7 +7,7 @@ export default class Graph0 {
 	_config(config) {
 		// Decides what kind of data should be returned when exporting.
 		// Values: Graph or Tree.
-		if (config == undefined) this.exportType = "Graph0";
+		if (config == undefined) this.exportType = "Graph";
 		else this.exportType = config.exportType;
 
 		if (config == undefined) this.subType == undefined;
@@ -15,8 +15,8 @@ export default class Graph0 {
 			this.subType = config.subType;
 			this.nextLetter = "A";
 
-			this.startNodeColor = config.startNodeColor;
-			this.endNodeColor = config.endNodeColor;
+			this.startNodeColor = config.startNodeColor || "LightGreen";
+			this.endNodeColor = config.endNodeColor || "LightCoral";
 
 			if (this.subType == "Dijkstra") {
 				this.buttons.push("Mark");
