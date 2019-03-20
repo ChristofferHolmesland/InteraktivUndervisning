@@ -23,12 +23,12 @@ module.exports.createAVLTree = function (elements,add,existingTreeObject) {
 				}
 			}
 		} else { //existing tree object not given
-			let rootNode = new BinaryTreeNode(elements[0]);
+			let rootNode = new BinaryTreeNode(parseInt(elements[0]));
 			tree = new Tree(rootNode);
 			a++;
 		}
 		for (a; a < elements.length; a++) {
-			let node = new BinaryTreeNode(elements[a]);
+			let node = new BinaryTreeNode(parseInt(elements[a]));
 			let bestParent = GeneralTreeFunctions.findBestParent(node, tree.root);
 			node.addParent(bestParent);
 			tree.nodes.push(node);
@@ -55,7 +55,7 @@ module.exports.createAVLTree = function (elements,add,existingTreeObject) {
 				for (let t = 0; t < treelist.length; t++) {
 					let currentTree = treelist[t];
 					let newTreeList = [];
-					let treeIndex = currentTree.findNodeInNodesUsingValue(elements[b]);
+					let treeIndex = currentTree.findNodeInNodesUsingValue(parseInt(elements[b]));
 					if (treeIndex !== -1) {
 						let removedNode = currentTree.nodes[treeIndex];
 						newTreeList = removeNodeFromAVLTree(removedNode,currentTree,treeIndex);
@@ -104,14 +104,14 @@ module.exports.createAVLTreeSolution = function (elements, add, existingTreeObje
 				}
 			}
 		} else { //existing tree object not given
-			let rootNode = new BinaryTreeNode(elements[0]);
+			let rootNode = new BinaryTreeNode(parseInt(elements[0]));
 			tree = new Tree(rootNode);
 			let stepInitial = GeneralTreeFunctions.createStepArray("Initial","AVL",[tree]);
 			steps.push(stepInitial);
 			a++;
 		}
 		for (a; a < elements.length; a++) {
-			let node = new BinaryTreeNode(elements[a]);
+			let node = new BinaryTreeNode(parseInt(elements[a]));
 			let bestParent = GeneralTreeFunctions.findBestParent(node, tree.root);
 			node.addParent(bestParent);
 			tree.nodes.push(node);
@@ -158,7 +158,7 @@ module.exports.createAVLTreeSolution = function (elements, add, existingTreeObje
 				for (let t = 0; t < treelist.length; t++) {
 					let currentTree = treelist[t];
 					let newTreeList = [];
-					let treeIndex = currentTree.findNodeInNodesUsingValue(elements[b]);
+					let treeIndex = currentTree.findNodeInNodesUsingValue(parseInt(elements[b]));
 					if (treeIndex !== -1) {
 						let removedNode = currentTree.nodes[treeIndex];
 						newTreeList = removeNodeFromAVLTree(removedNode,currentTree,treeIndex,removedSteps,rotationSteps);

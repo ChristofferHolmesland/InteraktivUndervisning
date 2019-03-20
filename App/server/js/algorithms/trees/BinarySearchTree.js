@@ -57,12 +57,12 @@ module.exports.createBinarySearchTree = function(elements,add,existingTreeObject
 			tree = existingTreeObject.createDuplicateTree();
 			rootNode = tree.root;
 		} else {	//existing tree is not given
-			rootNode = new BinaryTreeNode(elements[0]);
+			rootNode = new BinaryTreeNode(parseInt(elements[0]));
 			tree = new Tree(rootNode);
 			a++;
 		}
 		for (a; a < elements.length; a++) {
-			let node = new BinaryTreeNode(elements[a]);
+			let node = new BinaryTreeNode(parseInt(elements[a]));
 			let bestParent = GeneralTreeFunctions.findBestParent(node, rootNode);
 			node.addParent(bestParent);
 			tree.nodes.push(node);
@@ -77,7 +77,7 @@ module.exports.createBinarySearchTree = function(elements,add,existingTreeObject
 				for (let t = 0; t < treelist.length; t++) {
 					let currentTree = treelist[t];
 					let newTreeList = [];
-					let treeIndex = currentTree.findNodeInNodesUsingValue(elements[b]);
+					let treeIndex = currentTree.findNodeInNodesUsingValue(parseInt(elements[b]));
 					if (treeIndex !== -1) {
 						let removedNode = currentTree.nodes[treeIndex];
 						newTreeList = removeNodeFromBSTTree(removedNode,currentTree,treeIndex);
@@ -113,14 +113,14 @@ module.exports.createBinarySearchTreeSolution = function(elements, add, existing
 			let stepInital = GeneralTreeFunctions.createStepArray("Initial","BST",[tree]);
 			steps.push(stepInital);
 		} else {	//existing tree is not given
-			rootNode = new BinaryTreeNode(elements[0]);
+			rootNode = new BinaryTreeNode(parseInt(elements[0]));
 			tree = new Tree(rootNode);
 			let stepInital = GeneralTreeFunctions.createStepArray("Initial","BST",[tree]);
 			steps.push(stepInital);
 			a++;
 		}
 		for (a; a < elements.length; a++) {
-			let node = new BinaryTreeNode(elements[a]);
+			let node = new BinaryTreeNode(parseInt(elements[a]));
 			let bestParent = GeneralTreeFunctions.findBestParent(node, rootNode);
 			node.addParent(bestParent);
 			tree.nodes.push(node);
@@ -146,7 +146,7 @@ module.exports.createBinarySearchTreeSolution = function(elements, add, existing
 				for (let t = 0; t < treelist.length; t++) {
 					let currentTree = treelist[t];
 					let newTreeList = [];
-					let treeIndex = currentTree.findNodeInNodesUsingValue(elements[b]);
+					let treeIndex = currentTree.findNodeInNodesUsingValue(parseInt(elements[b]));
 					if (treeIndex !== -1) {
 						let removedNode = currentTree.nodes[treeIndex];
 						newTreeList = removeNodeFromBSTTree(removedNode,currentTree,treeIndex);

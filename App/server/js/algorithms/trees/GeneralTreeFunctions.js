@@ -6,21 +6,33 @@ const Tree = require("./Tree.js").Tree;
 //This function is going to transform a student's and teacher's drawn tree to a tree object.
 module.exports.createTreeObjectFromCanvasObjectver1 = function(treeCanvas) {
 	let listofTrees = [];
-	for (let l=0;l<treeCanvas.roots.length;l++) {
-		let rootNode = new BinaryTreeNode(treeCanvas.roots[l].value,undefined,treeCanvas.roots[l].children);
+	for (let l=0;l<treeCanvas.roots.length;l++) {	//can be more than 1 root
+		let listofConfiguredNodes = [];
+		let rootNode = new BinaryTreeNode(parseInt(treeCanvas.roots[l].v),undefined);
 		let tree = new Tree(rootNode);
-		let parentNode = rootNode;
-		for (let c=0;c<treeCanvas.roots[l].children.length;c++) {
-			let node = new BinaryTreeNode(treeCanvas.roots[l].children[c].value,
-				parentNode,
-				treeCanvas.roots[l].children);	//will not work
-			parentNode = node;
-			tree.push(node);
-		}
+		convertCanvasNodeToTreeNode(treeCanvas.roots[l],rootNode,listofConfiguredNodes);
+		tree.nodes = listofConfiguredNodes;
 		listofTrees.push(tree);
 	}
 	return listofTrees
 };
+
+function convertCanvasNodeToTreeNode(currentCanvasNode,currentTreeNode,nodelist,parentTreeNode) {
+	//console.log("Parent");
+	//console.log(parentTreeNode);
+	currentTreeNode.parent = parentTreeNode;
+	nodelist.push(currentTreeNode);
+	if(currentCanvasNode.children.length > 0){
+		for (let l=0;l<currentCanvasNode.children.length;l++) {
+			if(currentCanvasNode.children[l] !== undefined) currentTreeNode.children[l] = new BinaryTreeNode(parseInt(currentCanvasNode.children[l].v));
+		}
+	}
+	//if(currentCanvasNode.children[0] === undefined && currentCanvasNode.children[1] === undefined) return;
+	//console.log(currentCanvasNode);
+	if(currentCanvasNode.children[0] !== undefined)	convertCanvasNodeToTreeNode(currentCanvasNode.children[0],currentTreeNode.children[0],nodelist,currentTreeNode);
+	if(currentCanvasNode.children[1] !== undefined)	convertCanvasNodeToTreeNode(currentCanvasNode.children[1],currentTreeNode.children[1],nodelist,currentTreeNode);
+
+}
 
 
 //Checks to two tree branches whether or not they are the same.

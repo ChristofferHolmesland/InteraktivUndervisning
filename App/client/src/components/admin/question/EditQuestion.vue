@@ -223,7 +223,6 @@
                         startingArray: "",
                         startTree: undefined,
                         graph: undefined,
-                        startTree: undefined,
                         treeElements: ""
                     },
                     solutionTypes: [],
@@ -232,12 +231,10 @@
                 };
             },
             gotTreeDrawerObject(result) {
-                console.log("Hello Mom!");
                 this.newQuestion.objects.startTree = result;
                 this.$socket.emit("checkQuestionInformation",this.newQuestion,this.solutionTreeType);
             },
             gotGraphDrawerObject(result) {
-            	console.log("Hello Senpai!");
                 this.newQuestion.objects.graph = result;
                 this.$socket.emit("checkQuestionInformation",this.newQuestion,this.solutionTreeType);
             },

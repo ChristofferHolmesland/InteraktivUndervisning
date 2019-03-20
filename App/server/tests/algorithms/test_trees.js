@@ -988,6 +988,20 @@ describe('TestBinaryTrees', function () {
 	});
 
 	describe("Test createTreeObjectFromCanvasObject",function () {
+		it("Test with a valid canvasobject",function () {
+			let canvasNode1 = {x: 8, y: 8, r: 8, v: '8', children: []};
+			let canvasNode2 = {x: 6, y: 6, r: 6, v: '6', children: []};
+			let canvasNode3 = {x: 7, y: 7, r: 7, v: '7', children:  [canvasNode2,canvasNode1]};
+			let canvasNode4 = {x: 3, y: 3, r: 3, v: '3', children: []};
+			let canvasNode5 = {x: 4, y: 4, r: 4, v: '4', children: [canvasNode4]};
+			let canvasTree = {roots: [{x: 123, y: 543, r: 3, v: '5', children: [canvasNode5, canvasNode3]}]};
+			let resultingTrees = GeneralTreeFunctions.createTreeObjectFromCanvasObjectver1(canvasTree);
+			let solutionTree = BinarySearchTreeFunctions.createBinarySearchTree([5, 4, 3, 7, 6, 8], true)[0];
+			assert(resultingTrees.length === 1);
+			assert(GeneralTreeFunctions.checkStudentAnswer(resultingTrees[0], solutionTree));
+		});
+		it("Test with a not valid canvasobject",function () {
 
+		});
 	})
 });
