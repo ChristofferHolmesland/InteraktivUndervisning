@@ -21,9 +21,9 @@ export default class Sort {
 		if (config.steps) {
 			this.steps = config.steps;
 			if (this.gd.operatingMode == "Presentation") {
+				this.gd.currentStep = config.steps.length - 1;
 				this.gd.addSteppingButtons();
 				this.gd.drawStatic();
-				this.gd.currentStep = config.steps.length - 1;
 			}
 			this.parseSteps();
 		}
@@ -944,8 +944,8 @@ export default class Sort {
 			if (this._initialArrayPosition == undefined) {
 				this._initialArrayPosition = { x: p.x, y: p.y };
 			} else {
-				p.x = (p.x - this._initialArrayPosition.x);
-				p.y = (p.y - this._initialArrayPosition.y);
+				p.x -= (p.x - this._initialArrayPosition.x);
+				p.y -= (p.y - this._initialArrayPosition.y);
 			}
 
 			let newArr = this.getNewArray(p.x, p.y);
@@ -1028,17 +1028,17 @@ export default class Sort {
 
 			for (let i = 0; i < step.arrays.length; i++) {
 				let arr = step.arrays[i];
-
 				let newArr = {
 					position: {
-						x: arr.position.x + pos.dx,
-						y: arr.position.y + pos.dy
+						x: arr.position.x + pos.x,
+						y: arr.position.y + pos.y
 					},
 					nodes: [],
 					links: []
 				};
 				nodesFromValueList(arr.nodes, newArr);
 				this.arrays.push(newArr);
+				this.gd.centerCameraOnGraph();
 			}
 
 			for (let i = 0; i < this.arrays.length; i++) {
@@ -1147,11 +1147,9 @@ export default class Sort {
 
 				parseMerge(step, pos);
 			} else if (step.type == "Complete") {
-				if (offset == undefined) {
-					pos = {
-						dx: 0,
-						dy: 0
-					};
+				if (offset !== undefined) {
+					pos.x = offset.dx;
+					pos.y = offset.dy;
 				}
 				parseComplete(step, pos);
 			} else {

@@ -93,7 +93,7 @@ export default class GraphDrawer {
 
 		// Which step of the presentation the user is currently on
 		// Should be used by the controller to decide on what to display
-		this.currentStep = -1;
+		this.currentStep = 0;
 		// Buttons used to change step in presentation mode.
 		this.steppingButtons = [];
 		// Decides how much of the assigned button space should be used
@@ -847,7 +847,7 @@ export default class GraphDrawer {
 		};
 
 		let stepForward = () => {
-			if (this.currentStep < numOfSteps - 1) {	
+			if (this.currentStep < numOfSteps - 1) {
 				this.currentStep += 1;
 				this.controllers[this.controlType].parseSteps();
 				this.addSteppingButtons();
