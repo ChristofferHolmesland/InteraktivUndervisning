@@ -222,8 +222,13 @@
                         multipleChoices: [],
                         startingArray: "",
                         startTree: undefined,
-                        graphs: undefined
-                    }
+                        graph: undefined,
+                        startTree: undefined,
+                        treeElements: ""
+                    },
+                    solutionTypes: [],
+                    requestGraphDrawerObject: false,
+                    solutionTreeType: 1,
                 };
             },
             gotTreeDrawerObject(result) {
@@ -240,7 +245,12 @@
             	//if the component is using the Graph Drawer, Graph drawer is used on Binary Tree 7 up to BFS 13
                 //Need a admin socket function for validating the question information given.
                 e.preventDefault();
-                this.$socket.emit("checkQuestionInformation",this.newQuestion,this.solutionTreeType);
+                if (this.newQuestion.solutionType > 6 && this.newQuestion.solutionType <= 13) {
+                        this.requestGraphDrawerObject = !this.requestGraphDrawerObject;
+                        console.log("Asking graphdrawer for object");
+                } else {
+                    this.$socket.emit("checkQuestionInformation",this.newQuestion,this.solutionTreeType);
+                }
             },
             objectsInputChanged(newObject) {
                 if (newObject == undefined) return;
@@ -326,12 +336,8 @@
             confirmQuestionRequirements: function (result) {
             	console.log(result);
             	if (result) {
-					if (this.newQuestion.solutionType > 6 && this.newQuestion <= 13) {
-						this.requestGraphDrawerObject = !this.requestGraphDrawerObject;
-					} else {
-						this.$refs[this.elementRef].hide();
-						this.returnToOkHandler();
-					}
+                    this.$refs[this.elementRef].hide();
+                    this.returnToOkHandler();
                 }
 
             }
