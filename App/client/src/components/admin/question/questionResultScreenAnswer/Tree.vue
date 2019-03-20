@@ -8,7 +8,7 @@
                     :width="500"
     />
 </template>
-<!--Pretty sure :steps does not work like this -->
+<!--Pretty sure :steps does not work like this. Needs to be changed to accommodate for array of trees in steps. Needs a button to show alternatives-->
 <script>
 	import GraphDrawer from "../../../graphDrawer/GraphDrawer";
 	export default {

@@ -17,7 +17,7 @@
 					+
 					<span style="visibility: hidden;">+</span>
 				</b-button>
-				<EditQuestion elementId="newQuestionModal" :okHandler="addNewQuestionHandler"></EditQuestion>
+				<EditQuestion elementRef="innerModal" elementId="newQuestionModal" :okHandler="addNewQuestionHandler"></EditQuestion>
 			</b-col>
 			<b-col cols="2"></b-col>
 		</b-row>

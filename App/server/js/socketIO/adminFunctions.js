@@ -2,7 +2,10 @@ const dbFunctions = require("../database/databaseFunctions").dbFunctions;
 
 const generalFunctions =  require("../generalFunctions.js").functions;
 const algorithms = require("../algorithms/algorithms");
-
+const BinaryTreeFunctions = require("../algorithms/trees/BinaryTree.js");
+const BinarySearchTreeFunctions = require("../algorithms/trees/BinarySearchTree.js");
+const AVLTreeFunctions = require("../algorithms/trees/AVLTree.js");
+const GeneralTreeFunctions = require("../algorithms/trees/GeneralTreeFunctions.js");
 const session = require("../session.js").Session;
 const question = require("../session.js").Question;
 const answer = require("../session.js").Answer;
@@ -454,6 +457,108 @@ module.exports.admin = function(socket, db, user, sessions) {
 			}
 			socket.emit("sendAllQuestionsWithinCourse", result);
 		});
+	});
+
+	socket.on("checkQuestionInformation",function (questionInfo,treeAction) {
+		//TODO put different cases together if they have the same question validations, example the tree cases
+		let questionType = questionInfo.solutionType;
+		let treeElements = questionInfo.objects.treeElements;
+		console.log(questionType);
+		console.log(treeElements);
+		console.log(questionInfo.objects.startTree);
+		console.log(questionInfo.objects.graphs);
+		let result = true;
+		switch(questionType) {
+			case 1:	//Text input
+				break;
+			case 2:	//Multiple choice
+				break;
+			case 3:	//ArraySort //TODO Remove this ArraySort from the database and reduce all other questiontypes with 1.
+				break;
+			case 4:	//MergeSort
+				break;
+			case 5: //QuickSort
+				break;
+			case 6:	//ShellSort
+				break;
+			case 7: //Binary Tree
+				if (treeElements === undefined) result = false;
+				else {
+					let treeArray = treeElements.split(",");
+					if (treeArray.length === 0) result = false;
+					else {
+						for (let i=0;i<treeArray.length;i++) {
+							if(isNaN(treeArray[i])){
+								result = false;
+								break;
+							}
+						}
+					}
+				}
+				break;
+				case 8: case 9:	//Binary Search Tree, AVL Tree
+				let startTree = undefined;
+				let treeArray = [];
+				if(treeAction === 0) {
+					//add nodes
+					if(questionInfo.objects.startTree === undefined && treeElements === undefined) result = false;
+					else {
+						if(questionInfo.objects.startTree !== undefined) {
+							startTree = GeneralTreeFunctions.createTreeObjectFromCanvasObjectver1(questionInfo.objects.startTree);
+						}
+						if(treeElements !== undefined) {
+							treeArray = treeElements.split(",");
+							for (let i=0;i<treeArray.length;i++) {
+								if(isNaN(treeArray[i])){
+									result = false;
+									break;
+								}
+							}
+						}
+						if(questionType === 8 && result){
+							let treeObject = BinarySearchTreeFunctions.createBinarySearchTree(treeArray,true,startTree);
+							result = BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(treeObject);
+						}
+						if(questionType === 9 && result) {
+							let treeObject = AVLTreeFunctions.createAVLTree(treeArray,true,startTree);
+							result = BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(treeObject);
+						}
+					}
+				}else {
+					//remove nodes
+					if (questionInfo.objects.startTree === undefined || treeElements === undefined) result = false;
+					else {
+						treeArray = treeElements.split(",");
+						if(treeArray.length === 0) result = false;
+						for (let i=0;i<treeArray.length;i++) {
+							if(isNaN(treeArray[i])){
+								result = false;
+								break;
+							}
+						}
+						startTree = GeneralTreeFunctions.createTreeObjectFromCanvasObjectver1(questionInfo.objects.startTree);
+					}
+					if(questionType === 8 && result) {
+						let treeObject = BinarySearchTreeFunctions.createBinarySearchTree(treeArray,false,questionInfo.objects.startTree);
+						result = BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(treeObject);
+					}
+					if(questionType === 9 && result) {
+						let treeObject = BinarySearchTreeFunctions.createBinarySearchTree(treeArray,false,questionInfo.objects.startTree);
+						result = BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(treeObject);
+					}
+				}
+				break;
+			case 10: //Graph
+				break;
+			case 11: //Djikstra
+				break;
+			case 12: //BellmanFord
+			case 13: //BFS
+			case 14: //Python
+			default:	//undefined or a case that should exist
+				result = false
+		}
+		socket.emit("confirmQuestionRequirements",result)
 	});
 
 	socket.on("addNewQuestion", function(question) {

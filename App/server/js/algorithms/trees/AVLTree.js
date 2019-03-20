@@ -119,7 +119,7 @@ module.exports.createAVLTreeSolution = function (elements, add, existingTreeObje
 			steps.push(step);
 			let rotationStep = fixAVLCondition(node, tree,true);
 			if (rotationStep) {
-				let step = GeneralTreeFunctions.createStepArray("Rotation","AVL",[tree]);
+				let step = GeneralTreeFunctions.createStepArray("Rotated","AVL",[tree]);
 				steps.push(step)
 			}
 		}
@@ -187,7 +187,7 @@ module.exports.createAVLTreeSolution = function (elements, add, existingTreeObje
 					}
 				}
 				if(rotationNeeded){
-					let rotationStep = GeneralTreeFunctions.createStepArray("Rotation","AVL",rotationSteps);
+					let rotationStep = GeneralTreeFunctions.createStepArray("Rotated","AVL",rotationSteps);
 					steps.push(rotationStep);
 				}
 			}

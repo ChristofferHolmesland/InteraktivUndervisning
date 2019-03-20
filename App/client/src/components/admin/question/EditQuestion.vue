@@ -123,15 +123,34 @@
                 </b-form-input>
             </b-form-group>
             <b-form-group
-                    id="Tree"
-                    label="Draw the tree, or give an array to build the solution tree"
-                    v-if="newQuestion.solutionType === 6"
+                    id="BinaryTree"
+                    label="List the nodes that are going to be used in the binary tree. Elements are divided by , and [] are not required)"
+                    v-if="newQuestion.solutionType === 7"
                     >
+                <b-form-input   id="nodeElements"
+                                type="text"
+                                v-model="newQuestion.objects.treeElements"
+                                >
+                </b-form-input>
+            </b-form-group>
+            <b-form-group
+                    id="BinarySearchTrees"
+                    label="Draw the tree, or give an array to build the solution tree"
+                    v-if="newQuestion.solutionType === 8 || newQuestion.solutionType === 9"
+                    >
+                <b-button variant="primary" @click="addTreeType">Add</b-button>
+                <b-button variant="danger" @click="removeTreeType">Remove</b-button>
+                <label v-if="this.solutionTreeType === 1" for="solutionListElements">Input elements to be added to the tree. The elements are seperated by ,</label>
+                <label v-else for="solutionListElements">Input elements to be removed from the tree. The elements are seperated by ,</label>
+                <b-form-input 	id="solutionListElements"
+                                 type="text"
+                                 v-model="newQuestion.objects.treeElements">
+                </b-form-input>
                 <GraphDrawer
-                    @getValueResponse="gotGraphDrawerObject"
+                    @getValueResponse="gotTreeDrawerObject"
                     :requestAnswer="requestGraphDrawerObject"
                     control-type="Graph0"
-                    export-type="Graph"
+                    export-type="Tree"
                     operationMode="Interactive"
                 />
             </b-form-group>
@@ -168,11 +187,14 @@
                     objects: {
                         multipleChoices: [],
                         startingArray: "",
-                        graph: undefined
+                        graph: undefined,
+                        startTree: undefined,
+						treeElements: ""
                     }
                 },
                 solutionTypes: [],
-                requestGraphDrawerObject: false
+                requestGraphDrawerObject: false,
+                solutionTreeType: 1,
             }
         },
         components: {
@@ -199,20 +221,26 @@
                     objects: {
                         multipleChoices: [],
                         startingArray: "",
+                        startTree: undefined,
                         graphs: undefined
                     }
                 };
             },
-            gotGraphDrawerObject(result) {
-                this.newQuestion.objects.graph = result;
-                this.returnToOkHandler();
+            gotTreeDrawerObject(result) {
+                console.log("Hello Mom!");
+                this.newQuestion.objects.startTree = result;
+                this.$socket.emit("checkQuestionInformation",this.newQuestion,this.solutionTreeType);
             },
-            callOkHandler: function() {
-                if (this.newQuestion.solutionType == 10) {
-                    this.requestGraphDrawerObject = !this.requestGraphDrawerObject;
-                } else {
-                    this.returnToOkHandler();
-                }
+            gotGraphDrawerObject(result) {
+            	console.log("Hello Senpai!");
+                this.newQuestion.objects.graph = result;
+                this.$socket.emit("checkQuestionInformation",this.newQuestion,this.solutionTreeType);
+            },
+            callOkHandler: function(e) {
+            	//if the component is using the Graph Drawer, Graph drawer is used on Binary Tree 7 up to BFS 13
+                //Need a admin socket function for validating the question information given.
+                e.preventDefault();
+                this.$socket.emit("checkQuestionInformation",this.newQuestion,this.solutionTreeType);
             },
             objectsInputChanged(newObject) {
                 if (newObject == undefined) return;
@@ -222,6 +250,12 @@
             },
             addNewMultipleChoice() {
                 this.newQuestion.objects.multipleChoices.push("");
+            },
+            removeTreeType() {
+            	this.solutionTreeType = 0;
+            },
+            addTreeType() {
+            	this.solutionTreeType = 1;
             }
         },
         computed: {
@@ -288,8 +322,20 @@
         sockets: {
             sendQuestionTypes: function(types) {
                 this.solutionTypes = types;
+            },
+            confirmQuestionRequirements: function (result) {
+            	console.log(result);
+            	if (result) {
+					if (this.newQuestion.solutionType > 6 && this.newQuestion <= 13) {
+						this.requestGraphDrawerObject = !this.requestGraphDrawerObject;
+					} else {
+						this.$refs[this.elementRef].hide();
+						this.returnToOkHandler();
+					}
+                }
+
             }
-        },
+	},
         watch: {
             "newQuestion.solutionType": function() {
                 if (this.solutionType === 1) this.newQuestion.solution = "";
