@@ -10,6 +10,21 @@ export default class Graph0 {
 		if (config == undefined) this.exportType = "Graph";
 		else this.exportType = config.exportType;
 
+		// If there are some starting steps, they are parsed
+		// and put into the world.
+		if (config.steps) {
+			if (config.importType) this.importType = config.importType;
+			else console.error("Got configuration steps, but importType is undefined");
+
+			this.steps = config.steps;
+			if (this.gd.operatingMode == "Presentation") {
+				this.gd.currentStep = config.steps.length - 1;
+				this.gd.addSteppingButtons();
+				this.gd.drawStatic();
+			}
+			this.parseSteps();
+		}
+
 		if (config == undefined) this.subType == undefined;
 		else {
 			this.subType = config.subType;
@@ -64,6 +79,9 @@ export default class Graph0 {
 			if (!this.stateHandlers.hasOwnProperty(key)) continue;
 			this.stateHandlers[key] = this.stateHandlers[key].bind(this);
 		}
+
+		// Decides which of the trees is being displayed
+		this.treeIndex = 0;
 
 		this.config = config;
 	}
@@ -319,6 +337,106 @@ export default class Graph0 {
 	}
 
 	parseSteps() {
+		if (this.importType == "Graph") this._parseGraphSteps();
+		else this._parseTreeSteps();
+	}
+
+	_parseTreeSteps() {
+		this.gd.nodes = [];
+		this.gd.edges = [];
+		this.gd.dirty = true;
+
+		let getTree = (step) => {
+			if (this.treeIndex > step.treeInfo.length)
+				return step.treeInfo[step.treeInfo.length - 1];
+			else return step.treeInfo[this.treeIndex];
+		}
+
+		let r = this.gd.nodeShape == "Circle" ? this.gd.R : this.gd.R * this.gd.SQUARE_FACTOR;
+
+		let parseInitial = (step) => {
+			let tree = getTree(step);
+
+			let p = this.gd.camera.project(this.gd.canvas.width / 2, 0);
+			// Add some padding between canvas top and the top of the tree
+			p.y += r / 2;
+
+			/*
+				Searches a tree with root node for the node with the lowest cost.
+				The cost increases or decreases when accessing children based on the direction.
+				If dir == 0, then we're looking at a tree where node is the left child.
+				If dir == 1, then we're looking at a tree where node is the riht child.
+				The node with the lowest cost is the one which is the closest to the x-position
+				of the root node.
+			*/
+			let search = (node, cost, dir) => {
+				if (node == undefined) return undefined;
+
+				let leftCost = cost;
+				let rightCost = cost;
+				if (dir == 0) {
+					leftCost += 1;
+					rightCost -= 1;
+				} else if (dir == 1) {
+					leftCost -= 1;
+					rightCost += 1;
+				}
+
+				let l = search(node.children[0], leftCost, dir);
+				let r = search(node.children[1], rightCost, dir);
+
+				if (l == undefined && r == undefined) {
+					return { node: node, cost: cost };
+				} else if (l && r == undefined) {
+					if (cost < l.cost) return { node: node, cost: cost };
+					else return l;
+				} else if (r && l == undefined) {
+					if (cost < r.cost) return { node: node, cost: cost };
+					else return r;
+				}
+
+				if (l.cost < r.cost) return l;
+				else return r;
+			}
+
+			// Find the node furthest to the right on the left side of the tree
+			let left = tree.rootNode.children[0];
+			let rightest = search(left, 0, 0).node;
+
+			// Find the node furthest to the left on the right side of the tree
+			let right = tree.rootNode.children[1];
+			let leftest = search(right, 0, 1).node;
+		};
+
+		let parseAdd = (step) => {};
+
+		let parseRemove = (step) => {};
+
+		let parseRotate = (step) => {};
+
+		let parseComplete = (step) => {};
+
+		for (let i = 0; i <= this.gd.currentStep; i++) {
+			let step = this.steps[i];
+
+			if (step.type == "Initial") {
+				parseInitial(step);
+			} else if (step.type == "Add") {
+				parseAdd(step);
+			} else if (step.type == "Remove") {
+				parseRemove(step);
+			} else if (step.type == "Rotated") {
+				parseRotate(step);
+			} else if (step.type == "Done") {
+				parseComplete(step);
+			} else {
+				console.error(`Found invalid step type: ${step.type} 
+					at index ${i}, skipping.`);
+			}
+		}
+	}
+
+	_parseGraphSteps() {
 		this.gd.nodes = [];
 		this.gd.edges = [];
 		this.gd.dirty = true;
@@ -356,7 +474,7 @@ export default class Graph0 {
 					console.error(`Found edge with non-existing node: ${e}`);
 				}
 			}
-		}
+		};
 
 		for (let i = 0; i <= this.gd.currentStep; i++) {
 			let step = this.steps[i];
