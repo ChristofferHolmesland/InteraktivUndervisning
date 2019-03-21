@@ -420,7 +420,18 @@ export default class Graph0 {
 					v: node.value
 				});
 
-				addGraphDrawerNode(node.children[0], x + 1, y + 1, dir);
+				let left = dir == 0 ? x + 1 : x - 1;
+				let right = dir == 0 ? x - 1 : x + 1;
+
+				// Add child nodes
+				addGraphDrawerNode(node.children[0], left, y + 1, dir);
+				addGraphDrawerNode(node.children[1], right, y + 1, dir);
+
+				// Add parent node
+				let parentDir = 0;
+				if (node.rootNode.children[0] == node) parentDir = right;
+				else if (node.rootNode.children[1] == node) parentDir = left;
+				addGraphDrawerNode(node.rootNode, parentDir, y - 1, dir);
 			};
 
 			// Find the node furthest to the right on the left side of the tree
@@ -434,6 +445,13 @@ export default class Graph0 {
 			addGraphDrawerNode(leftest.node, 1, leftest.depth, 1);
 
 			// Add root node
+			let root = tree.rootNode;
+			this.gd.nodes.push({
+				x: p.x,
+				y: p.y,
+				r: r,
+				v: root.value
+			});
 		};
 
 		let parseAdd = (step) => {};
