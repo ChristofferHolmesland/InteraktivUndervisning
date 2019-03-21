@@ -212,16 +212,18 @@
         },
         methods: {
             addNewQuestionHandler: function() {
-				if (this.newQuestion.time === 0) this.newQuestion.time = -1;
+                let responseNewQuestion = JSON.parse(JSON.stringify(this.newQuestion));
+				if (responseNewQuestion.time === 0) responseNewQuestion.time = -1;
                 this.$socket.emit(
                     "addNewQuestion", 
-                    Object.assign({}, this.newQuestion, {courseCode: this.$store.getters.getSelectedCourse.split(" ")[0]}),
+                    Object.assign({}, responseNewQuestion, {courseCode: this.$store.getters.getSelectedCourse.split(" ")[0]}),
                     this.solutionTreeType
                 );
 			},
 			editQuestionHandler: function() {
-				if (this.newQuestion.time === 0) this.newQuestion.time = -1;
-				this.$socket.emit("updateQuestion", this.newQuestion, this.solutionTreeType);
+                let responseNewQuestion = JSON.parse(JSON.stringify(this.newQuestion));
+				if (responseNewQuestion.time === 0) responseNewQuestion.time = -1;
+				this.$socket.emit("updateQuestion", responseNewQuestion, this.solutionTreeType);
 
 			},
             returnToOkHandler: function() {
