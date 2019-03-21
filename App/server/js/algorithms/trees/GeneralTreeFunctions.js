@@ -5,6 +5,7 @@ const Tree = require("./Tree.js").Tree;
 //the trees should be checked if they are valid after this function is finished
 //This function is going to transform a student's and teacher's drawn tree to a tree object.
 module.exports.createTreeObjectFromCanvasObjectver1 = function(treeCanvas) {
+	replaceNullWithUndefined(treeCanvas);
 	let listofTrees = [];
 	for (let l=0;l<treeCanvas.roots.length;l++) {	//can be more than 1 root
 		let listofConfiguredNodes = [];
@@ -31,10 +32,21 @@ function convertCanvasNodeToTreeNode(currentCanvasNode,currentTreeNode,nodelist,
 	//console.log(currentCanvasNode);
 	if(currentCanvasNode.children[0] !== undefined)	convertCanvasNodeToTreeNode(currentCanvasNode.children[0],currentTreeNode.children[0],nodelist,currentTreeNode);
 	if(currentCanvasNode.children[1] !== undefined)	convertCanvasNodeToTreeNode(currentCanvasNode.children[1],currentTreeNode.children[1],nodelist,currentTreeNode);
-
 }
 
+function replaceNullWithUndefined(canvasTree) {
+	if (canvasTree.roots.length > 0) for (let r=0;r<canvasTree.roots.length;r++) checkCanvasNodeForNull(canvasTree.roots[r]);
+}
 
+function checkCanvasNodeForNull(canvasNode) {
+	if(canvasNode.children.length > 0) {
+		for(let i=0;i<canvasNode.children.length;i++){
+			if(canvasNode.children[i] === null) canvasNode.children[i] = undefined
+		}
+		if(canvasNode.children[0] !== undefined)	checkCanvasNodeForNull(canvasNode.children[0]);
+		if(canvasNode.children[1] !== undefined)	checkCanvasNodeForNull(canvasNode.children[1]);
+	}
+}
 //Checks to two tree branches whether or not they are the same.
 //Will return true if two trees are the same and false if they are not.
 // Is going to be used to check a students answer with the solution!

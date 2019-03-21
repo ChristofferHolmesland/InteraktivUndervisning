@@ -166,6 +166,47 @@ describe('TestBinaryTrees', function () {
 			assert(!binaryNode5.compareNodes(binaryNode2));
 		})
 	});
+	describe("Test values in tree function",function () {
+		let valueList = [1,5,3,2,4,6,7];
+		it("All values should be in the tree",function () {
+			let roottestNode = new BinaryTreeNode(3);
+			let testnode1 = new BinaryTreeNode(1);
+			let testnode2 = new BinaryTreeNode(2);
+			let testnode3 = new BinaryTreeNode(4);
+			let testnode4 = new BinaryTreeNode(5);
+			let testnode5 = new BinaryTreeNode(6);
+			let testnode6 = new BinaryTreeNode(7);
+			let testnode8 = new BinaryTreeNode(8);
+			let solutionTree = new Tree(roottestNode);
+			testnode1.addParent(testnode2);
+			testnode2.addParent(roottestNode);
+			testnode3.addParent(roottestNode);
+			testnode4.addParent(testnode3);
+			testnode5.addParent(testnode4);
+			testnode6.addParent(testnode5);
+			testnode8.addParent(testnode6);
+			solutionTree.nodes = [roottestNode,testnode1,testnode2,testnode3,testnode4,testnode5,testnode6,testnode8];
+			assert(solutionTree.areValuesInTree(valueList));
+		});
+		it("One value is not in the solution tree.",function () {
+			let rootfaultyNode = new BinaryTreeNode(3);
+			let nodefaulty1 = new BinaryTreeNode(1);
+			let nodefaulty2 = new BinaryTreeNode(2);
+			let nodefaulty4 = new BinaryTreeNode(5);
+			let nodefaulty5 = new BinaryTreeNode(6);
+			let nodefaulty6 = new BinaryTreeNode(7);
+			let nodefaulty8 = new BinaryTreeNode(8);
+			let solutionTree = new Tree(rootfaultyNode);
+			nodefaulty1.addParent(rootfaultyNode);
+			nodefaulty2.addParent(nodefaulty1);
+			nodefaulty4.addParent(rootfaultyNode);
+			nodefaulty5.addParent(nodefaulty4);
+			nodefaulty6.addParent(nodefaulty5);
+			nodefaulty8.addParent(nodefaulty6);
+			solutionTree.nodes = [rootfaultyNode,nodefaulty1,nodefaulty2,nodefaulty4,nodefaulty5,nodefaulty6,nodefaulty8];
+			assert(!solutionTree.areValuesInTree(valueList));
+		})
+	});
 
 	describe('TestBinarySearchConditions', function () {
 		it("checkBinarySearchTreeTrueConditions", function () {

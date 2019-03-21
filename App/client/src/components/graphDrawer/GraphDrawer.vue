@@ -40,6 +40,10 @@
             height: {
                 default: 600,
                 type: Number
+            },
+			displayEdgeValues: {
+            	default: false,
+                type: Boolean
             }
         },
         watch: {
@@ -59,7 +63,7 @@
                 nodeShape: nodeShape,
                 controlType: this.controlType,
                 operatingMode: this.operatingMode,
-                displayEdgeValues: true,
+                displayEdgeValues: false,
                 directedEdges: true,
 
                 dijkstra: {

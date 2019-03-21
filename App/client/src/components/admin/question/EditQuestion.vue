@@ -138,6 +138,7 @@
                     label="Draw the tree, or give an array to build the solution tree"
                     v-if="newQuestion.solutionType === 8 || newQuestion.solutionType === 9"
                     >
+                <!--TODO replace buttons with radio fields! Default should be Add -->
                 <b-button variant="primary" @click="addTreeType">Add</b-button>
                 <b-button variant="danger" @click="removeTreeType">Remove</b-button>
                 <label v-if="this.solutionTreeType === 1" for="solutionListElements">Input elements to be added to the tree. The elements are seperated by ,</label>
@@ -242,7 +243,7 @@
             	//if the component is using the Graph Drawer, Graph drawer is used on Binary Tree 7 up to BFS 13
                 //Need a admin socket function for validating the question information given.
                 e.preventDefault();
-                if (this.newQuestion.solutionType > 6 && this.newQuestion.solutionType <= 13) {
+                if (this.newQuestion.solutionType > 7 && this.newQuestion.solutionType <= 13) {
                         this.requestGraphDrawerObject = !this.requestGraphDrawerObject;
                         console.log("Asking graphdrawer for object");
                 } else {

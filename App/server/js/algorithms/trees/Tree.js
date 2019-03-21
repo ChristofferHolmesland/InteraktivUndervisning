@@ -86,6 +86,24 @@ class Tree {
 		}
 		return binaryNode
 	}
+
+	areValuesInTree(listOfValues) {
+		let result = true;
+		for(let n=0;n<listOfValues.length;n++) {
+			let nodeFound = false;
+			for (let j=0;j<this.nodes.length;j++) {
+				if(this.nodes[j].value === listOfValues[n]){
+					nodeFound = true;
+					break;
+				}
+			}
+			if(!nodeFound) {
+				result = false;
+				break;
+			}
+		}
+		return result
+	}
 }
 
 class BinaryTreeNode {
