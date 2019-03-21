@@ -1,12 +1,13 @@
 export default class Python {
 	_config(config) {
-		if (config.steps) {
+		if (config && config.steps) {
 			// Read last step to find the data types defined by the script
 			let types = config.steps[config.steps.length - 1].classes;
 			types.forEach((t) => this.objectTypes.push(t));
 		}
 
 		this.drawStatic();
+		this.stateHandlers.Move = this.gd.controllers["Graph0"].moveNode.bind(this);
 	}
 
 	configure() {
@@ -21,10 +22,11 @@ export default class Python {
 		this.objects = [];
 
 		this.currentState = "Join";
-		this.buttons = ["Join", "Remove", "Add_Variable", "Add_Object"];
+		this.buttons = ["Join", "Remove", "Move", "Add_Variable", "Add_Object"];
 		this.stateHandlers = {
 			Join: this.joinHandler,
 			Remove: this.removeHandler,
+			Move: undefined,
 			Add_Variable: this.addVariableHandler,
 			Add_Object: this.addObjectHandler
 		};
@@ -33,6 +35,7 @@ export default class Python {
 
 		for (let key in this.stateHandlers) {
 			if (!this.stateHandlers.hasOwnProperty(key)) continue;
+			if (this.stateHandlers[key] == undefined) continue;
 			this.stateHandlers[key] = this.stateHandlers[key].bind(this);
 		}
 	}
@@ -53,24 +56,29 @@ export default class Python {
 
 	}
 
-	addVariableHandler() {
+	addVariableHandler(e) {
 		let variableName = "";
 		while (variableName == "") {
 			variableName = prompt("Enter variable name:", "");
 			if (variableName == undefined) variableName = "";
 		}
 
+		
+
+		/*
 		let yPadding = 10 + this.gd.R * 2;
 		let margin = 10;
+		*/
 
 		let variable = {
 			name: variableName,
-			position: { x: 0, y: 0 },
+			position: { x: e.offsetX, y: e.offsetY },
 			links: []
 		};
 
 		this.variables.push(variable);
 
+		/*
 		if (this.variables.length == 1) {
 			let p = this.gd.camera.project(margin, margin);
 			variable.position.x = p.x + this.gd.R;
@@ -80,6 +88,7 @@ export default class Python {
 			variable.position.x = last.position.x;
 			variable.position.y = last.position.y + yPadding;
 		}
+		*/
 
 		this.gd.nodes.push({
 			x: variable.position.x,
@@ -92,31 +101,37 @@ export default class Python {
 		return true;
 	}
 
-	addObjectHandler() {
+	addObjectHandler(e) {
 		let objectType = "";
 		while (objectType == "") {
-			objectType = prompt("Enter objectType:", "");
+			objectType = prompt("Enter object type:", "");
 			if (objectType == undefined) objectType = "";
 			// Only accept defined types (TODO: Decide if we want to help the student)
 			if (!this.objectTypes.includes(objectType)) objectType = "";
 		}
 
-		let yPadding = 10 + this.gd.R * 2;
-		let margin = 10;
+		let baseType = this.objectTypes.indexOf(objectType) < 3;
 
+		let objectValue = undefined;
+		if (baseType) objectValue = prompt("Enter object value:", "");
+
+		/*
+		let yPadding = 10 + this.gd.R * 2;
+		let margin = 10 * this.gd.R;
+		*/
 		let object = {
 			type: objectType,
-			position: { x: 0, y: 0 },
-			links: []
+			baseType: baseType,
+			value: objectValue,
+			position: { x: e.offsetX, y: e.offsetY },
+			links: baseType ? undefined : []
 		};
 
 		this.objects.push(object);
 
+		/*
 		if (this.objects.length == 1) {
-			let p = this.gd.camera.project(
-				this.gd.canvas.width - margin,
-				margin
-			);
+			let p = this.gd.camera.project(margin, margin / this.gd.R);
 			object.position.x = p.x + this.gd.R;
 			object.position.y = p.y + this.gd.R;
 		} else {
@@ -124,12 +139,13 @@ export default class Python {
 			object.position.x = last.position.x;
 			object.position.y = last.position.y + yPadding;
 		}
+		*/
 
 		this.gd.nodes.push({
 			x: object.position.x,
 			y: object.position.y,
 			r: this.gd.R,
-			v: object.type
+			v: object.baseType ? object.type + ": " + object.value : object.type
 		});
 
 		this.gd.dirty = true;
