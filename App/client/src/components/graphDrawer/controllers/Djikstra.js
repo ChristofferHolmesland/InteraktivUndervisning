@@ -220,5 +220,6 @@ export default class Djikstra {
 		}
 
 		this.gd.dirty = true;
+		this.gd.centerCameraOnGraph();
 	}
 }

@@ -19,13 +19,13 @@ export default class Sort {
 		// If there are some starting steps, they are parsed
 		// and put into the world.
 		if (config.steps) {
-			this.gd.currentStep = config.steps.length - 1;
 			this.steps = config.steps;
 			if (this.gd.operatingMode == "Presentation") {
+				this.gd.currentStep = config.steps.length - 1;
 				this.gd.addSteppingButtons();
 				this.gd.drawStatic();
-				this.parseSteps();
 			}
+			this.parseSteps();
 		}
 	}
 
@@ -929,6 +929,8 @@ export default class Sort {
 		// The inital array is placed centered
 		// at the top of the canvas relative 
 		// to the current camera position.
+		// If this is not the first time parseInitial is ran,
+		// it will be placed at the position of the first run instead.
 		let parseInitial = (step) => {
 			let p = this.gd.camera.project(this.gd.canvas.width / 2, 0);
 
@@ -938,6 +940,13 @@ export default class Sort {
 			// Assumes same size nodes
 			let arrayWidth = step.list.length * r;
 			p.x -= arrayWidth / 2;
+
+			if (this._initialArrayPosition == undefined) {
+				this._initialArrayPosition = { x: p.x, y: p.y };
+			} else {
+				p.x -= (p.x - this._initialArrayPosition.x);
+				p.y -= (p.y - this._initialArrayPosition.y);
+			}
 
 			let newArr = this.getNewArray(p.x, p.y);
 			nodesFromValueList(step.list, newArr);
@@ -960,14 +969,14 @@ export default class Sort {
 		let parseSplit = (step, pos) => {
 			let parent = this._findArrayFromNodeValues(step.list);
 
-			if (step.left.length > 0) {
+			if (step.left !== undefined && step.left.length > 0) {
 				let left = this.getNewArray(pos.left.x, pos.left.y);
 				nodesFromValueList(step.left, left);
 				this.arrays.push(left);
 				this.arrays[parent].links.push(left);
 			}
 
-			if (step.right.length > 0) {
+			if (step.right !== undefined && step.right.length > 0) {
 				let right = this.getNewArray(pos.right.x, pos.right.y);
 				nodesFromValueList(step.right, right);
 				this.arrays.push(right);
@@ -1019,17 +1028,17 @@ export default class Sort {
 
 			for (let i = 0; i < step.arrays.length; i++) {
 				let arr = step.arrays[i];
-
 				let newArr = {
 					position: {
-						x: arr.position.x + pos.dx,
-						y: arr.position.y + pos.dy
+						x: arr.position.x + pos.x,
+						y: arr.position.y + pos.y
 					},
 					nodes: [],
 					links: []
 				};
 				nodesFromValueList(arr.nodes, newArr);
 				this.arrays.push(newArr);
+				this.gd.centerCameraOnGraph();
 			}
 
 			for (let i = 0; i < this.arrays.length; i++) {
@@ -1138,11 +1147,9 @@ export default class Sort {
 
 				parseMerge(step, pos);
 			} else if (step.type == "Complete") {
-				if (offset == undefined) {
-					pos = {
-						dx: 0,
-						dy: 0
-					};
+				if (offset !== undefined) {
+					pos.x = offset.dx;
+					pos.y = offset.dy;
 				}
 				parseComplete(step, pos);
 			} else {
