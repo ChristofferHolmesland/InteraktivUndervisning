@@ -204,14 +204,30 @@
         props: {
             elementRef: String,
             elementId: String,
-            okHandler: Function
+            okHandler: String,
+            doneHandler: Function
         },
         mounted() {
             this.$socket.emit("getQuestionTypes");
         },
         methods: {
+            addNewQuestionHandler: function() {
+				if (this.newQuestion.time === 0) this.newQuestion.time = -1;
+                this.$socket.emit(
+                    "addNewQuestion", 
+                    Object.assign({}, this.newQuestion, {courseCode: this.$store.getters.getSelectedCourse.split(" ")[0]}),
+                    this.solutionTreeType
+                );
+			},
+			editQuestionHandler: function() {
+				if (this.newQuestion.time === 0) this.newQuestion.time = -1;
+				this.$socket.emit("updateQuestion", this.newQuestion, this.solutionTreeType);
+
+			},
             returnToOkHandler: function() {
-                this.okHandler(this.newQuestion);
+                if (this.okHandler == "add") this.addNewQuestionHandler();
+                else if (this.okHandler == "edit") this.editQuestionHandler();
+
                 this.newQuestion = {
                     id: -1,
                     text: "",
@@ -233,11 +249,11 @@
             },
             gotTreeDrawerObject(result) {
                 this.newQuestion.objects.startTree = result;
-                this.$socket.emit("checkQuestionInformation",this.newQuestion,this.solutionTreeType);
+                this.returnToOkHandler();
             },
             gotGraphDrawerObject(result) {
                 this.newQuestion.objects.graph = result;
-                this.$socket.emit("checkQuestionInformation",this.newQuestion,this.solutionTreeType);
+                this.returnToOkHandler();
             },
             callOkHandler: function(e) {
             	//if the component is using the Graph Drawer, Graph drawer is used on Binary Tree 7 up to BFS 13
@@ -245,9 +261,8 @@
                 e.preventDefault();
                 if (this.newQuestion.solutionType > 7 && this.newQuestion.solutionType <= 13) {
                         this.requestGraphDrawerObject = !this.requestGraphDrawerObject;
-                        console.log("Asking graphdrawer for object");
                 } else {
-                    this.$socket.emit("checkQuestionInformation",this.newQuestion,this.solutionTreeType);
+                    this.returnToOkHandler();
                 }
             },
             objectsInputChanged(newObject) {
@@ -335,11 +350,11 @@
             	console.log(result);
             	if (result) {
                     this.$refs[this.elementRef].hide();
-                    this.returnToOkHandler();
+                    this.doneHandler();
                 }
 
             }
-	},
+	    },
         watch: {
             "newQuestion.solutionType": function() {
                 if (this.solutionType === 1) this.newQuestion.solution = "";
