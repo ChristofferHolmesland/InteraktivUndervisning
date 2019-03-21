@@ -109,7 +109,7 @@
 			}
 		},
 		methods: {
-			doneHandler: function() {
+			requestNewQuestions: function() {
 				this.$socket.emit("getAllQuestionsWithinCourse",
 					this.$store.getters.getSelectedCourse.split(" ")[0]);
 			},

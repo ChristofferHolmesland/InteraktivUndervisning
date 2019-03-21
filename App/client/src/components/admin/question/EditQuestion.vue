@@ -227,25 +227,6 @@
             returnToOkHandler: function() {
                 if (this.okHandler == "add") this.addNewQuestionHandler();
                 else if (this.okHandler == "edit") this.editQuestionHandler();
-
-                this.newQuestion = {
-                    id: -1,
-                    text: "",
-                    description: "", 
-              		solutionType: "",
-                    solution: "",
-                    time: 0,
-                    objects: {
-                        multipleChoices: [],
-                        startingArray: "",
-                        startTree: undefined,
-                        graph: undefined,
-                        treeElements: ""
-                    },
-                    solutionTypes: [],
-                    requestGraphDrawerObject: false,
-                    solutionTreeType: 1,
-                };
             },
             gotTreeDrawerObject(result) {
                 this.newQuestion.objects.startTree = result;
@@ -350,6 +331,24 @@
             	console.log(result);
             	if (result) {
                     this.$refs[this.elementRef].hide();
+                    this.newQuestion = {
+                        id: -1,
+                        text: "",
+                        description: "", 
+                        solutionType: "",
+                        solution: "",
+                        time: 0,
+                        objects: {
+                            multipleChoices: [],
+                            startingArray: "",
+                            startTree: undefined,
+                            graph: undefined,
+                            treeElements: ""
+                        },
+                        solutionTypes: [],
+                        requestGraphDrawerObject: false,
+                        solutionTreeType: 1,
+                    };
                     this.doneHandler();
                 }
 

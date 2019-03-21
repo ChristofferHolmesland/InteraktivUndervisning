@@ -607,10 +607,8 @@ module.exports.admin = function(socket, db, user, sessions) {
 
 	socket.on("updateQuestion", function(question, treeAction) {
 		let valid = validateQuestion(question, treeAction);
-		if (!valid) {
-			socket.emit("confirmQuestionRequirements", false)
-			return;
-		}
+		socket.emit("confirmQuestionRequirements", valid);
+		if (!valid) return;
 
 		question = generateSolution(question);
 
