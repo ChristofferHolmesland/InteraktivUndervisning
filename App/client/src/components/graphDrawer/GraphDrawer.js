@@ -2,6 +2,7 @@ import Graph0 from "./controllers/Graph0.js";
 import Graph1 from "./controllers/Graph1.js";
 import Sort from "./controllers/Sort.js";
 import Djikstra from "./controllers/Djikstra.js";
+import Python from "./controllers/Python.js";
 import Camera from "./Camera.js";
 
 /*
@@ -177,7 +178,8 @@ export default class GraphDrawer {
 			Graph0: new Graph0(this, config.graph),
 			Graph1: new Graph1(this),
 			Sort: new Sort(this, config.sort),
-			Dijkstra: new Djikstra(this, config.dijkstra)
+			Dijkstra: new Djikstra(this, config.dijkstra),
+			Python: new Python(this, config.python)
 		};
 		
 		this.setController(this.controlType);

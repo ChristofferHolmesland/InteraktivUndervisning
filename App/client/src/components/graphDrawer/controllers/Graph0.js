@@ -70,7 +70,7 @@ export default class Graph0 {
 			Remove: this.removeNode,
 			Join: this.joinNode,
 			Move: this.moveNode,
-			Edit: this.editNode,
+			Edit: this.editNode
 		}
 
 		// Binds the "this" context to the GraphDrawer object.
