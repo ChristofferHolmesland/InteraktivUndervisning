@@ -7,8 +7,8 @@ export default class Python {
 		}
 
 		// TODO: Remove this
-		this.objectTypes.push("Punkt");
-		this.objectTypes.push("Linje");
+		this.objectTypes.push("Navn");
+		this.objectTypes.push("Person");
 
 		this.drawStatic();
 		let graph0 = this.gd.controllers["Graph0"];
