@@ -7,22 +7,47 @@ export default class Graph0 {
 	_config(config) {
 		// Decides what kind of data should be returned when exporting.
 		// Values: Graph or Tree.
-		if (config == undefined) this.exportType = "Graph0";
+		if (config == undefined) this.exportType = "Graph";
 		else this.exportType = config.exportType;
+
+		// If there are some starting steps, they are parsed
+		// and put into the world.
+		if (config.steps) {
+			if (config.importType) this.importType = config.importType;
+			else console.error("Got configuration steps, but importType is undefined");
+
+			this.steps = config.steps;
+			if (this.gd.operatingMode == "Presentation") {
+				this.gd.currentStep = config.steps.length - 1;
+				this.gd.addSteppingButtons();
+				this.gd.drawStatic();
+			}
+			this.parseSteps();
+		}
 
 		if (config == undefined) this.subType == undefined;
 		else {
 			this.subType = config.subType;
 			this.nextLetter = "A";
 
-			this.startNodeColor = config.startNodeColor;
-			this.endNodeColor = config.endNodeColor;
+			this.startNodeColor = config.startNodeColor || "LightGreen";
+			this.endNodeColor = config.endNodeColor || "LightCoral";
 
 			if (this.subType == "Dijkstra") {
 				this.buttons.push("Mark");
 				this.stateHandlers.Mark = this.markNode.bind(this);
 				this.drawStatic();
 			}
+		}
+
+		if (config.steps) {
+			this.steps = config.steps;
+			if (this.gd.operatingMode == "Presentation") {
+				this.gd.addSteppingButtons();
+				this.gd.drawStatic();
+				this.gd.currentStep = config.steps.length - 1;
+			}
+			this.parseSteps();
 		}
 	}
 
@@ -54,6 +79,9 @@ export default class Graph0 {
 			if (!this.stateHandlers.hasOwnProperty(key)) continue;
 			this.stateHandlers[key] = this.stateHandlers[key].bind(this);
 		}
+
+		// Decides which of the trees is being displayed
+		this.treeIndex = 0;
 
 		this.config = config;
 	}
@@ -308,6 +336,160 @@ export default class Graph0 {
 		this.gd.staticContext.closePath();
 	}
 
+	parseSteps() {
+		if (this.importType == "Graph") this._parseGraphSteps();
+		else this._parseTreeSteps();
+	}
+
+	_parseTreeSteps() {
+		this.gd.nodes = [];
+		this.gd.edges = [];
+		this.gd.dirty = true;
+
+		let getTree = (step) => {
+			if (this.treeIndex > step.treeInfo.length)
+				return step.treeInfo[step.treeInfo.length - 1];
+			else return step.treeInfo[this.treeIndex];
+		}
+
+		let r = this.gd.nodeShape == "Circle" ? this.gd.R : this.gd.R * this.gd.SQUARE_FACTOR;
+
+		let parseInitial = (step) => {
+			let tree = getTree(step);
+
+			let p = this.gd.camera.project(this.gd.canvas.width / 2, 0);
+			// Add some padding between canvas top and the top of the tree
+			p.y += r / 2;
+
+			/*
+				Searches a tree with root node for the node with the lowest cost.
+				The cost increases or decreases when accessing children based on the direction.
+				If dir == 0, then we're looking at a tree where node is the left child.
+				If dir == 1, then we're looking at a tree where node is the riht child.
+				The node with the lowest cost is the one which is the closest to the x-position
+				of the root node.
+			*/
+			let search = (node, cost, dir) => {
+				if (node == undefined) return undefined;
+
+				let leftCost = cost;
+				let rightCost = cost;
+				if (dir == 0) {
+					leftCost += 1;
+					rightCost -= 1;
+				} else if (dir == 1) {
+					leftCost -= 1;
+					rightCost += 1;
+				}
+
+				let l = search(node.children[0], leftCost, dir);
+				let r = search(node.children[1], rightCost, dir);
+
+				if (l == undefined && r == undefined) {
+					return { node: node, cost: cost };
+				} else if (l && r == undefined) {
+					if (cost < l.cost) return { node: node, cost: cost };
+					else return l;
+				} else if (r && l == undefined) {
+					if (cost < r.cost) return { node: node, cost: cost };
+					else return r;
+				}
+
+				if (l.cost < r.cost) return l;
+				else return r;
+			};
+
+			// Find the node furthest to the right on the left side of the tree
+			let left = tree.rootNode.children[0];
+			let rightest = search(left, 0, 0).node;
+
+			// Find the node furthest to the left on the right side of the tree
+			let right = tree.rootNode.children[1];
+			let leftest = search(right, 0, 1).node;
+		};
+
+		let parseAdd = (step) => {};
+
+		let parseRemove = (step) => {};
+
+		let parseRotate = (step) => {};
+
+		let parseComplete = (step) => {};
+
+		for (let i = 0; i <= this.gd.currentStep; i++) {
+			let step = this.steps[i];
+
+			if (step.type == "Initial") {
+				parseInitial(step);
+			} else if (step.type == "Add") {
+				parseAdd(step);
+			} else if (step.type == "Remove") {
+				parseRemove(step);
+			} else if (step.type == "Rotated") {
+				parseRotate(step);
+			} else if (step.type == "Done") {
+				parseComplete(step);
+			} else {
+				console.error(`Found invalid step type: ${step.type} 
+					at index ${i}, skipping.`);
+			}
+		}
+	}
+
+	_parseGraphSteps() {
+		this.gd.nodes = [];
+		this.gd.edges = [];
+		this.gd.dirty = true;
+
+		let parseComplete = (step) => {
+			for (let i = 0; i < step.nodes.length; i++) {
+				let n = step.nodes[i];
+				this.gd.nodes.push({
+					x: n.x,
+					y: n.y,
+					v: n.v,
+					r: n.r
+				});
+			}
+
+			for (let i = 0; i < step.edges.length; i++) {
+				let e = step.edges[i];
+				let n1 = undefined;
+				let n2 = undefined;
+
+				for (let j = 0; j < this.gd.nodes.length; j++) {
+					let n = this.gd.nodes[j];
+					if (n.v == e.n1) n1 = n;
+					else if (n.v == e.n2) n2 = n;
+
+					if (n1 && n2) break;
+				}
+
+				if (n1 && n2) {
+					this.gd.edges.push({
+						n1: n1,
+						n2: n2
+					});
+				} else {
+					console.error(`Found edge with non-existing node: ${e}`);
+				}
+			}
+		};
+
+		for (let i = 0; i <= this.gd.currentStep; i++) {
+			let step = this.steps[i];
+
+			if (step.type == "Complete") {
+				parseComplete(step);
+			} else {
+				console.error(`Found invalid step type: ${step.type} 
+					at index ${i}, skipping.`);
+			}
+		}
+
+		this.gd.centerCameraOnGrpah();
+	}
+
 	export() {
 		if (this.exportType == "Graph") return this.exportAsGraph();
 		if (this.exportType == "Tree") return this.exportAsTree();
@@ -347,6 +529,25 @@ export default class Graph0 {
 			}
 
 			if (isRoot) tree.roots.push(node);
+		}
+
+		// Fix left/right children
+		let fixer = (node) => {
+			if (node.children.length == 0) return;
+			if (node.children[0] != undefined) fixer(node.children[0]);
+			if (node.children[1] != undefined) fixer(node.children[1]);
+
+			let sorter = function(a, b) {
+				if (a.x < b.x) return -1;
+				if (a.x > b.x) return 1;
+				return 0;
+			};
+
+			node.children.sort(sorter);
+		};
+
+		for (let r = 0; r < tree.roots.length; r++) {
+			fixer(tree.roots[r]);
 		}
 
 		return tree;
