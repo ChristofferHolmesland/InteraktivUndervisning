@@ -10,6 +10,21 @@ export default class Graph0 {
 		if (config == undefined) this.exportType = "Graph";
 		else this.exportType = config.exportType;
 
+		// If there are some starting steps, they are parsed
+		// and put into the world.
+		if (config.steps) {
+			if (config.importType) this.importType = config.importType;
+			else console.error("Got configuration steps, but importType is undefined");
+
+			this.steps = config.steps;
+			if (this.gd.operatingMode == "Presentation") {
+				this.gd.currentStep = config.steps.length - 1;
+				this.gd.addSteppingButtons();
+				this.gd.drawStatic();
+			}
+			this.parseSteps();
+		}
+
 		if (config == undefined) this.subType == undefined;
 		else {
 			this.subType = config.subType;
@@ -64,6 +79,9 @@ export default class Graph0 {
 			if (!this.stateHandlers.hasOwnProperty(key)) continue;
 			this.stateHandlers[key] = this.stateHandlers[key].bind(this);
 		}
+
+		// Decides which of the trees is being displayed
+		this.treeIndex = 0;
 
 		this.config = config;
 	}
@@ -319,6 +337,152 @@ export default class Graph0 {
 	}
 
 	parseSteps() {
+		if (this.importType == "Graph") this._parseGraphSteps();
+		else this._parseTreeSteps();
+	}
+
+	_parseTreeSteps() {
+		this.gd.nodes = [];
+		this.gd.edges = [];
+		this.gd.dirty = true;
+
+		let getTree = (step) => {
+			if (this.treeIndex > step.treeInfo.length)
+				return step.treeInfo[step.treeInfo.length - 1];
+			else return step.treeInfo[this.treeIndex];
+		}
+
+		let r = this.gd.nodeShape == "Circle" ? this.gd.R : this.gd.R * this.gd.SQUARE_FACTOR;
+
+		let parseInitial = (step) => {
+			let tree = getTree(step);
+
+			let p = this.gd.camera.project(this.gd.canvas.width / 2, 0);
+			// Add some padding between canvas top and the top of the tree
+			p.y += r / 2;
+
+			/*
+				Searches a tree with root node for the node with the lowest cost.
+				The cost increases or decreases when accessing children based on the direction.
+				If dir == 0, then we're looking at a tree where node is the left child.
+				If dir == 1, then we're looking at a tree where node is the riht child.
+				The node with the lowest cost is the one which is the closest to the x-position
+				of the root node.
+			*/
+			let search = (node, cost, dir, depth) => {
+				if (node == undefined) return undefined;
+
+				let leftCost = cost;
+				let rightCost = cost;
+				if (dir == 0) {
+					leftCost += 1;
+					rightCost -= 1;
+				} else if (dir == 1) {
+					leftCost -= 1;
+					rightCost += 1;
+				}
+
+				let l = search(node.children[0], leftCost, dir, depth + 1);
+				let r = search(node.children[1], rightCost, dir, depth + 1);
+
+				if (l == undefined && r == undefined) {
+					return { node: node, cost: cost, depth: depth };
+				} else if (l && r == undefined) {
+					if (cost < l.cost)
+						return { node: node, cost: cost, depth: depth };
+					else return l;
+				} else if (r && l == undefined) {
+					if (cost < r.cost)
+						return { node: node, cost: cost, depth: depth };
+					else return r;
+				}
+
+				if (l.cost < r.cost) return l;
+				else return r;
+			};
+
+			let xPadding = 25;
+			let yPadding = 30;
+
+			let addGraphDrawerNode = (node, x, y, dir) => {
+				if (node.parent == undefined) return;
+				if (node.visited) return;
+				node.visited = true;
+
+				let tx = p.x;
+				if (dir == 0) tx -= x * xPadding;
+				else if (dir == 1) tx += x * xPadding;
+
+				this.gd.nodes.push({
+					x: tx,
+					y: p.y + y * yPadding,
+					r: r,
+					v: node.value
+				});
+
+				let left = dir == 0 ? x + 1 : x - 1;
+				let right = dir == 0 ? x - 1 : x + 1;
+
+				// Add child nodes
+				addGraphDrawerNode(node.children[0], left, y + 1, dir);
+				addGraphDrawerNode(node.children[1], right, y + 1, dir);
+
+				// Add parent node
+				let parentDir = 0;
+				if (node.rootNode.children[0] == node) parentDir = right;
+				else if (node.rootNode.children[1] == node) parentDir = left;
+				addGraphDrawerNode(node.rootNode, parentDir, y - 1, dir);
+			};
+
+			// Find the node furthest to the right on the left side of the tree
+			let left = tree.rootNode.children[0];
+			let rightest = search(left, 0, 0, 1);
+			addGraphDrawerNode(rightest.node, 1, rightest.depth, 0);
+
+			// Find the node furthest to the left on the right side of the tree
+			let right = tree.rootNode.children[1];
+			let leftest = search(right, 0, 1, 1);
+			addGraphDrawerNode(leftest.node, 1, leftest.depth, 1);
+
+			// Add root node
+			let root = tree.rootNode;
+			this.gd.nodes.push({
+				x: p.x,
+				y: p.y,
+				r: r,
+				v: root.value
+			});
+		};
+
+		let parseAdd = (step) => {};
+
+		let parseRemove = (step) => {};
+
+		let parseRotate = (step) => {};
+
+		let parseComplete = (step) => {};
+
+		for (let i = 0; i <= this.gd.currentStep; i++) {
+			let step = this.steps[i];
+
+			if (step.type == "Initial") {
+				parseInitial(step);
+			} else if (step.type == "Add") {
+				parseAdd(step);
+			} else if (step.type == "Remove") {
+				parseRemove(step);
+			} else if (step.type == "Rotated") {
+				parseRotate(step);
+			} else if (step.type == "Done") {
+				parseComplete(step);
+			} else {
+				console.error(`Found invalid step type: ${step.type} 
+					at index ${i}, skipping.`);
+			}
+		}
+	}
+
+	_parseGraphSteps() {
 		this.gd.nodes = [];
 		this.gd.edges = [];
 		this.gd.dirty = true;
@@ -356,7 +520,7 @@ export default class Graph0 {
 					console.error(`Found edge with non-existing node: ${e}`);
 				}
 			}
-		}
+		};
 
 		for (let i = 0; i <= this.gd.currentStep; i++) {
 			let step = this.steps[i];
@@ -411,6 +575,31 @@ export default class Graph0 {
 			}
 
 			if (isRoot) tree.roots.push(node);
+		}
+
+		// Fix left/right children
+		let fixer = (node) => {
+			if (node.children.length == 0) return;
+			if (node.children[0] != undefined) fixer(node.children[0]);
+			if (node.children[1] != undefined) fixer(node.children[1]);
+
+			let sorter = function(a, b) {
+				if (a.x < b.x) return -1;
+				if (a.x > b.x) return 1;
+				return 0;
+			};
+
+			node.children.sort(sorter);
+
+			// If there is just one children, then it might be a right child
+			if (node.children.length == 1) {
+				let child = node.children[0];
+				if (child.x > node.x) node.children = [undefined, child];
+			}
+		};
+
+		for (let r = 0; r < tree.roots.length; r++) {
+			fixer(tree.roots[r]);
 		}
 
 		return tree;
