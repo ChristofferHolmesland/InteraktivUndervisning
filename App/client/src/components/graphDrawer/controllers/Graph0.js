@@ -397,7 +397,7 @@ export default class Graph0 {
 
 				if (l.cost < r.cost) return l;
 				else return r;
-			}
+			};
 
 			// Find the node furthest to the right on the left side of the tree
 			let left = tree.rootNode.children[0];
@@ -529,6 +529,25 @@ export default class Graph0 {
 			}
 
 			if (isRoot) tree.roots.push(node);
+		}
+
+		// Fix left/right children
+		let fixer = (node) => {
+			if (node.children.length == 0) return;
+			if (node.children[0] != undefined) fixer(node.children[0]);
+			if (node.children[1] != undefined) fixer(node.children[1]);
+
+			let sorter = function(a, b) {
+				if (a.x < b.x) return -1;
+				if (a.x > b.x) return 1;
+				return 0;
+			};
+
+			node.children.sort(sorter);
+		};
+
+		for (let r = 0; r < tree.roots.length; r++) {
+			fixer(tree.roots[r]);
 		}
 
 		return tree;
