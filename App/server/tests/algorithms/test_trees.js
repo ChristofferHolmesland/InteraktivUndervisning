@@ -1026,6 +1026,22 @@ describe('TestBinaryTrees', function () {
 				}
 			}
 		});
+		it("Testing specialcase without any added entrys",function () {
+			let rootI = new BinaryTreeNode(4);
+			let nodeI1 = new BinaryTreeNode(7);
+			let nodeI2 = new BinaryTreeNode(8);
+			let nodeI3 = new BinaryTreeNode(10);
+			let nodeI4 = new BinaryTreeNode(1);
+			let treeI = new Tree(rootI);
+			nodeI1.addParent(rootI);
+			nodeI2.addParent(nodeI1);
+			nodeI3.addParent(nodeI2);
+			nodeI4.addParent(rootI);
+			treeI.nodes = [rootI,nodeI1,nodeI2,nodeI3,nodeI4];
+			let solutionObject = AVLFunctions.createAVLTree([],true,treeI);
+			let solutionITree = BinarySearchTreeFunctions.createBinarySearchTree([4,1,8,7,10],true);
+			assert(GeneralTreeFunctions.checkStudentAnswer(solutionObject[0],solutionITree[0]));
+		})
 	});
 
 	describe("Test createTreeObjectFromCanvasObject",function () {

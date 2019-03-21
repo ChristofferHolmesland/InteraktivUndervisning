@@ -523,9 +523,10 @@ module.exports.admin = function(socket, db, user, sessions) {
 						}
 						if(result){
 							let treeObject;
-							console.log(startTree);
+							console.log("StartTree");
+							console.log(startTree[0]);
 							if (startTree.length === 1 && treeArray.length > 1) {
-								for (let a=0;treeArray.length;a++) {
+								for (let a=0;a<treeArray.length;a++) {
 									let index = startTree[0].findNodeInNodesUsingValue(treeArray[a]);
 									if (index > -1) {
 										result = false;
@@ -540,6 +541,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 								result = BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(treeObject[0]);
 							}
 							if(questionType === 9 && result) {
+								startTree[0].printTree();
 								if (startTree.length > 0) treeObject = AVLTreeFunctions.createAVLTree(treeArray, true, startTree[0]);
 								else treeObject = AVLTreeFunctions.createAVLTree(treeArray, true);
 								treeObject[0].printTree();

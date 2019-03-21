@@ -74,7 +74,7 @@ class Tree {
 	findNodeInNodesUsingValue(value) {
 		let index = -1;
 		for(let l=0;l<this.nodes.length;l++){
-			if (this.nodes[l].value === value) index = l;
+			if (this.nodes[l].value === parseInt(value)) index = l;
 		}
 		return index
 	}
@@ -82,7 +82,7 @@ class Tree {
 	getNodeWithValue(value) {
 		let binaryNode = undefined;
 		for (let t =0;t<this.nodes.length;t++) {
-			if (this.nodes[t].value === value) binaryNode = this.nodes[t];
+			if (this.nodes[t].value === parseInt(value)) binaryNode = this.nodes[t];
 		}
 		return binaryNode
 	}

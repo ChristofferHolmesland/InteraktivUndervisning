@@ -13,14 +13,41 @@ module.exports.createAVLTree = function (elements,add,existingTreeObject) {
 		if (existingTreeObject !== undefined) {	//if an existing tree is given
 			tree = existingTreeObject.createDuplicateTree();
 			while (checkBalance(tree.root) === false) {
-				if (tree.root.children[0] !== undefined) {
+				let rootHeight = getNodeHeight(tree.root);
+				console.log(rootHeight);
+				if (rootHeight > 0) {	//choose which side of the tree to start with.
+					if (tree.root.children[0] !== undefined) {
+						let getLowestLeftNode = getLowestNode(tree.root.children[0]);
+						console.log(getLowestLeftNode);
+						fixAVLCondition(getLowestLeftNode, tree,true);
+					}
+					if (tree.root.children[1] !== undefined) {
+						let getLowestRightNode = getLowestNode(tree.root.children[1]);
+						console.log(getLowestRightNode);
+						fixAVLCondition(getLowestRightNode, tree,true);
+					}
+				}else {
+					if (tree.root.children[1] !== undefined) {
+						let getLowestRightNode = getLowestNode(tree.root.children[1]);
+						console.log(getLowestRightNode);
+						fixAVLCondition(getLowestRightNode, tree,true);
+					}
+					if (tree.root.children[0] !== undefined) {
+						let getLowestLeftNode = getLowestNode(tree.root.children[0]);
+						console.log(getLowestLeftNode);
+						fixAVLCondition(getLowestLeftNode, tree,true);
+					}
+				}
+				/*if (tree.root.children[0] !== undefined) {
 					let getLowestLeftNode = getLowestNode(tree.root.children[0]);
+					console.log(getLowestLeftNode);
 					fixAVLCondition(getLowestLeftNode, tree,true);
 				}
 				if (tree.root.children[1] !== undefined) {
 					let getLowestRightNode = getLowestNode(tree.root.children[1]);
+					console.log(getLowestRightNode);
 					fixAVLCondition(getLowestRightNode, tree,true);
-				}
+				}*/
 			}
 		} else { //existing tree object not given
 			let rootNode = new BinaryTreeNode(parseInt(elements[0]));
@@ -92,15 +119,29 @@ module.exports.createAVLTreeSolution = function (elements, add, existingTreeObje
 			let stepInitial = GeneralTreeFunctions.createStepArray("Initial","AVL",[tree]);
 			steps.push(stepInitial);
 			while (checkBalance(tree.root) === false) {
-				if (tree.root.children[0] !== undefined) {
-					let getLowestLeftNode = getLowestNode(tree.root.children[0]);
-					let rotated = fixAVLCondition(getLowestLeftNode, tree,true);
-					if (rotated)	steps.push("Rotated", "AVL", tree);
-				}
-				if (tree.root.children[1] !== undefined) {
-					let getLowestRightNode = getLowestNode(tree.root.children[1]);
-					let rotated = fixAVLCondition(getLowestRightNode, tree,true);
-					if (rotated)	steps.push("Rotated", "AVL", tree);
+				let rootHeight = getNodeHeight(tree.root);
+				if (rootHeight > 0) {	//choose which side of the tree to start with.
+					if (tree.root.children[0] !== undefined) {
+						let getLowestLeftNode = getLowestNode(tree.root.children[0]);
+						let rotated = fixAVLCondition(getLowestLeftNode, tree, true);
+						if (rotated) steps.push("Rotated", "AVL", tree);
+					}
+					if (tree.root.children[1] !== undefined) {
+						let getLowestRightNode = getLowestNode(tree.root.children[1]);
+						let rotated = fixAVLCondition(getLowestRightNode, tree, true);
+						if (rotated) steps.push("Rotated", "AVL", tree);
+					}
+				}else {
+					if (tree.root.children[1] !== undefined) {
+						let getLowestRightNode = getLowestNode(tree.root.children[1]);
+						let rotated = fixAVLCondition(getLowestRightNode, tree, true);
+						if (rotated) steps.push("Rotated", "AVL", tree);
+					}
+					if (tree.root.children[0] !== undefined) {
+						let getLowestLeftNode = getLowestNode(tree.root.children[0]);
+						let rotated = fixAVLCondition(getLowestLeftNode, tree, true);
+						if (rotated) steps.push("Rotated", "AVL", tree);
+					}
 				}
 			}
 		} else { //existing tree object not given
@@ -338,6 +379,7 @@ function rotationRight(node,tree) {
 //Rotation prioritises are different between when adding a new node to the tree or when deleting an existing node in the tree
 function fixAVLCondition(node,tree,add) {
 	let respNode = getResponsibleNode(node);
+	console.log(respNode);
 	//let step;
 	let rotation = false;
 	if (add) {
