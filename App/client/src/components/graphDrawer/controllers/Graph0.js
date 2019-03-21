@@ -369,7 +369,7 @@ export default class Graph0 {
 				The node with the lowest cost is the one which is the closest to the x-position
 				of the root node.
 			*/
-			let search = (node, cost, dir) => {
+			let search = (node, cost, dir, depth) => {
 				if (node == undefined) return undefined;
 
 				let leftCost = cost;
@@ -382,16 +382,18 @@ export default class Graph0 {
 					rightCost += 1;
 				}
 
-				let l = search(node.children[0], leftCost, dir);
-				let r = search(node.children[1], rightCost, dir);
+				let l = search(node.children[0], leftCost, dir, depth + 1);
+				let r = search(node.children[1], rightCost, dir, depth + 1);
 
 				if (l == undefined && r == undefined) {
-					return { node: node, cost: cost };
+					return { node: node, cost: cost, depth: depth };
 				} else if (l && r == undefined) {
-					if (cost < l.cost) return { node: node, cost: cost };
+					if (cost < l.cost)
+						return { node: node, cost: cost, depth: depth };
 					else return l;
 				} else if (r && l == undefined) {
-					if (cost < r.cost) return { node: node, cost: cost };
+					if (cost < r.cost)
+						return { node: node, cost: cost, depth: depth };
 					else return r;
 				}
 
@@ -399,13 +401,39 @@ export default class Graph0 {
 				else return r;
 			};
 
+			let xPadding = 25;
+			let yPadding = 30;
+
+			let addGraphDrawerNode = (node, x, y, dir) => {
+				if (node.parent == undefined) return;
+				if (node.visited) return;
+				node.visited = true;
+
+				let tx = p.x;
+				if (dir == 0) tx -= x * xPadding;
+				else if (dir == 1) tx += x * xPadding;
+
+				this.gd.nodes.push({
+					x: tx,
+					y: p.y + y * yPadding,
+					r: r,
+					v: node.value
+				});
+
+				addGraphDrawerNode(node.children[0], x + 1, y + 1, dir);
+			};
+
 			// Find the node furthest to the right on the left side of the tree
 			let left = tree.rootNode.children[0];
-			let rightest = search(left, 0, 0).node;
+			let rightest = search(left, 0, 0, 1);
+			addGraphDrawerNode(rightest.node, 1, rightest.depth, 0);
 
 			// Find the node furthest to the left on the right side of the tree
 			let right = tree.rootNode.children[1];
-			let leftest = search(right, 0, 1).node;
+			let leftest = search(right, 0, 1, 1);
+			addGraphDrawerNode(leftest.node, 1, leftest.depth, 1);
+
+			// Add root node
 		};
 
 		let parseAdd = (step) => {};
@@ -544,6 +572,12 @@ export default class Graph0 {
 			};
 
 			node.children.sort(sorter);
+
+			// If there is just one children, then it might be a right child
+			if (node.children.length == 1) {
+				let child = node.children[0];
+				if (child.x > node.x) node.children = [undefined, child];
+			}
 		};
 
 		for (let r = 0; r < tree.roots.length; r++) {
