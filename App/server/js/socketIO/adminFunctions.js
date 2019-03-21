@@ -145,6 +145,7 @@ let validateQuestion = function (questionInfo, treeAction) {
 			default:	//undefined or a case that should not exist
 				result = false
 		}
+		console.log(result);
 	return result;
 };
 
