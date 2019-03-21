@@ -9,14 +9,15 @@
 				<b-col cols="12" lg="8">
 
 <!-- TODO: Remove GraphDrawer from this file. Currently used for testing -->
-    			<GraphDrawer 
+    			<!--<GraphDrawer 
 					@getValueResponse="printGraphDrawer" 
 					:requestAnswer="requestAnswer" 
 					controlType="Sort"
 					sortType="Quicksort"
 					operatingMode="Presentation"
 					:steps="steps" />
-				<b-button @click="requestAnswer = !requestAnswer" >Export</b-button>
+				<b-button @click="requestAnswer = !requestAnswer" >Export</b-button>-->
+				<shellsort :initialList="[	]" :initialKValue="3"/>
 				</b-col>
 			</b-row>
 		</b-container>
@@ -26,6 +27,7 @@
 <script>
 import JoinSession from "../components/client/JoinSession.vue";
 import GraphDrawer from "../components/graphDrawer/GraphDrawer.vue";
+import Shellsort from "../components/client/session/questionTypes/sorting/Shellsort.vue"
 
 export default {
 	name: "client",
@@ -71,7 +73,8 @@ export default {
 	},
 	components: {
 		JoinSession,
-		GraphDrawer
+		GraphDrawer,
+		Shellsort
 	},
 	created() {
 		this.$socket.emit("verifyUserLevel", 1);

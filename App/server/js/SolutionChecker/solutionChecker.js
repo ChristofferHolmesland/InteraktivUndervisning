@@ -1,7 +1,7 @@
 let checkers = {
     1: require("./text.js"),
     2: require("./multipleChoice.js"),
-    3: require("./text.js"),
+    3: require("./shellsort.js"),
     4: require("./mergesort.js"),
     5: require("./quicksort.js"),
     6: require("./solutionCheckerBinaryTree.js"),
