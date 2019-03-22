@@ -13,6 +13,7 @@ const answer = require("../session.js").Answer;
 
 let validateQuestion = function (questionInfo, treeAction) {
 		//TODO put different cases together if they have the same question validations, example the tree cases
+		console.log(treeAction);
 		let questionType = questionInfo.solutionType;
 		console.log(questionType);
 		let treeElements = questionInfo.objects.treeElements;
@@ -54,7 +55,7 @@ let validateQuestion = function (questionInfo, treeAction) {
 			case 8: case 9:	//Binary Search Tree, AVL Tree
 				let startTree = [];
 				let treeArray = [];
-				if(treeAction === 1) {
+				if(treeAction === "Add") {
 					//add nodes
 					console.log("treeAction == add");
 					if((givenStartTree === undefined || givenStartTree.roots.length === 0) && (treeElements === undefined || treeElements === "")) result = false;
@@ -101,7 +102,7 @@ let validateQuestion = function (questionInfo, treeAction) {
 							}
 						}
 					}
-				}else {
+				}else if(treeAction === "Remove") {
 					//remove nodes
 					console.log("treeAction == remove");
 					if ((givenStartTree === undefined || givenStartTree.roots.length === 0) || treeElements === undefined || treeElements === "") result = false;
@@ -133,6 +134,8 @@ let validateQuestion = function (questionInfo, treeAction) {
 							if (!result) break;
 						}
 					}
+				}else {
+					result = false;
 				}
 				break;
 			case 10: //Graph

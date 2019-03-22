@@ -138,11 +138,10 @@
                     label="Draw the tree, or give an array to build the solution tree"
                     v-if="newQuestion.solutionType === 8 || newQuestion.solutionType === 9"
                     >
-                <!--TODO replace buttons with radio fields! Default should be Add -->
-                <b-button variant="primary" @click="addTreeType">Add</b-button>
-                <b-button variant="danger" @click="removeTreeType">Remove</b-button>
-                <label v-if="this.solutionTreeType === 1" for="solutionListElements">Input elements to be added to the tree. The elements are seperated by ,</label>
-                <label v-else for="solutionListElements">Input elements to be removed from the tree. The elements are seperated by ,</label>
+                <label for="Add">Add</label><input type="radio" id="Add" v-model="solutionTreeType" value="Add" checked/><br/>
+                <label for="Remove">Remove</label><input type="radio" id="Remove" v-model="solutionTreeType" value="Remove"/>
+                <label v-if="this.solutionTreeType === 'Add'" for="solutionListElements">Input elements to be added to the tree. The elements are seperated by ,</label>
+                <label v-else-if="this.solutionTreeType === 'Remove'" for="solutionListElements">Input elements to be removed from the tree. The elements are seperated by ,</label>
                 <b-form-input 	id="solutionListElements"
                                  type="text"
                                  v-model="newQuestion.objects.treeElements">
@@ -195,7 +194,7 @@
                 },
                 solutionTypes: [],
                 requestGraphDrawerObject: false,
-                solutionTreeType: 1,
+                solutionTreeType: "Add",
             }
         },
         components: {
@@ -257,12 +256,6 @@
             addNewMultipleChoice() {
                 this.newQuestion.objects.multipleChoices.push("");
             },
-            removeTreeType() {
-            	this.solutionTreeType = 0;
-            },
-            addTreeType() {
-            	this.solutionTreeType = 1;
-            }
         },
         computed: {
             getLocale() {
