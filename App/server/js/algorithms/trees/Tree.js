@@ -92,7 +92,7 @@ class Tree {
 		for(let n=0;n<listOfValues.length;n++) {
 			let nodeFound = false;
 			for (let j=0;j<this.nodes.length;j++) {
-				if(this.nodes[j].value === listOfValues[n]){
+				if(this.nodes[j].value === parseInt(listOfValues[n])){
 					nodeFound = true;
 					break;
 				}

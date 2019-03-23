@@ -1,9 +1,7 @@
 const BinaryTreeNode = require("./Tree.js").BinaryTreeNode;
 const Tree = require("./Tree.js").Tree;
 
-//Converts object given by the graphDrawer to a tree object, has not been fully tested.
-//the trees should be checked if they are valid after this function is finished
-//This function is going to transform a student's and teacher's drawn tree to a tree object.
+//This function is going to transform a student's and teacher's drawn canvas tree to a Binary Search Tree object.
 module.exports.createTreeObjectFromCanvasObjectver1 = function(treeCanvas) {
 	replaceNullWithUndefined(treeCanvas);
 	let listofTrees = [];

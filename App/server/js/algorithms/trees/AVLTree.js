@@ -38,16 +38,6 @@ module.exports.createAVLTree = function (elements,add,existingTreeObject) {
 						fixAVLCondition(getLowestLeftNode, tree,true);
 					}
 				}
-				/*if (tree.root.children[0] !== undefined) {
-					let getLowestLeftNode = getLowestNode(tree.root.children[0]);
-					console.log(getLowestLeftNode);
-					fixAVLCondition(getLowestLeftNode, tree,true);
-				}
-				if (tree.root.children[1] !== undefined) {
-					let getLowestRightNode = getLowestNode(tree.root.children[1]);
-					console.log(getLowestRightNode);
-					fixAVLCondition(getLowestRightNode, tree,true);
-				}*/
 			}
 		} else { //existing tree object not given
 			let rootNode = new BinaryTreeNode(parseInt(elements[0]));
@@ -68,13 +58,30 @@ module.exports.createAVLTree = function (elements,add,existingTreeObject) {
 			//Balance any Tree given that is not an AVL Tree
 			console.log(checkBalance(tree.root));
 			while (checkBalance(tree.root) === false) {
-				if (tree.root.children[0] !== undefined) {
-					let getLowestLeftNode = getLowestNode(tree.root.children[0]);
-					fixAVLCondition(getLowestLeftNode, tree,true);
-				}
-				if (tree.root.children[1] !== undefined) {
-					let getLowestRightNode = getLowestNode(tree.root.children[1]);
-					fixAVLCondition(getLowestRightNode, tree,true);
+				let rootHeight = getNodeHeight(tree.root);
+				console.log(rootHeight);
+				if (rootHeight > 0) {	//choose which side of the tree to start with.
+					if (tree.root.children[0] !== undefined) {
+						let getLowestLeftNode = getLowestNode(tree.root.children[0]);
+						console.log(getLowestLeftNode);
+						fixAVLCondition(getLowestLeftNode, tree,true);
+					}
+					if (tree.root.children[1] !== undefined) {
+						let getLowestRightNode = getLowestNode(tree.root.children[1]);
+						console.log(getLowestRightNode);
+						fixAVLCondition(getLowestRightNode, tree,true);
+					}
+				}else {
+					if (tree.root.children[1] !== undefined) {
+						let getLowestRightNode = getLowestNode(tree.root.children[1]);
+						console.log(getLowestRightNode);
+						fixAVLCondition(getLowestRightNode, tree,true);
+					}
+					if (tree.root.children[0] !== undefined) {
+						let getLowestLeftNode = getLowestNode(tree.root.children[0]);
+						console.log(getLowestLeftNode);
+						fixAVLCondition(getLowestLeftNode, tree,true);
+					}
 				}
 			}
 			treelist.push(tree);
@@ -175,20 +182,40 @@ module.exports.createAVLTreeSolution = function (elements, add, existingTreeObje
 			//Balance any Tree given that is not an AVL Tree
 			console.log(checkBalance(tree.root));
 			while (checkBalance(tree.root) === false) {
-				if (tree.root.children[0] !== undefined) {
-					let getLowestLeftNode = getLowestNode(tree.root.children[0]);
-					let rotation = fixAVLCondition(getLowestLeftNode, tree,true);
-					if (rotation){
-						let step = GeneralTreeFunctions.createStepArray("Rotated","AVL",[tree]);
-						steps.push(step);
+				let rootHeight = getNodeHeight(tree.root);
+				if (rootHeight > 0) {	//choose which side of the tree to start with.
+					if (tree.root.children[0] !== undefined) {
+						let getLowestLeftNode = getLowestNode(tree.root.children[0]);
+						let rotation = fixAVLCondition(getLowestLeftNode, tree, true);
+						if (rotation) {
+							let step = GeneralTreeFunctions.createStepArray("Rotated", "AVL", [tree]);
+							steps.push(step);
+						}
 					}
-				}
-				if (tree.root.children[1] !== undefined) {
-					let getLowestRightNode = getLowestNode(tree.root.children[1]);
-					let rotation = fixAVLCondition(getLowestRightNode, tree,true);
-					if (rotation)	{
-						let step = GeneralTreeFunctions.createStepArray("Rotated","AVL",[tree]);
-						steps.push(step);
+					if (tree.root.children[1] !== undefined) {
+						let getLowestRightNode = getLowestNode(tree.root.children[1]);
+						let rotation = fixAVLCondition(getLowestRightNode, tree, true);
+						if (rotation) {
+							let step = GeneralTreeFunctions.createStepArray("Rotated", "AVL", [tree]);
+							steps.push(step);
+						}
+					}
+				}else {
+					if (tree.root.children[1] !== undefined) {
+						let getLowestRightNode = getLowestNode(tree.root.children[1]);
+						let rotation = fixAVLCondition(getLowestRightNode, tree, true);
+						if (rotation) {
+							let step = GeneralTreeFunctions.createStepArray("Rotated", "AVL", [tree]);
+							steps.push(step);
+						}
+					}
+					if (tree.root.children[0] !== undefined) {
+						let getLowestLeftNode = getLowestNode(tree.root.children[0]);
+						let rotation = fixAVLCondition(getLowestLeftNode, tree, true);
+						if (rotation) {
+							let step = GeneralTreeFunctions.createStepArray("Rotated", "AVL", [tree]);
+							steps.push(step);
+						}
 					}
 				}
 			}
@@ -241,6 +268,7 @@ module.exports.createAVLTreeSolution = function (elements, add, existingTreeObje
 	}
 	return steps
 };
+
 //checks whether or not the tree is AVL balanced. It depends on the node given.
 // If root is given the entire tree will be checked.
 //Can be used to check whether or not a tree is a valid AVL by the root of the tree as inparameter.
@@ -266,6 +294,7 @@ function checkBalance(node) {
 	}
 	return balanced
 }
+module.exports.checkBalance = checkBalance;
 
 //function that obtains the closest leafNode to the given node
 function getLowestNode(node) {

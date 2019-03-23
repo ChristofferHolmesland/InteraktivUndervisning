@@ -167,6 +167,12 @@
                     operatingMode="Interactive"
                     />
             </b-form-group>
+            <b-alert
+            :show="useAlert"
+            variant="danger"
+            >
+            <p>{{alertReason}}</p>
+            </b-alert>
         </b-form>
     </b-modal>
 </template>
@@ -195,6 +201,8 @@
                 solutionTypes: [],
                 requestGraphDrawerObject: false,
                 solutionTreeType: "Add",
+                useAlert: false,
+                alertReason: ""
             }
         },
         components: {
@@ -324,8 +332,9 @@
             },
             confirmQuestionRequirements: function (result) {
             	console.log(result);
-            	if (result) {
+            	if (result.validation) {
                     this.$refs[this.elementRef].hide();
+                    this.useAlert = false;
                     this.newQuestion = {
                         id: -1,
                         text: "",
@@ -342,9 +351,12 @@
                         },
                         solutionTypes: [],
                         requestGraphDrawerObject: false,
-                        solutionTreeType: 1,
+                        solutionTreeType: "Add",
                     };
                     this.doneHandler();
+                }else {
+            	    this.useAlert = true;
+            	    this.alertReason = result.reason;
                 }
 
             }
