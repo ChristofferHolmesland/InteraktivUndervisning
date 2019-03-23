@@ -1,42 +1,42 @@
 <template>
-	<b-container>
-		<b-row>
-			<b-col cols="2">
-				K Value
-			</b-col>
-			<b-col v-for="(value, index) in initialList" :key="index">
-				{{ index }}
-			</b-col>
-		</b-row>
-		<b-row class="mb-2">
-			<b-col cols="2">
-				<input type="text" disabled :value="initialKValue">
-			</b-col>
-			<b-col v-for="(value, index) in initialList" :key="index">
-				<input type="text" disabled :value="value">
-			</b-col>
-		</b-row>
-		<b-row v-for="row in rows" :key="row" class="mb-1">
-			<b-col cols="2">
-				<input type="text" placeholder="Enter k value" v-model="kValues[row - 1]">
-			</b-col>
-			<b-col v-for="(value, index) in getRowValues(row - 1)" :key="index" @click="elementClicked(row - 1, index)">
-				<input type="text" disabled :value="value">
-			</b-col>
-		</b-row>
-		<b-row class="mt-3">
-			<b-col>
-				<b-row>
-					<b-col style="text-align: center;">
-						<b-btn @click="addNewLine">Add new row</b-btn>
-					</b-col>
-					<b-col style="text-align: center;">
-						<b-btn @click="removeLastLine">Remove last row</b-btn>
-					</b-col>
-				</b-row>
-			</b-col>
-		</b-row>
-	</b-container>
+	<div>
+		<b-container style="overflow-x:scroll;">
+			<b-row class="tableRow">
+				<b-col class="colKValue" cols="4">
+					K Value
+				</b-col>
+				<b-col v-for="(value, index) in initialList" :key="index" class="colArrayElement">
+					{{ index }}
+				</b-col>
+			</b-row>
+			<b-row class="mb-2 tableRow">
+				<b-col class="colKValue" cols="4">
+					<input type="text" disabled :value="initialKValue">
+				</b-col>
+				<b-col v-for="(value, index) in initialList" :key="index" class="colArrayElement">
+					<input type="text" disabled :value="value">
+				</b-col>
+			</b-row>
+			<b-row v-for="row in rows" :key="row" class="mb-1 tableRow">
+				<b-col class="colKValue" cols="4">
+					<input type="text" placeholder="Enter k value" v-model="kValues[row - 1]">
+				</b-col>
+				<b-col v-for="(value, index) in getRowValues(row - 1)" :key="index" @click="elementClicked(row - 1, index)" class="colArrayElement">
+					<input type="text" disabled :value="value">
+				</b-col>
+			</b-row>
+		</b-container>
+		<b-container>
+			<b-row>
+				<b-col>
+					<b-btn variant="primary" @click="addNewLine">Add new row</b-btn>
+				</b-col>
+				<b-col>
+					<b-btn variant="danger" @click="removeLastLine">Remove last row</b-btn>
+				</b-col>
+			</b-row>
+		</b-container>
+	</div>
 </template>
 
 <script>
@@ -135,5 +135,14 @@ input {
 }
 .col {
 	text-align: center;
+}
+.colKValue {
+	width: 120px;
+}
+.colArrayElement {
+	width: 40px;
+}
+.tableRow {
+	flex-wrap: nowrap;
 }
 </style>
