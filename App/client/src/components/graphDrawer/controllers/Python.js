@@ -74,8 +74,10 @@ export default class Python {
 		this.gd.nodes.push({
 			x: variable.position.x,
 			y: variable.position.y,
-			r: this.gd.R,
-			v: variable.name
+			w: this.gd.R * 1.5, // calculate the width based on variable name length
+			h: this.gd.R,
+			v: variable.name,
+			shape: "Circle"//this.gd.nodeShape
 		});
 
 		this.gd.dirty = true;
@@ -108,11 +110,16 @@ export default class Python {
 
 		this.objects.push(object);
 
+		let typeText = "Type: " + object.type;
+		let dataText = "Data: " + object.value;
+
 		this.gd.nodes.push({
 			x: object.position.x,
 			y: object.position.y,
-			r: this.gd.R,
-			v: object.baseType ? object.type + ": " + object.value : object.type
+			w: this.gd.R * 2, // Calculate width and height based on text dimensions
+			h: this.gd.R * 2,
+			v: object.baseType ? typeText + "\n" + dataText : typeText,
+			shape: this.gd.nodeShape
 		});
 
 		this.gd.dirty = true;

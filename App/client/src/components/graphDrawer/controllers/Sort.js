@@ -493,10 +493,12 @@ export default class Sort {
 	addNewNodeToArray(event) {
 		let clickedNode = this.arrays[event.data.ai].nodes[event.data.ni];
 		let node = {
-			x: clickedNode.x + (event.data.side == "left" ? -clickedNode.r : clickedNode.r),
+			x: clickedNode.x + (event.data.side == "left" ? -clickedNode.w : clickedNode.w),
 			y: clickedNode.y,
-			r: clickedNode.r,
-			v: 0
+			w: clickedNode.w,
+			h: clickedNode.h,
+			v: 0,
+			shape: clickedNode.shape
 		}
 
 		this.arrays[event.data.ai].nodes.splice(
@@ -507,7 +509,7 @@ export default class Sort {
 
 		// Recalculate node position inside the array
 		if (event.data.side == "left") 
-			this.arrays[event.data.ai].position.x -= clickedNode.r;
+			this.arrays[event.data.ai].position.x -= clickedNode.w;
 		this._repositionNodes(event.data.ai);
 
 		this.gd.nodes.push(node);
@@ -521,8 +523,8 @@ export default class Sort {
 		let start = this.arrays[ai].position
 		for (let ni = 0; ni < this.arrays[ai].nodes.length; ni++) {
 			let node = this.arrays[ai].nodes[ni];
-			// Assumes all the nodes have the same width
-			node.x = start.x + ni * node.r;
+			// Assumes all the nodes have the same width TODO: This assumption is no longer true
+			node.x = start.x + ni * node.w;
 			node.y = start.y;
 		}
 
@@ -640,10 +642,10 @@ export default class Sort {
 		Creates a + button next to a node on a given side.
 	*/
 	_renderAddNodeButton(node, side, ai, ni) {
-		let bSize = node.r / this.bsf;
-		let bX = node.x + node.r - bSize / 2;
+		let bSize = node.w / this.bsf;
+		let bX = node.x + node.w - bSize / 2;
 		if (side == "left") {
-			bX -= node.r;
+			bX -= node.w;
 		}
 
 		let point = this.gd.camera.unproject(
@@ -910,15 +912,17 @@ export default class Sort {
 		let user = this.steps[0].position != undefined;
 		let yPadding = 75;
 		let xPadding = 25;
-		let r = this.gd.nodeShape == "Circle" ? this.gd.R : this.gd.R * this.gd.SQUARE_FACTOR;
+		let r = this.gd.nodeShape == "Circle" ? this.gd.R : this.gd.R * 2;
 
 		let nodesFromValueList = (list, array) => {
 			for (let i = 0; i < list.length; i++) {
 				let node = {
 					x: array.position.x + r * i,
 					y: array.position.y,
-					r: r,
-					v: list[i]
+					w: r,
+					h: r,
+					v: list[i],
+					shape: this.gd.nodeShape
 				};
 
 				this.gd.nodes.push(node);
@@ -1190,8 +1194,8 @@ export default class Sort {
 		if (hoveredNode == undefined) return;
 
 		// Delete node
-		let bSize = hoveredNode.r / this.bsf;
-		let bX = hoveredNode.x + hoveredNode.r / 2 - bSize / 2;
+		let bSize = hoveredNode.w / this.bsf;
+		let bX = hoveredNode.x + hoveredNode.w / 2 - bSize / 2;
 		let dP = this.gd.camera.unproject(
 			bX,
 			hoveredNode.y

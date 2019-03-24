@@ -14,7 +14,7 @@
 					:requestAnswer="requestAnswer" 
 					controlType="Python"
 					operatingMode="Interactive"
-					:steps="steps" />
+					/>
 				<b-button @click="requestAnswer = !requestAnswer" >Export</b-button>
 				</b-col>
 			</b-row>

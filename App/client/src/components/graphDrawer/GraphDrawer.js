@@ -36,14 +36,15 @@ export default class GraphDrawer {
 	_config(config) {
 		/*
 			What shape is drawn for the nodes
-			Possible values: Circle, Square
+			Possible values: Circle, Rectangle
 		*/
-		this.nodeShape = config.nodeShape || "Square";
+		this.nodeShape = config.nodeShape || "Rectangle";
 		/*
 			Determines how the user can interact with the canvas.
 			Graph0 = Buttons are shown.
 			Graph1 = Simple mode 
 			Sort = Quicksort or Mergesort
+			Python = Python
 		*/
 		this.controlType = config.controlType || "Sort";
 		/*
@@ -81,8 +82,6 @@ export default class GraphDrawer {
 	constructor(canvas, config) {
 		// Radius of nodes.
 		this.R = 25;
-		// Relative size of square nodes compared to circle nodes.
-		this.SQUARE_FACTOR = 1.5;
 		// How often the canvas should be updated.
 		this.FPS = 60;
 		// Milliseconds between each update.
@@ -106,11 +105,11 @@ export default class GraphDrawer {
 		/*
 			Nodes in the graph 
 			{
-				x, y, r, v, 
+				x, y, w, h, v, shape
 				selected (can be undefined), 
 				culled (can be undefined),
 				fillColor (undefined => white),
-				strokeColor (undefined => black)
+				strokeColor (undefined => black),
 			}.
 		*/
 		this.nodes = [];
@@ -128,6 +127,11 @@ export default class GraphDrawer {
 		// be redrawn. Default value is true, so the UI
 		// is rendered.
 		this.dirty = true;
+
+		// Flag which determines if the dirty flag should remain
+		// true after a draw operation. This can not stay true 
+		// after being used.
+		this.stillDirty = false;
 
 		// Canvas used to display graph.
 		this.canvas = canvas;
@@ -213,10 +217,10 @@ export default class GraphDrawer {
 
 		this.canvasContext.drawImage(
 			this.drawBuffer,
-			camera.Left,
-			camera.Top,
-			camera.Width,
-			camera.Height,
+			camera.left,
+			camera.top,
+			camera.width,
+			camera.height,
 			0,
 			0,
 			this.canvas.width,
@@ -302,23 +306,12 @@ export default class GraphDrawer {
 		for (let i = 0; i < this.edges.length; i++) {
 			if (this.camera.cull(this.edges[i], false)) continue;
 
-			let cx1 = this.edges[i].n1.x;
-			let cy1 = this.edges[i].n1.y;
-			let cx2 = this.edges[i].n2.x;
-			let cy2 = this.edges[i].n2.y;
-
-			if (this.nodeShape == "Square") {
-				let n1 = this.edges[i].n1;
-				let n2 = this.edges[i].n2;
-				cx1 += n1.r / 2;
-				cy1 += n1.r / 2;
-				cx2 += n2.r / 2;
-				cy2 += n2.r / 2;
-			}
+			let center1 = this.getCenter(this.edges[i].n1);
+			let center2 = this.getCenter(this.edges[i].n2);
 
 			this.drawContext.beginPath();
-			this.drawContext.moveTo(cx1, cy1);
-			this.drawContext.lineTo(cx2, cy2);
+			this.drawContext.moveTo(center1.x, center1.y);
+			this.drawContext.lineTo(center2.x, center2.y);
 
 			if (this.edges[i].strokeColor) {
 				this.drawContext.strokeStyle = this.edges[i].strokeColor;
@@ -333,25 +326,17 @@ export default class GraphDrawer {
 				(this.edges[i].directed == undefined ||
 					this.edges[i].directed == true)
 			) {
-				let dx = cx1 - cx2;
-				let dy = cy1 - cy2;
+				let dx = center1.x - center2.x;
+				let dy = center1.y - center2.y;
 				let magnitude = Math.sqrt(dx * dx + dy * dy);
 				let nx = dx / magnitude;
 				let ny = dy / magnitude;
-				let a = { x: this.edges[i].n2.x, y: this.edges[i].n2.y };
-				a.x += nx * this.edges[i].n2.r;
-				a.y += ny * this.edges[i].n2.r;
+				let a = { x: center2.x, y: center2.y };
+				a.x += nx * this.edges[i].n2.w;
+				a.y += ny * this.edges[i].n2.h;
 				let b = { x: a.x, y: a.y };
-				b.x += nx * this.edges[i].n2.r;
-				b.y += ny * this.edges[i].n2.r;
-
-				if (this.nodeShape == "Square") {
-					let halfWidth = (this.R * this.SQUARE_FACTOR) / 2;
-					a.x += halfWidth;
-					a.y += halfWidth;
-					b.x += halfWidth;
-					b.y += halfWidth;
-				}
+				b.x += nx * this.edges[i].n2.w;
+				b.y += ny * this.edges[i].n2.h;
 
 				// TODO: When the nodeshape is square, the arrows
 				// are placed on the line, but not close to
@@ -379,8 +364,8 @@ export default class GraphDrawer {
 			}
 
 			if (this.displayEdgeValues && this.edges[i].v !== undefined) {
-				let tx = (cx1 + cx2) / 2 + 5;
-				let ty = (cy1 + cy2) / 2 + 5;
+				let tx = (center1.x + center2.x) / 2 + 5;
+				let ty = (center1.y + center2.y) / 2 + 5;
 				this.drawContext.fillText(this.edges[i].v, tx, ty);
 			}
 		}
@@ -388,22 +373,7 @@ export default class GraphDrawer {
 		for (let i = 0; i < this.nodes.length; i++) {
 			if (this.camera.cull(this.nodes[i], true)) continue;
 			this.drawContext.beginPath();
-			if (this.nodeShape == "Circle") {
-				this.drawContext.arc(
-					this.nodes[i].x,
-					this.nodes[i].y,
-					this.R,
-					0,
-					2 * Math.PI
-				);
-			} else if (this.nodeShape == "Square") {
-				this.drawContext.rect(
-					this.nodes[i].x,
-					this.nodes[i].y,
-					this.nodes[i].r,
-					this.nodes[i].r
-				);
-			}
+
 			if (this.nodes[i].fillColor == undefined)
 				this.drawContext.fillStyle = "white";
 			else this.drawContext.fillStyle = this.nodes[i].fillColor;
@@ -411,25 +381,41 @@ export default class GraphDrawer {
 			if (this.nodes[i].strokeColor == undefined)
 				this.drawContext.strokeStyle = "black";
 			else this.drawContext.strokeStyle = this.nodes[i].strokeColor;
+			
+			this.drawNode(this.nodes[i], this.drawContext);
 
 			this.drawContext.fill();
 			this.drawContext.stroke();
 			this.drawContext.closePath();
 			this.drawContext.strokeStyle = "black";
+			
 			// Text
+			let center = this.getCenter(this.nodes[i]);
 			this.drawContext.fillStyle = "black";
-			/*
-				Width is the only property
-				https://developer.mozilla.org/en-US/docs/Web/API/TextMetrics
-			*/
-			let textWidth = this.drawContext.measureText(this.nodes[i].v).width;
-			let ox = this.nodeShape == "Circle" ? 0 : this.nodes[i].r / 2;
-			let oy = this.nodeShape == "Circle" ? 0 : this.nodes[i].r / 2;
-			this.drawContext.fillText(
-				this.nodes[i].v,
-				this.nodes[i].x - textWidth / 2 + ox,
-				this.nodes[i].y + this.fontHeight / 2 + oy
-			);
+			let lines = this.nodes[i].v.split("\n");
+			let firstY = -(lines.length - 1) * 0.5;
+
+			// Fix nodes where the text overflows the height of the node
+			if (this.nodes[i].h < lines * this.fontHeight) {
+				this.nodes[i].h = lines * this.fontHeight + 5;
+				this.stillDirty = true;
+			}
+
+			for (let l = 0; l < lines.length; l++) {
+				let textWidth = this.drawContext.measureText(lines[l]).width;
+
+				// Fix nodes where the text overflows the width of the node
+				if (this.nodes[i].w < textWidth) {
+					this.nodes[i].w = textWidth + 5;
+					this.stillDirty = true;
+				}
+
+				this.drawContext.fillText(
+					lines[l],
+					center.x - textWidth / 2,
+					center.y + this.fontHeight / 2 + this.fontHeight * firstY + this.fontHeight * l
+				);
+			}
 		}
 
 		for (let i = 0; i < this.nodes.length; i++)
@@ -447,10 +433,12 @@ export default class GraphDrawer {
 				this.controllers[this.controlType].dirtyUpdate();
 			}
 
-			this.moveGraphInsideWorld();
+			//this.moveGraphInsideWorld();
 			this.draw();
 			this.switchBuffers();
-			this.dirty = false;
+
+			if (this.stillDirty) this.stillDirty = false;
+			else this.dirty = false;
 		}
 	}
 
@@ -542,6 +530,34 @@ export default class GraphDrawer {
 		this.canvas.addEventListener("touchleave", zoomStopHandler);
 	}
 
+	drawNode(node, context) {
+		if (node.shape == "Circle") {
+			/*context.arc(
+				node.x,
+				node.y,
+				node.w,
+				0,
+				2 * Math.PI
+			);*/
+			context.ellipse(
+				node.x,
+				node.y,
+				node.w,
+				node.h,
+				0,
+				0,
+				2 * Math.PI
+			);
+		} else if (node.shape == "Rectangle") {
+			context.rect(
+				node.x,
+				node.y,
+				node.w,
+				node.h
+			);
+		}
+	}
+
 	/*
 		Can be called to determine if the event e is the start of a panning gesture.
 		This let's the user move the camera around the world.
@@ -580,8 +596,8 @@ export default class GraphDrawer {
 				// to render anything outside the world.
 				this.camera.translateX(
 					-dX,
-					frustum.Width / 2,
-					this.drawBuffer.width - frustum.Width / 2
+					frustum.width / 2,
+					this.drawBuffer.width - frustum.width / 2
 				);
 				hasMoved = true;
 			}
@@ -589,8 +605,8 @@ export default class GraphDrawer {
 				dY -= Math.sign(dY) * threshold;
 				this.camera.translateY(
 					-dY,
-					frustum.Height / 2,
-					this.drawBuffer.height - frustum.Height / 2
+					frustum.height / 2,
+					this.drawBuffer.height - frustum.height / 2
 				);
 				hasMoved = true;
 			}
@@ -636,7 +652,7 @@ export default class GraphDrawer {
 	*/
 	getNodeAtPoint(x, y) {
 		for (let i = 0; i < this.nodes.length; i++) {
-			if (this.isPointInNode(x, y, this.nodes[i].x, this.nodes[i].y)) {
+			if (this.isPointInNode(x, y, this.nodes[i])) {
 				return {
 					index: i,
 					node: this.nodes[i]
@@ -651,24 +667,27 @@ export default class GraphDrawer {
 	}
 
 	/*
-		Checks whether a point (x, y) is inside a node (nx, ny).
+		Checks whether a point (x, y) is inside a node.
 	*/
-	isPointInNode(x, y, nx, ny) {
-		if (this.nodeShape == "Circle") {
-			return this.isPointInCircle(x, y, nx, ny, this.R);
+	isPointInNode(x, y, node) {
+		if (node.shape == "Circle") {
+			return this.isPointInCircle(x, y, node.x, node.y, node.w);
 		}
-		if (this.nodeShape == "Square") {
-			return this.isPointInSquare(
+		if (node.shape == "Rectangle") {
+			return this.isPointInRectangle(
 				x,
 				y,
-				nx,
-				ny,
-				this.R * this.SQUARE_FACTOR
+				node.x,
+				node.y,
+				node.w,
+				node.h
 			);
 		}
 	}
 
 	/*
+		TODO: Change this to isPointInEllipse
+
 		Checks whether a point (x, y) is inside a circle
 		with center (nx, ny) and radius r.
 	*/
@@ -677,12 +696,12 @@ export default class GraphDrawer {
 	}
 
 	/*
-		Checks whether a point (x, y) is inside a square with radius r.
+		Checks whether a point (x, y) is inside a rectangle with width w and height h.
 		Top left corner of square (nx, ny).
 	*/
-	isPointInSquare(x, y, nx, ny, r) {
-		if (x < nx || x > nx + r) return false;
-		if (y < ny || y > ny + r) return false;
+	isPointInRectangle(x, y, nx, ny, w, h) {
+		if (x < nx || x > nx + w) return false;
+		if (y < ny || y > ny + h) return false;
 		return true;
 	}
 
@@ -726,6 +745,13 @@ export default class GraphDrawer {
 			x: v.x + t * (w.x - v.x),
 			y: v.y + t * (w.y - v.y)
 		});
+	}
+
+	getCenter(node) {
+		if (node.shape == "Circle") 
+			return { x: node.x, y: node.y };
+		if (node.shape == "Rectangle")
+			return { x: node.x + node.w / 2, y: node.y + node.h / 2 };
 	}
 
 	// Sort the selected nodes based on x coordinate to get them in the right order
@@ -828,8 +854,9 @@ export default class GraphDrawer {
 		let ty = 0;
 
 		for (let i = 0; i < this.nodes.length; i++) {
-			tx += this.nodes[i].x;
-			ty += this.nodes[i].y;
+			let center = this.getCenter(this.nodes[i]);
+			tx += center.x;
+			ty += center.y;
 		}
 
 		this.camera.centerX = tx / this.nodes.length;
