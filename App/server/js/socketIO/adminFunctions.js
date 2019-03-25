@@ -266,7 +266,7 @@ function generateSolution(question) {
 		// manipulate it.
 		question.objects.steps = [steppingFunctions.reset()];
 	}
-	else if(solutionType === 7) {
+	else if(solutionType === 7) { //TODO create solution object for binary Tree & Update solutionChecker for normal Binary Trees
 
 	}else if(solutionType === 8 || solutionType === 9) {
 		console.log("QUESTION!");
