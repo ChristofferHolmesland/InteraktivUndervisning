@@ -1058,7 +1058,43 @@ describe('TestBinaryTrees', function () {
 			assert(GeneralTreeFunctions.checkStudentAnswer(resultingTrees[0], solutionTree));
 		});
 		it("Test with a not valid canvasobject",function () {
+		});
+	});
 
+	describe("Test prepare tree export & import functions",function () {
+		it("Test makeTreeReadyForExport tree function",function () {
+			let testTree = BinarySearchTreeFunctions.createBinarySearchTree([2,4,1],true)[0];
+			let solutionRoot = new BinaryTreeNode(2);
+			let solutionTree = new Tree(solutionRoot);
+			let node1 = new BinaryTreeNode(4);
+			let node2 = new BinaryTreeNode(1);
+			node1.addParent(solutionRoot);
+			node2.addParent(solutionRoot);
+			node1.parent = solutionRoot.value;
+			node2.parent = solutionRoot.value;
+			solutionTree.nodes = [solutionRoot,node1,node2];
+			testTree.makeTreeReadyForExport();
+			testTree.printTree();
+			solutionTree.printTree();
+			assert(GeneralTreeFunctions.checkStudentAnswer(solutionTree,testTree));
+		});
+		it("Test makeBSTAVKTreeReadyForImport tree function",function () {
+			let solutionTree = BinarySearchTreeFunctions.createBinarySearchTree([4,2,7],true)[0];
+			let rootNode = new BinaryTreeNode(4);
+			let node1 = new BinaryTreeNode(2);
+			let node2 = new BinaryTreeNode(7);
+			node1.addParent(rootNode);
+			node2.addParent(rootNode);
+			node1.parent = node1.parent.value;
+			node2.parent = node2.parent.value;
+			let testTree = new Tree(rootNode);
+			testTree.nodes = [rootNode,node1,node2];
+			testTree.makeBSTAVKTreeReadyForImport();
+			console.log("Solution");
+			solutionTree.printTree();
+			console.log("Test");
+			testTree.printTree();
+			assert(GeneralTreeFunctions.checkStudentAnswer(solutionTree,testTree));
 		});
 	})
 });

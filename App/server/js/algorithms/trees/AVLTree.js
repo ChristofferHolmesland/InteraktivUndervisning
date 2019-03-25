@@ -131,23 +131,35 @@ module.exports.createAVLTreeSolution = function (elements, add, existingTreeObje
 					if (tree.root.children[0] !== undefined) {
 						let getLowestLeftNode = getLowestNode(tree.root.children[0]);
 						let rotated = fixAVLCondition(getLowestLeftNode, tree, true);
-						if (rotated) steps.push("Rotated", "AVL", tree);
+						if (rotated){
+							let step = GeneralTreeFunctions.createStepArray("Rotated","AVL",[tree]);
+							steps.push(step);
+						}
 					}
 					if (tree.root.children[1] !== undefined) {
 						let getLowestRightNode = getLowestNode(tree.root.children[1]);
 						let rotated = fixAVLCondition(getLowestRightNode, tree, true);
-						if (rotated) steps.push("Rotated", "AVL", tree);
+						if (rotated){
+							let step = GeneralTreeFunctions.createStepArray("Rotated","AVL",[tree]);
+							steps.push(step);
+						}
 					}
 				}else {
 					if (tree.root.children[1] !== undefined) {
 						let getLowestRightNode = getLowestNode(tree.root.children[1]);
 						let rotated = fixAVLCondition(getLowestRightNode, tree, true);
-						if (rotated) steps.push("Rotated", "AVL", tree);
+						if (rotated){
+							let step = GeneralTreeFunctions.createStepArray("Rotated","AVL",[tree]);
+							steps.push(step);
+						}
 					}
 					if (tree.root.children[0] !== undefined) {
 						let getLowestLeftNode = getLowestNode(tree.root.children[0]);
 						let rotated = fixAVLCondition(getLowestLeftNode, tree, true);
-						if (rotated) steps.push("Rotated", "AVL", tree);
+						if (rotated){
+							let step = GeneralTreeFunctions.createStepArray("Rotated","AVL",[tree]);
+							steps.push(step);
+						}
 					}
 				}
 			}

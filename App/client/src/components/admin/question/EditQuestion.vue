@@ -1,5 +1,5 @@
 <template>
-    <b-modal :id="elementId" :ref="elementRef" :no-close-on-backdrop="true" :title="getLocale.newQuestion" @ok="callOkHandler" style="text-align: left;">
+    <b-modal :id="elementId" :ref="elementRef" :no-close-on-backdrop="true" :title="getLocale.newQuestion" @ok="callOkHandler" @cancel="cancelHandler" style="text-align: left;">
         <b-form>
             <b-form-group 	id="questionTitle"
                             :label="getLocale.newQuestionTitle"
@@ -138,10 +138,10 @@
                     label="Draw the tree, or give an array to build the solution tree"
                     v-if="newQuestion.solutionType === 8 || newQuestion.solutionType === 9"
                     >
-                <label for="Add">Add</label><input type="radio" id="Add" v-model="solutionTreeType" value="Add" checked/><br/>
-                <label for="Remove">Remove</label><input type="radio" id="Remove" v-model="solutionTreeType" value="Remove"/>
-                <label v-if="this.solutionTreeType === 'Add'" for="solutionListElements">Input elements to be added to the tree. The elements are seperated by ,</label>
-                <label v-else-if="this.solutionTreeType === 'Remove'" for="solutionListElements">Input elements to be removed from the tree. The elements are seperated by ,</label>
+                <label for="Add">Add</label><input type="radio" id="Add" v-model="newQuestion.objects.solutionTreeType" value="Add" /><br/>
+                <label for="Remove">Remove</label><input type="radio" id="Remove" v-model="newQuestion.objects.solutionTreeType" value="Remove"/>
+                <label v-if="newQuestion.objects.solutionTreeType === 'Add'" for="solutionListElements">Input elements to be added to the tree. The elements are seperated by ,</label>
+                <label v-else-if="newQuestion.objects.solutionTreeType === 'Remove'" for="solutionListElements">Input elements to be removed from the tree. The elements are seperated by ,</label>
                 <b-form-input 	id="solutionListElements"
                                  type="text"
                                  v-model="newQuestion.objects.treeElements">
@@ -195,12 +195,12 @@
                         startingArray: "",
                         graph: undefined,
                         startTree: undefined,
-						treeElements: ""
+						treeElements: "",
+						solutionTreeType: "Add",
                     }
                 },
                 solutionTypes: [],
                 requestGraphDrawerObject: false,
-                solutionTreeType: "Add",
                 useAlert: false,
                 alertReason: ""
             }
@@ -224,14 +224,13 @@
                 this.$socket.emit(
                     "addNewQuestion", 
                     Object.assign({}, responseNewQuestion, {courseCode: this.$store.getters.getSelectedCourse.split(" ")[0]}),
-                    this.solutionTreeType
+                    this.newQuestion.objects.solutionTreeType
                 );
 			},
 			editQuestionHandler: function() {
                 let responseNewQuestion = JSON.parse(JSON.stringify(this.newQuestion));
 				if (responseNewQuestion.time === 0) responseNewQuestion.time = -1;
-				this.$socket.emit("updateQuestion", responseNewQuestion, this.solutionTreeType);
-
+				this.$socket.emit("updateQuestion", responseNewQuestion, this.newQuestion.objects.solutionTreeType);
 			},
             returnToOkHandler: function() {
                 if (this.okHandler == "add") this.addNewQuestionHandler();
@@ -254,6 +253,10 @@
                 } else {
                     this.returnToOkHandler();
                 }
+            },
+            cancelHandler: function() {
+                this.useAlert = false;
+                this.alertReason = "";
             },
             objectsInputChanged(newObject) {
                 if (newObject == undefined) return;

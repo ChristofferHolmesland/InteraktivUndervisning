@@ -11,9 +11,9 @@ const question = require("../session.js").Question;
 const answer = require("../session.js").Answer;
 
 
-let validateQuestion = function (questionInfo, treeAction) {
+let validateQuestion = function (questionInfo) {
 		//TODO put different cases together if they have the same question validations, example the tree cases
-		console.log(treeAction);
+		let treeAction = questionInfo.objects.solutionTreeType;
 		let questionType = questionInfo.solutionType;
 		console.log(questionType);
 		let treeElements = questionInfo.objects.treeElements;
@@ -22,7 +22,6 @@ let validateQuestion = function (questionInfo, treeAction) {
 		console.log(treeElements);
 		console.log("Given Tree");
 		console.log(givenStartTree);
-		if(givenStartTree.roots[0] !== undefined)	console.log(givenStartTree.roots[0].children[0]);
 		let result = {validation: true, reason:""};
 		switch(questionType) {
 			case 1:	//Text input
@@ -270,28 +269,34 @@ function generateSolution(question) {
 	else if(solutionType === 7) {
 
 	}else if(solutionType === 8 || solutionType === 9) {
+		console.log("QUESTION!");
+		console.log(question.objects.solutionTreeType);
 		let elements = question.objects.treeElements;
 		let startCanvasTree = question.objects.startTree;
 		let startTree = [];
 		let arrayOfElements = [];
-		let solutionObject = [];
+		let solutionArray = [];
 
 		if (elements !== "" || elements !== undefined) {
 			arrayOfElements = elements.split(",");
 		}
 		console.log(question);
-		if (startCanvasTree !== undefined && startCanvasTree.roots.length !== 0) startTree = GeneralTreeFunctions.createTreeObjectFromCanvasObjectver1(startCanvasTree[0]);
-			if (solutionType === 8) {
-				//TODO fix solutionTreeType so that its connected to questionInformation + default value 'Add' on EditQuestion component
-				if (question.objects.solutionTreeType === "Add") solutionObject = BinarySearchTreeFunctions.createBinarySearchTreeSolution(arrayOfElements, true, startTree[0]);
-				else solutionObject = BinarySearchTreeFunctions.createBinarySearchTreeSolution(arrayOfElements, false, startTree[0]);
-			} else {
-				if (question.objects.solutionTreeType === "Remove") solutionObject = AVLTreeFunctions.createAVLTreeSolution(arrayOfElements, true, startTree[0]);
-				else solutionObject = AVLTreeFunctions.createAVLTreeSolution(arrayOfElements, false, startTree[0]);
+		if (startCanvasTree !== undefined && startCanvasTree.roots.length !== 0) startTree = GeneralTreeFunctions.createTreeObjectFromCanvasObjectver1(startCanvasTree);
+		if (solutionType === 8) {
+			if (question.objects.solutionTreeType === "Add") solutionArray = BinarySearchTreeFunctions.createBinarySearchTreeSolution(arrayOfElements, true, startTree[0]);
+			else solutionArray = BinarySearchTreeFunctions.createBinarySearchTreeSolution(arrayOfElements, false, startTree[0]);
+		} else {
+			if (question.objects.solutionTreeType === "Add") solutionArray = AVLTreeFunctions.createAVLTreeSolution(arrayOfElements, true, startTree[0]);
+			else solutionArray = AVLTreeFunctions.createAVLTreeSolution(arrayOfElements, false, startTree[0]);
+		}
+		console.log("SOLUTION");
+		console.log(solutionArray);
+		for(let s=0;s<solutionArray.length;s++){
+			for(let t=0;t<solutionArray[s].treeInfo.length;t++){
+				solutionArray[s].treeInfo[t].makeTreeReadyForExport();
 			}
-			console.log("SOLUTION");
-			console.log(solutionObject);
-			//TODO finish the solution handler for trees
+		}
+		question.solution = solutionArray;
 	}
 	else if (solutionType == 10) {
 		let algo = algorithms.graphs.dijkstra;
@@ -686,8 +691,8 @@ module.exports.admin = function(socket, db, user, sessions) {
 		});
 	});
 
-	socket.on("addNewQuestion", function(question, treeAction) {
-		let valid = validateQuestion(question, treeAction);
+	socket.on("addNewQuestion", function(question) {
+		let valid = validateQuestion(question);
 		socket.emit("confirmQuestionRequirements", valid);
 		if (!valid.validation) return;
 
