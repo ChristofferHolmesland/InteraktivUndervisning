@@ -2,7 +2,7 @@
 	<div>
 		<b-container style="overflow-x:scroll;">
 			<b-row class="tableRow">
-				<b-col class="colKValue" cols="4">
+				<b-col class="colKValue" cols="4" lg="1">
 					K Value
 				</b-col>
 				<b-col v-for="(value, index) in initialList" :key="index" class="colArrayElement">
@@ -10,7 +10,7 @@
 				</b-col>
 			</b-row>
 			<b-row class="mb-2 tableRow">
-				<b-col class="colKValue" cols="4">
+				<b-col class="colKValue" cols="4" lg="1">
 					<input type="text" disabled :value="initialKValue">
 				</b-col>
 				<b-col v-for="(value, index) in initialList" :key="index" class="colArrayElement">
@@ -18,7 +18,7 @@
 				</b-col>
 			</b-row>
 			<b-row v-for="row in rows" :key="row" class="mb-1 tableRow">
-				<b-col class="colKValue" cols="4">
+				<b-col class="colKValue" cols="4" lg="1">
 					<input type="text" placeholder="Enter k value" v-model="kValues[row - 1]">
 				</b-col>
 				<b-col v-for="(value, index) in getRowValues(row - 1)" :key="index" @click="elementClicked(row - 1, index)" class="colArrayElement">
@@ -130,7 +130,7 @@ export default {
 
 <style scoped>
 input {
-	width: 30px;
+	width: 60px;
 	text-align: center;
 }
 .col {
@@ -140,7 +140,7 @@ input {
 	width: 120px;
 }
 .colArrayElement {
-	width: 40px;
+	width: 120px;
 }
 .tableRow {
 	flex-wrap: nowrap;
