@@ -155,24 +155,30 @@ export default class Python {
 								text += "\n - " + n2.object.fields[i].name;
 							}
 							let input = prompt(text, "");
-
+							let ok = false;
+							let field = undefined;
 							for (let i = 0; i < n2.object.fields.length; i++) {
-								if (n2.object.fields[i].name == input) {
-									// If there is already something else linked
-									// to the same field, the edge should be removed
-									// from the GraphDrawer
-									if (n2.object.fields[i].value != undefined) {
-										this.removeEdge(
-											n2.object.fields[i].value,
-											n2.object.id
-										);
+								if (n2.object.fields[i].name.startsWith(input)) {
+									if (ok) {
+										ok = false;
+										break;
 									}
-
-									n2.object.fields[i].value = n1.object.id;
-									this.generateNodeText(n2.object.id);
-									done = true;
-									break;
+									ok = true;
+									field = n2.object.fields[i];
 								}
+							}
+
+							if (ok) {
+								// If there is already something else linked
+								// to the same field, the edge should be removed
+								// from the GraphDrawer
+								if (field.value != undefined) {
+									this.removeEdge(field.value, n2.object.id);
+								}
+
+								field.value = n1.object.id;
+								this.generateNodeText(n2.object.id);
+								done = true;
 							}
 						}
 					} else if (n1.type == "Variable" && n2.type == "Object") {
@@ -271,9 +277,11 @@ export default class Python {
 		let pickThreshold = 8;
 		for (let e = 0; e < this.gd.edges.length; e++) {
 			let d = this.gd.distanceFromEdgeToPoint(this.gd.edges[e], p.x, p.y);
+			console.log("Distance " + d);
 			if (d < pickThreshold) {
-				let n1 = this.findObjectById(e.n1.id);
-				let n2 = this.findObjectById(e.n2.id);
+				console.log("Remove");
+				let n1 = this.findObjectById(this.gd.edges[e].n1.id);
+				let n2 = this.findObjectById(this.gd.edges[e].n2.id);
 
 				if (n1.type == "Variable")
 					this.removeLink(n1.object, n2.object.id);
@@ -365,9 +373,36 @@ export default class Python {
 	addObjectHandler(e) {
 		let objectType = "";
 		while (objectType == "") {
-			objectType = prompt("Enter object type:", "");
+			let text = "Enter object type?\n";
+			for (let i = 0; i < this.objectTypes.length; i++) {
+				text += "\n - " + this.objectTypes[i].name;
+			}
+			objectType = prompt(text, "");
 			if (objectType == undefined || objectType == null) return true;
-			if (!this.typeExists(objectType)) objectType = "";
+
+			// Convert the first letter to uppercase, because the user might not
+			// write it correctly
+			objectType = objectType.charAt(0).toUpperCase() + objectType.slice(1);
+
+			// Checks if it's a valid type
+			let ok = false;
+			let properName = "";
+			for (let i = 0; i < this.objectTypes.length; i++) {
+				let t = this.objectTypes[i];
+				if (t.name.startsWith(objectType)) {
+					// Prevent the user from entering a shorter version of
+					// the type name, which matches more than one type name.
+					if (ok) {
+						ok = false;
+						break;
+					}
+
+					ok = true;
+					properName = t.name;
+				}
+			}
+			if (!ok) objectType = "";
+			else objectType = properName;
 		}
 
 		let p = this.gd.camera.project(e.offsetX, e.offsetY);
@@ -559,7 +594,8 @@ export default class Python {
 		for (let i = 0; i < v.links.length; i++) {
 			let link = v.links[i];
 			if (link.id == id) {
-				v.object.links.splice(i, 1);
+				v.links.splice(i, 1);
+				this.generateNodeText(v.id);
 				break;
 			}
 		}
@@ -570,7 +606,10 @@ export default class Python {
 
 		for (let i = 0; i < o.fields.length; i++) {
 			let f = o.fields[i];
-			
+			if (f.value == id) {
+				f.value = undefined;
+				this.generateNodeText(o.id);
+			}
 		}
 	}
 }

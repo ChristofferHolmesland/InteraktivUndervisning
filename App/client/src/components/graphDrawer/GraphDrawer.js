@@ -773,17 +773,10 @@ export default class GraphDrawer {
 		let p = {
 			x: x,
 			y: y
-		}
-
-		let p1 = {
-			x: edge.n1.x,
-			y: edge.n1.y
 		};
 
-		let p2 = {
-			x: edge.n2.x,
-			y: edge.n2.y
-		};
+		let p1 = this.getCenter(edge.n1);
+		let p2 = this.getCenter(edge.n2);
 
 		return Math.sqrt(this._distToSegmentSquared(p, p1, p2));
 	}
