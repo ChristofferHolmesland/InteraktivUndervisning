@@ -51,15 +51,15 @@
             let c = document.getElementById("canvas");
 
             let nodeShape = "Circle";
-            if (this.controlType == "Sort") {
-                nodeShape = "Square"
+            if (this.controlType == "Sort" || this.controlType == "Python") {
+                nodeShape = "Rectangle"
             }
 
             this.graphDrawer = new GraphDrawer(c, {
                 nodeShape: nodeShape,
                 controlType: this.controlType,
                 operatingMode: this.operatingMode,
-                displayEdgeValues: true,
+                displayEdgeValues: false,
                 directedEdges: true,
 
                 dijkstra: {
