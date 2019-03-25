@@ -60,7 +60,7 @@
                 controlType: this.controlType,
                 operatingMode: this.operatingMode,
                 displayEdgeValues: false,
-                directedEdges: false,
+                directedEdges: true,
 
                 dijkstra: {
                     startColor: "LightGreen",

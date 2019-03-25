@@ -337,13 +337,21 @@ export default class GraphDrawer {
 				let nx = dx / magnitude;
 				let ny = dy / magnitude;
 
+				// Distance from the center of shape to the edge
+				let dstToEdgeW = this.edges[i].n2.w;
+				let dstToEdgeH = this.edges[i].n2.h;
+				if (this.edges[i].n2.shape == "Rectangle") {
+					dstToEdgeW /= 2;
+					dstToEdgeH /= 2;
+				}
+
 				let a = { x: center2.x, y: center2.y };
-				a.x += nx * this.edges[i].n2.w;
-				a.y += ny * this.edges[i].n2.h;
+				a.x += nx * dstToEdgeW;
+				a.y += ny * dstToEdgeH;
 
 				let b = { x: a.x, y: a.y };
-				b.x += nx * this.edges[i].n2.w;
-				b.y += ny * this.edges[i].n2.h;
+				b.x += nx * dstToEdgeW;
+				b.y += ny * dstToEdgeH;
 
 				// TODO: When the nodeshape is square, the arrows
 				// are placed on the line, but not close to
@@ -352,8 +360,7 @@ export default class GraphDrawer {
 				let headlen = 15;
 				let angle = Math.atan2(a.y - b.y, a.x - b.x);
 				this.drawContext.beginPath();
-				this.drawContext.moveTo(b.x, b.y);
-				this.drawContext.lineTo(a.x, a.y);
+				this.drawContext.moveTo(a.x, a.y);
 				this.drawContext.lineTo(
 					a.x - headlen * Math.cos(angle - Math.PI / 6),
 					a.y - headlen * Math.sin(angle - Math.PI / 6)
