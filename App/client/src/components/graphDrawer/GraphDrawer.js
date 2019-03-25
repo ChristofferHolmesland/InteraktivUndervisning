@@ -123,6 +123,10 @@ export default class GraphDrawer {
 		*/
 		this.edges = [];
 
+		// This value can be used by any object needing an id.
+		// It should always be incremented after using the id.
+		this.nextId = 0;
+
 		// Flag which determines if the graph state should
 		// be redrawn. Default value is true, so the UI
 		// is rendered.
@@ -185,7 +189,7 @@ export default class GraphDrawer {
 			Dijkstra: new Djikstra(this, config.dijkstra),
 			Python: new Python(this, config.python)
 		};
-		
+
 		this.setController(this.controlType);
 	}
 
@@ -326,14 +330,17 @@ export default class GraphDrawer {
 				(this.edges[i].directed == undefined ||
 					this.edges[i].directed == true)
 			) {
+				// Normalize the line as (nx, ny)
 				let dx = center1.x - center2.x;
 				let dy = center1.y - center2.y;
 				let magnitude = Math.sqrt(dx * dx + dy * dy);
 				let nx = dx / magnitude;
 				let ny = dy / magnitude;
+
 				let a = { x: center2.x, y: center2.y };
 				a.x += nx * this.edges[i].n2.w;
 				a.y += ny * this.edges[i].n2.h;
+
 				let b = { x: a.x, y: a.y };
 				b.x += nx * this.edges[i].n2.w;
 				b.y += ny * this.edges[i].n2.h;
@@ -381,14 +388,14 @@ export default class GraphDrawer {
 			if (this.nodes[i].strokeColor == undefined)
 				this.drawContext.strokeStyle = "black";
 			else this.drawContext.strokeStyle = this.nodes[i].strokeColor;
-			
+
 			this.drawNode(this.nodes[i], this.drawContext);
 
 			this.drawContext.fill();
 			this.drawContext.stroke();
 			this.drawContext.closePath();
 			this.drawContext.strokeStyle = "black";
-			
+
 			// Text
 			let center = this.getCenter(this.nodes[i]);
 			this.drawContext.fillStyle = "black";
@@ -420,6 +427,49 @@ export default class GraphDrawer {
 
 		for (let i = 0; i < this.nodes.length; i++)
 			this.nodes[i].culled = undefined;
+	}
+
+	/*
+		Adds a node and returns a reference to it.
+		props should be an object with mapping from attribute->value.
+		Possible attributes: (all optional)
+			x, y, w, h, v, shape,
+			selected, culled,
+			fillColor, strokeColor
+	*/
+	addNode(props) {
+		let nextId = this.nextId;
+		this.nextId++;
+
+		let node = {
+			id: nextId,
+			x: 0,
+			y: 0,
+			w: this.R,
+			h: this.R,
+			shape: this.nodeShape,
+			selected: undefined,
+			culled: undefined,
+			fillColor: undefined,
+			strokeColor: undefined
+		};
+
+		for (var prop in props) {
+			if (props.hasOwnProperty(prop)) {
+				node[prop] = props[prop];
+			}
+		}
+
+		this.nodes.push(node);
+		return node;
+	}
+
+	getNode(id) {
+		for (let i = 0; i < this.nodes.length; i++) {
+			if (this.nodes[i].id == id) return this.nodes[i];
+		}
+
+		return undefined;
 	}
 
 	/*
@@ -671,7 +721,7 @@ export default class GraphDrawer {
 	*/
 	isPointInNode(x, y, node) {
 		if (node.shape == "Circle") {
-			return this.isPointInCircle(x, y, node.x, node.y, node.w);
+			return this.isPointInEllipse(x, y, node.x, node.y, node.w, node.h);
 		}
 		if (node.shape == "Rectangle") {
 			return this.isPointInRectangle(
@@ -686,8 +736,19 @@ export default class GraphDrawer {
 	}
 
 	/*
-		TODO: Change this to isPointInEllipse
+		Check wheter a point (x, y) is inside an ellipse
+		with center (nx, ny) and radius (rx, ry).
 
+
+		TODO: Check if this can be used for nodes where rx == ry
+	*/
+	isPointInEllipse(x, y, nx, ny, rx, ry) {
+		let xx = ((x - nx) * (x - nx)) / (rx * rx);
+		let yy = ((y - ny) * (y - ny)) / (ry * ry);
+		return xx + yy <= 1;
+	}
+
+	/*
 		Checks whether a point (x, y) is inside a circle
 		with center (nx, ny) and radius r.
 	*/
