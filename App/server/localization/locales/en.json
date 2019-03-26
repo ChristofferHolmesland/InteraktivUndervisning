@@ -11,7 +11,8 @@
         "addToSession": "Add",
         "solutionText": "Solution: ",
         "selectSessionText": "Select session: ",
-        "time": "Time:"
+        "time": "Time:",
+        "mediaTypes": ["Images", "Graphs", "Tables"]
     },
     "AdminSessions": {
         "newSession": "New session",

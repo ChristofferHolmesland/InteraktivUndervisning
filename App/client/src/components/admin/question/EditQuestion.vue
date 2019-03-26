@@ -45,6 +45,10 @@
                     </b-row>
                 </b-col>
             </b-form-group>
+
+
+
+
             <!-- TODO Make it possible to add objects to question
                             - Graphs
                             - Images
@@ -62,6 +66,16 @@
                     </li>
                 </ul>
             </b-form-group> -->
+
+            <b-form-group   id="Media"
+                            label="Media"
+                            label-for="mediaSelector">
+                <b-form-select  :options="mediaTypes"
+                                @change="selectedMediaType($event)">
+                </b-form-select>
+            </b-form-group>
+
+
             <b-form-group 	id="solutionType"
                             :label="getLocale.newQuestionSolutionType"
                             label-for="solutionTypeInput">
@@ -165,11 +179,15 @@
                         multipleChoices: [],
                         startingArray: "",
                         kValue: "",
-                        graph: undefined
+                        graph: undefined,
+                        files: [],
+                        graphs: [],
+                        tables: []
                     }
                 },
                 solutionTypes: [],
-                requestGraphDrawerObject: false
+                requestGraphDrawerObject: false,
+                mediaTypes: []
             }
         },
         components: {
@@ -182,6 +200,7 @@
         },
         mounted() {
             this.$socket.emit("getQuestionTypes");
+            this.mediaTypes = this.getLocale().mediaTypes;
         },
         methods: {
             returnToOkHandler: function() {
@@ -219,6 +238,9 @@
             },
             addNewMultipleChoice() {
                 this.newQuestion.objects.multipleChoices.push("");
+            },
+            selectedMediaType(event){
+                console.log(event);
             }
         },
         computed: {

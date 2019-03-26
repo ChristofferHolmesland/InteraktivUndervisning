@@ -11,7 +11,8 @@
         "addToSession": "Legg til",
         "solutionText": "Løsning: ",
         "selectSessionText": "Velg økt: ",
-        "time": "Tid:"
+        "time": "Tid:",
+        "mediaTypes": ["Bilder", "Grafer", "Tabeller"]
     },
     "AdminSessions": {
         "newSession": "Ny økt",
