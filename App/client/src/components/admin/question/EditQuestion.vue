@@ -150,7 +150,7 @@
                             v-if="newQuestion.solutionType === 13">
             <b-form-textarea 	id="solutionInput"
                                 placeholder="Write Python code here..."
-                                v-model="newQuestion.solution">
+                                v-model="newQuestion.objects.code">
             </b-form-textarea>
             </b-form-group>
         </b-form>
@@ -171,6 +171,7 @@
                     solution: "",
                     time: 0,
                     objects: {
+                        code: "",
                         multipleChoices: [],
                         startingArray: "",
                         kValue: "",
@@ -194,7 +195,12 @@
         },
         methods: {
             returnToOkHandler: function() {
+                if (this.newQuestion.solutionType == 13) {
+                    this.newQuestion.solution = this.newQuestion.objects.code;
+                }
+
                 this.okHandler(this.newQuestion);
+                
                 this.newQuestion = {
                     id: -1,
                     text: "",
@@ -205,7 +211,8 @@
                     objects: {
                         multipleChoices: [],
                         startingArray: "",
-                        graphs: undefined
+                        graphs: undefined,
+                        code: undefined
                     }
                 };
             },
