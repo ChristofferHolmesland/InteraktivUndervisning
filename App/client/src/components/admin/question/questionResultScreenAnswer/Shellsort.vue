@@ -24,10 +24,7 @@ export default {
     name: "ShellsortAnswer",
     props: {
         answer: Array
-	},
-	created() {
-		console.log(this.answer);
-	},
+	}
 }
 </script>
 

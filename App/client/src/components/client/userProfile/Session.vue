@@ -5,7 +5,7 @@
                 <b-container>
                     <b-row>
                         <b-col lg="12">
-                            <b-button @click="showUserStats" variant="primary">Go back</b-button>
+                            <b-button @click="showUserStats" variant="primary">{{getLocale.goBackBtn}}</b-button>
                         </b-col>
                     </b-row>
                     <b-row>
@@ -17,7 +17,7 @@
                                     {{question.text}}
                                 </b-list-group-item>
                                 <b-list-group-item class="border-0" v-show="showNoQuestions">
-                                    No questions
+                                    {{getLocale.noQuestions}}
                                 </b-list-group-item>
                                 <div v-if="questionListLength < 10">
                                     <b-list-group-item v-for="index in (10 - questionListLength)" :key="index + questionListLength">
@@ -32,7 +32,7 @@
             <b-col lg="8">
                 <b-container>
                     <b-row>
-                        <b-col cols="5">
+                        <b-col cols="8">
                             <h6>{{sessionInformation.name}}</h6>
                         </b-col>
                         <b-col cols="2">
@@ -41,78 +41,78 @@
                         <b-col cols=2>
                             <h6>{{sessionInformation.courseSemester}}</h6>
                         </b-col>
-                        <b-col cols=3>
-                            <h6>Participants: {{sessionInformation.participants}}</h6>
-                        </b-col>
                     </b-row>
+                    <hr>
                     <b-row align-h="center" @click="changeShowSessionStat()" style="cursor: pointer;">
-                        <b-col cols="4">
+                        <b-col cols="2">
 
                         </b-col>
-                        <b-col cols="4">
-                            <h4 style="text-align: center;">Session Stats</h4>
+                        <b-col cols="8">
+                            <h4 style="text-align: center;">{{getLocale.sessionStats}}</h4>
                         </b-col>
-                        <b-col cols="4" style="text-align: right;">
+                        <b-col cols="2" style="text-align: right;">
                             <p v-if="showSessionStat">^</p>
                             <p v-else>V</p>
                         </b-col>
                     </b-row>
                     <b-row v-show="showSessionStat">
                         <b-col>
-                            <h6>Other user correct: {{sessionInformation.otherUserCorrect}}%</h6> 
+                            <h6>{{getLocale.classStats}}</h6> 
                         </b-col>
                         <b-col>
-                            <h6>Other user incorrect: {{sessionInformation.otherUserIncorrect}}%</h6> 
+                            <h6>{{getLocale.correct}}{{sessionInformation.otherUserCorrect}}%</h6> 
                         </b-col>
                         <b-col>
-                            <h6>Other user didn't know: {{sessionInformation.otherUserDidntKnow}}%</h6> 
+                            <h6>{{getLocale.incorrect}}<span v-b-tooltip.hover :title="getLocale.incorrectTooltip">{{sessionInformation.otherUserIncorrect}}%</span> / <span v-b-tooltip.hover :title="getLocale.didntKnow">{{sessionInformation.otherUserDidntKnow}}%</span></h6> 
                         </b-col>
                     </b-row>
                     <b-row v-show="showSessionStat">
                         <b-col>
-                            <h6>User correct: {{sessionInformation.userCorrect}}%</h6>
+                            <h6>{{getLocale.userStats}}</h6>
                         </b-col>
                         <b-col>
-                            <h6>User incorrect: {{sessionInformation.userIncorrect}}%</h6>
+                            <h6>{{getLocale.correct}}{{sessionInformation.userCorrect}}%</h6>
                         </b-col>
                         <b-col>
-                            <h6>User didn't know: {{sessionInformation.userDidntKnow}}%</h6>                        
+                            <h6>{{getLocale.incorrect}}<span v-b-tooltip.hover :title="getLocale.incorrectTooltip">{{sessionInformation.userIncorrect}}%</span> / <span v-b-tooltip.hover :title="getLocale.didntKnow">{{sessionInformation.userDidntKnow}}%</span></h6>
                         </b-col>
                     </b-row>
+                    <hr>
                     <b-row align-h="center" @click="changeShowQuestionStat" style="cursor: pointer;">
-                        <b-col cols="4">
+                        <b-col cols="2">
 
                         </b-col>
-                        <b-col cols="4">
-                            <h4 style="text-align: center;">Question Stats</h4>
+                        <b-col cols="8">
+                            <h4 style="text-align: center;">{{getLocale.questionStats}}</h4>
                         </b-col>
-                        <b-col cols="4" style="text-align: right;">
+                        <b-col cols="2" style="text-align: right;">
                             <p v-if="showQuestionStat">^</p>
                             <p v-else>V</p>
                         </b-col>
                     </b-row>
                     <b-row v-show="showQuestionStat">
                         <b-col>
-                            <h6>Other user correct: {{sessionInformation.questionList[selectedQuestion].otherUserCorrect}}%</h6> 
+                            <h6>{{getLocale.classStats}}</h6> 
                         </b-col>
                         <b-col>
-                            <h6>Other user incorrect: {{sessionInformation.questionList[selectedQuestion].otherUserIncorrect}}%</h6> 
+                            <h6>{{getLocale.correct}}{{sessionInformation.questionList[selectedQuestion].otherUserCorrect}}%</h6> 
                         </b-col>
                         <b-col>
-                            <h6>Other user didn't know: {{sessionInformation.questionList[selectedQuestion].otherUserDidntKnow}}%</h6> 
+                            <h6>{{getLocale.incorrect}}<span v-b-tooltip.hover :title="getLocale.incorrectTooltip">{{sessionInformation.questionList[selectedQuestion].otherUserIncorrect}}%</span> / <span v-b-tooltip.hover :title="getLocale.didntKnow">{{sessionInformation.questionList[selectedQuestion].otherUserDidntKnow}}%</span></h6> 
                         </b-col>
                     </b-row>
                     <b-row v-show="showQuestionStat">
                         <b-col>
-                            <h6>User correct: {{sessionInformation.questionList[selectedQuestion].userCorrect}}%</h6>
+                            <h6>{{getLocale.userStats}}</h6>
                         </b-col>
                         <b-col>
-                            <h6>User incorrect: {{sessionInformation.questionList[selectedQuestion].userIncorrect}}%</h6>
+                            <h6>{{getLocale.correct}}{{sessionInformation.questionList[selectedQuestion].userCorrect}}%</h6>
                         </b-col>
-                        <b-col>
-                            <h6>User didn't know: {{sessionInformation.questionList[selectedQuestion].userDidntKnow}}%</h6>                        
+                        <b-col> 
+                            <h6>{{getLocale.incorrect}}<span v-b-tooltip.hover :title="getLocale.incorrectTooltip">{{sessionInformation.questionList[selectedQuestion].userIncorrect}}%</span> / <span v-b-tooltip.hover :title="getLocale.didntKnow">{{sessionInformation.questionList[selectedQuestion].userDidntKnow}}%</span></h6>
                         </b-col>
                     </b-row>
+                    <hr>
                     <b-row>
                         <b-col lg="12">
                             <DisplayQuestion :resultInfo="getResultInformation" :selectedAnswer="selectedAnswer"/>
@@ -126,30 +126,14 @@
                                         :key="index"
                                         class="list-inline-item"
                                         >
-                                        <b-card v-if="checkResult(index) === 1"
-                                                style="cursor: pointer; min-width: 100px; min-height: 100px;"
+                                        <b-card style="cursor: pointer; min-width: 100px; min-height: 100px;"
                                                 @click="changeAnswer($event)"
                                                 :id="index"
-                                                no-body
-                                                class="correctAnswer answer">
-                                            <p :id="index">Answer {{index}}</p>
-                                            <p :id="index">Correct</p>
-                                        </b-card>
-                                        <b-card v-else-if="checkResult(index) === 0"
-                                                style="cursor: pointer; min-width: 100px; min-height: 100px;"
-                                                @click="changeAnswer($event)"
-                                                :id="index"
-                                                no-body
-                                                class="incorrectAnswer answer">
-                                            <p :id="index">Answer {{index}}</p>
-                                            <p :id="index">Incorrect</p>
-                                        </b-card>
-                                        <b-card v-else-if="checkResult(index) === -1"
-                                                style="cursor: pointer; min-width: 100px; min-height: 100px;"
-                                                no-body
-                                                class="didntKnowAnswer answer">
-                                            <p>Answer {{index}}</p>
-                                            <p>Didn't know</p>
+                                                no-body>
+                                            <p :id="index">{{getLocale.answer}} {{index}}</p>
+                                            <p :id="index" v-if="checkResult(index) === 1">{{getLocale.correctCard}}</p>
+                                            <p :id="index" v-if="checkResult(index) === 0">{{getLocale.incorrectCard}}</p>    
+                                            <p :id="index" v-if="checkResult(index) === -1">{{getLocale.didntKnow}}</p>
                                         </b-card>
                                     </li>
                                 </ul>
@@ -185,15 +169,11 @@ export default {
         },
         changeShowSessionStat() {
             this.showSessionStat = !this.showSessionStat;
-            if (this.showSessionStat) this.showQuestionStat = false;
         },
         changeShowQuestionStat() {
             this.showQuestionStat = !this.showQuestionStat;
-            if (this.showQuestionStat) this.showSessionStat = false;
         },
         changeAnswer(event) {
-            console.log(event);
-            console.log(event.target.id);
             this.selectedAnswer = Number(event.target.id);
         },
         checkResult(index) {
@@ -230,6 +210,11 @@ export default {
         },
         getAnswers() {
             return this.sessionInformation.questionList[this.selectedQuestion].answerList;
+        },
+        getLocale() {
+			let locale = this.$store.getters.getLocale("SessionStat");
+			if (locale) return locale;
+			else return {};
         }
     },
     components: {

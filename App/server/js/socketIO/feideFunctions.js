@@ -68,7 +68,6 @@ module.exports.feide = function(socket, db, user){
                 name: String,
                 courseCode: String,
                 courseSemester: String,
-                Participants: Number,
                 userCorrect: Number,
                 userIncorrect: Number,
                 userDidntKnow: Number,
@@ -97,7 +96,6 @@ module.exports.feide = function(socket, db, user){
             sessionInformation.name = session.name;
             sessionInformation.courseCode = session.courseCode;
             sessionInformation.courseSemester = session.courseSemester;
-            sessionInformation.participants = session.participants;
         });
 
         await dbFunctions.get.allQuestionInSession(db, sessionId).then(async (questions) => {
@@ -155,7 +153,7 @@ module.exports.feide = function(socket, db, user){
 
                             answer.answerObject = JSON.parse(answer.object);
                             delete answer.object;
-                            
+
                             answerList.push(answer);
                         }
                         else {
