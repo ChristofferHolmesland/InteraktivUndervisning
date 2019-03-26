@@ -108,18 +108,15 @@ export default class Graph0 {
 			this._incrementNextLetter();
 		}
 
-		let node = {
+		this.gd.addNode({
 			x: p.x,
 			y: p.y,
 			shape: this.gd.nodeShape,
 			w: this.gd.nodeShape == "Circle" ? this.gd.R : this.gd.R * 2,
 			h: this.gd.nodeShape == "Circle" ? this.gd.R : this.gd.R * 2,
 			v: v
-		}
+		});
 
-		//this._editNode(node);
-
-		this.gd.nodes.push(node)
 		this.gd.dirty = true;
 		return true;
 	}
@@ -497,13 +494,16 @@ export default class Graph0 {
 		let parseComplete = (step) => {
 			for (let i = 0; i < step.nodes.length; i++) {
 				let n = step.nodes[i];
-				this.gd.nodes.push({
+				this.gd.addNode({
+					id: n.id,
 					x: n.x,
 					y: n.y,
 					v: n.v,
 					w: n.w,
 					h: n.h,
-					shape: this.gd.nodeShape
+					shape: this.gd.nodeShape,
+					marked: n.marked,
+					fillColor: n.fillColor
 				});
 			}
 
@@ -514,8 +514,8 @@ export default class Graph0 {
 
 				for (let j = 0; j < this.gd.nodes.length; j++) {
 					let n = this.gd.nodes[j];
-					if (n.v == e.n1) n1 = n;
-					else if (n.v == e.n2) n2 = n;
+					if (n.id == e.n1.id) n1 = n;
+					else if (n.id == e.n2.id) n2 = n;
 
 					if (n1 && n2) break;
 				}
@@ -526,7 +526,8 @@ export default class Graph0 {
 						n2: n2
 					});
 				} else {
-					console.error(`Found edge with non-existing node: ${e}`);
+					console.error("Found edge with non-existing node");
+					console.error(e);
 				}
 			}
 		};
@@ -542,12 +543,18 @@ export default class Graph0 {
 			}
 		}
 
-		this.gd.centerCameraOnGrpah();
+		this.gd.centerCameraOnGraph();
 	}
 
 	export() {
 		if (this.exportType == "Graph") return this.exportAsGraph();
 		if (this.exportType == "Tree") return this.exportAsTree();
+		if (this.exportType == "Both") {
+			return {
+				graph: this.exportAsGraph(),
+				tree: this.exportAsTree()
+			};
+		}
 	}
 
 	exportAsGraph() {
