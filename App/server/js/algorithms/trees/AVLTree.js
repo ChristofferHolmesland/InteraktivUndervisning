@@ -127,6 +127,7 @@ module.exports.createAVLTreeSolution = function (elements, add, existingTreeObje
 			steps.push(stepInitial);
 			while (checkBalance(tree.root) === false) {
 				let rootHeight = getNodeHeight(tree.root);
+				console.log(rootHeight);
 				if (rootHeight > 0) {	//choose which side of the tree to start with.
 					if (tree.root.children[0] !== undefined) {
 						let getLowestLeftNode = getLowestNode(tree.root.children[0]);

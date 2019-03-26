@@ -159,8 +159,10 @@
                     @getValueResponse="gotTreeDrawerObject"
                     :requestAnswer="requestGraphDrawerObject"
                     control-type="Graph0"
-                    export-type="Tree"
+                    export-type="Both"
                     operationMode="Interactive"
+                    import-type="Graph"
+                    :steps="this.newQuestion.objects._graphdrawerGraph"
                 />
             </b-form-group>
             <b-form-group 	

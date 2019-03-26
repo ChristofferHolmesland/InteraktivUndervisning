@@ -445,6 +445,7 @@ export default class GraphDrawer {
 
 				let minSize = this.nodes[i].shape == "Circle" ? this.R : this.R * 2;
 				if (this.nodes[i].w < minSize) this.nodes[i].w = minSize;
+				this.stillDirty = true;
 			}
 		}
 

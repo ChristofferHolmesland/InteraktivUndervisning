@@ -20,8 +20,6 @@ let validateQuestion = function (questionInfo) {
 		console.log(questionType);
 		let treeElements = questionInfo.objects.treeElements;
 		let givenStartTree = questionInfo.objects.startTree;
-		console.log("Elements");
-		console.log(treeElements);
 		console.log("Given Tree");
 		console.log(givenStartTree);
 		let result = {validation: true, reason:""};
@@ -119,6 +117,10 @@ let validateQuestion = function (questionInfo) {
 							}
 							if(questionType === 8 && result.validation) {
 								//startTree[0].printTree();
+								console.log("TreeArray:");
+								console.log(treeArray);
+								console.log("StartTree:");
+								startTree[0].printTree();
 								if (startTree.length > 0) treeObject = AVLTreeFunctions.createAVLTree(treeArray, true, startTree[0]);
 								else treeObject = AVLTreeFunctions.createAVLTree(treeArray, true);
 								if(!BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(treeObject[0]) || !AVLTreeFunctions.checkBalance(treeObject[0].root)) {
@@ -284,11 +286,14 @@ function generateSolution(question) {
 		let arrayOfElements = [];
 		let solutionArray = [];
 
-		if (elements !== "" || elements !== undefined) {
+		if (elements !== "" && elements !== undefined) {
 			arrayOfElements = elements.split(",");
 		}
 		console.log(question);
 		if (startCanvasTree !== undefined && startCanvasTree.roots.length !== 0) startTree = GeneralTreeFunctions.createTreeObjectFromCanvasObjectver1(startCanvasTree);
+		console.log("Array of Elements:");
+		console.log(arrayOfElements);
+		startTree[0].printTree();
 		if (solutionType === 7) {
 			if (question.objects.solutionTreeType === "Add") solutionArray = BinarySearchTreeFunctions.createBinarySearchTreeSolution(arrayOfElements, true, startTree[0]);
 			else solutionArray = BinarySearchTreeFunctions.createBinarySearchTreeSolution(arrayOfElements, false, startTree[0]);
