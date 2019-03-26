@@ -261,7 +261,10 @@
             },
             gotTreeDrawerObject(result) {
                 this.newQuestion.objects.startTree = result.tree;
-                this.newQuestion.objects._graphdrawerGraph = [result.graph];
+                this.newQuestion.objects._graphdrawerGraph = [Object.assign(
+                    { type: "Complete" },
+                    result.graph
+                )];
                 this.returnToOkHandler();
             },
             gotGraphDrawerObject(result) {
