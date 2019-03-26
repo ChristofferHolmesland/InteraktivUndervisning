@@ -406,7 +406,11 @@ export default class GraphDrawer {
 			// Text
 			let center = this.getCenter(this.nodes[i]);
 			this.drawContext.fillStyle = "black";
-			let lines = this.nodes[i].v.split("\n");
+			let lines = [];
+			if (typeof this.nodes[i].v == "string")
+				lines = this.nodes[i].v.split("\n");
+			else lines.push("" + this.nodes[i].v);
+
 			let firstY = -(lines.length - 1) * 0.5;
 
 			// Fix nodes where the text overflows the height of the node
