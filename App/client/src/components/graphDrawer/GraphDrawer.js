@@ -419,6 +419,7 @@ export default class GraphDrawer {
 				this.stillDirty = true;
 			}
 
+			let maxTextWidth = 0;
 			for (let l = 0; l < lines.length; l++) {
 				let textWidth = this.drawContext.measureText(lines[l]).width;
 
@@ -428,11 +429,22 @@ export default class GraphDrawer {
 					this.stillDirty = true;
 				}
 
+				if (textWidth > maxTextWidth) maxTextWidth = textWidth;
+
 				this.drawContext.fillText(
 					lines[l],
 					center.x - textWidth / 2,
 					center.y + this.fontHeight / 2 + this.fontHeight * firstY + this.fontHeight * l
 				);
+			}
+
+			// If a node is wider than needed, it will be assigned a smaller
+			// width, bounded by this.R.
+			if (maxTextWidth < this.nodes[i].w) {
+				this.nodes[i].w = maxTextWidth;
+
+				let minSize = this.nodes[i].shape == "Circle" ? this.R : this.R * 2;
+				if (this.nodes[i].w < minSize) this.nodes[i].w = minSize;
 			}
 		}
 
