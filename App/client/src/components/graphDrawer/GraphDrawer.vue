@@ -27,7 +27,7 @@
             sortType: String,
             // Interactive or Presentation
             operatingMode: String,
-            // Graph or Tree
+            // Graph, Tree or Both
             exportType: String,
             // Graph or Tree
             importType: String,

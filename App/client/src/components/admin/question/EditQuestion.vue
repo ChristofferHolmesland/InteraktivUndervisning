@@ -260,8 +260,8 @@
                 else if (this.okHandler == "edit") this.editQuestionHandler();
             },
             gotTreeDrawerObject(result) {
-                this.newQuestion.objects.startTree = result;
-                this.newQuestion.objects._graphdrawerGraph = [result];
+                this.newQuestion.objects.startTree = result.tree;
+                this.newQuestion.objects._graphdrawerGraph = [result.graph];
                 this.returnToOkHandler();
             },
             gotGraphDrawerObject(result) {

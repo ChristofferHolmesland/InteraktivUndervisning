@@ -549,6 +549,12 @@ export default class Graph0 {
 	export() {
 		if (this.exportType == "Graph") return this.exportAsGraph();
 		if (this.exportType == "Tree") return this.exportAsTree();
+		if (this.exportType == "Both") {
+			return {
+				graph: this.exportAsGraph(),
+				tree: this.exportAsTree()
+			};
+		}
 	}
 
 	exportAsGraph() {
