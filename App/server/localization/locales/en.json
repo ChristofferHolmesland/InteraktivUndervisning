@@ -119,7 +119,19 @@
         "didntKnowAnswers": "Didn't know answers:"
     },
     "SessionStat": {
-
+        "goBackBtn": "Go Back",
+        "sessionStats": "SessionStats",
+        "classStats": "Class stats: ",
+        "userStats": "User stats: ",
+        "correct": "Correct: ",
+        "incorrect": "Incorrect: ",
+        "incorrectTooltip": "Incorrect answer",
+        "didntKnow": "Didn't know",
+        "questionStats": "Question Stats",
+        "answer": "Answer",
+        "noQuestions": "No questions",
+        "correctCard": "Correct",
+        "incorrectCard": "Incorrect"
     },
     "ClientSessionQuestion": {
         "question": "Question",

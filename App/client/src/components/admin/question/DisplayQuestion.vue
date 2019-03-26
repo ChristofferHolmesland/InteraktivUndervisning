@@ -33,25 +33,30 @@
 						</b-tab>
 						<b-tab :title="getLocale.answer" v-if="resultInfo.answerList.length > 0">
                             <div v-if="tabIndex === 2">
-                                <TextAnswer v-if="resultInfo.question.type === 1"
-                                            :answer="resultInfo.answerList[selectedAnswer].answerObject"
-                                            />
-                                <MultipleChoiceAnswer   v-if="resultInfo.question.type === 2" 
-                                                        :answers="resultInfo.answerList[selectedAnswer].answerObject"
-                                                        :choices="resultInfo.question.object.multipleChoices"
+                                <div v-if="getResult > -1">
+                                    <TextAnswer v-if="resultInfo.question.type === 1"
+                                                :answer="resultInfo.answerList[selectedAnswer].answerObject"
+                                                />
+                                    <MultipleChoiceAnswer   v-if="resultInfo.question.type === 2" 
+                                                            :answers="resultInfo.answerList[selectedAnswer].answerObject"
+                                                            :choices="resultInfo.question.object.multipleChoices"
+                                                            />
+                                    <ShellsortAnswer    v-if="resultInfo.question.type === 3"
+                                                        :answer="resultInfo.answerList[selectedAnswer].answerObject"
                                                         />
-                                <ShellsortAnswer    v-if="resultInfo.question.type === 3"
-                                                    :answer="resultInfo.answerList[selectedAnswer].answerObject"
-                                                    />
-                                <MergesortAnswer    v-if="resultInfo.question.type === 4"
-                                                    :answer="resultInfo.solution"
-                                                    />
-                                <QuicksortAnswer    v-if="resultInfo.question.type === 5"
-                                                    :answer="resultInfo.answerList[selectedAnswer].answerObject"
-                                                    />
-                                <DijkstraAnswer     v-if="resultInfo.question.type === 10"
-                                                    :answer="resultInfo.answerList[selectedAnswer].answerObject"
-                                                    />
+                                    <MergesortAnswer    v-if="resultInfo.question.type === 4"
+                                                        :answer="resultInfo.solution"
+                                                        />
+                                    <QuicksortAnswer    v-if="resultInfo.question.type === 5"
+                                                        :answer="resultInfo.answerList[selectedAnswer].answerObject"
+                                                        />
+                                    <DijkstraAnswer     v-if="resultInfo.question.type === 10"
+                                                        :answer="resultInfo.answerList[selectedAnswer].answerObject"
+                                                        />  
+                                </div>
+                                <div v-else>
+                                    <text-answer    :answer="didntAnswerString"/>
+                                </div>
                             </div>
 						</b-tab>
 					</b-tabs>
@@ -83,7 +88,8 @@ export default {
     },
     data() {
         return {
-            tabIndex: Number
+            tabIndex: Number,
+            didntAnswerString: "You answered: I don't know!"
         }
     },
     computed: {
@@ -91,7 +97,12 @@ export default {
 			let locale = this.$store.getters.getLocale("DisplayQuestion");
 			if (locale) return locale;
 			else return {};
-		},
+        },
+        getResult() {
+            let answer = this.resultInfo.answerList[this.selectedAnswer];
+            if(answer.result !== undefined) return answer.result;
+            return 1
+        }
     },
     methods: {
         setTab(event) {

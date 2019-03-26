@@ -119,7 +119,19 @@
         "didntKnowAnswers": "Antall vet ikke svar:"
     },
     "SessionStat": {
-
+        "goBackBtn": "Tilbake",
+        "sessionStats": "Statistikk for økt",
+        "classStats": "Statistikk for klasse: ",
+        "userStats": "Statistikk for bruker: ",
+        "correct": "Riktig: ",
+        "incorrect": "Feil: ",
+        "incorrectTooltip": "Feil svar",
+        "didntKnow": "Vet ikke",
+        "questionStats": "Statistikk for spørsmål",
+        "answer": "Svar nr",
+        "noQuestions": "Ingen spørsmål",
+        "correctCard": "Riktig",
+        "incorrectCard": "Feil"
     },
     "ClientSessionQuestion": {
         "question": "Spørsmål",
