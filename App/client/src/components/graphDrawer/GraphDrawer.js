@@ -414,8 +414,8 @@ export default class GraphDrawer {
 			let firstY = -(lines.length - 1) * 0.5;
 
 			// Fix nodes where the text overflows the height of the node
-			if (this.nodes[i].h < lines * this.fontHeight) {
-				this.nodes[i].h = lines * this.fontHeight + 5;
+			if (this.nodes[i].h < lines.length * this.fontHeight) {
+				this.nodes[i].h = lines.length * this.fontHeight + 5;
 				this.stillDirty = true;
 			}
 
