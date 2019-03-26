@@ -2,6 +2,8 @@ const dbFunctions = require("../database/databaseFunctions").dbFunctions;
 
 const generalFunctions =  require("../generalFunctions.js").functions;
 const algorithms = require("../algorithms/algorithms");
+const Tree = require("../algorithms/trees/Tree.js").Tree;
+const BinaryTreeNode = require("../algorithms/trees/Tree").BinaryTreeNode;
 const BinaryTreeFunctions = require("../algorithms/trees/BinaryTree.js");
 const BinarySearchTreeFunctions = require("../algorithms/trees/BinarySearchTree.js");
 const AVLTreeFunctions = require("../algorithms/trees/AVLTree.js");
@@ -267,7 +269,10 @@ function generateSolution(question) {
 		question.objects.steps = [steppingFunctions.reset()];
 	}
 	else if(solutionType === 7) { //TODO create solution object for binary Tree & Update solutionChecker for normal Binary Trees
-
+		//store the tree elements
+		let binaryTree = new Tree(new BinaryTreeNode(question.objects.treeElements[0]));
+		binaryTree.nodes = question.objects.treeElements;
+		question.solution = binaryTree
 	}else if(solutionType === 8 || solutionType === 9) {
 		console.log("QUESTION!");
 		console.log(question.objects.solutionTreeType);
