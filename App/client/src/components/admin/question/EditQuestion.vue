@@ -116,11 +116,20 @@
             <b-form-group 	id="sortingSolution"
                             label="Starting array (elements seperated by ,)"
                             label-for="solutionInput"
-                            v-if="newQuestion.solutionType === 4 || newQuestion.solutionType === 5">
+                            v-if="newQuestion.solutionType < 6 && newQuestion.solutionType > 2">
                 <b-form-input 	id="solutionInput"
                                 type="text"
                                 v-model="newQuestion.objects.startingArray">
                 </b-form-input>
+                <b-form-group   id="kValue"
+                                label="K start value"
+                                label-for="kValueInput"
+                                v-if="newQuestion.solutionType === 3">
+                    <b-form-input   id="kValueInput"
+                                    type="text"
+                                    v-model="newQuestion.objects.kValue">
+                    </b-form-input>
+                </b-form-group>
             </b-form-group>
             <b-form-group
                     id="BinaryTree"
@@ -193,10 +202,11 @@
                     objects: {
                         multipleChoices: [],
                         startingArray: "",
-                        graph: undefined,
                         startTree: undefined,
 						treeElements: "",
 						solutionTreeType: "Add",
+                        kValue: "",
+                        graph: undefined
                     }
                 },
                 solutionTypes: [],
