@@ -1,6 +1,24 @@
+const GeneralTreeFunction = require("../algorithms/trees/GeneralTreeFunctions.js");
 const customReject = function(err, func){
     return new Error(`Error in get function: ${func} \n\n ${err}`)
 }
+
+const BSTAVLImportModifier = function (questions) {
+    for (let i = 0; i < questions.length; i++) {
+        let question = questions[i];
+        question.solution = JSON.parse(question.solution);
+        if (question.type === 7 || question.type === 8) {
+            for (let d = 0; d < question.solution.length; d++) {
+                  let currentStep = question.solution[d];
+                  for (let e = 0; e < currentStep.length; e++) {
+                      let currentTrees = currentStep[e].treeInfo;
+                      for (let f = 0; f < currentTrees.length; f++) GeneralTreeFunction.makeBSTAVLTreeReadyForImport(currentTrees[f]);
+                  }
+            }
+            console.log(question.solution[0].treeInfo[0];
+        }
+    }
+};
 
 const get = {
     feideById: function(db, feideId) {
@@ -103,6 +121,7 @@ const get = {
                              WHERE SQ.sessionId = ${sessionId};`;
             db.all(statement, (err,rows) => {
                 if (err) reject(customReject(err, "allQuestionInSession"));
+                BSTAVLImportModifier(rows);
                 resolve(rows);
             });
         });
@@ -112,6 +131,7 @@ const get = {
             let statement = `SELECT * FROM Answer WHERE sessionHasQuestionId = ${sessionHasQuestionId}`;
             db.all(statement, (err,rows) => {
                 if (err) reject(customReject(err, "allAnswerToQuestion"));
+                BSTAVLImportModifier(rows);
                 resolve(rows);
             });
         });

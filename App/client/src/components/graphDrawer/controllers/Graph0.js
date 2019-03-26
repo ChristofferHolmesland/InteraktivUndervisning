@@ -431,23 +431,23 @@ export default class Graph0 {
 
 				// Add parent node
 				let parentDir = 0;
-				if (node.rootNode.children[0] == node) parentDir = right;
-				else if (node.rootNode.children[1] == node) parentDir = left;
-				addGraphDrawerNode(node.rootNode, parentDir, y - 1, dir);
+				if (node.parent.children[0] == node) parentDir = right;
+				else if (node.parent.children[1] == node) parentDir = left;
+				addGraphDrawerNode(node.parent, parentDir, y - 1, dir);
 			};
 
 			// Find the node furthest to the right on the left side of the tree
-			let left = tree.rootNode.children[0];
+			let left = tree.root.children[0];
 			let rightest = search(left, 0, 0, 1);
 			addGraphDrawerNode(rightest.node, 1, rightest.depth, 0);
 
 			// Find the node furthest to the left on the right side of the tree
-			let right = tree.rootNode.children[1];
+			let right = tree.root.children[1];
 			let leftest = search(right, 0, 1, 1);
 			addGraphDrawerNode(leftest.node, 1, leftest.depth, 1);
 
 			// Add root node
-			let root = tree.rootNode;
+			let root = tree.root;
 			this.gd.nodes.push({
 				x: p.x,
 				y: p.y,

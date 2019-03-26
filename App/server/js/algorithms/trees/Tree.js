@@ -116,23 +116,6 @@ class Tree {
 		if(currentNode.children[0] !== undefined)	this.makeSelectedNodeReadyForExport(currentNode.children[0]);
 		if(currentNode.children[1] !== undefined)	this.makeSelectedNodeReadyForExport(currentNode.children[1]);
 	}
-	makeBSTAVKTreeReadyForImport() {
-		if(this.root.children[0] === null)	this.root.children[0] = undefined;
-		if(this.root.children[1] === null)	this.root.children[1] = undefined;
-		for (let n=1;n<this.nodes.length;n++) {
-			let parentValue = this.nodes[n].parent;
-			let parentNode = undefined;
-			for (let p=0;p<this.nodes.length;p++) {
-				if(this.nodes[p].value === parentValue) {
-					parentNode = this.nodes[p];
-					break;
-				}
-			}
-			this.nodes[n].parent = parentNode;
-			if(this.nodes[n].children[0] === null)	this.nodes[n].children[0] = undefined;
-			if(this.nodes[n].children[1] === null)	this.nodes[n].children[1] = undefined;
-		}
-	}
 }
 
 class BinaryTreeNode {

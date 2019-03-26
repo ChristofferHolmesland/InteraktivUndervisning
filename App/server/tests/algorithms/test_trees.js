@@ -1078,7 +1078,7 @@ describe('TestBinaryTrees', function () {
 			solutionTree.printTree();
 			assert(GeneralTreeFunctions.checkStudentAnswer(solutionTree,testTree));
 		});
-		it("Test makeBSTAVKTreeReadyForImport tree function",function () {
+		it("Test makeBSTAVLTreeReadyForImport tree function",function () {
 			let solutionTree = BinarySearchTreeFunctions.createBinarySearchTree([4,2,7],true)[0];
 			let rootNode = new BinaryTreeNode(4);
 			let node1 = new BinaryTreeNode(2);
@@ -1089,7 +1089,7 @@ describe('TestBinaryTrees', function () {
 			node2.parent = node2.parent.value;
 			let testTree = new Tree(rootNode);
 			testTree.nodes = [rootNode,node1,node2];
-			testTree.makeBSTAVKTreeReadyForImport();
+			GeneralTreeFunctions.makeBSTAVLTreeReadyForImport(testTree);
 			console.log("Solution");
 			solutionTree.printTree();
 			console.log("Test");

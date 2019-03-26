@@ -1,7 +1,7 @@
 <template>
     <GraphDrawer    id="TreeSolution"
                     controlType="Graph0"
-                    exportType="Tree"
+                    importType="Tree"
                     operationMode="Presentation"
                     :steps="solution"
                     :height="400"
@@ -10,9 +10,9 @@
 </template>
 
 <script>
-	import GraphDrawer from "../../../graphDrawer/GraphDrawer";
+	import GraphDrawer from "../../../graphDrawer/GraphDrawer.vue";
 	export default {
-		name: "TreeSolution.vue",
+		name: "TreeSolution",
 		props: {
 			solution: Array //or Object
         },

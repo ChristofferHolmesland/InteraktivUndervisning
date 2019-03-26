@@ -1,7 +1,7 @@
 <template>
     <GraphDrawer    id="TreeAnswer"
                     controlType="Graph0"
-                    exportType="Tree"
+                    importType="Tree"
                     operationMode="Presentation"
                     :steps="answer"
                     :height="400"
@@ -10,13 +10,15 @@
 </template>
 <!--Pretty sure :steps does not work like this. Needs to be changed to accommodate for array of trees in steps. Needs a button to show alternatives-->
 <script>
-	import GraphDrawer from "../../../graphDrawer/GraphDrawer";
+	import GraphDrawer from "../../../graphDrawer/GraphDrawer.vue";
 	export default {
-		name: "Tree.vue",
+		name: "TreeAnswer",
         props: {
 			answer: Array  //or Object
 		},
-		components: {GraphDrawer}
+		components: {
+			GraphDrawer
+		}
 	}
 </script>
 

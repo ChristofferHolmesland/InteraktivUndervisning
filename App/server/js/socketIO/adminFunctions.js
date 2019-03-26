@@ -309,7 +309,7 @@ function generateSolution(question) {
 			}
 		}
 		question.solution = solutionArray;
-	}
+}
 	else if (solutionType == 10) {
 		let algo = algorithms.graphs.dijkstra;
 		let from = undefined;
@@ -405,7 +405,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 						object: JSON.parse(question.object),
 						type: question.type
 					},
-					solution: JSON.parse(question.solution),
+					solution: question.solution,
 					answerList: answers,
 					correctAnswer: Math.round(correctAnswers / answer.length * 100)
 				});

@@ -202,3 +202,21 @@ function createStepArray(description,treeType,treeArray) {
 	};
 }
 module.exports.createStepArray = createStepArray;
+
+module.exports.makeBSTAVLTreeReadyForImport = function (tree) {
+	if(tree.root.children[0] === null)	tree.root.children[0] = undefined;
+	if(tree.root.children[1] === null)	tree.root.children[1] = undefined;
+	for (let n=1;n<tree.nodes.length;n++) {
+		let parentValue = tree.nodes[n].parent;
+		let parentNode = undefined;
+		for (let p=0;p<tree.nodes.length;p++) {
+			if(tree.nodes[p].value === parentValue) {
+				parentNode = tree.nodes[p];
+				break;
+			}
+		}
+		tree.nodes[n].parent = parentNode;
+		if(tree.nodes[n].children[0] === null)	tree.nodes[n].children[0] = undefined;
+		if(tree.nodes[n].children[1] === null)	tree.nodes[n].children[1] = undefined;
+	}
+};
