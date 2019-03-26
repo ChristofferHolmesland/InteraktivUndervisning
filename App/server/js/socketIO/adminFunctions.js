@@ -535,6 +535,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 	});
 
 	socket.on("adminLeaveSession", function(sessionCode) {
+		
 		// TODO add logic for session to be ended when admin leaves session
 	});
 }

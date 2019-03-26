@@ -115,7 +115,11 @@
         "title": "Bruker statistikk",
         "totalSessions": "Antall økter:",
         "correctAnswers": "Antall rett svar:",
-        "incorrectAnswers": "Antall feil svar:"
+        "incorrectAnswers": "Antall feil svar:",
+        "didntKnowAnswers": "Antall vet ikke svar:"
+    },
+    "SessionStat": {
+
     },
     "ClientSessionQuestion": {
         "question": "Spørsmål",

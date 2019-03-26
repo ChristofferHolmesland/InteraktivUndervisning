@@ -72,7 +72,6 @@ import MergesortAnswer from "./questionResultScreenAnswer/Mergesort.vue";
 import MergesortSolution from "./questionResultScreenSolution/Mergesort.vue"
 import QuicksortAnswer from "./questionResultScreenAnswer/Quicksort.vue";
 import QuicksortSolution from "./questionResultScreenSolution/Quicksort.vue"
-
 import DijkstraAnswer from "./questionResultScreenAnswer/Dijkstra.vue";
 import DijkstraSolution from "./questionResultScreenSolution/Dijkstra.vue";
 
@@ -84,7 +83,6 @@ export default {
     },
     data() {
         return {
-            selectedResult: Number,
             tabIndex: Number
         }
     },
