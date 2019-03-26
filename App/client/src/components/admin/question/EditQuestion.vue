@@ -144,6 +144,15 @@
                     operatingMode="Interactive"
                     />
             </b-form-group>
+            <b-form-group 	id="pythonSolution"
+                            :label="getLocale.newQuestionSolution"
+                            label-for="solutionInput"
+                            v-if="newQuestion.solutionType === 13">
+            <b-form-textarea 	id="solutionInput"
+                                placeholder="Write Python code here..."
+                                v-model="newQuestion.solution">
+            </b-form-textarea>
+            </b-form-group>
         </b-form>
     </b-modal>
 </template>
