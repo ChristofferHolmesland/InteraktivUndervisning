@@ -9,12 +9,12 @@
 				<b-col cols="12" lg="8">
 
 <!-- TODO: Remove GraphDrawer from this file. Currently used for testing -->
-    			<!--<GraphDrawer 
+    			<GraphDrawer 
 					@getValueResponse="printGraphDrawer" 
 					:requestAnswer="requestAnswer" 
 					controlType="Python"
 					operatingMode="Interactive"
-					/>
+				/>
 				<b-button @click="requestAnswer = !requestAnswer" >Export</b-button>
 <!--				<shellsort :initialList="[	]" :initialKValue="3"/> -->
 				</b-col>

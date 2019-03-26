@@ -509,7 +509,12 @@ export default class Python {
 		this.gd.staticContext.closePath();
 	}
 
-	export() {}
+	export() {
+		return {
+			variables: this.variables,
+			objects: this.objects
+		};
+	}
 
 	typeExists(typeName) {
 		for (let i = 0; i < this.objectTypes.length; i++) {
