@@ -240,7 +240,7 @@ function parse(code) {
 
     let instantiateClass = function(c, scope, args) {
         let object = {
-            type: "Object",
+            type: c.name
         };
         assignScope(object);
         object.functions = c.functions;

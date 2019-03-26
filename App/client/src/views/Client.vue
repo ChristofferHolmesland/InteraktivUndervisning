@@ -12,12 +12,11 @@
     			<!--<GraphDrawer 
 					@getValueResponse="printGraphDrawer" 
 					:requestAnswer="requestAnswer" 
-					controlType="Sort"
-					sortType="Quicksort"
-					operatingMode="Presentation"
-					:steps="steps" />
-				<b-button @click="requestAnswer = !requestAnswer" >Export</b-button>-->
-				<shellsort :initialList="[	]" :initialKValue="3"/>
+					controlType="Python"
+					operatingMode="Interactive"
+					/>
+				<b-button @click="requestAnswer = !requestAnswer" >Export</b-button>
+<!--				<shellsort :initialList="[	]" :initialKValue="3"/> -->
 				</b-col>
 			</b-row>
 		</b-container>
