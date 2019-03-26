@@ -115,7 +115,11 @@
         "title": "User stats",
         "totalSessions": "Total number of sessions:",
         "correctAnswers": "Correct answers:",
-        "incorrectAnswers": "Incorrect answers:"
+        "incorrectAnswers": "Incorrect answers:",
+        "didntKnowAnswers": "Didn't know answers:"
+    },
+    "SessionStat": {
+
     },
     "ClientSessionQuestion": {
         "question": "Question",
