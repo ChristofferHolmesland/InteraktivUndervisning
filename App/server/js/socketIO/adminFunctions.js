@@ -393,7 +393,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 
 					if(a.result === 0){
 						answers.push({
-							answerObject: JSON.parse(a.object)
+							answerObject: a.object
 						});
 					}
 				});
@@ -402,7 +402,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 					question: {
 						text: question.text,
 						description: question.description,
-						object: JSON.parse(question.object),
+						object: question.object,
 						type: question.type
 					},
 					solution: question.solution,
@@ -433,7 +433,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 			for(let i = 0; i < questions.length; i++){
 				let tempQuestion = questions[i];
 				tempQuestion.resultScreen = false;
-				questionList.push(new question(tempQuestion.id, tempQuestion.text, tempQuestion.description, JSON.parse(tempQuestion.object), JSON.parse(tempQuestion.solution), tempQuestion.type, tempQuestion.time, tempQuestion.sqId));
+				questionList.push(new question(tempQuestion.id, tempQuestion.text, tempQuestion.description, tempQuestion.object, tempQuestion.solution, tempQuestion.type, tempQuestion.time, tempQuestion.sqId));
 			}
 
 			currentSession = {session: new session(sessionInformation.id, sessionInformation.name,
@@ -694,9 +694,9 @@ module.exports.admin = function(socket, db, user, sessions) {
 					text: q.text,
 					description: q.description,
 					solutionType: q.type,
-					solution: JSON.parse(q.solution),
+					solution: q.solution,
 					time: q.time,
-					objects: JSON.parse(q.object)
+					objects: q.object
 				});
 			}
 			socket.emit("sendAllQuestionsWithinCourse", result);

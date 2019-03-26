@@ -405,6 +405,7 @@ export default class Graph0 {
 			let yPadding = 30;
 
 			let addGraphDrawerNode = (node, x, y, dir) => {
+				if (node == undefined) return;
 				if (node.parent == undefined) return;
 				if (node.visited) return;
 				node.visited = true;
@@ -428,7 +429,7 @@ export default class Graph0 {
 				// Add child nodes
 				addGraphDrawerNode(node.children[0], left, y + 1, dir);
 				addGraphDrawerNode(node.children[1], right, y + 1, dir);
-
+				console.log(node);
 				// Add parent node
 				let parentDir = 0;
 				if (node.parent.children[0] == node) parentDir = right;
@@ -447,6 +448,7 @@ export default class Graph0 {
 			addGraphDrawerNode(leftest.node, 1, leftest.depth, 1);
 
 			// Add root node
+			console.log(tree);
 			let root = tree.root;
 			this.gd.nodes.push({
 				x: p.x,

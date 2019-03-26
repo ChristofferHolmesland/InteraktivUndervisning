@@ -204,7 +204,24 @@ function createStepArray(description,treeType,treeArray) {
 module.exports.createStepArray = createStepArray;
 
 module.exports.makeBSTAVLTreeReadyForImport = function (tree) {
-	if(tree.root.children[0] === null)	tree.root.children[0] = undefined;
+	let root = {};
+	root.value = tree.root.value;
+	root.children = [];
+
+	let nodeParser = function(node, parent) {
+		if (node === undefined) return undefined;
+		node.parent = parent;
+		nodeParser(node.children[0], node);
+		nodeParser(node.children[1], node);
+	}
+
+	nodeParser(tree.root.children[0], root);
+	nodeParser(tree.root.children[1], root);
+	root.children[0] = tree.root.children[0];
+	root.children[1] = tree.root.children[1];
+	tree.root = root;
+
+	/*if(tree.root.children[0] === null)	tree.root.children[0] = undefined;
 	if(tree.root.children[1] === null)	tree.root.children[1] = undefined;
 	for (let n=1;n<tree.nodes.length;n++) {
 		let parentValue = tree.nodes[n].parent;
@@ -216,7 +233,11 @@ module.exports.makeBSTAVLTreeReadyForImport = function (tree) {
 			}
 		}
 		tree.nodes[n].parent = parentNode;
+		console.log(parentNode);
 		if(tree.nodes[n].children[0] === null)	tree.nodes[n].children[0] = undefined;
 		if(tree.nodes[n].children[1] === null)	tree.nodes[n].children[1] = undefined;
 	}
+	tree.root = tree.nodes[0];*/
 };
+
+
