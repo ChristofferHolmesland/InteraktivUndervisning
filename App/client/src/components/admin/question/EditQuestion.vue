@@ -134,7 +134,7 @@
             <b-form-group
                     id="BinaryTree"
                     label="List the nodes that are going to be used in the binary tree. Elements are divided by , and [] are not required)"
-                    v-if="newQuestion.solutionType === 7"
+                    v-if="newQuestion.solutionType === 6"
                     >
                 <b-form-input   id="nodeElements"
                                 type="text"
@@ -145,7 +145,7 @@
             <b-form-group
                     id="BinarySearchTrees"
                     label="Draw the tree, or give an array to build the solution tree"
-                    v-if="newQuestion.solutionType === 8 || newQuestion.solutionType === 9"
+                    v-if="newQuestion.solutionType === 7 || newQuestion.solutionType === 8"
                     >
                 <label for="Add">Add</label><input type="radio" id="Add" v-model="newQuestion.objects.solutionTreeType" value="Add" /><br/>
                 <label for="Remove">Remove</label><input type="radio" id="Remove" v-model="newQuestion.objects.solutionTreeType" value="Remove"/>
@@ -258,7 +258,7 @@
             	//if the component is using the Graph Drawer, Graph drawer is used on Binary Tree 7 up to BFS 13
                 //Need a admin socket function for validating the question information given.
                 e.preventDefault();
-                if (this.newQuestion.solutionType > 7 && this.newQuestion.solutionType <= 13) {
+                if (this.newQuestion.solutionType > 6 && this.newQuestion.solutionType <= 13) {
                         this.requestGraphDrawerObject = !this.requestGraphDrawerObject;
                 } else {
                     this.returnToOkHandler();

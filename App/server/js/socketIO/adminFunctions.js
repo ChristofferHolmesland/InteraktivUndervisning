@@ -30,15 +30,13 @@ let validateQuestion = function (questionInfo) {
 				break;
 			case 2:	//Multiple choice
 				break;
-			case 3:	//ArraySort //TODO Remove this ArraySort from the database and reduce all other questiontypes with 1.
+			case 3:	//MergeSort
 				break;
-			case 4:	//MergeSort
+			case 4: //QuickSort
 				break;
-			case 5: //QuickSort
+			case 5:	//ShellSort
 				break;
-			case 6:	//ShellSort
-				break;
-			case 7: //Binary Tree
+			case 6: //Binary Tree
 				if (treeElements === undefined || treeElements === "") {
 					result.validation = false;
 					result.reason = "You need to input the elements that are going to be in the tree";
@@ -60,7 +58,7 @@ let validateQuestion = function (questionInfo) {
 					}
 				}
 				break;
-			case 8: case 9:	//Binary Search Tree, AVL Tree
+			case 7: case 8:	//Binary Search Tree, AVL Tree
 				let startTree = [];
 				let treeArray = [];
 				if(treeAction === "Add") {
@@ -110,7 +108,7 @@ let validateQuestion = function (questionInfo) {
 									}
 								}
 							}
-							if(questionType === 8 && result.validation) {
+							if(questionType === 7 && result.validation) {
 								if (startTree.length > 0) treeObject = BinarySearchTreeFunctions.createBinarySearchTree(treeArray, true, startTree[0]);
 								else treeObject = BinarySearchTreeFunctions.createBinarySearchTree(treeArray, true);
 								treeObject[0].printTree();
@@ -119,7 +117,7 @@ let validateQuestion = function (questionInfo) {
 									result.reason = "The resulting tree is not a valid Binary Search Tree";
 								}
 							}
-							if(questionType === 9 && result.validation) {
+							if(questionType === 8 && result.validation) {
 								//startTree[0].printTree();
 								if (startTree.length > 0) treeObject = AVLTreeFunctions.createAVLTree(treeArray, true, startTree[0]);
 								else treeObject = AVLTreeFunctions.createAVLTree(treeArray, true);
@@ -169,7 +167,7 @@ let validateQuestion = function (questionInfo) {
 						}
 						console.log("StartTree");
 						startTree[0].printTree();
-						if(questionType === 8 && result.validation) {
+						if(questionType === 7 && result.validation) {
 							let treeObject = BinarySearchTreeFunctions.createBinarySearchTree(treeArray,false,startTree[0]);
 							for(let i=0;i<treeObject.length;i++) {
 								console.log("treeObject i:" + i);
@@ -181,7 +179,7 @@ let validateQuestion = function (questionInfo) {
 								if (!result.validation) break;
 							}
 						}
-						if(questionType === 9 && result.validation) {
+						if(questionType === 8 && result.validation) {
 							let treeObject = AVLTreeFunctions.createAVLTree(treeArray,false,startTree[0]);
 							for(let i=0;i<treeObject.length;i++) {
 								console.log("treeObject i:" + i);
@@ -272,12 +270,12 @@ function generateSolution(question) {
 		// manipulate it.
 		question.objects.steps = [steppingFunctions.reset()];
 	}
-	else if(solutionType === 7) { //TODO create solution object for binary Tree & Update solutionChecker for normal Binary Trees
+	else if(solutionType === 6) { //TODO create solution object for binary Tree & Update solutionChecker for normal Binary Trees
 		//store the tree elements
 		let binaryTree = new Tree(new BinaryTreeNode(question.objects.treeElements[0]));
 		binaryTree.nodes = question.objects.treeElements;
 		question.solution = binaryTree
-	}else if(solutionType === 8 || solutionType === 9) {
+	}else if(solutionType === 7 || solutionType === 8) {
 		console.log("QUESTION!");
 		console.log(question.objects.solutionTreeType);
 		let elements = question.objects.treeElements;
@@ -291,7 +289,7 @@ function generateSolution(question) {
 		}
 		console.log(question);
 		if (startCanvasTree !== undefined && startCanvasTree.roots.length !== 0) startTree = GeneralTreeFunctions.createTreeObjectFromCanvasObjectver1(startCanvasTree);
-		if (solutionType === 8) {
+		if (solutionType === 7) {
 			if (question.objects.solutionTreeType === "Add") solutionArray = BinarySearchTreeFunctions.createBinarySearchTreeSolution(arrayOfElements, true, startTree[0]);
 			else solutionArray = BinarySearchTreeFunctions.createBinarySearchTreeSolution(arrayOfElements, false, startTree[0]);
 		} else {
