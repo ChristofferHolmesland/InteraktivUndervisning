@@ -36,7 +36,7 @@
                         <b-col>
                             <b-form-input   id="questionTimeInputSlider"
                                             type="range"
-                                            v-model="newQuestion.time"
+                                            v-model="time"
                                             min="0"
                                             max="600"
                                             step="15">
@@ -174,6 +174,8 @@
                     subType="Dijkstra"
                     exportType="Graph"
                     operatingMode="Interactive"
+                    importType="Graph"
+                    :steps="this.newQuestion.objects._graphdrawerGraph" 
                     />
             </b-form-group>
             <b-alert
@@ -206,13 +208,15 @@
 						treeElements: "",
 						solutionTreeType: "Add",
                         kValue: "",
-                        graph: undefined
+                        graph: undefined,
+                        _graphdrawerGraph: undefined
                     }
                 },
                 solutionTypes: [],
                 requestGraphDrawerObject: false,
                 useAlert: false,
-                alertReason: ""
+                alertReason: "",
+                time: 0
             }
         },
         components: {
@@ -228,30 +232,44 @@
             this.$socket.emit("getQuestionTypes");
         },
         methods: {
+            assignTime: function() {
+                this.newQuestion.time = JSON.parse(JSON.stringify(this.time));
+                if (this.newQuestion.time  === 0) this.newQuestion.time = -1;
+            },
             addNewQuestionHandler: function() {
-                let responseNewQuestion = JSON.parse(JSON.stringify(this.newQuestion));
-				if (responseNewQuestion.time === 0) responseNewQuestion.time = -1;
                 this.$socket.emit(
                     "addNewQuestion", 
-                    Object.assign({}, responseNewQuestion, {courseCode: this.$store.getters.getSelectedCourse.split(" ")[0]}),
-                    this.newQuestion.objects.solutionTreeType
+                    Object.assign(
+                        {},
+                        this.newQuestion,
+                        {
+                            courseCode: this.$store.getters.getSelectedCourse.split(" ")[0]
+                        }
+                    ),
                 );
 			},
 			editQuestionHandler: function() {
-                let responseNewQuestion = JSON.parse(JSON.stringify(this.newQuestion));
-				if (responseNewQuestion.time === 0) responseNewQuestion.time = -1;
-				this.$socket.emit("updateQuestion", responseNewQuestion, this.newQuestion.objects.solutionTreeType);
+                this.$socket.emit(
+                    "updateQuestion",
+                    this.newQuestion
+                );
 			},
             returnToOkHandler: function() {
+                this.assignTime();
                 if (this.okHandler == "add") this.addNewQuestionHandler();
                 else if (this.okHandler == "edit") this.editQuestionHandler();
             },
             gotTreeDrawerObject(result) {
                 this.newQuestion.objects.startTree = result;
+                this.newQuestion.objects._graphdrawerGraph = [result];
                 this.returnToOkHandler();
             },
             gotGraphDrawerObject(result) {
                 this.newQuestion.objects.graph = result;
+                this.newQuestion.objects._graphdrawerGraph = [Object.assign(
+                    { type: "Complete" },
+                    result
+                )];
                 this.returnToOkHandler();
             },
             callOkHandler: function(e) {
@@ -316,8 +334,8 @@
             },
             timeInput: {
                 get: function() {
-                    let min = Math.floor(this.newQuestion.time / 60).toString();
-                    let sec = Math.floor(this.newQuestion.time % 60).toString();
+                    let min = Math.floor(this.time / 60).toString();
+                    let sec = Math.floor(this.time % 60).toString();
 
                     return `${min.padStart(2, "0")}:${sec.padStart(2, "0")}`;
                 },
@@ -335,7 +353,7 @@
                         s = 0;
                     }
 
-                    this.newQuestion.time = h * 60 + s;
+                    this.time = h * 60 + s;
                 }
             }
         },
@@ -348,6 +366,7 @@
             	if (result.validation) {
                     this.$refs[this.elementRef].hide();
                     this.useAlert = false;
+                    this.time = 0;
                     this.newQuestion = {
                         id: -1,
                         text: "",
@@ -360,7 +379,8 @@
                             startingArray: "",
                             startTree: undefined,
                             graph: undefined,
-                            treeElements: ""
+                            treeElements: "",
+                            _graphdrawerGraph : undefined,
                         },
                         solutionTypes: [],
                         requestGraphDrawerObject: false,

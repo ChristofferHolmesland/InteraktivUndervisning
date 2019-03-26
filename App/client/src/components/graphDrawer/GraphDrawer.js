@@ -467,6 +467,10 @@ export default class GraphDrawer {
 			}
 		}
 
+		// Check if the new node was given an id which is larger than the
+		// next id. If it was, nextId needs to be changed to prevent duplicate ids.
+		if (node.id >= this.nextId) nextId = node.id + 1;
+
 		this.nodes.push(node);
 		return node;
 	}
@@ -851,8 +855,16 @@ export default class GraphDrawer {
 	checkSteppingButtons(e) {
 		for (let i = 0; i < this.steppingButtons.length; i++) {
 			let btn = this.steppingButtons[i];
-			if (this.isPointInSquare(e.offsetX, e.offsetY, btn.position.x,
-									btn.position.y, btn.position.width)) {
+			let inside = this.isPointInRectangle(
+				e.offsetX,
+				e.offsetY,
+				btn.position.x,
+				btn.position.y,
+				btn.position.width,
+				btn.position.height
+			);
+
+			if (inside) {
 				btn.handler(e);
 				return true;
 			}

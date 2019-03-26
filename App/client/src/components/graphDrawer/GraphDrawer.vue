@@ -29,6 +29,8 @@
             operatingMode: String,
             // Graph or Tree
             exportType: String,
+            // Graph or Tree
+            importType: String,
             // Dijkstra or undefined
             subType: String,
             // The graph to perform dijkstra on
@@ -78,7 +80,9 @@
                     exportType: this.exportType,
                     subType: this.subType,
                     startNodeColor: "LightGreen",
-                    endNodeColor: "LightCoral"
+                    endNodeColor: "LightCoral",
+                    steps: this.steps,
+                    importType: this.importType
                 },
                 
                 sort: {

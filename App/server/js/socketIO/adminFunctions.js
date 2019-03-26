@@ -706,8 +706,8 @@ module.exports.admin = function(socket, db, user, sessions) {
 			question.solutionType, question.courseCode, question.objects);
 	});
 
-	socket.on("updateQuestion", function(question, treeAction) {
-		let valid = validateQuestion(question, treeAction);
+	socket.on("updateQuestion", function(question) {
+		let valid = validateQuestion(question);
 		socket.emit("confirmQuestionRequirements", valid);
 		if (!valid.validation) return;
 
