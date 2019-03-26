@@ -205,7 +205,45 @@ describe('TestBinaryTrees', function () {
 			nodefaulty8.addParent(nodefaulty6);
 			solutionTree.nodes = [rootfaultyNode,nodefaulty1,nodefaulty2,nodefaulty4,nodefaulty5,nodefaulty6,nodefaulty8];
 			assert(!solutionTree.areValuesInTree(valueList));
-		})
+		});
+		it("Test valid areValuesInTree using GeneralTree version",function () {
+			let roottestNode = new BinaryTreeNode(3);
+			let testnode1 = new BinaryTreeNode(1);
+			let testnode2 = new BinaryTreeNode(2);
+			let testnode3 = new BinaryTreeNode(4);
+			let testnode4 = new BinaryTreeNode(5);
+			let testnode5 = new BinaryTreeNode(6);
+			let testnode6 = new BinaryTreeNode(7);
+			let testnode8 = new BinaryTreeNode(8);
+			let solutionTree = new Tree(roottestNode);
+			testnode1.addParent(testnode2);
+			testnode2.addParent(roottestNode);
+			testnode3.addParent(roottestNode);
+			testnode4.addParent(testnode3);
+			testnode5.addParent(testnode4);
+			testnode6.addParent(testnode5);
+			testnode8.addParent(testnode6);
+			solutionTree.nodes = [roottestNode,testnode1,testnode2,testnode3,testnode4,testnode5,testnode6,testnode8];
+			assert(GeneralTreeFunctions.areValuesInTree(valueList,solutionTree))
+		});
+		it("Test fail case of areValuesInTree using GeneralTree version",function () {
+			let rootfaultyNode = new BinaryTreeNode(3);
+			let nodefaulty1 = new BinaryTreeNode(1);
+			let nodefaulty2 = new BinaryTreeNode(9);
+			let nodefaulty4 = new BinaryTreeNode(5);
+			let nodefaulty5 = new BinaryTreeNode(6);
+			let nodefaulty6 = new BinaryTreeNode(7);
+			let nodefaulty8 = new BinaryTreeNode(8);
+			let solutionTree = new Tree(rootfaultyNode);
+			nodefaulty1.addParent(rootfaultyNode);
+			nodefaulty2.addParent(rootfaultyNode);
+			nodefaulty4.addParent(nodefaulty2);
+			nodefaulty5.addParent(nodefaulty4);
+			nodefaulty6.addParent(nodefaulty5);
+			nodefaulty8.addParent(nodefaulty6);
+			solutionTree.nodes = [rootfaultyNode,nodefaulty1,nodefaulty2,nodefaulty4,nodefaulty5,nodefaulty6,nodefaulty8];
+			assert(!GeneralTreeFunctions.areValuesInTree(valueList,solutionTree));
+		});
 	});
 
 	describe('TestBinarySearchConditions', function () {
@@ -1095,6 +1133,29 @@ describe('TestBinaryTrees', function () {
 			console.log("Test");
 			testTree.printTree();
 			assert(GeneralTreeFunctions.checkStudentAnswer(solutionTree,testTree));
+		});
+		//TODO THIS TEST MUST PASS BEFORE makeBSTAVLTREEREADYFORIMPORT FUNCTION WORKS CORRECTLY!!!
+		it("Test makeBSTAVLTreeReadyForImport where some nodes have value null",function () {
+			let solutionTree = BinarySearchTreeFunctions.createBinarySearchTree([6,3,5,8,9],true)[0];
+			let rootNode = new BinaryTreeNode(6);
+			let node1 = new BinaryTreeNode(3);
+			let node2 = new BinaryTreeNode(5);
+			let node3 = new BinaryTreeNode(8);
+			let node4 = new BinaryTreeNode(9);
+			rootNode.parent = null;
+			rootNode.children = [node1,node3];
+			node1.parent = rootNode.value;
+			node2.parent = node1.value;
+			node3.parent = node1.value;
+			node4.parent = node3.value;
+			node1.children[0] = null;
+			node1.children[1] = node2;
+			node3.children[0] = null;
+			node3.children[1] = node4;
+			let tree = {root:rootNode,nodes:[rootNode,node1,node2,node3,node4]};
+			GeneralTreeFunctions.makeBSTAVLTreeReadyForImport(tree);
+			console.log(tree.nodes);
+			assert(GeneralTreeFunctions.checkStudentAnswer(solutionTree,tree));
 		});
 	})
 });

@@ -11,7 +11,7 @@ const check = function (answerTree,type,solution) {
 	if (treeList.length === 1) {
 		if (BinaryTreeFunctions.checkTreeCriteria(treeList[0])) {
 			let sol = solution[solution.length];
-			for (let s=0;sol.treeInfo.length;s++) sol.treeInfo[s].makeBSTAVLTreeReadyForImport();
+			for (let s=0;sol.treeInfo.length;s++) //sol.treeInfo[s].makeBSTAVLTreeReadyForImport();
 			if (type !== 6) {
 				for (let t = 0; t < sol.treeInfo.length; t++) {
 					result = GeneralTreeFunctions.checkStudentAnswer(treeList[0], sol.treeInfo[t]);
@@ -19,7 +19,7 @@ const check = function (answerTree,type,solution) {
 				}
 			}else {
 				if (answerTree.nodes.length === solution.nodes.length) {
-					result = answerTree.areValuesInTree(solution.nodes);
+					result = GeneralTreeFunctions.areValuesInTree(solution.nodes,answerTree);
 				}
 			}
 		}

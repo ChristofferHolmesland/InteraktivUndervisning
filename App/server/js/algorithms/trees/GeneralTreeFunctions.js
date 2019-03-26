@@ -203,17 +203,35 @@ function createStepArray(description,treeType,treeArray) {
 }
 module.exports.createStepArray = createStepArray;
 
+module.exports.areValuesInTree = function(valueList,tree) {
+	let result = true;
+	for(let n=0;n<valueList.length;n++) {
+		let nodeFound = false;
+		for (let j=0;j<tree.nodes.length;j++) {
+			if(tree.nodes[j].value === parseInt(valueList[n])){
+				nodeFound = true;
+				break;
+			}
+		}
+		if(!nodeFound) {
+			result = false;
+			break;
+		}
+	}
+	return result
+};
+//TODO if(tree.children[0] or [1] === null --> tree.children[0] or [1] = undefined right now returning undefined will not change the reference to node in children and parent.)
 module.exports.makeBSTAVLTreeReadyForImport = function (tree) {
 	let root = {};
 	root.value = tree.root.value;
 	root.children = [];
-
+	root.parent = undefined;	//edited in
 	let nodeParser = function(node, parent) {
-		if (node === undefined) return undefined;
+		if (node === undefined || node === null) return undefined;
 		node.parent = parent;
 		nodeParser(node.children[0], node);
 		nodeParser(node.children[1], node);
-	}
+	};
 
 	nodeParser(tree.root.children[0], root);
 	nodeParser(tree.root.children[1], root);
