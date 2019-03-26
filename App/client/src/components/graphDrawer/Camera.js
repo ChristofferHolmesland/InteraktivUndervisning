@@ -56,21 +56,33 @@ export default class Camera {
 	_cullNode(node) {
 		if (node.culled != undefined) return node.culled;
 		
-		// RectA and RectB objects can be removed if they're too slow.
-		let RectA = this.getFrustumFront();
-		let RectB = {};
-		RectB.Left = node.x - (node.r / 2);
-		RectB.Right = node.x + (node.r / 2);
-		RectB.Top = node.y - (node.r / 2);
-		RectB.Bottom = node.y + (node.r / 2);
-
-		// TODO Make the culling work better with square nodes
+		// cameraRect and nodeRect objects can be removed if they're too slow.
+		let cameraRect = this.getFrustumFront();
+		let nodeRect = this.getNodeRect(node);
 
 		// ref: (modified for our coordinate system)
 		// https://stackoverflow.com/questions/306316/determine-if-two-rectangles-overlap-each-other
-		node.culled = !(RectA.Left < RectB.Right && RectA.Right > RectB.Left &&
-			RectA.Top < RectB.Bottom && RectA.Bottom > RectB.Top);
+		node.culled = !(cameraRect.left < nodeRect.right && cameraRect.right > nodeRect.left &&
+			cameraRect.top < nodeRect.bottom && cameraRect.bottom > nodeRect.top);
 		return node.culled;
+	}
+
+	getNodeRect(node) {
+		let nodeRect = {};
+		
+		if (node.shape == "Circle") {
+			nodeRect.left = node.x - (node.w / 2);
+			nodeRect.right = node.x + (node.w / 2);
+			nodeRect.top = node.y - (node.h / 2);
+			nodeRect.bottom = node.y + (node.h / 2);
+		} else if (node.shape == "Rectangle") {
+			nodeRect.left = node.x;
+			nodeRect.right = node.x + node.w;
+			nodeRect.top = node.y;
+			nodeRect.bottom = node.y + node.h;
+		}
+
+		return nodeRect;
 	}
 
 	/*
@@ -79,14 +91,14 @@ export default class Camera {
 		front dimensions == back dimensions, and we're working in 2D space.
 	*/
 	getFrustumFront() {
-		let RectA = {};
-		RectA.Left = this.centerX - this.zoomLevel * (this.viewportWidth / 2);
-		RectA.Right = this.centerX + this.zoomLevel * (this.viewportWidth / 2);
-		RectA.Top = this.centerY - this.zoomLevel * (this.viewportHeight / 2);
-		RectA.Bottom = this.centerY + this.zoomLevel * (this.viewportHeight / 2);
-		RectA.Width = RectA.Right - RectA.Left;
-		RectA.Height = RectA.Bottom - RectA.Top;
-		return RectA;
+		let cameraRect = {};
+		cameraRect.left = this.centerX - this.zoomLevel * (this.viewportWidth / 2);
+		cameraRect.right = this.centerX + this.zoomLevel * (this.viewportWidth / 2);
+		cameraRect.top = this.centerY - this.zoomLevel * (this.viewportHeight / 2);
+		cameraRect.bottom = this.centerY + this.zoomLevel * (this.viewportHeight / 2);
+		cameraRect.width = cameraRect.right - cameraRect.left;
+		cameraRect.height = cameraRect.bottom - cameraRect.top;
+		return cameraRect;
 	}
 
 	/*
@@ -94,8 +106,8 @@ export default class Camera {
 	*/
 	project(x, y) {
 		let frustum = this.getFrustumFront();
-		let worldX = (x / this.canvas.width) * frustum.Width + frustum.Left;
-		let worldY = (y / this.canvas.height) * frustum.Height + frustum.Top;
+		let worldX = (x / this.canvas.width) * frustum.width + frustum.left;
+		let worldY = (y / this.canvas.height) * frustum.height + frustum.top;
 		return { x: worldX, y: worldY };
 	}
 
@@ -105,11 +117,11 @@ export default class Camera {
 	unproject(x, y) {
 		let frustum = this.getFrustumFront();
 
-		let cameraSpaceX = x - frustum.Left;
-		let cameraSpaceY = y - frustum.Top;
+		let cameraSpaceX = x - frustum.left;
+		let cameraSpaceY = y - frustum.top;
 
-		let canvasX = this.canvas.width * (cameraSpaceX / frustum.Width);
-		let canvasY = this.canvas.height * (cameraSpaceY / frustum.Height);
+		let canvasX = this.canvas.width * (cameraSpaceX / frustum.width);
+		let canvasY = this.canvas.height * (cameraSpaceY / frustum.height);
 
 		return { x: canvasX, y: canvasY };
 	}

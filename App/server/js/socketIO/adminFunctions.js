@@ -242,7 +242,8 @@ function generateSolution(question) {
 	else if (solutionType >= 3 && solutionType <= 5) {
 		// Determine sorting function
 		let sorter = undefined;
-		if (solutionType === 4) sorter = algorithms.sorting.mergesort;
+		if (solutionType === 3) sorter = algorithms.sorting.shellsort;
+		else if (solutionType === 4) sorter = algorithms.sorting.mergesort;
 		else if (solutionType === 5) sorter = algorithms.sorting.quicksort;
 	
 		// Check if the array contains numbers and remove whitespace
@@ -259,8 +260,11 @@ function generateSolution(question) {
 				elements[i] = Number(elements[i]);
 			}
 		}
-	
-		let steppingFunctions = sorter(elements);
+
+		let steppingFunctions = undefined;
+
+		if (solutionType === 3) steppingFunctions = sorter(question.objects.kValue, elements);
+		else steppingFunctions = sorter(elements);
 		// Store all the steps in the solution
 		//question.objects.startingArray = undefined;
 		question.solution = steppingFunctions.getSteps();

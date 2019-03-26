@@ -70,7 +70,7 @@ export default class Graph0 {
 			Remove: this.removeNode,
 			Join: this.joinNode,
 			Move: this.moveNode,
-			Edit: this.editNode,
+			Edit: this.editNode
 		}
 
 		// Binds the "this" context to the GraphDrawer object.
@@ -111,7 +111,9 @@ export default class Graph0 {
 		let node = {
 			x: p.x,
 			y: p.y,
-			r: this.gd.nodeShape == "Circle" ? this.gd.R : this.gd.R * this.gd.SQUARE_FACTOR,
+			shape: this.gd.nodeShape,
+			w: this.gd.nodeShape == "Circle" ? this.gd.R : this.gd.R * 2,
+			h: this.gd.nodeShape == "Circle" ? this.gd.R : this.gd.R * 2,
 			v: v
 		}
 
@@ -130,7 +132,7 @@ export default class Graph0 {
 
 		// Searches for the clicked node.
 		for (let i = 0; i < this.gd.nodes.length; i++) {
-			if (this.gd.isPointInNode(p.x, p.y, this.gd.nodes[i].x, this.gd.nodes[i].y)) {
+			if (this.gd.isPointInNode(p.x, p.y, this.gd.nodes[i])) {
 				// Checks if the node is connected to anything with edges.
 				for (let j = 0; j < this.gd.edges.length; j++) {
 					// Removes the edges.
@@ -234,8 +236,8 @@ export default class Graph0 {
 			newE.preventDefault();
 			this.gd.setEventOffset(newE);
 			let p = this.gd.camera.project(newE.offsetX, newE.offsetY);
-			node.x = p.x;
-			node.y = p.y;
+			node.x = p.x - node.w / 2;
+			node.y = p.y - node.h / 2;
 			this.gd.dirty = true;
 		}.bind(this);
 
@@ -352,7 +354,8 @@ export default class Graph0 {
 			else return step.treeInfo[this.treeIndex];
 		}
 
-		let r = this.gd.nodeShape == "Circle" ? this.gd.R : this.gd.R * this.gd.SQUARE_FACTOR;
+		// This assumes that the nodeshape is Circle
+		let r = this.gd.R;
 
 		let parseInitial = (step) => {
 			let tree = getTree(step);
@@ -416,11 +419,24 @@ export default class Graph0 {
 				this.gd.nodes.push({
 					x: tx,
 					y: p.y + y * yPadding,
-					r: r,
-					v: node.value
+					w: r,
+					h: r,
+					v: node.value,
+					shape: this.gd.nodeShape
 				});
 
-				addGraphDrawerNode(node.children[0], x + 1, y + 1, dir);
+				let left = dir == 0 ? x + 1 : x - 1;
+				let right = dir == 0 ? x - 1 : x + 1;
+
+				// Add child nodes
+				addGraphDrawerNode(node.children[0], left, y + 1, dir);
+				addGraphDrawerNode(node.children[1], right, y + 1, dir);
+
+				// Add parent node
+				let parentDir = 0;
+				if (node.rootNode.children[0] == node) parentDir = right;
+				else if (node.rootNode.children[1] == node) parentDir = left;
+				addGraphDrawerNode(node.rootNode, parentDir, y - 1, dir);
 			};
 
 			// Find the node furthest to the right on the left side of the tree
@@ -434,6 +450,15 @@ export default class Graph0 {
 			addGraphDrawerNode(leftest.node, 1, leftest.depth, 1);
 
 			// Add root node
+			let root = tree.rootNode;
+			this.gd.nodes.push({
+				x: p.x,
+				y: p.y,
+				w: r,
+				h: r,
+				shape: this.gd.nodeShape,
+				v: root.value
+			});
 		};
 
 		let parseAdd = (step) => {};
@@ -476,7 +501,9 @@ export default class Graph0 {
 					x: n.x,
 					y: n.y,
 					v: n.v,
-					r: n.r
+					w: n.w,
+					h: n.h,
+					shape: this.gd.nodeShape
 				});
 			}
 

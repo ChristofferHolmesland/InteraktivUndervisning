@@ -23,9 +23,11 @@
                                             v-if="getQuestionType === 2"
                                             />
                                             <!--getQuestionInfo.object.choices-->
-                            <ArraySort v-if="getQuestionType === 3" 
+                            <Shellsort v-if="getQuestionType === 3" 
                                         :requestAnswer="requestAnswer"
                                         @getTextResponse="getTextValue"
+                                        :initialList="getStartArray(questionInfo.object.startingArray)"
+                                        :initialKValue="questionInfo.object.kValue"
                                         />
                             <Mergesort  v-if="getQuestionType === 4"
                                         :requestAnswer="requestAnswer"
@@ -66,7 +68,7 @@
 <script>
 	import TextInput from "./questionTypes/TextInput.vue";
     import MultipleChoice from "./questionTypes/MultipleChoice.vue";
-    import ArraySort from "./questionTypes/sorting/ArraySort.vue";
+    import Shellsort from "./questionTypes/sorting/Shellsort.vue";
     import Mergesort from "./questionTypes/sorting/Mergesort.vue";
     import Quicksort from "./questionTypes/sorting/Quicksort.vue";
     import Tree from "./questionTypes/trees/Tree.vue";
@@ -119,6 +121,14 @@
                 if (confirm(this.getLocale.leaveSessionBody)) {
                     this.$socket.emit("leaveSession",this.sessionCode);
                 }
+            },
+            getStartArray(array) {
+                let elements = array.split(",");
+                let result = [];
+                for (let i = 0; i < elements.length; i++) {
+                    result.push(elements[i]);
+                }
+                return result;
             }
 	    },
 		computed: {
@@ -148,7 +158,7 @@
 		components: {
 			TextInput,
             MultipleChoice,
-            ArraySort,
+            Shellsort,
             Mergesort,
             Quicksort,
             Tree,
