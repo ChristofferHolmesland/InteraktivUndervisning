@@ -254,7 +254,7 @@
                 // Prevent shifting focus from the element
                 e.preventDefault();
 
-                let codeInput = this.$refs.codeInput;
+                let codeInput = this.$refs.codeInput.$refs.input;
 
                 // Add 4 spaces
                 let tabSize = 4;
@@ -319,7 +319,7 @@
             	//if the component is using the Graph Drawer, Graph drawer is used on Binary Tree 7 up to BFS 13
                 //Need a admin socket function for validating the question information given.
                 e.preventDefault();
-                if (this.newQuestion.solutionType > 6 && this.newQuestion.solutionType <= 13) {
+                if (this.newQuestion.solutionType > 6 && this.newQuestion.solutionType < 13) {
                         this.requestGraphDrawerObject = !this.requestGraphDrawerObject;
                 } else {
                     this.returnToOkHandler();
