@@ -851,8 +851,8 @@ export default class GraphDrawer {
 	checkSteppingButtons(e) {
 		for (let i = 0; i < this.steppingButtons.length; i++) {
 			let btn = this.steppingButtons[i];
-			if (this.isPointInSquare(e.offsetX, e.offsetY, btn.position.x,
-									btn.position.y, btn.position.width)) {
+			if (this.isPointInRectangle(e.offsetX, e.offsetY, btn.position.x,
+									btn.position.y, btn.position.width, btn.position.height)) {
 				btn.handler(e);
 				return true;
 			}

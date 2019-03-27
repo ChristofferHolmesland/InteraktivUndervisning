@@ -77,7 +77,7 @@
 			AddQuestionToSession,
 			SelectCourse
 		},
-		created() {
+		mounted() {
 			this.$socket.emit("getAllQuestionsWithinCourse", this.$store.getters.getSelectedCourse.split(" ")[0]);
 		},
 		computed: {
