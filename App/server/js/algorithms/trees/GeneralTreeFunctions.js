@@ -3,7 +3,7 @@ const Tree = require("./Tree.js").Tree;
 
 //This function is going to transform a student's and teacher's drawn canvas tree to a Binary Search Tree object.
 module.exports.createTreeObjectFromCanvasObjectver1 = function(treeCanvas) {
-	replaceNullWithUndefined(treeCanvas);
+	replaceNullWithUndefinedCanvas(treeCanvas);
 	let listofTrees = [];
 	for (let l=0;l<treeCanvas.roots.length;l++) {	//can be more than 1 root
 		let listofConfiguredNodes = [];
@@ -32,9 +32,10 @@ function convertCanvasNodeToTreeNode(currentCanvasNode,currentTreeNode,nodelist,
 	if(currentCanvasNode.children[1] !== undefined)	convertCanvasNodeToTreeNode(currentCanvasNode.children[1],currentTreeNode.children[1],nodelist,currentTreeNode);
 }
 
-function replaceNullWithUndefined(canvasTree) {
+function replaceNullWithUndefinedCanvas(canvasTree) {
 	if (canvasTree.roots.length > 0) for (let r=0;r<canvasTree.roots.length;r++) checkCanvasNodeForNull(canvasTree.roots[r]);
 }
+module.exports.replaceNullWithUndefined = replaceNullWithUndefinedCanvas;
 
 function checkCanvasNodeForNull(canvasNode) {
 	if(canvasNode.children.length > 0) {
@@ -226,6 +227,7 @@ module.exports.makeBSTAVLTreeReadyForImport = function (tree) {
 	root.value = tree.root.value;
 	root.children = [];
 	root.parent = undefined;	//edited in
+
 	let nodeParser = function(node, parent) {
 		if (node === undefined || node === null) return undefined;
 		node.parent = parent;
@@ -238,6 +240,9 @@ module.exports.makeBSTAVLTreeReadyForImport = function (tree) {
 	root.children[0] = tree.root.children[0];
 	root.children[1] = tree.root.children[1];
 	tree.root = root;
+
+	tree.nodes[0].parent = undefined;	//edited in
+	checkCanvasNodeForNull(tree.root);	//edited in
 
 	/*if(tree.root.children[0] === null)	tree.root.children[0] = undefined;
 	if(tree.root.children[1] === null)	tree.root.children[1] = undefined;
