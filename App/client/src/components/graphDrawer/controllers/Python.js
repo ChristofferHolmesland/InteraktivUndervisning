@@ -541,7 +541,16 @@ export default class Python {
 		}
 
 		// Add objects
-		console.log(step);
+		let uniqueIdToId = {};
+		let objects = [];
+		let findAllObjects = (objectList) => {
+			let objectNames = this.getProps(objectList);
+
+			for (let i = 0; i < objectNames.length; i++) {
+				// Not implemented yet
+			}
+		};
+		findAllObjects(step.data);
 
 		this.gd.centerCameraOnGraph();
 	}
