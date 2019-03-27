@@ -1,32 +1,59 @@
 const BinaryTreeNode = require("./Tree.js").BinaryTreeNode;
 const Tree = require("./Tree.js").Tree;
 
-//Converts object given by the graphDrawer to a tree object, has not been fully tested.
-//the trees should be checked if they are valid after this function is finished
-//This function is going to transform a student's and teacher's drawn tree to a tree object.
+//This function is going to transform a student's and teacher's drawn canvas tree to a Binary Search Tree object.
 module.exports.createTreeObjectFromCanvasObjectver1 = function(treeCanvas) {
+	replaceNullWithUndefinedCanvas(treeCanvas);
 	let listofTrees = [];
-	for (let l=0;l<treeCanvas.roots.length;l++) {
-		let rootNode = new BinaryTreeNode(treeCanvas.roots[l].value,undefined,treeCanvas.roots[l].children);
+	for (let l=0;l<treeCanvas.roots.length;l++) {	//can be more than 1 root
+		let listofConfiguredNodes = [];
+		let rootNode = new BinaryTreeNode(parseInt(treeCanvas.roots[l].v),undefined);
 		let tree = new Tree(rootNode);
-		let parentNode = rootNode;
-		for (let c=0;c<treeCanvas.roots[l].children.length;c++) {
-			let node = new BinaryTreeNode(treeCanvas.roots[l].children[c].value,
-				parentNode,
-				treeCanvas.roots[l].children);	//will not work
-			parentNode = node;
-			tree.push(node);
-		}
+		convertCanvasNodeToTreeNode(treeCanvas.roots[l],rootNode,listofConfiguredNodes);
+		tree.nodes = listofConfiguredNodes;
 		listofTrees.push(tree);
 	}
 	return listofTrees
 };
 
+function convertCanvasNodeToTreeNode(currentCanvasNode,currentTreeNode,nodelist,parentTreeNode) {
+	//console.log("Parent");
+	//console.log(parentTreeNode);
+	currentTreeNode.parent = parentTreeNode;
+	nodelist.push(currentTreeNode);
+	if(currentCanvasNode.children.length > 0){
+		for (let l=0;l<currentCanvasNode.children.length;l++) {
+			if(currentCanvasNode.children[l] !== undefined) currentTreeNode.children[l] = new BinaryTreeNode(parseInt(currentCanvasNode.children[l].v));
+		}
+	}
+	//if(currentCanvasNode.children[0] === undefined && currentCanvasNode.children[1] === undefined) return;
+	//console.log(currentCanvasNode);
+	if(currentCanvasNode.children[0] !== undefined)	convertCanvasNodeToTreeNode(currentCanvasNode.children[0],currentTreeNode.children[0],nodelist,currentTreeNode);
+	if(currentCanvasNode.children[1] !== undefined)	convertCanvasNodeToTreeNode(currentCanvasNode.children[1],currentTreeNode.children[1],nodelist,currentTreeNode);
+}
 
+function replaceNullWithUndefinedCanvas(canvasTree) {
+	if (canvasTree.roots.length > 0) for (let r=0;r<canvasTree.roots.length;r++) checkCanvasNodeForNull(canvasTree.roots[r]);
+}
+module.exports.replaceNullWithUndefined = replaceNullWithUndefinedCanvas;
+
+function checkCanvasNodeForNull(canvasNode) {
+	if(canvasNode.children.length > 0) {
+		for(let i=0;i<canvasNode.children.length;i++){
+			if(canvasNode.children[i] === null) canvasNode.children[i] = undefined
+		}
+		if(canvasNode.children[0] !== undefined)	checkCanvasNodeForNull(canvasNode.children[0]);
+		if(canvasNode.children[1] !== undefined)	checkCanvasNodeForNull(canvasNode.children[1]);
+	}
+}
 //Checks to two tree branches whether or not they are the same.
 //Will return true if two trees are the same and false if they are not.
 // Is going to be used to check a students answer with the solution!
 function checkStudentAnswer(studentTree,solutionTree) {
+	/*console.log("Student");
+	console.log(studentTree);
+	console.log("Solution");
+	console.log(solutionTree);*/
 	let checkresult = true;
 	if (studentTree.nodes.length === solutionTree.nodes.length) {
 		checkresult = checkNode(studentTree.root,solutionTree.root,checkresult);
@@ -157,3 +184,83 @@ function removeDuplicateTreeResult(treelist) {
 	return newTreeList
 }
 module.exports.removeDuplicateTreeResult = removeDuplicateTreeResult;
+
+//create a step for the solution
+//the description describe what action caused the change to the solution tree,
+//treeType specifies the treetype currently being modified,
+//treeArray contains all known trees currently being used in the solutionmaker
+function createStepArray(description,treeType,treeArray) {
+	let newArray = [];
+	//console.log(treeArray);
+	for (let t=0;t<treeArray.length;t++){
+		newArray.push(treeArray[t].createDuplicateTree());
+	}
+
+	return {
+		type: description,
+		treeType:treeType,
+		treeInfo: newArray
+	};
+}
+module.exports.createStepArray = createStepArray;
+
+module.exports.areValuesInTree = function(valueList,tree) {
+	let result = true;
+	for(let n=0;n<valueList.length;n++) {
+		let nodeFound = false;
+		for (let j=0;j<tree.nodes.length;j++) {
+			if(tree.nodes[j].value === parseInt(valueList[n])){
+				nodeFound = true;
+				break;
+			}
+		}
+		if(!nodeFound) {
+			result = false;
+			break;
+		}
+	}
+	return result
+};
+//TODO if(tree.children[0] or [1] === null --> tree.children[0] or [1] = undefined right now returning undefined will not change the reference to node in children and parent.)
+module.exports.makeBSTAVLTreeReadyForImport = function (tree) {
+	let root = {};
+	root.value = tree.root.value;
+	root.children = [];
+	root.parent = undefined;	//edited in
+
+	let nodeParser = function(node, parent) {
+		if (node === undefined || node === null) return undefined;
+		node.parent = parent;
+		nodeParser(node.children[0], node);
+		nodeParser(node.children[1], node);
+	};
+
+	nodeParser(tree.root.children[0], root);
+	nodeParser(tree.root.children[1], root);
+	root.children[0] = tree.root.children[0];
+	root.children[1] = tree.root.children[1];
+	tree.root = root;
+
+	tree.nodes[0].parent = undefined;	//edited in
+	checkCanvasNodeForNull(tree.root);	//edited in
+
+	/*if(tree.root.children[0] === null)	tree.root.children[0] = undefined;
+	if(tree.root.children[1] === null)	tree.root.children[1] = undefined;
+	for (let n=1;n<tree.nodes.length;n++) {
+		let parentValue = tree.nodes[n].parent;
+		let parentNode = undefined;
+		for (let p=0;p<tree.nodes.length;p++) {
+			if(tree.nodes[p].value === parentValue) {
+				parentNode = tree.nodes[p];
+				break;
+			}
+		}
+		tree.nodes[n].parent = parentNode;
+		console.log(parentNode);
+		if(tree.nodes[n].children[0] === null)	tree.nodes[n].children[0] = undefined;
+		if(tree.nodes[n].children[1] === null)	tree.nodes[n].children[1] = undefined;
+	}
+	tree.root = tree.nodes[0];*/
+};
+
+

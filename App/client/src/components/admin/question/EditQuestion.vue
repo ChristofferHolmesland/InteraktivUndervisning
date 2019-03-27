@@ -1,5 +1,5 @@
 <template>
-    <b-modal :id="elementId" :ref="elementRef" :no-close-on-backdrop="true" :title="getLocale.newQuestion" @ok="callOkHandler" style="text-align: left;">
+    <b-modal :id="elementId" :ref="elementRef" :no-close-on-backdrop="true" :title="getLocale.newQuestion" @ok="callOkHandler" @cancel="cancelHandler" style="text-align: left;">
         <b-form>
             <b-container   class="px-0"
                             @click="changeShowBasicInfo"
@@ -53,7 +53,7 @@
                             <b-col>
                                 <b-form-input   id="questionTimeInputSlider"
                                                 type="range"
-                                                v-model="newQuestion.time"
+                                                v-model="time"
                                                 min="0"
                                                 max="600"
                                                 step="15">
@@ -216,19 +216,59 @@
                         </b-form-input>
                     </b-form-group>
                 </b-form-group>
-                <b-form-group 	
-                        id="dijkstraSolution"
-                        label="Draw the graph, and mark start (green) and end (red) nodes"
-                        v-if="newQuestion.solutionType === 10">
-                    <GraphDrawer 
-                        @getValueResponse="gotGraphDrawerObject" 
-                        :requestAnswer="requestGraphDrawerObject" 
-                        controlType="Graph0"
-                        subType="Dijkstra"
-                        exportType="Graph"
-                        operatingMode="Interactive"
-                        />
-                </b-form-group>
+                <b-form-group
+                    id="BinaryTree"
+                    label="List the nodes that are going to be used in the binary tree. Elements are divided by , and [] are not required)"
+                    v-if="newQuestion.solutionType === 6"
+                    >
+                <b-form-input   id="nodeElements"
+                                type="text"
+                                v-model="newQuestion.objects.treeElements"
+                                >
+                </b-form-input>
+            </b-form-group>
+            <b-form-group
+                    id="BinarySearchTrees"
+                    label="Draw the tree, or give an array to build the solution tree"
+                    v-if="newQuestion.solutionType === 7 || newQuestion.solutionType === 8"
+                    >
+                <label for="Add">Add</label><input type="radio" id="Add" v-model="newQuestion.objects.solutionTreeType" value="Add" /><br/>
+                <label for="Remove">Remove</label><input type="radio" id="Remove" v-model="newQuestion.objects.solutionTreeType" value="Remove"/>
+                <label v-if="newQuestion.objects.solutionTreeType === 'Add'" for="solutionListElements">Input elements to be added to the tree. The elements are seperated by ,</label>
+                <label v-else-if="newQuestion.objects.solutionTreeType === 'Remove'" for="solutionListElements">Input elements to be removed from the tree. The elements are seperated by ,</label>
+                <b-form-input 	id="solutionListElements"
+                                 type="text"
+                                 v-model="newQuestion.objects.treeElements">
+                </b-form-input>
+                <GraphDrawer
+                    @getValueResponse="gotTreeDrawerObject"
+                    :requestAnswer="requestGraphDrawerObject"
+                    control-type="Graph0"
+                    export-type="Both"
+                    operationMode="Interactive"
+                    import-type="Graph"
+                    :steps="this.newQuestion.objects._graphdrawerGraph"
+                />
+            </b-form-group>
+            <b-form-group 	
+                    id="dijkstraSolution"
+                    label="Draw the graph, and mark start (green) and end (red) nodes"
+                    v-if="newQuestion.solutionType === 10">
+                <GraphDrawer 
+                    @getValueResponse="gotGraphDrawerObject" 
+                    :requestAnswer="requestGraphDrawerObject" 
+                    controlType="Graph0"
+                    subType="Dijkstra"
+                    exportType="Graph"
+                    operatingMode="Interactive"
+                    />
+            </b-form-group>
+            <b-alert
+            :show="useAlert"
+            variant="danger"
+            >
+            <p>{{alertReason}}</p>
+            </b-alert>
             </div>
         </b-form>
     </b-modal>
@@ -250,11 +290,15 @@
                     objects: {
                         multipleChoices: [],
                         startingArray: "",
+                        startTree: undefined,
+						treeElements: "",
+						solutionTreeType: "Add",
                         kValue: "",
                         graph: undefined,
                         files: [],
                         graphs: [],
-                        tables: []
+                        tables: [],
+                        _graphdrawerGraph: undefined
                     }
                 },
                 solutionTypes: [],
@@ -269,7 +313,10 @@
                 mediaWarningText: "",
                 showMediaWarning: false,
                 mediaErrorText: "",
-                showMediaError: false
+                showMediaError: false,
+                useAlert: false,
+                alertReason: "",
+                time: 0
             }
         },
         components: {
@@ -278,7 +325,8 @@
         props: {
             elementRef: String,
             elementId: String,
-            okHandler: Function
+            okHandler: String,
+            doneHandler: Function
         },
         mounted() {
             this.$socket.emit("getQuestionTypes");
@@ -337,32 +385,62 @@
             changeShowBasicInfo() {
                 this.showBasicInfo = !this.showBasicInfo;
             },
+            assignTime: function() {
+                this.newQuestion.time = JSON.parse(JSON.stringify(this.time));
+                if (this.newQuestion.time  === 0) this.newQuestion.time = -1;
+            },
+            addNewQuestionHandler: function() {
+                this.$socket.emit(
+                    "addNewQuestion", 
+                    Object.assign(
+                        {},
+                        this.newQuestion,
+                        {
+                            courseCode: this.$store.getters.getSelectedCourse.split(" ")[0]
+                        }
+                    ),
+                );
+			},
+			editQuestionHandler: function() {
+                this.$socket.emit(
+                    "updateQuestion",
+                    this.newQuestion
+                );
+			},
             returnToOkHandler: function() {
-                this.okHandler(this.newQuestion);
-                this.newQuestion = {
-                    id: -1,
-                    text: "",
-                    description: "", 
-              		solutionType: "",
-                    solution: "",
-                    time: 0,
-                    objects: {
-                        multipleChoices: [],
-                        startingArray: "",
-                        graphs: undefined
-                    }
-                };
+                this.assignTime();
+                if (this.okHandler == "add") this.addNewQuestionHandler();
+                else if (this.okHandler == "edit") this.editQuestionHandler();
+            },
+            gotTreeDrawerObject(result) {
+                this.newQuestion.objects.startTree = result.tree;
+                this.newQuestion.objects._graphdrawerGraph = [Object.assign(
+                    { type: "Complete" },
+                    result.graph
+                )];
+                this.returnToOkHandler();
             },
             gotGraphDrawerObject(result) {
                 this.newQuestion.objects.graph = result;
+                this.newQuestion.objects._graphdrawerGraph = [Object.assign(
+                    { type: "Complete" },
+                    result
+                )];
                 this.returnToOkHandler();
             },
-            callOkHandler: function() {
-                if (this.newQuestion.solutionType == 10) {
-                    this.requestGraphDrawerObject = !this.requestGraphDrawerObject;
+            callOkHandler: function(e) {
+            	//if the component is using the Graph Drawer, Graph drawer is used on Binary Tree 7 up to BFS 13
+                //Need a admin socket function for validating the question information given.
+                e.preventDefault();
+                if (this.newQuestion.solutionType > 6 && this.newQuestion.solutionType <= 13) {
+                        this.requestGraphDrawerObject = !this.requestGraphDrawerObject;
                 } else {
                     this.returnToOkHandler();
                 }
+            },
+            cancelHandler: function() {
+                this.useAlert = false;
+                this.alertReason = "";
             },
             objectsInputChanged(newObject) {
                 if (newObject == undefined) return;
@@ -418,13 +496,17 @@
                     {
                         value: "image",
                         text: "Image"
+                    },
+                    {
+                    	value: "tree",
+                        text: "Tree"
                     }
                 ]
             },
             timeInput: {
                 get: function() {
-                    let min = Math.floor(this.newQuestion.time / 60).toString();
-                    let sec = Math.floor(this.newQuestion.time % 60).toString();
+                    let min = Math.floor(this.time / 60).toString();
+                    let sec = Math.floor(this.time % 60).toString();
 
                     return `${min.padStart(2, "0")}:${sec.padStart(2, "0")}`;
                 },
@@ -442,7 +524,7 @@
                         s = 0;
                     }
 
-                    this.newQuestion.time = h * 60 + s;
+                    this.time = h * 60 + s;
                 }
             }
         },
@@ -450,8 +532,40 @@
             sendQuestionTypes: function(types) {
                 this.solutionTypes = types;
                 this.newQuestion.solutionType = this.solutionTypes[0].value;
+            },
+            confirmQuestionRequirements: function (result) {
+            	console.log(result);
+            	if (result.validation) {
+                    this.$refs[this.elementRef].hide();
+                    this.useAlert = false;
+                    this.time = 0;
+                    this.newQuestion = {
+                        id: -1,
+                        text: "",
+                        description: "", 
+                        solutionType: "",
+                        solution: "",
+                        time: 0,
+                        objects: {
+                            multipleChoices: [],
+                            startingArray: "",
+                            startTree: undefined,
+                            graph: undefined,
+                            treeElements: "",
+                            _graphdrawerGraph : undefined,
+                        },
+                        solutionTypes: [],
+                        requestGraphDrawerObject: false,
+                        solutionTreeType: "Add",
+                    };
+                    this.doneHandler();
+                }else {
+            	    this.useAlert = true;
+            	    this.alertReason = result.reason;
+                }
+
             }
-        },
+	    },
         watch: {
             "newQuestion.solutionType": function() {
                 if (this.solutionType === 1) this.newQuestion.solution = "";

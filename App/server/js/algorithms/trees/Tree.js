@@ -74,7 +74,7 @@ class Tree {
 	findNodeInNodesUsingValue(value) {
 		let index = -1;
 		for(let l=0;l<this.nodes.length;l++){
-			if (this.nodes[l].value === value) index = l;
+			if (this.nodes[l].value === parseInt(value)) index = l;
 		}
 		return index
 	}
@@ -82,9 +82,39 @@ class Tree {
 	getNodeWithValue(value) {
 		let binaryNode = undefined;
 		for (let t =0;t<this.nodes.length;t++) {
-			if (this.nodes[t].value === value) binaryNode = this.nodes[t];
+			if (this.nodes[t].value === parseInt(value)) binaryNode = this.nodes[t];
 		}
 		return binaryNode
+	}
+
+	areValuesInTree(listOfValues) {
+		let result = true;
+		for(let n=0;n<listOfValues.length;n++) {
+			let nodeFound = false;
+			for (let j=0;j<this.nodes.length;j++) {
+				if(this.nodes[j].value === parseInt(listOfValues[n])){
+					nodeFound = true;
+					break;
+				}
+			}
+			if(!nodeFound) {
+				result = false;
+				break;
+			}
+		}
+		return result
+	}
+	//make all parent references to values to avoid circular references in order to for the tree object to be JSON.stringify()-ed
+	makeTreeReadyForExport() {
+		let rootNode = this.root;
+		if(rootNode.children[0] !== undefined)	this.makeSelectedNodeReadyForExport(rootNode.children[0]);
+		if(rootNode.children[1] !== undefined) 	this.makeSelectedNodeReadyForExport(rootNode.children[1]);
+	}
+	//recursive function used to change the parent references to the parents value,
+	makeSelectedNodeReadyForExport(currentNode)  {
+		currentNode.parent = currentNode.parent.value;
+		if(currentNode.children[0] !== undefined)	this.makeSelectedNodeReadyForExport(currentNode.children[0]);
+		if(currentNode.children[1] !== undefined)	this.makeSelectedNodeReadyForExport(currentNode.children[1]);
 	}
 }
 
@@ -155,7 +185,6 @@ class BinaryTreeNode {
 		}
 		return true
 	}
-
 }
 
 module.exports.Tree = Tree;
