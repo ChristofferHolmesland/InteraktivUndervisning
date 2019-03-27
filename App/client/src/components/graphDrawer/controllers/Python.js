@@ -29,7 +29,7 @@ export default class Python {
 					name: t.name,
 					fields: fields
 				});
-			});
+			}
 
 			if (this.gd.operatingMode == "Presentation") {
 				this.gd.currentStep = this.steps.length - 1;
@@ -515,12 +515,15 @@ export default class Python {
 	}
 
 	parseSteps() {
-		let step = this.steps[this.gd.currentStep];
-		console.log("Parse steps start");
-		if (step._graphdrawer) return this.parseUserStep(step);
+		this.gd.nodes = [];
+		this.gd.edges = [];
+		this.variables = [];
+		this.objects = [];
 
+		let step = this.steps[this.gd.currentStep];
+		if (step._graphdrawer) return this.parseUserStep(step);
 		// Add variables
-		let variables = [...step.objects.keys()];
+		let variables = this.getProps(step.objects);
 		let margin = 25;
 		let left = this.gd.camera.project(margin, margin);
 		let right = this.gd.camera.project(
@@ -536,8 +539,9 @@ export default class Python {
 				y: left.y
 			});
 		}
-		console.log("Hei");
-		console.log(this.variables);
+
+		// Add objects
+		console.log(step);
 
 		this.gd.centerCameraOnGraph();
 	}

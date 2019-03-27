@@ -47,7 +47,11 @@ function parseCode() {
     return parse(codeInput.value);
 }
 
+let uniqueId = 0;
 function assignScope(object) {
+    // This is used to keep track of unique scopes
+    object._uniqueId = uniqueId;
+    uniqueId += 1;
     // Address -> Value
     object.data = [];
     // Name -> Address
