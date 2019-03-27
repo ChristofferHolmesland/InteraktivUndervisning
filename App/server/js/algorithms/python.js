@@ -37,11 +37,11 @@ function assignScope(object) {
     // Address -> Value
     object.data = [];
     // Name -> Address
-    object.objects = new Map();
+    object.objects = {};
     // Name -> Scope
-    object.functions = new Map();
+    object.functions = {};
     // Name -> Scope
-    object.classes = new Map();
+    object.classes = {};
 }
 
 function parse(code) {
@@ -87,7 +87,7 @@ function parse(code) {
             };
             assignScope(func);
 
-            scope.functions.set(name, func);
+            scope.functions[name] = func;
             return {
                 type: "SkipLines",
                 data: length
@@ -125,7 +125,7 @@ function parse(code) {
                 }
             }
 
-            scope.classes.set(name, c);
+            scope.classes[name] = c;
             return {
                 type: "SkipLines",
                 data: length
@@ -231,11 +231,11 @@ function parse(code) {
         assignScope(object);
         object.functions = c.functions;
 
-        if (object.functions.has("__init__")) {
+        if (object.functions.hasOwnProperty("__init__")) {
             // Add the object as the self argument
             args.unshift(object);
             callFunc(
-                object.functions.get("__init__"),
+                object.functions["__init__"],
                 scope,
                 args
             );
@@ -247,7 +247,7 @@ function parse(code) {
     let callFunc = function(func, scope, args) {
         // Add arguments as local functions
         for (let i = 0; i < func.args.length; i++) {
-            func.objects.set(func.args[i], func.data.length);
+            func.objects[func.args[i]] = func.data.length;
             func.data[func.data.length] = args[i];
         }
 
@@ -316,9 +316,9 @@ function parse(code) {
 
         // Check if its a variable
         if (print) console.log(scope);
-        if (scope.objects.has(expression)) {
+        if (scope.objects.hasOwnProperty(expression)) {
             if (print) console.log("Variable");
-            return scope.data[scope.objects.get(expression)];
+            return scope.data[scope.objects[expression]];
         }
 
         // Check if its a variable belonging to an object
@@ -334,14 +334,14 @@ function parse(code) {
 
             // Checks if the property contains a (, which means that its
             // a function call instead of property access.
-            if (!propertyName.includes("(") && scope.objects.has(objectName)) {
-                let objectAddr = scope.objects.get(objectName);
+            if (!propertyName.includes("(") && scope.objects.hasOwnProperty(objectName)) {
+                let objectAddr = scope.objects[objectName];
                 let object = scope.data[objectAddr];
                 // Check that the object actually has the property
-                if (object.objects.has(propertyName)) {
+                if (object.objects.hasOwnProperty(propertyName)) {
                     if (print) console.log("Belongs to object");
 
-                    let propertyAddr = object.objects.get(propertyName);
+                    let propertyAddr = object.objects[propertyName];
                     if (print) console.log(object.data[propertyAddr]);
                     return object.data[propertyAddr];
                 } 
@@ -431,27 +431,27 @@ function parse(code) {
             // Checks if the function belongs to class
             if (name.includes(".")) {
                 let s = name.split(".");
-                let objectAddr = scope.objects.get(s[0]);
+                let objectAddr = scope.objects[s[0]];
                 let object = scope.data[objectAddr];
                 let funcName = s[1];
                 // Add the self argument
                 args.unshift(object);
                 return callFunc(
-                    object.functions.get(funcName),
+                    object.functions[funcName],
                     scope,
                     args
                 );
             }
 
             // Global function
-            if (globalScope.functions.has(name)) {
-                let func = globalScope.functions.get(name);
+            if (globalScope.functions.hasOwnProperty(name)) {
+                let func = globalScope.functions[name];
                 return callFunc(func, scope, args);
             }
 
             // Global class
-            if (globalScope.classes.has(name)) {
-                let c = globalScope.classes.get(name);
+            if (globalScope.classes.hasOwnProperty(name)) {
+                let c = globalScope.classes[name];
                 return instantiateClass(c, scope, args);
             }
 
@@ -672,27 +672,27 @@ function parse(code) {
         // Object property
         if (variableName.includes(".")) {
             let s = variableName.split(".");
-            let objectAddr = scope.objects.get(s[0]);
+            let objectAddr = scope.objects[s[0]];
             let object = scope.data[objectAddr];
             let attribute = s[1];
 
-            if (object.objects.has(attribute)) {
-                let addr = object.objects.get(attribute);
+            if (object.objects.hasOwnProperty(attribute)) {
+                let addr = object.objects[attribute];
                 object.data[addr] = evaluated;
             } else {
                 let addr = object.data.length;
-                object.objects.set(attribute, addr);
+                object.objects[attribute] = addr;
                 object.data[addr] = evaluated;
             }
         }
         // Global object
         else if (variableName !== "") {
-            if (scope.objects.has(variableName)) {
-                let addr = scope.objects.get(variableName);
+            if (scope.objects.hasOwnProperty(variableName)) {
+                let addr = scope.objects[variableName];
                 scope.data[addr] = evaluated;
             } else {
                 let addr = scope.data.length;
-                scope.objects.set(variableName, addr);
+                scope.objects[variableName] = addr;
                 scope.data[addr] = evaluated;
             }
         }
@@ -721,19 +721,18 @@ function parse(code) {
             
             let copyOfScope = {
                 data: [],
-                objects: new Map()
+                objects: {}
             };
 
             for (let i = 0; i < globalScope.data.length; i++) {
                 copyOfScope.data[i] = JSON.parse(JSON.stringify(globalScope.data[i]));
             }
 
-            let keys = globalScope.objects.keys();
-            for (let key of keys) {
-                copyOfScope.objects.set(
-                    key,
-                    JSON.parse(JSON.stringify((globalScope.objects.get(key))))
-                );
+            for (let prop in globalScope.objects) {
+                if (globalScope.objects.hasOwnProperty(prop)) {
+                    copyOfScope.objects[prop] = 
+                        JSON.parse(JSON.stringify((globalScope.objects[prop])));
+                }
             }
 
             steps.push(copyOfScope);
