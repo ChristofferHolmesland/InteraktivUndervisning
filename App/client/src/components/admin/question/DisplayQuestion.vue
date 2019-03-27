@@ -26,6 +26,9 @@
                                 <QuicksortSolution  v-if="resultInfo.question.type === 5"
                                                     :solution="resultInfo.solution"
                                                     />
+                                <TreeSolution       v-if="resultInfo.question.type === 7 || resultInfo.question.type === 8"
+                                                    :solution="resultInfo.solution"
+                                                    />
                                 <DijkstraSolution v-if="resultInfo.question.type === 10"
                                                     :solution="resultInfo.solution"
                                                     />
@@ -49,6 +52,9 @@
                                 <QuicksortAnswer    v-if="resultInfo.question.type === 5"
                                                     :answer="resultInfo.answerList[selectedAnswer].answerObject"
                                                     />
+                                <TreeAnswer         v-if="resultInfo.question.type === 7 || resultInfo.question.type === 8"
+                                                    :answer="resultInfo.answerList[selectedAnswer].answerObject"
+                                                   />
                                 <DijkstraAnswer     v-if="resultInfo.question.type === 10"
                                                     :answer="resultInfo.answerList[selectedAnswer].answerObject"
                                                     />
@@ -63,18 +69,20 @@
 
 <script>
 import MultipleChoiceAnswer from "./questionResultScreenAnswer/MultipleChoice.vue";
-import MultipleChoiceSolution from "./questionResultScreenSolution/MultipleChoice.vue"
+import MultipleChoiceSolution from "./questionResultScreenSolution/MultipleChoice.vue";
 import TextAnswer from "./questionResultScreenAnswer/Text.vue";
-import TextSolution from "./questionResultScreenSolution/Text.vue"
-import ShellsortAnswer from "./questionResultScreenAnswer/Shellsort.vue"
+import TextSolution from "./questionResultScreenSolution/Text.vue";
+import ShellsortAnswer from "./questionResultScreenAnswer/Shellsort.vue";
 import ShellsortSolution from "./questionResultScreenSolution/Shellsort.vue";
 import MergesortAnswer from "./questionResultScreenAnswer/Mergesort.vue";
-import MergesortSolution from "./questionResultScreenSolution/Mergesort.vue"
+import MergesortSolution from "./questionResultScreenSolution/Mergesort.vue";
 import QuicksortAnswer from "./questionResultScreenAnswer/Quicksort.vue";
-import QuicksortSolution from "./questionResultScreenSolution/Quicksort.vue"
-
+import QuicksortSolution from "./questionResultScreenSolution/Quicksort.vue";
+import TreeAnswer from "./questionResultScreenAnswer/Tree.vue";
+import TreeSolution from "./questionResultScreenSolution/Tree.vue";
 import DijkstraAnswer from "./questionResultScreenAnswer/Dijkstra.vue";
 import DijkstraSolution from "./questionResultScreenSolution/Dijkstra.vue";
+
 
 export default {
     name: "DisplayQuestion",
@@ -101,6 +109,8 @@ export default {
         }
     },
     components: {
+		TreeAnswer,
+		TreeSolution,
         TextAnswer,
         TextSolution,
         MultipleChoiceAnswer,

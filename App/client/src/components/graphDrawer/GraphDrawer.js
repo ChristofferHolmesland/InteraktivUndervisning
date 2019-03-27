@@ -406,15 +406,20 @@ export default class GraphDrawer {
 			// Text
 			let center = this.getCenter(this.nodes[i]);
 			this.drawContext.fillStyle = "black";
-			let lines = this.nodes[i].v.split("\n");
+			let lines = [];
+			if (typeof this.nodes[i].v == "string")
+				lines = this.nodes[i].v.split("\n");
+			else lines.push("" + this.nodes[i].v);
+
 			let firstY = -(lines.length - 1) * 0.5;
 
 			// Fix nodes where the text overflows the height of the node
-			if (this.nodes[i].h < lines * this.fontHeight) {
-				this.nodes[i].h = lines * this.fontHeight + 5;
+			if (this.nodes[i].h < lines.length * this.fontHeight) {
+				this.nodes[i].h = lines.length * this.fontHeight + 5;
 				this.stillDirty = true;
 			}
 
+			let maxTextWidth = 0;
 			for (let l = 0; l < lines.length; l++) {
 				let textWidth = this.drawContext.measureText(lines[l]).width;
 
@@ -424,11 +429,23 @@ export default class GraphDrawer {
 					this.stillDirty = true;
 				}
 
+				if (textWidth > maxTextWidth) maxTextWidth = textWidth;
+
 				this.drawContext.fillText(
 					lines[l],
 					center.x - textWidth / 2,
 					center.y + this.fontHeight / 2 + this.fontHeight * firstY + this.fontHeight * l
 				);
+			}
+
+			// If a node is wider than needed, it will be assigned a smaller
+			// width, bounded by this.R.
+			if (maxTextWidth < this.nodes[i].w) {
+				this.nodes[i].w = maxTextWidth;
+
+				let minSize = this.nodes[i].shape == "Circle" ? this.R : this.R * 2;
+				if (this.nodes[i].w < minSize) this.nodes[i].w = minSize;
+				this.stillDirty = true;
 			}
 		}
 
@@ -466,6 +483,10 @@ export default class GraphDrawer {
 				node[prop] = props[prop];
 			}
 		}
+
+		// Check if the new node was given an id which is larger than the
+		// next id. If it was, nextId needs to be changed to prevent duplicate ids.
+		if (node.id >= this.nextId) nextId = node.id + 1;
 
 		this.nodes.push(node);
 		return node;
@@ -851,8 +872,21 @@ export default class GraphDrawer {
 	checkSteppingButtons(e) {
 		for (let i = 0; i < this.steppingButtons.length; i++) {
 			let btn = this.steppingButtons[i];
+<<<<<<< HEAD
 			if (this.isPointInRectangle(e.offsetX, e.offsetY, btn.position.x,
 									btn.position.y, btn.position.width, btn.position.height)) {
+=======
+			let inside = this.isPointInRectangle(
+				e.offsetX,
+				e.offsetY,
+				btn.position.x,
+				btn.position.y,
+				btn.position.width,
+				btn.position.height
+			);
+
+			if (inside) {
+>>>>>>> clientTree
 				btn.handler(e);
 				return true;
 			}

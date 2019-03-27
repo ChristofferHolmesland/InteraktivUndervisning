@@ -4,31 +4,48 @@ const GeneralTreeFunctions = require("./GeneralTreeFunctions.js");
 
 //creates an AVL tree based on given list of elements and existing tree object.
 //Is going to be used to create an AVL tree object for the teacher's solution.
-module.exports.createAVLTreeSolution = function (elements,add,existingTreeObject) {
+module.exports.createAVLTree = function (elements,add,existingTreeObject) {
 	let tree;
 	let a = 0;
 	let treelist = [];
 	if(add) {
 		//Balance any Tree given that is not an AVL Tree
 		if (existingTreeObject !== undefined) {	//if an existing tree is given
-			tree = existingTreeObject;
+			tree = existingTreeObject.createDuplicateTree();
 			while (checkBalance(tree.root) === false) {
-				if (tree.root.children[0] !== undefined) {
-					let getLowestLeftNode = getLowestNode(tree.root.children[0]);
-					fixAVLCondition(getLowestLeftNode, tree,true);
-				}
-				if (tree.root.children[1] !== undefined) {
-					let getLowestRightNode = getLowestNode(tree.root.children[1]);
-					fixAVLCondition(getLowestRightNode, tree,true);
+				let rootHeight = getNodeHeight(tree.root);
+				console.log(rootHeight);
+				if (rootHeight > 0) {	//choose which side of the tree to start with.
+					if (tree.root.children[0] !== undefined) {
+						let getLowestLeftNode = getLowestNode(tree.root.children[0]);
+						console.log(getLowestLeftNode);
+						fixAVLCondition(getLowestLeftNode, tree,true);
+					}
+					if (tree.root.children[1] !== undefined) {
+						let getLowestRightNode = getLowestNode(tree.root.children[1]);
+						console.log(getLowestRightNode);
+						fixAVLCondition(getLowestRightNode, tree,true);
+					}
+				}else {
+					if (tree.root.children[1] !== undefined) {
+						let getLowestRightNode = getLowestNode(tree.root.children[1]);
+						console.log(getLowestRightNode);
+						fixAVLCondition(getLowestRightNode, tree,true);
+					}
+					if (tree.root.children[0] !== undefined) {
+						let getLowestLeftNode = getLowestNode(tree.root.children[0]);
+						console.log(getLowestLeftNode);
+						fixAVLCondition(getLowestLeftNode, tree,true);
+					}
 				}
 			}
 		} else { //existing tree object not given
-			let rootNode = new BinaryTreeNode(elements[0]);
+			let rootNode = new BinaryTreeNode(parseInt(elements[0]));
 			tree = new Tree(rootNode);
 			a++;
 		}
 		for (a; a < elements.length; a++) {
-			let node = new BinaryTreeNode(elements[a]);
+			let node = new BinaryTreeNode(parseInt(elements[a]));
 			let bestParent = GeneralTreeFunctions.findBestParent(node, tree.root);
 			node.addParent(bestParent);
 			tree.nodes.push(node);
@@ -37,17 +54,34 @@ module.exports.createAVLTreeSolution = function (elements,add,existingTreeObject
 		treelist.push(tree);
 	}else {
 		if (existingTreeObject !== undefined) {
-			tree = existingTreeObject;
+			tree = existingTreeObject.createDuplicateTree();
 			//Balance any Tree given that is not an AVL Tree
 			console.log(checkBalance(tree.root));
 			while (checkBalance(tree.root) === false) {
-				if (tree.root.children[0] !== undefined) {
-					let getLowestLeftNode = getLowestNode(tree.root.children[0]);
-					fixAVLCondition(getLowestLeftNode, tree,true);
-				}
-				if (tree.root.children[1] !== undefined) {
-					let getLowestRightNode = getLowestNode(tree.root.children[1]);
-					fixAVLCondition(getLowestRightNode, tree,true);
+				let rootHeight = getNodeHeight(tree.root);
+				console.log(rootHeight);
+				if (rootHeight > 0) {	//choose which side of the tree to start with.
+					if (tree.root.children[0] !== undefined) {
+						let getLowestLeftNode = getLowestNode(tree.root.children[0]);
+						console.log(getLowestLeftNode);
+						fixAVLCondition(getLowestLeftNode, tree,true);
+					}
+					if (tree.root.children[1] !== undefined) {
+						let getLowestRightNode = getLowestNode(tree.root.children[1]);
+						console.log(getLowestRightNode);
+						fixAVLCondition(getLowestRightNode, tree,true);
+					}
+				}else {
+					if (tree.root.children[1] !== undefined) {
+						let getLowestRightNode = getLowestNode(tree.root.children[1]);
+						console.log(getLowestRightNode);
+						fixAVLCondition(getLowestRightNode, tree,true);
+					}
+					if (tree.root.children[0] !== undefined) {
+						let getLowestLeftNode = getLowestNode(tree.root.children[0]);
+						console.log(getLowestLeftNode);
+						fixAVLCondition(getLowestLeftNode, tree,true);
+					}
 				}
 			}
 			treelist.push(tree);
@@ -55,7 +89,7 @@ module.exports.createAVLTreeSolution = function (elements,add,existingTreeObject
 				for (let t = 0; t < treelist.length; t++) {
 					let currentTree = treelist[t];
 					let newTreeList = [];
-					let treeIndex = currentTree.findNodeInNodesUsingValue(elements[b]);
+					let treeIndex = currentTree.findNodeInNodesUsingValue(parseInt(elements[b]));
 					if (treeIndex !== -1) {
 						let removedNode = currentTree.nodes[treeIndex];
 						newTreeList = removeNodeFromAVLTree(removedNode,currentTree,treeIndex);
@@ -78,6 +112,174 @@ module.exports.createAVLTreeSolution = function (elements,add,existingTreeObject
 		}
 	}
 	return treelist
+};
+
+module.exports.createAVLTreeSolution = function (elements, add, existingTreeObject) {
+	let tree;
+	let a = 0;
+	let steps = [];
+	let treelist = [];
+	if(add) {
+		//Balance any Tree given that is not an AVL Tree
+		if (existingTreeObject !== undefined) {	//if an existing tree is given
+			tree = existingTreeObject.createDuplicateTree();
+			let stepInitial = GeneralTreeFunctions.createStepArray("Initial","AVL",[tree]);
+			steps.push(stepInitial);
+			while (checkBalance(tree.root) === false) {
+				let rootHeight = getNodeHeight(tree.root);
+				console.log(rootHeight);
+				if (rootHeight > 0) {	//choose which side of the tree to start with.
+					if (tree.root.children[0] !== undefined) {
+						let getLowestLeftNode = getLowestNode(tree.root.children[0]);
+						let rotated = fixAVLCondition(getLowestLeftNode, tree, true);
+						if (rotated){
+							let step = GeneralTreeFunctions.createStepArray("Rotated","AVL",[tree]);
+							steps.push(step);
+						}
+					}
+					if (tree.root.children[1] !== undefined) {
+						let getLowestRightNode = getLowestNode(tree.root.children[1]);
+						let rotated = fixAVLCondition(getLowestRightNode, tree, true);
+						if (rotated){
+							let step = GeneralTreeFunctions.createStepArray("Rotated","AVL",[tree]);
+							steps.push(step);
+						}
+					}
+				}else {
+					if (tree.root.children[1] !== undefined) {
+						let getLowestRightNode = getLowestNode(tree.root.children[1]);
+						let rotated = fixAVLCondition(getLowestRightNode, tree, true);
+						if (rotated){
+							let step = GeneralTreeFunctions.createStepArray("Rotated","AVL",[tree]);
+							steps.push(step);
+						}
+					}
+					if (tree.root.children[0] !== undefined) {
+						let getLowestLeftNode = getLowestNode(tree.root.children[0]);
+						let rotated = fixAVLCondition(getLowestLeftNode, tree, true);
+						if (rotated){
+							let step = GeneralTreeFunctions.createStepArray("Rotated","AVL",[tree]);
+							steps.push(step);
+						}
+					}
+				}
+			}
+		} else { //existing tree object not given
+			let rootNode = new BinaryTreeNode(parseInt(elements[0]));
+			tree = new Tree(rootNode);
+			let stepInitial = GeneralTreeFunctions.createStepArray("Initial","AVL",[tree]);
+			steps.push(stepInitial);
+			a++;
+		}
+		for (a; a < elements.length; a++) {
+			let node = new BinaryTreeNode(parseInt(elements[a]));
+			let bestParent = GeneralTreeFunctions.findBestParent(node, tree.root);
+			node.addParent(bestParent);
+			tree.nodes.push(node);
+			let step = GeneralTreeFunctions.createStepArray("Add","AVL",[tree]);
+			steps.push(step);
+			let rotationStep = fixAVLCondition(node, tree,true);
+			if (rotationStep) {
+				let step = GeneralTreeFunctions.createStepArray("Rotated","AVL",[tree]);
+				steps.push(step)
+			}
+		}
+		treelist.push(tree);
+		let step = GeneralTreeFunctions.createStepArray("Done","AVL",treelist);
+		steps.push(step);
+	}else {
+		if (existingTreeObject !== undefined) {
+			tree = existingTreeObject.createDuplicateTree();
+			let stepInitial = GeneralTreeFunctions.createStepArray("Initial","AVL",[tree]);
+			steps.push(stepInitial);
+			//Balance any Tree given that is not an AVL Tree
+			console.log(checkBalance(tree.root));
+			while (checkBalance(tree.root) === false) {
+				let rootHeight = getNodeHeight(tree.root);
+				if (rootHeight > 0) {	//choose which side of the tree to start with.
+					if (tree.root.children[0] !== undefined) {
+						let getLowestLeftNode = getLowestNode(tree.root.children[0]);
+						let rotation = fixAVLCondition(getLowestLeftNode, tree, true);
+						if (rotation) {
+							let step = GeneralTreeFunctions.createStepArray("Rotated", "AVL", [tree]);
+							steps.push(step);
+						}
+					}
+					if (tree.root.children[1] !== undefined) {
+						let getLowestRightNode = getLowestNode(tree.root.children[1]);
+						let rotation = fixAVLCondition(getLowestRightNode, tree, true);
+						if (rotation) {
+							let step = GeneralTreeFunctions.createStepArray("Rotated", "AVL", [tree]);
+							steps.push(step);
+						}
+					}
+				}else {
+					if (tree.root.children[1] !== undefined) {
+						let getLowestRightNode = getLowestNode(tree.root.children[1]);
+						let rotation = fixAVLCondition(getLowestRightNode, tree, true);
+						if (rotation) {
+							let step = GeneralTreeFunctions.createStepArray("Rotated", "AVL", [tree]);
+							steps.push(step);
+						}
+					}
+					if (tree.root.children[0] !== undefined) {
+						let getLowestLeftNode = getLowestNode(tree.root.children[0]);
+						let rotation = fixAVLCondition(getLowestLeftNode, tree, true);
+						if (rotation) {
+							let step = GeneralTreeFunctions.createStepArray("Rotated", "AVL", [tree]);
+							steps.push(step);
+						}
+					}
+				}
+			}
+			treelist.push(tree);
+			for (let b=0; b < elements.length; b++) {
+				let removedSteps = [];
+				let rotationSteps = [];
+				for (let t = 0; t < treelist.length; t++) {
+					let currentTree = treelist[t];
+					let newTreeList = [];
+					let treeIndex = currentTree.findNodeInNodesUsingValue(parseInt(elements[b]));
+					if (treeIndex !== -1) {
+						let removedNode = currentTree.nodes[treeIndex];
+						newTreeList = removeNodeFromAVLTree(removedNode,currentTree,treeIndex,removedSteps,rotationSteps);
+					}
+					if (newTreeList.length > 1) {
+						treelist.splice(t,1,newTreeList[0],newTreeList[1]);
+						t++;
+					}
+					else if (newTreeList.length === 0) {
+
+					}
+					else {
+						treelist.splice(t,1,newTreeList[0]);
+					}
+				}
+				//storing
+				let removedStep = GeneralTreeFunctions.createStepArray("Remove","AVL",removedSteps);
+				steps.push(removedStep);
+				let rotationNeeded = false;
+				for (let l=0;l<removedSteps.length;l++) {
+					console.log(removedSteps);
+					console.log(rotationSteps);
+					if (!GeneralTreeFunctions.checkStudentAnswer(removedSteps[l],rotationSteps[l])) {
+						rotationNeeded = true;
+						break;
+					}
+				}
+				if(rotationNeeded){
+					let rotationStep = GeneralTreeFunctions.createStepArray("Rotated","AVL",rotationSteps);
+					steps.push(rotationStep);
+				}
+			}
+			if (treelist.length > 1)	treelist = GeneralTreeFunctions.removeDuplicateTreeResult(treelist);
+		}else {
+			console.log("Non-existent tree cannot have removed entries.")
+		}
+		let step = GeneralTreeFunctions.createStepArray("Done","AVL",treelist);
+		steps.push(step);
+	}
+	return steps
 };
 
 //checks whether or not the tree is AVL balanced. It depends on the node given.
@@ -105,6 +307,7 @@ function checkBalance(node) {
 	}
 	return balanced
 }
+module.exports.checkBalance = checkBalance;
 
 //function that obtains the closest leafNode to the given node
 function getLowestNode(node) {
@@ -218,17 +421,24 @@ function rotationRight(node,tree) {
 //Rotation prioritises are different between when adding a new node to the tree or when deleting an existing node in the tree
 function fixAVLCondition(node,tree,add) {
 	let respNode = getResponsibleNode(node);
+	console.log(respNode);
+	//let step;
+	let rotation = false;
 	if (add) {
 		if (getNodeHeight(respNode) < -1) {
 			if (node.value > respNode.children[1].value) {
 				//right rotation
 				console.log("Right");
 				rotationRight(respNode, tree);
+				rotation = true
+				//step = GeneralTreeFunctions.createStepArray("Right","AVL",[tree])
 			} else if (node.value < respNode.children[1].value) {
 				//dobbel left rotation
 				console.log("Dobbel left");
 				rotationLeft(respNode.children[1], tree);
 				rotationRight(respNode, tree);
+				rotation = true
+				//step = GeneralTreeFunctions.createStepArray("DobbelLeft","AVL",[tree])
 			} else {
 				console.log("How could this happen!");
 			}
@@ -238,11 +448,15 @@ function fixAVLCondition(node,tree,add) {
 			if (node.value < respNode.children[0].value) {
 				console.log("Left");
 				rotationLeft(respNode, tree);
+				rotation = true
+				//step = GeneralTreeFunctions.createStepArray("Left","AVL",[tree])
 			} else if (node.value > respNode.children[0].value) {
 				//dobbel right rotation
 				console.log("Dobbel right");
 				rotationRight(respNode.children[0], tree);
 				rotationLeft(respNode, tree);
+				rotation = true
+				//step = GeneralTreeFunctions.createStepArray("DobbelRight","AVL",[tree])
 			} else {
 				console.log("How could this happen!");
 			}
@@ -257,11 +471,16 @@ function fixAVLCondition(node,tree,add) {
 		if (respNode.children[1] !== undefined) rootRightBalance = getNodeHeight(respNode.children[1]);
 		if(respBalance < -1){
 			if (rootRightBalance <= 0){
+				console.log("Right");
 				rotationRight(respNode, tree);
+				rotation = true
+				//step = GeneralTreeFunctions.createStepArray("Right","AVL",[tree])
 			}else if(rootRightBalance > 0) {
 				console.log("dobbel left");
 				rotationLeft(respNode.children[1], tree);
 				rotationRight(respNode, tree);
+				rotation = true
+				//step = GeneralTreeFunctions.createStepArray("DobbelLeft","AVL",[tree])
 			}else {
 				console.log("How could this happen!");
 			}
@@ -269,10 +488,14 @@ function fixAVLCondition(node,tree,add) {
 			if (rootLeftBalance >= 0) {
 				console.log("Left");
 				rotationLeft(respNode, tree);
+				rotation = true
+				//step = GeneralTreeFunctions.createStepArray("Left","AVL",[tree])
 			}else if (rootLeftBalance < 0) {
 				console.log("dobbel right");
 				rotationRight(respNode.children[0], tree);
 				rotationLeft(respNode, tree);
+				rotation = true
+				//step = GeneralTreeFunctions.createStepArray("DobbelRight","AVL",[tree])
 			}else {
 				console.log("How could this happen!");
 			}
@@ -280,11 +503,14 @@ function fixAVLCondition(node,tree,add) {
 			console.log("No Rotation needed");
 		}
 	}
+	return rotation
 }
 //Removes an existing node from the AVL tree
 // it will call the fixAVLCondition function at the end in order to check tree balance, and re-balance the tree if necessary
-function removeNodeFromAVLTree(node,tree,index) {
+function removeNodeFromAVLTree(node,tree,index,removeSteps,rotationSteps) {
 	let newTreeList = [];
+	let saveRecords = true;
+	if (removeSteps === undefined || rotationSteps === undefined) saveRecords = false;
 	/*console.log(node);
 	console.log(tree);
 	console.log(index);*/
@@ -307,7 +533,9 @@ function removeNodeFromAVLTree(node,tree,index) {
 				childrenNode.parent = parent;
 			}
 			newTree.nodes.splice(index, 1);
+			if (saveRecords) removeSteps.push(newTree.createDuplicateTree());
 			fixAVLCondition(parent,newTree,false);
+			if (saveRecords) rotationSteps.push(newTree.createDuplicateTree());
 			newTreeList.push(newTree);
 		} else if (newNode.childrenAmount === 2) {
 			console.log("2 children");
@@ -344,8 +572,9 @@ function removeNodeFromAVLTree(node,tree,index) {
 
 				newSubTree.nodes[index] = tempNode;
 				newSubTree.nodes.splice(tempIndex, 1);
-				//newSubTree.printTree();
+				if(saveRecords) removeSteps.push(newSubTree.createDuplicateTree());
 				fixAVLCondition(tempNode,newSubTree,false);
+				if(saveRecords) rotationSteps.push(newSubTree.createDuplicateTree());
 				newTreeList.push(newSubTree);
 			}
 		} else {	//no children
@@ -354,7 +583,9 @@ function removeNodeFromAVLTree(node,tree,index) {
 			if (parent.children[0] === newNode) parent.children[0] = undefined;
 			else parent.children[1] = undefined;
 			newTree.nodes.splice(index, 1);
+			if(saveRecords) removeSteps.push(newTree.createDuplicateTree());
 			fixAVLCondition(parent,newTree,false);
+			if(saveRecords) rotationSteps.push(newTree.createDuplicateTree());
 			newTreeList.push(newTree);
 		}
 	}

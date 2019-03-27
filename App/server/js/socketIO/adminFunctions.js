@@ -2,10 +2,217 @@ const dbFunctions = require("../database/databaseFunctions").dbFunctions;
 
 const generalFunctions =  require("../generalFunctions.js").functions;
 const algorithms = require("../algorithms/algorithms");
-
+const Tree = require("../algorithms/trees/Tree.js").Tree;
+const BinaryTreeNode = require("../algorithms/trees/Tree").BinaryTreeNode;
+const BinaryTreeFunctions = require("../algorithms/trees/BinaryTree.js");
+const BinarySearchTreeFunctions = require("../algorithms/trees/BinarySearchTree.js");
+const AVLTreeFunctions = require("../algorithms/trees/AVLTree.js");
+const GeneralTreeFunctions = require("../algorithms/trees/GeneralTreeFunctions.js");
 const session = require("../session.js").Session;
 const question = require("../session.js").Question;
 const answer = require("../session.js").Answer;
+
+
+let validateQuestion = function (questionInfo) {
+		//TODO put different cases together if they have the same question validations, example the tree cases
+		let treeAction = questionInfo.objects.solutionTreeType;
+		let questionType = questionInfo.solutionType;
+		console.log(questionType);
+		let treeElements = questionInfo.objects.treeElements;
+		let givenStartTree = questionInfo.objects.startTree;
+		console.log("Given Tree");
+		console.log(givenStartTree);
+		let result = {validation: true, reason:""};
+		switch(questionType) {
+			case 1:	//Text input
+				break;
+			case 2:	//Multiple choice
+				break;
+			case 3:	//MergeSort
+				break;
+			case 4: //QuickSort
+				break;
+			case 5:	//ShellSort
+				break;
+			case 6: //Binary Tree
+				if (treeElements === undefined || treeElements === "") {
+					result.validation = false;
+					result.reason = "You need to input the elements that are going to be in the tree";
+				}
+				else {
+					let treeArray = treeElements.split(",");
+					if (treeArray.length === 0){
+						result.validation = false;
+						result.reason = "Wrong format for the element list!\n Only number values and the elements should be separated by a ,"
+					}
+					else {
+						for (let i=0;i<treeArray.length;i++) {
+							if(isNaN(treeArray[i])){
+								result.validation = false;
+								result.reason = "The element list should only contain numbered-valued elements!";
+								break;
+							}
+						}
+					}
+				}
+				break;
+			case 7: case 8:	//Binary Search Tree, AVL Tree
+				let startTree = [];
+				let treeArray = [];
+				if(treeAction === "Add") {
+					//add nodes
+					console.log("treeAction == add");
+					if((givenStartTree === undefined || givenStartTree.roots.length === 0) && (treeElements === undefined || treeElements === "")) {
+						result.validation = false;
+						result.reason = "Missing required fields for an add tree question!";
+					}
+					else {
+						if(givenStartTree !== undefined && givenStartTree.roots.length !== 0) {
+							startTree = GeneralTreeFunctions.createTreeObjectFromCanvasObjectver1(givenStartTree);
+							if(startTree.length > 1) {
+								result.validation = false;
+								result.reason = "The given tree has more than 1 root node!";
+							}
+							if(!BinaryTreeFunctions.checkTreeCriteria(startTree[0])) {
+								result.validation = false;
+								result.reason = "The given tree is not a valid Binary Tree!";
+							}
+							if(!BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(startTree[0])) {
+								result.validation = false;
+								result.reason = "The given tree is not a valid Binary Search Tree!";
+							}
+						}
+						if(treeElements !== undefined && !(treeElements === "")) {
+							treeArray = treeElements.split(",");
+							for (let i=0;i<treeArray.length;i++) {
+								if(isNaN(treeArray[i])){
+									result.validation = false;
+									result.reason = "The element list should only contain numbered-valued elements!";
+									break;
+								}
+							}
+						}
+						if(result.validation){
+							let treeObject;
+							console.log("StartTree");
+							console.log(startTree[0]);
+							if (startTree.length === 1 && treeArray.length > 1) {
+								for (let a=0;a<treeArray.length;a++) {
+									let index = startTree[0].findNodeInNodesUsingValue(treeArray[a]);
+									if (index > -1) {
+										result.validation = false;
+										result.reason = "Cannot add a node to the existing tree that has the same value as an existing node!";
+										break;
+									}
+								}
+							}
+							if(questionType === 7 && result.validation) {
+								if (startTree.length > 0) treeObject = BinarySearchTreeFunctions.createBinarySearchTree(treeArray, true, startTree[0]);
+								else treeObject = BinarySearchTreeFunctions.createBinarySearchTree(treeArray, true);
+								treeObject[0].printTree();
+								if(!BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(treeObject[0])){
+									result.validation = false;
+									result.reason = "The resulting tree is not a valid Binary Search Tree";
+								}
+							}
+							if(questionType === 8 && result.validation) {
+								//startTree[0].printTree();
+								console.log("TreeArray:");
+								console.log(treeArray);
+								console.log("StartTree:");
+								startTree[0].printTree();
+								if (startTree.length > 0) treeObject = AVLTreeFunctions.createAVLTree(treeArray, true, startTree[0]);
+								else treeObject = AVLTreeFunctions.createAVLTree(treeArray, true);
+								if(!BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(treeObject[0]) || !AVLTreeFunctions.checkBalance(treeObject[0].root)) {
+									result.validation = false;
+									result.reason = "The resulting tree is not a valid AVL Tree";
+								}
+							}
+						}
+					}
+				}else if(treeAction === "Remove") {
+					//remove nodes
+					console.log("treeAction == remove");
+					if ((givenStartTree === undefined || givenStartTree.roots.length === 0) || treeElements === undefined || treeElements === "") {
+						result.validation = false;
+						result.reason = "Missing required fields for a remove tree question!"
+					}
+					else {
+						treeArray = treeElements.split(",");
+						if(treeArray.length === 0) {
+							result.validation = false;
+							result.reason = "Wrong format for the element list!\n Only number values and the elements should be separated by a ,"
+						}
+						for (let i=0;i<treeArray.length;i++) {
+							if(isNaN(treeArray[i])){
+								result.validation = false;
+								result.reason = "The element list should only contain numbered-valued elements!";
+								break;
+							}
+						}
+						startTree = GeneralTreeFunctions.createTreeObjectFromCanvasObjectver1(givenStartTree);
+						if(startTree.length > 1) {
+							result.validation = false;
+							result.reason = "The given tree has more than 1 root node!"
+						}
+						if(!BinaryTreeFunctions.checkTreeCriteria(startTree[0])) {
+							result.validation = false;
+							result.reason = "The given tree is not a valid Binary Tree!";
+						}
+						if(!BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(startTree[0])) {
+							result.validation = false;
+							result.reason = "The given tree is not a valid Binary Search Tree!";
+						}
+						if(!startTree[0].areValuesInTree(treeArray)){
+							result.validation = false;
+							result.reason = "An element that is to be removed from the given tree does not exist in the given tree!";
+						}
+						console.log("StartTree");
+						startTree[0].printTree();
+						if(questionType === 7 && result.validation) {
+							let treeObject = BinarySearchTreeFunctions.createBinarySearchTree(treeArray,false,startTree[0]);
+							for(let i=0;i<treeObject.length;i++) {
+								console.log("treeObject i:" + i);
+								treeObject[i].printTree();
+								if(!BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(treeObject[i])) {
+									result.validation = false;
+									result.reason = "One of the resulting trees are not a valid Binary Search Tree";
+								}
+								if (!result.validation) break;
+							}
+						}
+						if(questionType === 8 && result.validation) {
+							let treeObject = AVLTreeFunctions.createAVLTree(treeArray,false,startTree[0]);
+							for(let i=0;i<treeObject.length;i++) {
+								console.log("treeObject i:" + i);
+								treeObject[i].printTree();
+								if(!BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(treeObject[i]) || !AVLTreeFunctions.checkBalance(treeObject[i].root)) {
+									result.validation = false;
+									result.reason = "One of the resulting trees are not a valid AVL Tree";
+								}
+								if (!result.validation) break;
+							}
+						}
+					}
+				}else {
+					result.validation = false;
+					result.reason = "Neither add tree question or remove tree question was chosen!";
+				}
+				break;
+			case 10: //Graph
+				break;
+			case 11: //Djikstra
+				break;
+			case 12: //BellmanFord
+			case 13: //BFS
+			case 14: //Python
+			default:	//undefined or a case that should not exist
+				result.validation = false;
+				result.reason = "The chosen question type is not a valid question type!"
+		}
+		console.log(result);
+	return result;
+};
 
 let courseListRequestHandler = function(socket, db, user, sessions) {
 	if (user.feide) feideId = user.feide.idNumber;
@@ -28,7 +235,7 @@ var currentSession = undefined;
 
 function generateSolution(question) {
 	let solutionType = question.solutionType;
-	
+	console.log(solutionType);
 	if (solutionType === 1 || solutionType === 2) {
 		return question;
 	}
@@ -65,6 +272,44 @@ function generateSolution(question) {
 		// manipulate it.
 		question.objects.steps = [steppingFunctions.reset()];
 	}
+	else if(solutionType === 6) { //TODO create solution object for binary Tree & Update solutionChecker for normal Binary Trees
+		//store the tree elements
+		let binaryTree = new Tree(new BinaryTreeNode(question.objects.treeElements[0]));
+		binaryTree.nodes = question.objects.treeElements;
+		question.solution = binaryTree
+	}else if(solutionType === 7 || solutionType === 8) {
+		console.log("QUESTION!");
+		console.log(question.objects.solutionTreeType);
+		let elements = question.objects.treeElements;
+		let startCanvasTree = question.objects.startTree;
+		let startTree = [];
+		let arrayOfElements = [];
+		let solutionArray = [];
+
+		if (elements !== "" && elements !== undefined) {
+			arrayOfElements = elements.split(",");
+		}
+		console.log(question);
+		if (startCanvasTree !== undefined && startCanvasTree.roots.length !== 0) startTree = GeneralTreeFunctions.createTreeObjectFromCanvasObjectver1(startCanvasTree);
+		console.log("Array of Elements:");
+		console.log(arrayOfElements);
+		startTree[0].printTree();
+		if (solutionType === 7) {
+			if (question.objects.solutionTreeType === "Add") solutionArray = BinarySearchTreeFunctions.createBinarySearchTreeSolution(arrayOfElements, true, startTree[0]);
+			else solutionArray = BinarySearchTreeFunctions.createBinarySearchTreeSolution(arrayOfElements, false, startTree[0]);
+		} else {
+			if (question.objects.solutionTreeType === "Add") solutionArray = AVLTreeFunctions.createAVLTreeSolution(arrayOfElements, true, startTree[0]);
+			else solutionArray = AVLTreeFunctions.createAVLTreeSolution(arrayOfElements, false, startTree[0]);
+		}
+		console.log("SOLUTION");
+		console.log(solutionArray);
+		for(let s=0;s<solutionArray.length;s++){
+			for(let t=0;t<solutionArray[s].treeInfo.length;t++){
+				solutionArray[s].treeInfo[t].makeTreeReadyForExport();
+			}
+		}
+		question.solution = solutionArray;
+}
 	else if (solutionType == 10) {
 		let algo = algorithms.graphs.dijkstra;
 		let from = undefined;
@@ -153,7 +398,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 
 					if(a.result === 0){
 						answers.push({
-							answerObject: JSON.parse(a.object)
+							answerObject: a.object
 						});
 					}
 				});
@@ -162,10 +407,10 @@ module.exports.admin = function(socket, db, user, sessions) {
 					question: {
 						text: question.text,
 						description: question.description,
-						object: JSON.parse(question.object),
+						object: question.object,
 						type: question.type
 					},
-					solution: JSON.parse(question.solution),
+					solution: question.solution,
 					answerList: answers,
 					correctAnswer: Math.round(correctAnswers / answer.length * 100)
 				});
@@ -193,7 +438,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 			for(let i = 0; i < questions.length; i++){
 				let tempQuestion = questions[i];
 				tempQuestion.resultScreen = false;
-				questionList.push(new question(tempQuestion.id, tempQuestion.text, tempQuestion.description, JSON.parse(tempQuestion.object), JSON.parse(tempQuestion.solution), tempQuestion.type, tempQuestion.time, tempQuestion.sqId));
+				questionList.push(new question(tempQuestion.id, tempQuestion.text, tempQuestion.description, tempQuestion.object, tempQuestion.solution, tempQuestion.type, tempQuestion.time, tempQuestion.sqId));
 			}
 
 			currentSession = {session: new session(sessionInformation.id, sessionInformation.name,
@@ -343,7 +588,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 			"type": firstQuestion.type,
 			"time": firstQuestion.time,
 			"participants": currentSession.session.currentUsers
-		}
+		};
 
 		io.to(sessionCode).emit("nextQuestion", safeFirstQuestion);
 	});
@@ -454,18 +699,20 @@ module.exports.admin = function(socket, db, user, sessions) {
 					text: q.text,
 					description: q.description,
 					solutionType: q.type,
-					solution: JSON.parse(q.solution),
+					solution: q.solution,
 					time: q.time,
-					objects: JSON.parse(q.object)
+					objects: q.object
 				});
-				// TODO: Remove this?
-				//if (i === questions.length - 1) console.log(result[result.length - 1]);
 			}
 			socket.emit("sendAllQuestionsWithinCourse", result);
 		});
 	});
 
 	socket.on("addNewQuestion", function(question) {
+		let valid = validateQuestion(question);
+		socket.emit("confirmQuestionRequirements", valid);
+		if (!valid.validation) return;
+
 		question = generateSolution(question);
 		
 		dbFunctions.insert.question(db, question.text, question.description, question.solution, question.time,
@@ -473,6 +720,10 @@ module.exports.admin = function(socket, db, user, sessions) {
 	});
 
 	socket.on("updateQuestion", function(question) {
+		let valid = validateQuestion(question);
+		socket.emit("confirmQuestionRequirements", valid);
+		if (!valid.validation) return;
+
 		question = generateSolution(question);
 
 		dbFunctions.update.question(db, question.id, question.text, question.description, question.objects, question.solution, question.solutionType, question.time);
