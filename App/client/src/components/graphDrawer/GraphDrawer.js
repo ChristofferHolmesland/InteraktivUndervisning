@@ -872,10 +872,6 @@ export default class GraphDrawer {
 	checkSteppingButtons(e) {
 		for (let i = 0; i < this.steppingButtons.length; i++) {
 			let btn = this.steppingButtons[i];
-<<<<<<< HEAD
-			if (this.isPointInRectangle(e.offsetX, e.offsetY, btn.position.x,
-									btn.position.y, btn.position.width, btn.position.height)) {
-=======
 			let inside = this.isPointInRectangle(
 				e.offsetX,
 				e.offsetY,
@@ -886,7 +882,6 @@ export default class GraphDrawer {
 			);
 
 			if (inside) {
->>>>>>> clientTree
 				btn.handler(e);
 				return true;
 			}

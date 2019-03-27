@@ -93,6 +93,10 @@
                     extractType: "xSorter",
                     joinType: "vSorter",
                     steps: this.steps
+                },
+
+                python: {
+                    steps: this.steps
                 }
             });
         }

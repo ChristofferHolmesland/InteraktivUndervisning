@@ -1,12 +1,17 @@
 export default class Python {
 	_config(config) {
+		console.log("Start of config");
 		if (config && config.steps) {
+			console.log("Found config");
 			this.steps = config.steps.slice(0, config.steps.length - 1);
 
 			// Read last step to find the data types defined by the script
 			this.lastStep = config.steps[config.steps.length - 1];
 			let types = this.lastStep.classes;
 			let completed = ["String", "Number", "Boolean"];
+
+			console.log(this.lastStep);
+			console.log(types);
 
 			types.forEach((t) => {
 				let fields = [];
@@ -514,6 +519,7 @@ export default class Python {
 
 	parseSteps() {
 		let step = this.steps[this.gd.currentStep];
+		console.log("Parse steps start");
 		if (step._graphdrawer) return this.parseUserStep(step);
 
 		// Add variables
