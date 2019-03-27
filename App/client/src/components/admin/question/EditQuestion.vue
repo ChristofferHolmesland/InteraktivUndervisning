@@ -148,10 +148,13 @@
                             :label="getLocale.newQuestionSolution"
                             label-for="solutionInput"
                             v-if="newQuestion.solutionType === 13">
-            <b-form-textarea 	id="solutionInput"
-                                placeholder="Write Python code here..."
-                                v-model="newQuestion.objects.code">
-            </b-form-textarea>
+                <div v-show="checkRef">klar</div>
+                    <b-form-textarea 	id="pythonCodeInput"
+                                        placeholder="Write Python code here..."
+                                        v-model="newQuestion.objects.code"
+                                        ref="codeInput"
+                                        @keydown.native.tab="keyDownInTextarea">
+                    </b-form-textarea>
             </b-form-group>
         </b-form>
     </b-modal>
@@ -194,6 +197,27 @@
             this.$socket.emit("getQuestionTypes");
         },
         methods: {
+            keyDownInTextarea(e) {
+                // Only accept the Tab key
+                if (e.key !== "Tab" && e.which !== "9") return;
+
+                // Prevent shifting focus from the element
+                e.preventDefault();
+
+                let codeInput = this.$refs.codeInput;
+
+                // Add 4 spaces
+                let tabSize = 4;
+                let tabPosition = codeInput.selectionStart;
+                let textWithSpaces = codeInput.value.substring(0, tabPosition);
+                for (let i = 0; i < tabSize; i++) textWithSpaces += " ";
+                textWithSpaces += codeInput.value.substring(tabPosition);
+
+                codeInput.value = textWithSpaces;
+                // Move cursor to the right position
+                codeInput.selectionStart = tabPosition + tabSize;
+                codeInput.selectionEnd = tabPosition + tabSize;
+            },
             returnToOkHandler: function() {
                 if (this.newQuestion.solutionType == 13) {
                     this.newQuestion.solution = this.newQuestion.objects.code;
@@ -238,6 +262,14 @@
             }
         },
         computed: {
+            checkRef() {
+                if (this.$refs["codeInput"] !== undefined) {
+                    this.$refs["codeInput"].onkeydown = this.keyDownInTextarea;
+                    return true;
+                }
+
+                return false;
+            },
             getLocale() {
 				let locale = this.$store.getters.getLocale("AdminQuestions");
                 if(locale) return locale;
@@ -300,13 +332,15 @@
             }
         },
         watch: {
-            "newQuestion.solutionType": function() {
-                if (this.solutionType === 1) this.newQuestion.solution = "";
-                else if (this.solutionType === 2) this.newQuestion.solution = [];
+            "newQuestion.solutionType": function(newType, oldType) {
+                if (newType === 1) this.newQuestion.solution = "";
+                else if (newType === 2) this.newQuestion.solution = [];
+                else if (newType === 13) {
+
+                }
             }
         },
     }
-
 </script>
 
 <style scoped>
