@@ -199,13 +199,16 @@ let validateQuestion = function (questionInfo) {
 					result.reason = "Neither add tree question or remove tree question was chosen!";
 				}
 				break;
-			case 10: //Graph
+			case 9: //Graph
 				break;
-			case 11: //Djikstra
+			case 10: //Djikstra
 				break;
-			case 12: //BellmanFord
-			case 13: //BFS
-			case 14: //Python
+			case 11: //BellmanFord
+				break;
+			case 12: //BFS
+				break;
+			case 13: //Python
+				break;
 			default:	//undefined or a case that should not exist
 				result.validation = false;
 				result.reason = "The chosen question type is not a valid question type!"
