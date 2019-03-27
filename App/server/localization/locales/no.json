@@ -12,7 +12,18 @@
         "solutionText": "Løsning: ",
         "selectSessionText": "Velg økt: ",
         "time": "Tid:",
-        "mediaTypes": ["Bilder", "Grafer", "Tabeller"]
+        "mediaTypes": [
+            {"text":"Bilder", "value": 0},
+            {"text":"Grafer", "value": 0},
+            {"text":"Tabeller", "value": 0}
+        ],
+        "multipleChoiceHeader": "Alternativer:",
+        "addNewMultipleChoice": "Legg til nytt alternativ",
+        "multipleChoiceDeleteBtn": "Slett",
+        "basicInfo": "Grunnleggende Informasjon",
+        "mediaErrorFileSize": "Summen av filstørrelsene overstiger maks størrelse på 1.5MB!",
+        "mediaWarningFileSize": "Summen av filstørrelsene overstiger snart maks størrelse på 1.5MB! Vurder om færre eller mindre filer er mulig.",
+        "mediaErrorFileType": " fil(er) ble lastet opp med feil filtype! Kun bilder blir godkjent."
     },
     "AdminSessions": {
         "newSession": "Ny økt",

@@ -12,7 +12,18 @@
         "solutionText": "Solution: ",
         "selectSessionText": "Select session: ",
         "time": "Time:",
-        "mediaTypes": ["Images", "Graphs", "Tables"]
+        "mediaTypes": [
+            {"text":"Images", "value": 0},
+            {"text":"Graphs", "value": 0},
+            {"text":"Tables", "value": 0}
+        ],
+        "multipleChoiceHeader": "Choices:",
+        "addNewMultipleChoice": "Add new choice",
+        "multipleChoiceDeleteBtn": "Delete",
+        "basicInfo": "Basic Information",
+        "mediaErrorFileSize": "The combined file size has exceeded the limit of 1.5MB!",
+        "mediaWarningFileSize": "The combined file size is about to about to exceed the limit of 1.5MB! Please consider uploading less files or smaller files.",
+        "mediaErrorFileType": " file(s) type uploaded was found not to be supported! Please only upload images."
     },
     "AdminSessions": {
         "newSession": "New session",
