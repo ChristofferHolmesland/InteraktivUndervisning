@@ -16,7 +16,9 @@ const check = function(answer, solution) {
 
     let checkData = (data, answer) => {
         // Check that fields match datatype fields.
-        for (var v in data.objects.keys()) {
+        let objectKeys = getProps(data.objects);
+        for (let k = 0; k < objectKeys.length; k++) {
+            let v = objectKeys[k];
             let index = -1;
             // Checks that fields with the same name exists
             for (let i = 0; i < answer.fields.length; i++) {
@@ -32,7 +34,7 @@ const check = function(answer, solution) {
             let answerObject = getAnswerObjectById(id);
             if (answerObject == undefined) return false;
 
-            let solutionObject = data.data[data.objects.get(v)];
+            let solutionObject = data.data[data.objects[v]];
             
             // Check that the objects have the same type
             if (answerObject.type !== solutionObject.type) return false;
@@ -48,14 +50,17 @@ const check = function(answer, solution) {
         return true;
     };
 
-    for (var v in solution.objects.keys()) {
+    let objectKeys = getProps(solution.objects);
+    for (let k = 0; k < objectKeys.length; k++) {
+        let v = objectKeys[k];
+
         let answerVariableIndex = answer.variables.indexOf(v);
         if (answerVariableIndex == -1) return false;
         let answerVariable = answer.variables[answerVariableIndex];
 
         // Check that the variables point to objects of the same type and
         // with the same values.
-        let data = solution.data[solution.objects.get(v)];
+        let data = solution.data[solution.objects[v]];
         if (answerVariable.type !== data.type) return false;
         
         // If the object is of basetype, the values should match.
@@ -72,4 +77,13 @@ const check = function(answer, solution) {
     return true;
 }
 
+function getProps(object) {
+    let props = [];
+    for (let prop in object) {
+        if (object.hasOwnProperty(prop)) props.push(prop);
+    }
+    return props;
+}
+
 module.exports.check = check;
+

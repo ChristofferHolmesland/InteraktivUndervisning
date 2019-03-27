@@ -12,7 +12,8 @@ const session = require("../session.js").Session;
 const question = require("../session.js").Question;
 const answer = require("../session.js").Answer;
 
-
+// This should be defined in another file, where each type of question have their
+// own validation function.
 let validateQuestion = function (questionInfo) {
 		//TODO put different cases together if they have the same question validations, example the tree cases
 		let treeAction = questionInfo.objects.solutionTreeType;

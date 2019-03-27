@@ -1,8 +1,6 @@
 export default class Python {
 	_config(config) {
-		console.log("Start of config");
 		if (config && config.steps) {
-			console.log("Found config");
 			this.steps = config.steps.slice(0, config.steps.length - 1);
 
 			// Read last step to find the data types defined by the script
@@ -10,20 +8,19 @@ export default class Python {
 			let types = this.lastStep.classes;
 			let completed = ["String", "Number", "Boolean"];
 
-			console.log(this.lastStep);
-			console.log(types);
+			for (let t in types) {
+				if (!types.hasOwnProperty(t)) continue;
 
-			types.forEach((t) => {
 				let fields = [];
 
 				if (!completed.includes(t.name)) {
 					completed.push(t.name);
 
-					let fieldNames = [...t.objects.keys()];
+					let fieldNames = this.getProps(t.objects);
 					for (let i = 0; i < fieldNames.length; i++) {
 						fields.push({
 							name: fieldNames[i],
-							type: t.data[t.objects.get(fieldNames[i])].type
+							type: t.data[t.objects[fieldNames[i]]].type
 						});
 					}
 				}
@@ -645,5 +642,13 @@ export default class Python {
 				this.generateNodeText(o.id);
 			}
 		}
+	}	
+	
+	getProps(object) {
+		let props = [];
+		for (let prop in object) {
+			if (object.hasOwnProperty(prop)) props.push(prop);
+		}
+		return props;
 	}
 }
