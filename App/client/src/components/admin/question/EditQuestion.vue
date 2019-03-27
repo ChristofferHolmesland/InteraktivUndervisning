@@ -1,6 +1,12 @@
 <template>
-    <b-modal :id="elementId" :ref="elementRef" :no-close-on-backdrop="true" :title="getLocale.newQuestion" @ok="callOkHandler" @cancel="cancelHandler" style="text-align: left;">
+    <b-modal :id="elementId" :ref="elementRef" :no-close-on-backdrop="true" :title="getLocale.newQuestion" @ok="callOkHandler" @cancel="cancelHandler" style="text-align: left;" size="lg">
         <b-form>
+            <b-alert    :show="validationFailure"
+                        variant="danger">
+                <p v-for="(error, index) in validationErrors" :key="index">
+                    {{getLocale.error}}
+                </p>
+            </b-alert>
             <b-container   class="px-0"
                             @click="changeShowBasicInfo"
                             style="cursor: pointer;">
@@ -118,7 +124,7 @@
                         <!-- TODO add table objects -->
                     </div>
                     <div v-if="newQuestion.objects.files.length > 0">
-                        <img v-attr="src: newQuestion.objects.files[0]">
+                        <!--<img v-attr="src: newQuestion.objects.files[0]">-->
                     </div>
                     <div></div>
                     <div></div>
@@ -263,12 +269,6 @@
                     operatingMode="Interactive"
                     />
             </b-form-group>
-            <b-alert
-            :show="useAlert"
-            variant="danger"
-            >
-            <p>{{alertReason}}</p>
-            </b-alert>
             </div>
         </b-form>
     </b-modal>
@@ -277,47 +277,51 @@
 <script>
     import GraphDrawer from "../../graphDrawer/GraphDrawer.vue";
 
+    function initializeState() {
+        return {
+            newQuestion: {
+                id: -1,
+                text: "",
+                description: "", 
+                solutionType: "",
+                solution: "",
+                time: 0,
+                objects: {
+                    multipleChoices: [],
+                    startingArray: "",
+                    startTree: undefined,
+                    treeElements: "",
+                    solutionTreeType: "Add",
+                    kValue: "",
+                    graph: undefined,
+                    files: [],
+                    graphs: [],
+                    tables: [],
+                    _graphdrawerGraph: undefined
+                }
+            },
+            solutionTypes: [],
+            requestGraphDrawerObject: false,
+            mediaTypes: [],
+            selectedMediaType: undefined,
+
+            showMedia: false,
+            showSolution: false,
+            showBasicInfo: false, // TODO set to true
+
+            mediaWarningText: "",
+            showMediaWarning: false,
+            mediaErrorText: "",
+            showMediaError: false,
+            validationFailure: false,
+            validationErrors: [],
+            time: 0
+        }
+    }
+
 	export default {
         data() {
-            return {
-                newQuestion: {
-                    id: -1,
-                    text: "",
-                    description: "", 
-              		solutionType: "",
-                    solution: "",
-                    time: 0,
-                    objects: {
-                        multipleChoices: [],
-                        startingArray: "",
-                        startTree: undefined,
-						treeElements: "",
-						solutionTreeType: "Add",
-                        kValue: "",
-                        graph: undefined,
-                        files: [],
-                        graphs: [],
-                        tables: [],
-                        _graphdrawerGraph: undefined
-                    }
-                },
-                solutionTypes: [],
-                requestGraphDrawerObject: false,
-                mediaTypes: [],
-                selectedMediaType: undefined,
-
-                showMedia: false,
-                showSolution: false,
-                showBasicInfo: false, // TODO set to true
-
-                mediaWarningText: "",
-                showMediaWarning: false,
-                mediaErrorText: "",
-                showMediaError: false,
-                useAlert: false,
-                alertReason: "",
-                time: 0
-            }
+            return initializeState();
         },
         components: {
             GraphDrawer
@@ -329,17 +333,30 @@
             doneHandler: Function
         },
         mounted() {
-            this.$socket.emit("getQuestionTypes");
-            this.mediaTypes = this.getLocale.mediaTypes;
-            this.selectedMediaType = this.mediaTypes[0].value;
+            this.$root.$on("bv::modal::show", (bvevent, modalid) => {
+                this.assignState();
+                this.$socket.emit("getQuestionTypes");
+                this.mediaTypes = this.getLocale.mediaTypes;
+                this.selectedMediaType = this.mediaTypes[0].value;
+            });
         },
         methods: {
+            assignState() {
+                let n = initializeState();
+                for (let p in n) {
+                    if (n.hasOwnProperty(p)) {
+                        if (p === "newQuestion") {
+                            if (this.okHandler === "add") this.$data[p] = n[p];
+                        }
+                        else this.$data[p] = n[p];
+                    }
+                }
+            },
             newFile(event) {
                 let files = [];
                 Array.prototype.push.apply(files, event.target.files);
                 let fileSize = 0;
                 let fileTypeErr = 0;
-                console.log(files);
 
                 for (let i = 0; i < files.length; i++) {
                     let file = files[i];
@@ -372,9 +389,6 @@
                         this.showMediaWarning = false;
                     }
                 }
-                console.log(this.showMediaWarning);
-                console.log(this.showMediaError)
-                console.log(this.newQuestion.objects.files);
             },
             changeShowMedia() {
                 this.showMedia = !this.showMedia;
@@ -534,34 +548,12 @@
                 this.newQuestion.solutionType = this.solutionTypes[0].value;
             },
             confirmQuestionRequirements: function (result) {
-            	console.log(result);
-            	if (result.validation) {
+            	if (result.passed) {
                     this.$refs[this.elementRef].hide();
-                    this.useAlert = false;
-                    this.time = 0;
-                    this.newQuestion = {
-                        id: -1,
-                        text: "",
-                        description: "", 
-                        solutionType: "",
-                        solution: "",
-                        time: 0,
-                        objects: {
-                            multipleChoices: [],
-                            startingArray: "",
-                            startTree: undefined,
-                            graph: undefined,
-                            treeElements: "",
-                            _graphdrawerGraph : undefined,
-                        },
-                        solutionTypes: [],
-                        requestGraphDrawerObject: false,
-                        solutionTreeType: "Add",
-                    };
                     this.doneHandler();
                 }else {
-            	    this.useAlert = true;
-            	    this.alertReason = result.reason;
+            	    this.validationFailure = true;
+            	    this.validationErrors = result.errors;
                 }
 
             }

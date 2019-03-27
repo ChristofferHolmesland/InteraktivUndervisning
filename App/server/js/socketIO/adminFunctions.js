@@ -4,215 +4,10 @@ const generalFunctions =  require("../generalFunctions.js").functions;
 const algorithms = require("../algorithms/algorithms");
 const Tree = require("../algorithms/trees/Tree.js").Tree;
 const BinaryTreeNode = require("../algorithms/trees/Tree").BinaryTreeNode;
-const BinaryTreeFunctions = require("../algorithms/trees/BinaryTree.js");
-const BinarySearchTreeFunctions = require("../algorithms/trees/BinarySearchTree.js");
-const AVLTreeFunctions = require("../algorithms/trees/AVLTree.js");
-const GeneralTreeFunctions = require("../algorithms/trees/GeneralTreeFunctions.js");
 const session = require("../session.js").Session;
 const question = require("../session.js").Question;
 const answer = require("../session.js").Answer;
-
-
-let validateQuestion = function (questionInfo) {
-		//TODO put different cases together if they have the same question validations, example the tree cases
-		let treeAction = questionInfo.objects.solutionTreeType;
-		let questionType = questionInfo.solutionType;
-		console.log(questionType);
-		let treeElements = questionInfo.objects.treeElements;
-		let givenStartTree = questionInfo.objects.startTree;
-		console.log("Given Tree");
-		console.log(givenStartTree);
-		let result = {validation: true, reason:""};
-		switch(questionType) {
-			case 1:	//Text input
-				break;
-			case 2:	//Multiple choice
-				break;
-			case 3:	//MergeSort
-				break;
-			case 4: //QuickSort
-				break;
-			case 5:	//ShellSort
-				break;
-			case 6: //Binary Tree
-				if (treeElements === undefined || treeElements === "") {
-					result.validation = false;
-					result.reason = "You need to input the elements that are going to be in the tree";
-				}
-				else {
-					let treeArray = treeElements.split(",");
-					if (treeArray.length === 0){
-						result.validation = false;
-						result.reason = "Wrong format for the element list!\n Only number values and the elements should be separated by a ,"
-					}
-					else {
-						for (let i=0;i<treeArray.length;i++) {
-							if(isNaN(treeArray[i])){
-								result.validation = false;
-								result.reason = "The element list should only contain numbered-valued elements!";
-								break;
-							}
-						}
-					}
-				}
-				break;
-			case 7: case 8:	//Binary Search Tree, AVL Tree
-				let startTree = [];
-				let treeArray = [];
-				if(treeAction === "Add") {
-					//add nodes
-					console.log("treeAction == add");
-					if((givenStartTree === undefined || givenStartTree.roots.length === 0) && (treeElements === undefined || treeElements === "")) {
-						result.validation = false;
-						result.reason = "Missing required fields for an add tree question!";
-					}
-					else {
-						if(givenStartTree !== undefined && givenStartTree.roots.length !== 0) {
-							startTree = GeneralTreeFunctions.createTreeObjectFromCanvasObjectver1(givenStartTree);
-							if(startTree.length > 1) {
-								result.validation = false;
-								result.reason = "The given tree has more than 1 root node!";
-							}
-							if(!BinaryTreeFunctions.checkTreeCriteria(startTree[0])) {
-								result.validation = false;
-								result.reason = "The given tree is not a valid Binary Tree!";
-							}
-							if(!BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(startTree[0])) {
-								result.validation = false;
-								result.reason = "The given tree is not a valid Binary Search Tree!";
-							}
-						}
-						if(treeElements !== undefined && !(treeElements === "")) {
-							treeArray = treeElements.split(",");
-							for (let i=0;i<treeArray.length;i++) {
-								if(isNaN(treeArray[i])){
-									result.validation = false;
-									result.reason = "The element list should only contain numbered-valued elements!";
-									break;
-								}
-							}
-						}
-						if(result.validation){
-							let treeObject;
-							console.log("StartTree");
-							console.log(startTree[0]);
-							if (startTree.length === 1 && treeArray.length > 1) {
-								for (let a=0;a<treeArray.length;a++) {
-									let index = startTree[0].findNodeInNodesUsingValue(treeArray[a]);
-									if (index > -1) {
-										result.validation = false;
-										result.reason = "Cannot add a node to the existing tree that has the same value as an existing node!";
-										break;
-									}
-								}
-							}
-							if(questionType === 7 && result.validation) {
-								if (startTree.length > 0) treeObject = BinarySearchTreeFunctions.createBinarySearchTree(treeArray, true, startTree[0]);
-								else treeObject = BinarySearchTreeFunctions.createBinarySearchTree(treeArray, true);
-								treeObject[0].printTree();
-								if(!BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(treeObject[0])){
-									result.validation = false;
-									result.reason = "The resulting tree is not a valid Binary Search Tree";
-								}
-							}
-							if(questionType === 8 && result.validation) {
-								//startTree[0].printTree();
-								console.log("TreeArray:");
-								console.log(treeArray);
-								console.log("StartTree:");
-								startTree[0].printTree();
-								if (startTree.length > 0) treeObject = AVLTreeFunctions.createAVLTree(treeArray, true, startTree[0]);
-								else treeObject = AVLTreeFunctions.createAVLTree(treeArray, true);
-								if(!BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(treeObject[0]) || !AVLTreeFunctions.checkBalance(treeObject[0].root)) {
-									result.validation = false;
-									result.reason = "The resulting tree is not a valid AVL Tree";
-								}
-							}
-						}
-					}
-				}else if(treeAction === "Remove") {
-					//remove nodes
-					console.log("treeAction == remove");
-					if ((givenStartTree === undefined || givenStartTree.roots.length === 0) || treeElements === undefined || treeElements === "") {
-						result.validation = false;
-						result.reason = "Missing required fields for a remove tree question!"
-					}
-					else {
-						treeArray = treeElements.split(",");
-						if(treeArray.length === 0) {
-							result.validation = false;
-							result.reason = "Wrong format for the element list!\n Only number values and the elements should be separated by a ,"
-						}
-						for (let i=0;i<treeArray.length;i++) {
-							if(isNaN(treeArray[i])){
-								result.validation = false;
-								result.reason = "The element list should only contain numbered-valued elements!";
-								break;
-							}
-						}
-						startTree = GeneralTreeFunctions.createTreeObjectFromCanvasObjectver1(givenStartTree);
-						if(startTree.length > 1) {
-							result.validation = false;
-							result.reason = "The given tree has more than 1 root node!"
-						}
-						if(!BinaryTreeFunctions.checkTreeCriteria(startTree[0])) {
-							result.validation = false;
-							result.reason = "The given tree is not a valid Binary Tree!";
-						}
-						if(!BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(startTree[0])) {
-							result.validation = false;
-							result.reason = "The given tree is not a valid Binary Search Tree!";
-						}
-						if(!startTree[0].areValuesInTree(treeArray)){
-							result.validation = false;
-							result.reason = "An element that is to be removed from the given tree does not exist in the given tree!";
-						}
-						console.log("StartTree");
-						startTree[0].printTree();
-						if(questionType === 7 && result.validation) {
-							let treeObject = BinarySearchTreeFunctions.createBinarySearchTree(treeArray,false,startTree[0]);
-							for(let i=0;i<treeObject.length;i++) {
-								console.log("treeObject i:" + i);
-								treeObject[i].printTree();
-								if(!BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(treeObject[i])) {
-									result.validation = false;
-									result.reason = "One of the resulting trees are not a valid Binary Search Tree";
-								}
-								if (!result.validation) break;
-							}
-						}
-						if(questionType === 8 && result.validation) {
-							let treeObject = AVLTreeFunctions.createAVLTree(treeArray,false,startTree[0]);
-							for(let i=0;i<treeObject.length;i++) {
-								console.log("treeObject i:" + i);
-								treeObject[i].printTree();
-								if(!BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(treeObject[i]) || !AVLTreeFunctions.checkBalance(treeObject[i].root)) {
-									result.validation = false;
-									result.reason = "One of the resulting trees are not a valid AVL Tree";
-								}
-								if (!result.validation) break;
-							}
-						}
-					}
-				}else {
-					result.validation = false;
-					result.reason = "Neither add tree question or remove tree question was chosen!";
-				}
-				break;
-			case 10: //Graph
-				break;
-			case 11: //Djikstra
-				break;
-			case 12: //BellmanFord
-			case 13: //BFS
-			case 14: //Python
-			default:	//undefined or a case that should not exist
-				result.validation = false;
-				result.reason = "The chosen question type is not a valid question type!"
-		}
-		console.log(result);
-	return result;
-};
+const validateChecker = require("../ValidateChecker/validateChecker.js").validateChecker;
 
 let courseListRequestHandler = function(socket, db, user, sessions) {
 	if (user.feide) feideId = user.feide.idNumber;
@@ -704,9 +499,9 @@ module.exports.admin = function(socket, db, user, sessions) {
 	});
 
 	socket.on("addNewQuestion", function(question) {
-		let valid = validateQuestion(question);
+		let valid = validateChecker.checkQuestion(question);
 		socket.emit("confirmQuestionRequirements", valid);
-		if (!valid.validation) return;
+		if (!valid.passed) return;
 
 		question = generateSolution(question);
 		
@@ -715,9 +510,9 @@ module.exports.admin = function(socket, db, user, sessions) {
 	});
 
 	socket.on("updateQuestion", function(question) {
-		let valid = validateQuestion(question);
+		let valid = validateChecker.checkQuestion(question);
 		socket.emit("confirmQuestionRequirements", valid);
-		if (!valid.validation) return;
+		if (!valid.passed) return;
 
 		question = generateSolution(question);
 
