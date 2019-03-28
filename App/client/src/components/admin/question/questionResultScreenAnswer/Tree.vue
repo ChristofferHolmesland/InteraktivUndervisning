@@ -2,7 +2,7 @@
     <GraphDrawer    id="TreeAnswer"
                     controlType="Graph0"
                     importType="Tree"
-                    operationMode="Presentation"
+                    operatingMode="Presentation"
                     :steps="answer"
                     :height="400"
                     :width="500"

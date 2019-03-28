@@ -500,6 +500,14 @@ export default class GraphDrawer {
 		return undefined;
 	}
 
+	getNodeByValue(v) {
+		for (let i = 0; i < this.nodes.length; i++) {
+			if (this.nodes[i].v == v) return this.nodes[i];
+		}
+
+		return undefined;
+	}
+
 	/*
 		Updates the GraphDrawer state.
 	*/
