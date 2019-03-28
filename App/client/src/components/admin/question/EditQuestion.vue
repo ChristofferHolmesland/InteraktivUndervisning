@@ -4,7 +4,7 @@
             <b-alert    :show="validationFailure"
                         variant="danger">
                 <p v-for="(error, index) in validationErrors" :key="index">
-                    {{getLocale.error}}
+                    {{getLocale[error]}}
                 </p>
             </b-alert>
             <b-container   class="px-0"
