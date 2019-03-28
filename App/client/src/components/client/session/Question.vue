@@ -39,6 +39,11 @@
                                 @getTextResponse="getTextValue"
                                 :steps="questionInfo.object.steps"
                                 />
+                            <Tree v-if="getQuestionType === 6 || getQuestionType === 7 || getQuestionType === 8"
+                                :requestAnswer="requestAnswer"
+                                @getTextResponse="getTextValue"
+                                />
+                            <!--:type = "questionInfo.object.type"-->
                             <Dijkstra v-if="getQuestionType === 10"
                                 :requestAnswer="requestAnswer"
                                 @getTextResponse="getTextValue"
@@ -70,6 +75,7 @@
     import Shellsort from "./questionTypes/sorting/Shellsort.vue";
     import Mergesort from "./questionTypes/sorting/Mergesort.vue";
     import Quicksort from "./questionTypes/sorting/Quicksort.vue";
+    import Tree from "./questionTypes/trees/Tree.vue";
     import Dijkstra from "./questionTypes/Dijkstra.vue";
     
 	export default {
@@ -159,6 +165,7 @@
             Shellsort,
             Mergesort,
             Quicksort,
+            Tree,
             Dijkstra
         }
 	};

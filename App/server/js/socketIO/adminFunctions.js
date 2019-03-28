@@ -2,10 +2,12 @@ const dbFunctions = require("../database/databaseFunctions").dbFunctions;
 
 const generalFunctions =  require("../generalFunctions.js").functions;
 const algorithms = require("../algorithms/algorithms");
-
+const Tree = require("../algorithms/trees/Tree.js").Tree;
+const BinaryTreeNode = require("../algorithms/trees/Tree").BinaryTreeNode;
 const session = require("../session.js").Session;
 const question = require("../session.js").Question;
 const answer = require("../session.js").Answer;
+const validateChecker = require("../ValidateChecker/validateChecker.js").validateChecker;
 
 let courseListRequestHandler = function(socket, db, user, sessions) {
 	if (user.feide) feideId = user.feide.idNumber;
@@ -28,7 +30,7 @@ var currentSession = undefined;
 
 function generateSolution(question) {
 	let solutionType = question.solutionType;
-	
+	console.log(solutionType);
 	if (solutionType === 1 || solutionType === 2) {
 		return question;
 	}
@@ -65,6 +67,44 @@ function generateSolution(question) {
 		// manipulate it.
 		question.objects.steps = [steppingFunctions.reset()];
 	}
+	else if(solutionType === 6) { //TODO create solution object for binary Tree & Update solutionChecker for normal Binary Trees
+		//store the tree elements
+		let binaryTree = new Tree(new BinaryTreeNode(question.objects.treeElements[0]));
+		binaryTree.nodes = question.objects.treeElements;
+		question.solution = binaryTree
+	}else if(solutionType === 7 || solutionType === 8) {
+		console.log("QUESTION!");
+		console.log(question.objects.solutionTreeType);
+		let elements = question.objects.treeElements;
+		let startCanvasTree = question.objects.startTree;
+		let startTree = [];
+		let arrayOfElements = [];
+		let solutionArray = [];
+
+		if (elements !== "" && elements !== undefined) {
+			arrayOfElements = elements.split(",");
+		}
+		console.log(question);
+		if (startCanvasTree !== undefined && startCanvasTree.roots.length !== 0) startTree = GeneralTreeFunctions.createTreeObjectFromCanvasObjectver1(startCanvasTree);
+		console.log("Array of Elements:");
+		console.log(arrayOfElements);
+		startTree[0].printTree();
+		if (solutionType === 7) {
+			if (question.objects.solutionTreeType === "Add") solutionArray = BinarySearchTreeFunctions.createBinarySearchTreeSolution(arrayOfElements, true, startTree[0]);
+			else solutionArray = BinarySearchTreeFunctions.createBinarySearchTreeSolution(arrayOfElements, false, startTree[0]);
+		} else {
+			if (question.objects.solutionTreeType === "Add") solutionArray = AVLTreeFunctions.createAVLTreeSolution(arrayOfElements, true, startTree[0]);
+			else solutionArray = AVLTreeFunctions.createAVLTreeSolution(arrayOfElements, false, startTree[0]);
+		}
+		console.log("SOLUTION");
+		console.log(solutionArray);
+		for(let s=0;s<solutionArray.length;s++){
+			for(let t=0;t<solutionArray[s].treeInfo.length;t++){
+				solutionArray[s].treeInfo[t].makeTreeReadyForExport();
+			}
+		}
+		question.solution = solutionArray;
+}
 	else if (solutionType == 10) {
 		let algo = algorithms.graphs.dijkstra;
 		let from = undefined;
@@ -148,7 +188,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 
 					if(a.result === 0){
 						answers.push({
-							answerObject: JSON.parse(a.object)
+							answerObject: a.object
 						});
 					}
 				});
@@ -157,10 +197,10 @@ module.exports.admin = function(socket, db, user, sessions) {
 					question: {
 						text: question.text,
 						description: question.description,
-						object: JSON.parse(question.object),
+						object: question.object,
 						type: question.type
 					},
-					solution: JSON.parse(question.solution),
+					solution: question.solution,
 					answerList: answers,
 					correctAnswer: Math.round(correctAnswers / answer.length * 100)
 				});
@@ -188,7 +228,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 			for(let i = 0; i < questions.length; i++){
 				let tempQuestion = questions[i];
 				tempQuestion.resultScreen = false;
-				questionList.push(new question(tempQuestion.id, tempQuestion.text, tempQuestion.description, JSON.parse(tempQuestion.object), JSON.parse(tempQuestion.solution), tempQuestion.type, tempQuestion.time, tempQuestion.sqId));
+				questionList.push(new question(tempQuestion.id, tempQuestion.text, tempQuestion.description, tempQuestion.object, tempQuestion.solution, tempQuestion.type, tempQuestion.time, tempQuestion.sqId));
 			}
 
 			currentSession = {session: new session(sessionInformation.id, sessionInformation.name,
@@ -338,7 +378,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 			"type": firstQuestion.type,
 			"time": firstQuestion.time,
 			"participants": currentSession.session.currentUsers
-		}
+		};
 
 		io.to(sessionCode).emit("nextQuestion", safeFirstQuestion);
 	});
@@ -449,18 +489,20 @@ module.exports.admin = function(socket, db, user, sessions) {
 					text: q.text,
 					description: q.description,
 					solutionType: q.type,
-					solution: JSON.parse(q.solution),
+					solution: q.solution,
 					time: q.time,
-					objects: JSON.parse(q.object)
+					objects: q.object
 				});
-				// TODO: Remove this?
-				//if (i === questions.length - 1) console.log(result[result.length - 1]);
 			}
 			socket.emit("sendAllQuestionsWithinCourse", result);
 		});
 	});
 
 	socket.on("addNewQuestion", function(question) {
+		let valid = validateChecker.checkQuestion(question);
+		socket.emit("confirmQuestionRequirements", valid);
+		if (!valid.passed) return;
+
 		question = generateSolution(question);
 		
 		dbFunctions.insert.question(db, question.text, question.description, question.solution, question.time,
@@ -468,6 +510,10 @@ module.exports.admin = function(socket, db, user, sessions) {
 	});
 
 	socket.on("updateQuestion", function(question) {
+		let valid = validateChecker.checkQuestion(question);
+		socket.emit("confirmQuestionRequirements", valid);
+		if (!valid.passed) return;
+
 		question = generateSolution(question);
 
 		dbFunctions.update.question(db, question.id, question.text, question.description, question.objects, question.solution, question.solutionType, question.time);

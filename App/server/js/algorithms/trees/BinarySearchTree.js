@@ -46,7 +46,7 @@ module.exports.checkBinarySearchTreeCriteria = function (tree) {
 //Creates a tree object based on added elements to the tree.
 //The function will either create a new tree instance or add the elements to a given tree.
 //Is going to be used to create a Binary Search tree object for the teacher's solution.
-module.exports.createBinarySearchTreeSolution = function(elements,add,existingTreeObject) {
+module.exports.createBinarySearchTree = function(elements,add,existingTreeObject) {
 	let tree;
 	let rootNode;
 	let treelist = [];
@@ -54,15 +54,15 @@ module.exports.createBinarySearchTreeSolution = function(elements,add,existingTr
 		console.log("Adding\n");
 		let a = 0;
 		if (existingTreeObject !== undefined) {	//there is an existing tree
-			tree = existingTreeObject;
+			tree = existingTreeObject.createDuplicateTree();
 			rootNode = tree.root;
 		} else {	//existing tree is not given
-			rootNode = new BinaryTreeNode(elements[0]);
+			rootNode = new BinaryTreeNode(parseInt(elements[0]));
 			tree = new Tree(rootNode);
 			a++;
 		}
 		for (a; a < elements.length; a++) {
-			let node = new BinaryTreeNode(elements[a]);
+			let node = new BinaryTreeNode(parseInt(elements[a]));
 			let bestParent = GeneralTreeFunctions.findBestParent(node, rootNode);
 			node.addParent(bestParent);
 			tree.nodes.push(node);
@@ -71,13 +71,13 @@ module.exports.createBinarySearchTreeSolution = function(elements,add,existingTr
 	}else if(!add){
 		console.log("Removing\n");
 		if (existingTreeObject !== undefined) {
-			tree = existingTreeObject;
+			tree = existingTreeObject.createDuplicateTree();
 			treelist.push(tree);
 			for (let b=0;b<elements.length;b++) {
 				for (let t = 0; t < treelist.length; t++) {
 					let currentTree = treelist[t];
 					let newTreeList = [];
-					let treeIndex = currentTree.findNodeInNodesUsingValue(elements[b]);
+					let treeIndex = currentTree.findNodeInNodesUsingValue(parseInt(elements[b]));
 					if (treeIndex !== -1) {
 						let removedNode = currentTree.nodes[treeIndex];
 						newTreeList = removeNodeFromBSTTree(removedNode,currentTree,treeIndex);
@@ -96,6 +96,85 @@ module.exports.createBinarySearchTreeSolution = function(elements,add,existingTr
 		}
 	}
 	return treelist
+};
+
+
+module.exports.createBinarySearchTreeSolution = function(elements, add, existingTreeObject) {
+	let tree;
+	let rootNode;
+	let steps = [];
+	let treelist = [];
+	if (add) {
+		console.log("Adding\n");
+		let a = 0;
+		if (existingTreeObject !== undefined) {	//there is an existing tree
+			tree = existingTreeObject.createDuplicateTree();
+			rootNode = tree.root;
+			let stepInital = GeneralTreeFunctions.createStepArray("Initial","BST",[tree]);
+			steps.push(stepInital);
+		} else {	//existing tree is not given
+			rootNode = new BinaryTreeNode(parseInt(elements[0]));
+			tree = new Tree(rootNode);
+			let stepInital = GeneralTreeFunctions.createStepArray("Initial","BST",[tree]);
+			steps.push(stepInital);
+			a++;
+		}
+		for (a; a < elements.length; a++) {
+			let node = new BinaryTreeNode(parseInt(elements[a]));
+			let bestParent = GeneralTreeFunctions.findBestParent(node, rootNode);
+			node.addParent(bestParent);
+			tree.nodes.push(node);
+			if (a === elements.length-1) {
+				let step = GeneralTreeFunctions.createStepArray("Done","BST",[tree]);
+				steps.push(step);
+			}
+			else {
+				let step = GeneralTreeFunctions.createStepArray("Add","BST",[tree]);
+				steps.push(step);
+			}
+		}
+		treelist.push(tree);
+	}else if(!add){
+		console.log("Removing\n");
+		if (existingTreeObject !== undefined) {
+			tree = existingTreeObject.createDuplicateTree()
+			;
+			treelist.push(tree);
+			let stepInital = GeneralTreeFunctions.createStepArray("Initial","BST",[tree]);
+			steps.push(stepInital);
+			for (let b=0;b<elements.length;b++) {
+				for (let t = 0; t < treelist.length; t++) {
+					let currentTree = treelist[t];
+					let newTreeList = [];
+					let treeIndex = currentTree.findNodeInNodesUsingValue(parseInt(elements[b]));
+					if (treeIndex !== -1) {
+						let removedNode = currentTree.nodes[treeIndex];
+						newTreeList = removeNodeFromBSTTree(removedNode,currentTree,treeIndex);
+						if (newTreeList.length > 1) {
+							treelist.splice(t,1,newTreeList[0],newTreeList[1]);
+							t++;
+						}else {
+							treelist.splice(t,1,newTreeList[0]);
+						}
+					}
+				}
+				if (b === elements.length-1) {
+					//console.log(treelist);
+					if (treelist.length > 1)	treelist = GeneralTreeFunctions.removeDuplicateTreeResult(treelist);
+					let step = GeneralTreeFunctions.createStepArray("Done","BST",treelist);
+					steps.push(step);
+				}
+				else {
+					//console.log(treelist);
+					let step = GeneralTreeFunctions.createStepArray("Remove","BST",treelist);
+					steps.push(step);
+				}
+			}
+		}else {
+			console.log("Non-existent tree cannot have removed entries.")
+		}
+	}
+	return steps
 };
 
 //removes an existing node in a given tree.
