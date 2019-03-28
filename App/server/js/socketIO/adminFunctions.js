@@ -8,6 +8,9 @@ const session = require("../session.js").Session;
 const question = require("../session.js").Question;
 const answer = require("../session.js").Answer;
 const validateChecker = require("../ValidateChecker/validateChecker.js").validateChecker;
+const GeneralTreeFunctions = require("../algorithms/trees/GeneralTreeFunctions");
+const AVLTreeFunctions = require("../algorithms/trees/AVLTree");
+const BinarySearchTreeFunctions = require("../algorithms/trees/BinarySearchTree");
 
 let courseListRequestHandler = function(socket, db, user, sessions) {
 	if (user.feide) feideId = user.feide.idNumber;

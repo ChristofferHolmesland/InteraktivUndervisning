@@ -83,11 +83,12 @@ const validateChecker = {
                 case 6: //Binary Tree
                     solutionInfo.treeElements = questionInformation.objects.treeElements;
                     break;
-                case 7 || 8: //Binary Search Tree and AVL tree
+                case 7:
+                case 8: //Binary Search Tree and AVL tree
                     solutionInfo.treeAction = questionInformation.objects.solutionTreeType;
                     solutionInfo.questionType = questionType;
                     solutionInfo.treeElements =  questionInformation.objects.treeElements;
-                    solutionInfo.givenStartTree = questionInfo.objects.startTree;
+                    solutionInfo.givenStartTree = questionInformation.objects.startTree;
                     break;
                 case 9:	//Graph
                     break;
@@ -100,7 +101,7 @@ const validateChecker = {
                 case 13: //Python
                     break;
             }
-
+            console.log(solutionInfo);
             let solutionTypeResult = checkers[questionType].check(solutionInfo);
             if(!solutionTypeResult.passed) {
                 result.passed = false;

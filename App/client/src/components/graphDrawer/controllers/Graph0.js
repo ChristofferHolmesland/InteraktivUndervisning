@@ -82,12 +82,16 @@ export default class Graph0 {
 
 		// Decides which of the trees is being displayed
 		this.treeIndex = 0;
+		// This contains the buttons to navigate between trees
+		this.steppingButtons = [];
 
 		this.config = config;
 	}
 
 	mouseDownHandler(e) {
-		if (this.gd.operatingMode == "Presentation") return false;
+		if (this.gd.operatingMode == "Presentation")
+			return this.detectTreeSteppingInput(e);
+		
 
 		// UI
 		let consumed = this.detectUIInput(e);
@@ -297,7 +301,68 @@ export default class Graph0 {
 		return true;
 	}
 
-	  /*
+	/*
+		Checks if the event (click) happened inside one of the tree stepping buttons.
+	*/
+	detectTreeSteppingInput(e) {
+		for (let i = 0; i < this.steppingButtons.length; i++) {
+			let btn = this.steppingButtons[i];
+
+			let inside = this.gd.isPointInRectangle(
+				e.offsetX,
+				e.offsetY,
+				btn.position.x,
+				btn.position.y,
+				btn.position.width,
+				btn.position.height
+			);
+
+			if (inside) {
+				btn.handler();
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/*
+		Draws the tree stepping buttons
+	*/
+	drawTreeSteppingButtons() {
+		// Draw tree stepping buttons if they exist
+		if (this.steppingButtons.length > 0) {
+			for (let i = 0; i < this.steppingButtons.length; i++) {
+				this.gd.staticContext.beginPath();
+				let btn = this.steppingButtons[i];
+				this.gd.staticContext.fillStyle = "white";
+
+				this.gd.staticContext.rect(
+					btn.position.x,
+					btn.position.y,
+					btn.position.width,
+					btn.position.height
+				);
+				this.gd.staticContext.fill();
+				this.gd.staticContext.stroke();
+
+				// Text
+				this.gd.staticContext.fillStyle = "black";
+				let textWidth = this.gd.staticContext.measureText(btn.data.text).width;
+				let xPadding = (btn.position.width - textWidth) / 2;
+				let yPadding = (btn.position.height + this.gd.fontHeight) / 2;
+				this.gd.staticContext.fillText(
+					btn.data.text,
+					btn.position.x + xPadding,
+					btn.position.y + yPadding
+				);
+				this.gd.staticContext.fillStyle = "white";
+				this.gd.staticContext.closePath();
+			}
+		}
+	}
+
+	/*
 		Draws the UI to the staticBuffer.
 	*/
 	drawStatic() {
@@ -337,9 +402,79 @@ export default class Graph0 {
 		this.gd.staticContext.closePath();
 	}
 
+	addTreeSteppingButtons(treeCount) {
+		this.steppingButtons = [];
+		let numOfSteps = treeCount;
+
+		let stepBack = () => {
+			if (this.treeIndex > 0) {
+				this.treeIndex -= 1;
+				this.parseSteps();
+				this.gd.drawStatic();
+			}
+		};
+
+		let stepForward = () => {
+			if (this.treeIndex < numOfSteps - 1) {
+				this.treeIndex += 1;
+				this.parseSteps();
+				this.gd.drawStatic();
+			}
+		};
+
+		this.steppingButtons.push({
+			data: {
+				text: "<-- Tree",
+				relSize: this.gd.relSize
+			},
+			handler: stepBack
+		});
+		this.steppingButtons.push({
+			data: {
+				text: (this.treeIndex + 1) + " / " + numOfSteps,
+				relSize: this.gd.relSize
+			},
+			handler: () => {}
+		});
+		this.steppingButtons.push({
+			data: {
+				text: "Tree -->",
+				relSize: this.gd.relSize
+			},
+			handler: stepForward
+		});
+
+		let numBtns = this.steppingButtons.length;
+		// Every button get an equal amount of screen size
+		let maxButtonWidth = this.gd.staticBuffer.width / numBtns;
+		let maxButtonHeight = this.gd.staticBuffer.height / 10;
+		for (let i = 0; i < numBtns; i++) {
+			let btn = this.steppingButtons[i];
+			//  Sets the button size to the allocated size * relative button size
+			let btnWidth = maxButtonWidth * btn.data.relSize;
+			let btnHeight = maxButtonHeight * btn.data.relSize;
+			// Centers the button inside the allocated space
+			let xPadding = (maxButtonWidth - btnWidth) / 2;
+			let yPadding = (maxButtonHeight - btnHeight) / 2;
+
+			btn.position = {
+				x: i * maxButtonWidth + xPadding,
+				y: this.gd.staticBuffer.height - 2 * maxButtonHeight + yPadding,
+				width: btnWidth,
+				height: btnHeight
+			};
+		}
+
+		this.dirty = true;
+	}
+
 	parseSteps() {
 		if (this.importType == "Graph") this._parseGraphSteps();
 		else this._parseTreeSteps();
+	}
+
+	afterDrawStatic() {
+		this.drawTreeSteppingButtons();
 	}
 
 	_parseTreeSteps() {
@@ -348,7 +483,7 @@ export default class Graph0 {
 		this.gd.dirty = true;
 
 		let getTree = (step) => {
-			if (this.treeIndex > step.treeInfo.length)
+			if (this.treeIndex >= step.treeInfo.length)
 				return step.treeInfo[step.treeInfo.length - 1];
 			else return step.treeInfo[this.treeIndex];
 		};
@@ -397,6 +532,12 @@ export default class Graph0 {
 		let parseStep = (step) => {
 			let tree = getTree(step);
 			fixTree(tree);
+
+			// If there are more than one tree, there should be
+			// buttons to navigate between them.
+			if (step.treeInfo.length > 1)
+				this.addTreeSteppingButtons(step.treeInfo.length);
+			else this.steppingButtons = [];
 
 			let p = this.gd.camera.project(this.gd.canvas.width / 2, 0);
 			// Add some padding between canvas top and the top of the tree
