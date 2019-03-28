@@ -663,15 +663,12 @@ export default class Graph0 {
 			// Every node is responsible for adding itself and its children.
 			let addStudentNode = (node) => {
 				if (node == undefined || node == null) return;
-				console.log("Adding node: " + node.v);
 
 				// Create and get the node
 				let id = node.id;
-				console.log("I think my id is " + id);
 				let n = this.gd.getNode(id);
 				if (n == undefined) n = this.gd.addNode(node);
 				node.id = n;
-				console.log("My actual id is: " + n.id);
 
 				// Create and get all the children.
 				// Edges are also created.
@@ -694,7 +691,6 @@ export default class Graph0 {
 
 			for (let i = 0; i < step.roots.length; i++) {
 				let root = step.roots[i];
-				console.log("Adding root " + root.v);
 				addStudentNode(root);
 			}
 
