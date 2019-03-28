@@ -57,7 +57,6 @@ const insert = {
 		if(typeof(questionObject) === "object")	questionObject = JSON.stringify(questionObject);
 		let statement = `INSERT INTO Question(text,description,object,solution,time,questionType,courseCode)
 						VALUES('${questionText}','${questionDescription}','${questionObject}','${JSON.stringify(questionSolution)}',${time},${Type},'${courseCode}')`;
-		console.log(statement);
 		return createPromise(db, statement, "questionWithObject");
 	},
 	storeAnswer: function (db, answer, result, sqId, userId) {

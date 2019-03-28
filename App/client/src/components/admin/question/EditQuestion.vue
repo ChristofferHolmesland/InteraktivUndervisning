@@ -388,6 +388,12 @@
                         }
                         this.showMediaWarning = false;
                     }
+                    files[i] = {
+                        "originalName": files[i].name,
+                        "size": files[i].size,
+                        "b64": new Buffer(files[i]).toString("base64")
+                    };
+                    console.log(files);
                 }
             },
             changeShowMedia() {
@@ -466,17 +472,14 @@
                 this.newQuestion.objects.multipleChoices.push("");
             },
             deleteMultiChoice(index) {
-                console.log(this.newQuestion.solution);
                 let solutionIndex = this.newQuestion.solution.indexOf(index.toString());
                 if (solutionIndex > -1) this.newQuestion.solution.splice(solutionIndex, 1);
                 for (let i = index + 1; i < this.newQuestion.objects.multipleChoices.length; i++) {
                     let j = this.newQuestion.solution.indexOf(i.toString())
-                    console.log(j);
                     if (j > -1) {
                         this.newQuestion.solution[j] = (Number(this.newQuestion.solution[j]) - 1).toString();
                     }
                 }
-                console.log(this.newQuestion.solution);
 
                 this.newQuestion.objects.multipleChoices.splice(index, 1);
             }

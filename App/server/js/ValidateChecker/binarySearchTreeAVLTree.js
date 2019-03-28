@@ -121,7 +121,6 @@ const check = function (solutionInfo) {
             if(questionType === 7 && result.passed) {
                 let treeObject = BinarySearchTreeFunctions.createBinarySearchTree(treeArray,false,startTree[0]);
                 for(let i=0;i<treeObject.length;i++) {
-                    console.log("treeObject i:" + i);
                     treeObject[i].printTree();
                     if(!BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(treeObject[i])) {
                         result.passed = false;
@@ -133,7 +132,6 @@ const check = function (solutionInfo) {
             if(questionType === 8 && result.passed) {
                 let treeObject = AVLTreeFunctions.createAVLTree(treeArray,false,startTree[0]);
                 for(let i=0;i<treeObject.length;i++) {
-                    console.log("treeObject i:" + i);
                     treeObject[i].printTree();
                     if(!BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(treeObject[i]) || !AVLTreeFunctions.checkBalance(treeObject[i].root)) {
                         result.passed = false;

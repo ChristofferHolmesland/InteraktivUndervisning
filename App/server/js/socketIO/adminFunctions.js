@@ -1,4 +1,6 @@
 const dbFunctions = require("../database/databaseFunctions").dbFunctions;
+const fs = require("fs");
+const mkdirp = require('mkdirp');
 
 const generalFunctions =  require("../generalFunctions.js").functions;
 const algorithms = require("../algorithms/algorithms");
@@ -33,7 +35,6 @@ var currentSession = undefined;
 
 function generateSolution(question) {
 	let solutionType = question.solutionType;
-	console.log(solutionType);
 	if (solutionType === 1 || solutionType === 2) {
 		return question;
 	}
@@ -76,8 +77,6 @@ function generateSolution(question) {
 		binaryTree.nodes = question.objects.treeElements;
 		question.solution = binaryTree
 	}else if(solutionType === 7 || solutionType === 8) {
-		console.log("QUESTION!");
-		console.log(question.objects.solutionTreeType);
 		let elements = question.objects.treeElements;
 		let startCanvasTree = question.objects.startTree;
 		let startTree = [];
@@ -87,10 +86,7 @@ function generateSolution(question) {
 		if (elements !== "" && elements !== undefined) {
 			arrayOfElements = elements.split(",");
 		}
-		console.log(question);
 		if (startCanvasTree !== undefined && startCanvasTree.roots.length !== 0) startTree = GeneralTreeFunctions.createTreeObjectFromCanvasObjectver1(startCanvasTree);
-		console.log("Array of Elements:");
-		console.log(arrayOfElements);
 		startTree[0].printTree();
 		if (solutionType === 7) {
 			if (question.objects.solutionTreeType === "Add") solutionArray = BinarySearchTreeFunctions.createBinarySearchTreeSolution(arrayOfElements, true, startTree[0]);
@@ -99,8 +95,6 @@ function generateSolution(question) {
 			if (question.objects.solutionTreeType === "Add") solutionArray = AVLTreeFunctions.createAVLTreeSolution(arrayOfElements, true, startTree[0]);
 			else solutionArray = AVLTreeFunctions.createAVLTreeSolution(arrayOfElements, false, startTree[0]);
 		}
-		console.log("SOLUTION");
-		console.log(solutionArray);
 		for(let s=0;s<solutionArray.length;s++){
 			for(let t=0;t<solutionArray[s].treeInfo.length;t++){
 				solutionArray[s].treeInfo[t].makeTreeReadyForExport();
@@ -502,15 +496,38 @@ module.exports.admin = function(socket, db, user, sessions) {
 		});
 	});
 
-	socket.on("addNewQuestion", function(question) {
+	socket.on("addNewQuestion", async function(question) {
 		let valid = validateChecker.checkQuestion(question);
 		socket.emit("confirmQuestionRequirements", valid);
 		if (!valid.passed) return;
 
 		question = generateSolution(question);
+
+		let objects = JSON.parse(JSON.stringify(question.objects));
+		delete objects.files;
 		
-		dbFunctions.insert.question(db, question.text, question.description, question.solution, question.time,
-			question.solutionType, question.courseCode, question.objects);
+		let questionIndex = await dbFunctions.insert.question(db, question.text, question.description, question.solution, question.time, question.solutionType, question.courseCode, objects);
+
+		let files = [];
+		for (let file in question.objects.files) {
+			files.push(file.toString('base64'));
+		}
+		let filePath = "./public/img/questionImages/" + questionIndex.toString() + "/";
+		let filePaths = [];
+		for (let i = 0; i < files.length; i++) {
+			filePaths.push(filePath + (i + 1).toString()+".png");
+			question.objects.files = filePaths[i];
+
+			mkdirp(filePath, (err) => {
+				if (err) console.error("Error making dirs!\n\n" + err);
+			
+				fs.writeFile(filePaths[i], files[i], (err) => {
+					if (err) console.error("Image was not saved!\n\n" + err);
+				});
+			});
+		}
+
+		await dbFunctions.update.question(db, questionIndex, question.text, question.description, question.objects, question.solution, question.solutionType, question.time);
 	});
 
 	socket.on("updateQuestion", function(question) {
