@@ -553,7 +553,8 @@
                     this.doneHandler();
                 }else {
             	    this.validationFailure = true;
-            	    this.validationErrors = result.errors;
+                    this.validationErrors = result.errors;
+                    console.log(this.validationErrors);
                 }
 
             }

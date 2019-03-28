@@ -98,7 +98,7 @@ export default class GraphDrawer {
 		this.steppingButtons = [];
 		// Decides how much of the assigned button space should be used
 		// by a button.
-		this.relSize = 0.6;
+		this.relSize = 0.7;
 
 		this._config(config);
 
@@ -283,6 +283,9 @@ export default class GraphDrawer {
 			this.staticContext.fillStyle = "white";
 			this.staticContext.closePath();
 		}
+
+		if (this.controllers[this.controlType].afterDrawStatic)
+			this.controllers[this.controlType].afterDrawStatic();
 	}
 
 	/*
