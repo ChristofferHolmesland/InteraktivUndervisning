@@ -24,7 +24,6 @@
         "mediaErrorFileSize": "The combined file size has exceeded the limit of 1.5MB!",
         "mediaWarningFileSize": "The combined file size is about to about to exceed the limit of 1.5MB! Please consider uploading less files or smaller files.",
         "mediaErrorFileType": " file(s) type uploaded was found not to be supported! Please only upload images.",
-
         "binaryTreeNoElementsError": "You need to input the elements that are going to be in the tree",
         "binaryTreeWrongFormatError": "Wrong format for the element list!\n Only number values and the elements should be separated by a ,",
         "BSTAVLAddMissingFieldsError": "Missing required fields for an add tree question!",
@@ -39,7 +38,8 @@
         "BSTAVLInvalidBinaryTreeError": "The given tree is not a valid Binary Tree!",
         "BSTAVLInvalidBinarySearchTreeError": "The given tree is not a valid Binary Search Tree!",
         "treeElementTypeError": "The element list should only contain numbered-valued elements!",
-        "BSTAVLInvalidTreeActionError": "Neither add tree question or remove tree question was chosen!"
+        "BSTAVLInvalidTreeActionError": "Neither add tree question or remove tree question was chosen!",
+        "questionTypeError": "No question type was selected!"
     },
     "AdminSessions": {
         "newSession": "New session",
