@@ -20,9 +20,6 @@ module.exports.client = function(socket, db, user, sessions) {
                                 let answerList = session.questionList[session.currentQuestion].answerList;
                                 let answered = false;
                                 let answer = {}
-                                for (let j = 0; j < answerList.length; j++) {
-                                    console.log(answerList[j]);
-                                }
 
                                 if (answered) {
                                     
@@ -31,7 +28,6 @@ module.exports.client = function(socket, db, user, sessions) {
                                 else {
                                     let question = session.questionList[session.currentQuestion];
 
-                                    console.log(question);
 
                                     if (question.resultScreen) {
                                         socket.emit("answerResponse", "waitingForAdmin")

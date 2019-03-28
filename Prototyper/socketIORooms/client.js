@@ -32,7 +32,6 @@ socket.on("deletingRoom", function(roomId){
 });
 
 socket.on("roomInfoResponse", function(room){
-    console.log("button pressed");
     container = "";
     headline = `<div id="headline"><h1>${room.roomName}</h1></div>`;
     container += headline;
@@ -46,9 +45,6 @@ socket.on("roomInfoResponse", function(room){
 });
 
 socket.on("newMessage", function(messageInfo){
-    console.log("Got new message:");
-    console.log(messageInfo);
-    console.log(messageInfo.roomId);
     if(messageInfo.roomId == currentRoom){
         messages = $("#messages").html();
         messages += `<p>${messageInfo.user}: ${messageInfo.message}</p>`;
