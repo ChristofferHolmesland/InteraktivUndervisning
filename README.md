@@ -60,10 +60,17 @@ The server is built using NodeJS, ExpressJS and SocketIO.
 ## Configuration
 
 ## Tests
-Tests are written in [Mocha](https://mochajs.org/), and can be ran using:
+Tests for algorithms and solutionChecker are written in [Mocha](https://mochajs.org/), and can be ran using:
 - ```cd InteraktivUndervisning/App/server```
 - ```npm run test```
 
+E2E tests uses [Cypress](https://www.cypress.io/), and run by using the following command:
+- ```cd InteraktivUndervising/App/server```
+- ```npm run cypress:open```
+
+The command will start the express server and should open the cypress editor, using the editor you can run the different available E2E tests residing in: InteraktivUndervising/App/server/tests/cypress/specs folder.
+
+NOTE running the cypress tests requires a Google Chrome browser. 
 
 ## Style guide
 This project uses [Prettier/ESLint](https://prettier.io/docs/en/eslint.html).
