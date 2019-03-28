@@ -10,6 +10,9 @@ export default class Graph0 {
 		if (config == undefined) this.exportType = "Graph";
 		else this.exportType = config.exportType;
 
+		console.log("Steps");
+		console.log(config.steps);
+
 		// If there are some starting steps, they are parsed
 		// and put into the world.
 		if (config.steps) {
@@ -621,12 +624,13 @@ export default class Graph0 {
 			// Find the node furthest to the right on the left side of the tree
 			let left = tree.root.children[0];
 			let rightest = search(left, 0, 0, 1);
-			addGraphDrawerNode(rightest.node, 1, rightest.depth, 0);
+			if (rightest)
+				addGraphDrawerNode(rightest.node, 1, rightest.depth, 0);
 
 			// Find the node furthest to the left on the right side of the tree
 			let right = tree.root.children[1];
 			let leftest = search(right, 0, 1, 1);
-			addGraphDrawerNode(leftest.node, 1, leftest.depth, 1);
+			if (leftest) addGraphDrawerNode(leftest.node, 1, leftest.depth, 1);
 
 			// Add root node
 			let root = tree.root;

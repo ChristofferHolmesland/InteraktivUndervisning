@@ -1,5 +1,6 @@
 const Answer = require("../session.js").Answer;
 const dbFunctions = require("../database/databaseFunctions.js").dbFunctions;
+const solutionChecker = require("../SolutionChecker/solutionChecker.js").solutionChecker;
 
 module.exports.client = function(socket, db, user, sessions) {
 
@@ -198,11 +199,18 @@ module.exports.client = function(socket, db, user, sessions) {
         let question = session.questionList[session.currentQuestion];
         let result = -1; // Default value is -1 for the users that answers that they don't know. Changed later if they did answer
 
+        console.log("QuestionAnsweredClient");
+        console.log(question);
+
         if(answerObject === null){
             answerObject = "You didn't answer";
             socket.emit("answerResponse", "betweenQuestionsNotAnswered");
         } else {
-            checkedResult = require("../SolutionChecker/solutionChecker.js").solutionChecker.checkAnswer(answerObject, question.solution, question.type);
+            checkedResult = solutionChecker.checkAnswer(
+                JSON.parse(JSON.stringify(answerObject)),
+                JSON.parse(JSON.stringify(question.solution)),
+                question.type
+            );
 
             if (checkedResult){
                 result = 1;
