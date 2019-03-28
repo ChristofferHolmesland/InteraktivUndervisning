@@ -107,6 +107,7 @@ function generateSolution(question) {
 			}
 		}
 		question.solution = solutionArray;
+		question.objects.steps = [solutionArray[0]];
 }
 	else if (solutionType == 10) {
 		let algo = algorithms.graphs.dijkstra;
@@ -231,6 +232,8 @@ module.exports.admin = function(socket, db, user, sessions) {
 			for(let i = 0; i < questions.length; i++){
 				let tempQuestion = questions[i];
 				tempQuestion.resultScreen = false;
+				console.log("Hei på meg");
+				console.log(tempQuestion.solution);
 				questionList.push(new question(tempQuestion.id, tempQuestion.text, tempQuestion.description, tempQuestion.object, tempQuestion.solution, tempQuestion.type, tempQuestion.time, tempQuestion.sqId));
 			}
 
@@ -392,8 +395,6 @@ module.exports.admin = function(socket, db, user, sessions) {
 		question.resultScreen = true;
 		let answerList = [];
 		if (question.answerList) answerList = question.answerList;
-		console.log("test");
-		console.log(question);
 
 		let filteredAnswerList = [];
 		let correctAnswer = 0;

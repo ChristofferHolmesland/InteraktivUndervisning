@@ -42,12 +42,13 @@
                             <Tree v-if="getQuestionType === 6 || getQuestionType === 7 || getQuestionType === 8"
                                 :requestAnswer="requestAnswer"
                                 @getTextResponse="getTextValue"
+                                :steps="questionInfo.object.steps"
                                 />
                             <!--:type = "questionInfo.object.type"-->
                             <Dijkstra v-if="getQuestionType === 10"
                                 :requestAnswer="requestAnswer"
                                 @getTextResponse="getTextValue"
-                                :steps="questionInfo.object.steps"
+                                :steps="questionInfo.solution"
                                 />
                         </b-tab>
                         <b-tab :title="updateTimer" v-if="interval !== undefined" disabled></b-tab>
@@ -59,7 +60,7 @@
                     <b-btn variant="danger" @click="exitSession">{{ getLocale.exitSessionBtnText }}</b-btn>
                 </b-col>
                 <b-col cols="12" lg="4" class="mt-3">
-                    <b-btn variant="warning"@click="questionNotAnswered">{{ getLocale.answerDontKnowBtnText }}</b-btn>
+                    <b-btn variant="warning" @click="questionNotAnswered">{{ getLocale.answerDontKnowBtnText }}</b-btn>
                 </b-col>
                 <b-col cols="12" lg="4" class="mt-3">
                     <b-btn variant="success" @click="questionAnswered">{{ getLocale.answerBtnText }}</b-btn>

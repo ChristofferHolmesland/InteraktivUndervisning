@@ -63,7 +63,7 @@ export default {
 		if (confirm(this.getLocale("ClientSessionQuestion").leaveSessionBody)) {
 			this.$socket.emit("adminLeaveSession", this.sessionId);
 		} else {
-			this.$router.push("/client/session/" + this.sessionId);
+			this.$router.push("/admin/session/" + this.sessionId);
 		}
 	}
 };
