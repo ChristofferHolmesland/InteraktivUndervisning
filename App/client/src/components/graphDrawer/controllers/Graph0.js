@@ -10,16 +10,26 @@ export default class Graph0 {
 		if (config == undefined) this.exportType = "Graph";
 		else this.exportType = config.exportType;
 
-		console.log("Steps");
-		console.log(config.steps);
-
 		// If there are some starting steps, they are parsed
 		// and put into the world.
 		if (config.steps) {
 			if (config.importType) this.importType = config.importType;
 			else console.error("Got configuration steps, but importType is undefined");
 
+			// If a tree is imported, it can either come from an algorithm,
+			// which is an array of steps. Or it can come from an student which
+			// means that it comes from this.exportAsTree()
+			if (this.importType == "Tree") {
+				if (
+					config.steps.length == 1 &&
+					config.steps[0].hasOwnProperty("roots")
+				) {
+					this.importSource = "Student";
+				} else this.importSource = "Algorithm";
+			}
+
 			this.steps = config.steps;
+
 			if (this.gd.operatingMode == "Presentation") {
 				this.gd.currentStep = config.steps.length - 1;
 				this.gd.addSteppingButtons();
@@ -41,16 +51,6 @@ export default class Graph0 {
 				this.stateHandlers.Mark = this.markNode.bind(this);
 				this.drawStatic();
 			}
-		}
-
-		if (config.steps) {
-			this.steps = config.steps;
-			if (this.gd.operatingMode == "Presentation") {
-				this.gd.addSteppingButtons();
-				this.gd.drawStatic();
-				this.gd.currentStep = config.steps.length - 1;
-			}
-			this.parseSteps();
 		}
 	}
 
@@ -599,7 +599,7 @@ export default class Graph0 {
 				if (dir == 0) tx -= x * xPadding;
 				else if (dir == 1) tx += x * xPadding;
 
-				this.gd.nodes.push({
+				this.gd.addNode({
 					x: tx,
 					y: p.y + y * yPadding,
 					w: r,
@@ -634,7 +634,7 @@ export default class Graph0 {
 
 			// Add root node
 			let root = tree.root;
-			this.gd.nodes.push({
+			this.gd.addNode({
 				x: p.x,
 				y: p.y,
 				w: r,
@@ -659,8 +659,51 @@ export default class Graph0 {
 			createEdges(root);
 		};
 
+		let parseStudentStep = (step) => {
+			// Every node is responsible for adding itself and its children.
+			let addStudentNode = (node) => {
+				if (node == undefined || node == null) return;
+				console.log("Adding node: " + node.v);
+
+				// Create and get the node
+				let id = node.id;
+				console.log("I think my id is " + id);
+				let n = this.gd.getNode(id);
+				if (n == undefined) n = this.gd.addNode(node);
+				node.id = n;
+				console.log("My actual id is: " + n.id);
+
+				// Create and get all the children.
+				// Edges are also created.
+				for (let i = 0; i < node.children.length; i++) {
+					let c = node.children[i];
+					if (c == undefined || c == null) continue;
+
+					let cNode = this.gd.getNode(c.id);
+					if (cNode == undefined) cNode = this.gd.addNode(c);
+					c.id = cNode.id;
+
+					this.gd.edges.push({
+						n1: n,
+						n2: cNode
+					});
+
+					addStudentNode(c);
+				}
+			};
+
+			for (let i = 0; i < step.roots.length; i++) {
+				let root = step.roots[i];
+				console.log("Adding root " + root.v);
+				addStudentNode(root);
+			}
+
+			this.gd.centerCameraOnGraph();
+		};
+
 		let step = this.steps[this.gd.currentStep];
-		parseStep(step);
+		if (this.importSource == "Algorithm") parseStep(step);
+		else if (this.importSource == "Student") parseStudentStep(step);
 	}
 
 	_parseGraphSteps() {

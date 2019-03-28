@@ -2,8 +2,8 @@
     <GraphDrawer    id="TreeAnswer"
                     controlType="Graph0"
                     importType="Tree"
-                    operatingMode="Presentation"
-                    :steps="answer"
+                    operatingMode="Interactive"
+                    :steps="getAnswer"
                     :height="400"
                     :width="500"
     />
@@ -14,11 +14,16 @@
 	export default {
 		name: "TreeAnswer",
         props: {
-			answer: Array  //or Object
+			answer: Object
 		},
 		components: {
 			GraphDrawer
-		}
+        },
+        computed: {
+            getAnswer() {
+                return [this.answer];
+            }
+        }
 	}
 </script>
 

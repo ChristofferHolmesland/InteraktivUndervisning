@@ -468,6 +468,14 @@ export default class GraphDrawer {
 		let nextId = this.nextId;
 		this.nextId++;
 
+		// If a node comes with a defined id, it needs to be checked
+		// to see if a node with that id already exists. If a node exists
+		// this nodes id should be set to nextId, instead of the defined id.
+		if (props.id !== undefined) {
+			let n = this.getNode(props.id);
+			if (n !== undefined) props.id = nextId;
+		}
+
 		let node = {
 			id: nextId,
 			x: 0,
