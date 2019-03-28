@@ -87,6 +87,8 @@ export default class Graph0 {
 	}
 
 	mouseDownHandler(e) {
+		if (this.gd.operatingMode == "Presentation") return false;
+
 		// UI
 		let consumed = this.detectUIInput(e);
 		if (consumed) return consumed;
@@ -349,17 +351,56 @@ export default class Graph0 {
 			if (this.treeIndex > step.treeInfo.length)
 				return step.treeInfo[step.treeInfo.length - 1];
 			else return step.treeInfo[this.treeIndex];
-		}
+		};
+
+		let fixTree = (tree) => {
+			let root = {};
+			root.value = tree.root.value;
+			root.children = [];
+			root.parent = undefined;
+
+			let nodeParser = function(node, parent) {
+				if (node === undefined || node === null) return undefined;
+				node.parent = parent;
+				node.visited = false;
+				nodeParser(node.children[0], node);
+				nodeParser(node.children[1], node);
+			};
+
+			nodeParser(tree.root.children[0], root);
+			nodeParser(tree.root.children[1], root);
+			root.children[0] = tree.root.children[0];
+			root.children[1] = tree.root.children[1];
+			tree.root = root;
+
+			tree.nodes[0].parent = undefined;
+
+			let fixNull = function(node) {
+				if (node.children.length > 0) {
+					for (let i = 0; i < node.children.length; i++)
+						if (node.children[i] === null)
+							node.children[i] = undefined;
+
+					if (node.children[0] !== undefined)
+						fixNull(node.children[0]);
+					if (node.children[1] !== undefined)
+						fixNull(node.children[1]);
+				}
+			};
+
+			fixNull(tree.root);
+		};
 
 		// This assumes that the nodeshape is Circle
 		let r = this.gd.R;
 
-		let parseInitial = (step) => {
+		let parseStep = (step) => {
 			let tree = getTree(step);
+			fixTree(tree);
 
 			let p = this.gd.camera.project(this.gd.canvas.width / 2, 0);
 			// Add some padding between canvas top and the top of the tree
-			p.y += r / 2;
+			p.y += r * 2.5;
 
 			/*
 				Searches a tree with root node for the node with the lowest cost.
@@ -401,8 +442,8 @@ export default class Graph0 {
 				else return r;
 			};
 
-			let xPadding = 25;
-			let yPadding = 30;
+			let xPadding = this.gd.R * 2.5;
+			let yPadding = this.gd.R * 2.5;
 
 			let addGraphDrawerNode = (node, x, y, dir) => {
 				if (node == undefined) return;
@@ -429,7 +470,6 @@ export default class Graph0 {
 				// Add child nodes
 				addGraphDrawerNode(node.children[0], left, y + 1, dir);
 				addGraphDrawerNode(node.children[1], right, y + 1, dir);
-				console.log(node);
 				// Add parent node
 				let parentDir = 0;
 				if (node.parent.children[0] == node) parentDir = right;
@@ -448,7 +488,6 @@ export default class Graph0 {
 			addGraphDrawerNode(leftest.node, 1, leftest.depth, 1);
 
 			// Add root node
-			console.log(tree);
 			let root = tree.root;
 			this.gd.nodes.push({
 				x: p.x,
@@ -458,34 +497,25 @@ export default class Graph0 {
 				shape: this.gd.nodeShape,
 				v: root.value
 			});
+
+			// Create edges between the nodes
+			let createEdges = (node) => {
+				if (node == undefined) return;
+				for (let i = 0; i < 2; i++) {
+					if (node.children[i] !== undefined) {
+						this.gd.edges.push({
+							n1: this.gd.getNodeByValue(node.value),
+							n2: this.gd.getNodeByValue(node.children[i].value)
+						});
+						createEdges(node.children[i]);
+					}
+				}
+			};
+			createEdges(root);
 		};
 
-		let parseAdd = (step) => {};
-
-		let parseRemove = (step) => {};
-
-		let parseRotate = (step) => {};
-
-		let parseComplete = (step) => {};
-
-		for (let i = 0; i <= this.gd.currentStep; i++) {
-			let step = this.steps[i];
-
-			if (step.type == "Initial") {
-				parseInitial(step);
-			} else if (step.type == "Add") {
-				parseAdd(step);
-			} else if (step.type == "Remove") {
-				parseRemove(step);
-			} else if (step.type == "Rotated") {
-				parseRotate(step);
-			} else if (step.type == "Done") {
-				parseComplete(step);
-			} else {
-				console.error(`Found invalid step type: ${step.type} 
-					at index ${i}, skipping.`);
-			}
-		}
+		let step = this.steps[this.gd.currentStep];
+		parseStep(step);
 	}
 
 	_parseGraphSteps() {
