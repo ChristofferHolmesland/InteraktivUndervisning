@@ -305,7 +305,7 @@
             mediaTypes: [],
             selectedMediaType: undefined,
 
-            showMedia: false,
+            showMedia: true, // TODO set to false
             showSolution: false,
             showBasicInfo: false, // TODO set to true
 
@@ -355,11 +355,21 @@
             newFile(event) {
                 let files = [];
                 Array.prototype.push.apply(files, event.target.files);
-                let fileSize = 0;
+                let storedFiles = this.newQuestion.objects.files;
+
+                let totalFilesSize = 0;
+                let errorFileSize = 1500000;
+                let warningFileSize = 500000;
+                for(let i = 0; i < storedFiles.length; i++) totalFilesSize += storedFiles[i].size;
                 let fileTypeErr = 0;
 
                 for (let i = 0; i < files.length; i++) {
                     let file = files[i];
+                    let fileObject = {
+                        name: file.name,
+                        size: file.size,
+                        type: file.type
+                    }
                     
                     let fileType = file.type.split("/");
                     if (fileType[0] !== "image") {
@@ -368,33 +378,40 @@
                         fileTypeErr++;
                         this.showMediaError = true;
                         this.mediaErrorText = fileTypeErr.toString() + this.getLocale.mediaErrorFileType;
+                        continue;
                     }
 
-                    fileSize += file.size;
-                    if (fileSize > 1500000) {
-                        files = [];
+                    totalFilesSize += file.size;
+                    if (totalFilesSize > errorFileSize) {
+                        event.target.value = "";
                         this.showMediaError = true;
                         if (fileTypeErr > 0) this.mediaErrorText += "\n\n" + this.getLocale.mediaErrorFileSize;
                         else this.mediaErrorText = this.getLocale.mediaErrorFileSize;
                     }
-                    else if (fileSize > 500000) {
+                    else if (totalFilesSize > warningFileSize) {
                         this.showMediaWarning = true;
                         this.mediaWarningText = this.getLocale.mediaWarningFileSize;
                     }
                     else {
                         if (fileTypeErr === 0) {      
                             this.showMediaError = false;
-                            this.newQuestion.objects.files.push(file);
                         }
                         this.showMediaWarning = false;
                     }
-                    files[i] = {
-                        "originalName": files[i].name,
-                        "size": files[i].size,
-                        "b64": new Buffer(files[i]).toString("base64")
-                    };
-                    console.log(files);
+
+                    if (fileTypeErr === 0 && totalFilesSize < errorFileSize) {
+                        let callbackFunction = function(e) {
+                            fileObject.buffer = e.target.result;
+                            storedFiles.push(fileObject);
+                        }
+
+                        let reader = new FileReader();
+                        reader.onload = callbackFunction;
+                        reader.readAsBinaryString(file);
+                    }
                 }
+
+                event.target.value = "";
             },
             changeShowMedia() {
                 this.showMedia = !this.showMedia;
