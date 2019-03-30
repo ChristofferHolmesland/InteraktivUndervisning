@@ -504,30 +504,42 @@ module.exports.admin = function(socket, db, user, sessions) {
 		question = generateSolution(question);
 
 		let objects = JSON.parse(JSON.stringify(question.objects));
-		delete objects.files;
+		for (let i = 0; i < objects.files.length; i++) {
+			delete objects.files[i].buffer;
+		}
 		
 		let questionIndex = await dbFunctions.insert.question(db, question.text, question.description, question.solution, question.time, question.solutionType, question.courseCode, objects);
 
 		let files = [];
-		for (let file in question.objects.files) {
-			files.push(file.toString('base64'));
+		for (let i = 0; i < question.objects.files.length; i++) {
+			files.push(JSON.parse(JSON.stringify(question.objects.files[i])));
 		}
 		let filePath = "./public/img/questionImages/" + questionIndex.toString() + "/";
 		let filePaths = [];
-		for (let i = 0; i < files.length; i++) {
-			filePaths.push(filePath + (i + 1).toString()+".png");
-			question.objects.files = filePaths[i];
 
-			mkdirp(filePath, (err) => {
-				if (err) console.error("Error making dirs!\n\n" + err);
-			
-				fs.writeFile(filePaths[i], files[i], (err) => {
-					if (err) console.error("Image was not saved!\n\n" + err);
+		mkdirp(filePath, (err) => {
+			if (err) console.error("Error making dirs!\n\n" + err);
+			for (let i = 0; i < files.length; i++) {
+				let type = files[i].type.split("/")[1];
+				filePaths.push(filePath + (i + 1).toString() + "." + type);
+				question.objects.files[i].filePath = filePaths[i];
+				delete question.objects.files[i].buffer;
+				
+				fs.open(filePaths[i], "a", 0755, function(error, fd) {
+					if (err) {
+						console.error("error writing image: \n\n" + err);
+						return;
+					}
+					fs.write(fd, files[i].buffer, null, "binary", function(err, written, buff) {
+						fs.close(fd, function() {
+							console.log("file saved");
+						});
+					});
 				});
-			});
-		}
-
-		await dbFunctions.update.question(db, questionIndex, question.text, question.description, question.objects, question.solution, question.solutionType, question.time);
+			}
+			
+			dbFunctions.update.question(db, questionIndex, question.text, question.description, question.objects, question.solution, question.solutionType, question.time);
+		});
 	});
 
 	socket.on("updateQuestion", function(question) {
