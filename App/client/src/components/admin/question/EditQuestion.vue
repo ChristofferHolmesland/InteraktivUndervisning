@@ -124,7 +124,20 @@
                         <!-- TODO add table objects -->
                     </div>
                     <div v-if="newQuestion.objects.files.length > 0">
-                        <!--<img v-attr="src: newQuestion.objects.files[0]">-->
+                        <label>Files:</label>
+                        <b-container>
+                            <b-row v-for="(image, index) in newQuestion.objects.files" :key="index">
+                                <b-col>
+                                    {{image.name}}
+                                </b-col>
+                                <b-col>
+                                    <b-button>Delete</b-button>
+                                </b-col>
+                                <b-col>
+                                    <img :src="getImageSrc(index)"/>
+                                </b-col>
+                            </b-row>
+                        </b-container>
                     </div>
                     <div></div>
                     <div></div>
@@ -315,7 +328,8 @@
             showMediaError: false,
             validationFailure: false,
             validationErrors: [],
-            time: 0
+            time: 0,
+            testImage: ""
         }
     }
 
@@ -401,7 +415,7 @@
 
                     if (fileTypeErr === 0 && totalFilesSize < errorFileSize) {
                         let callbackFunction = function(e) {
-                            fileObject.buffer = e.target.result;
+                            fileObject.buffer = btoa(e.target.result);
                             storedFiles.push(fileObject);
                         }
 
@@ -502,6 +516,12 @@
             }
         },
         computed: {
+            getImageSrc() {
+                return (index) => {
+                    let file = this.newQuestion.objects.files[index];
+                    return "data:" + file.type + ";base64," + file.buffer;
+                }
+            },
             getLocale() {
 				let locale = this.$store.getters.getLocale("AdminQuestions");
                 if(locale) return locale;
