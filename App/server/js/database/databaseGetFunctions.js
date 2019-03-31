@@ -1,3 +1,5 @@
+const fs = require("fs");
+
 const customReject = function(err, func){
 	return new Error(`Error in get function: ${func} \n\n ${err}`)
 }
@@ -9,6 +11,27 @@ const jsonParser = function (rows) {
 		if (row.object) row.object = JSON.parse(row.object);
 	}
 };
+
+const imageGetter = function (rows) {
+	for (let i = 0; i < rows.length; i++) {
+		let row = rows[i];
+		let files = row.object.files;
+		console.log(files);
+		for (let j = 0; j < files.length; j++) {
+			let file = files[j];
+			fs.readFileSync(file.filePath, function(err, data) {
+				if (err) {
+					console.error("Failed to read image: " + err);
+				}
+				else {
+					let base64Image = new Buffer(data, "binary").toString("base64");
+					file.buffer = base64Image;
+					delete file.filePath;
+				}
+			});
+		}
+	}
+}
 
 const get = {
 	feideById: function(db, feideId) {
@@ -112,6 +135,7 @@ const get = {
 			db.all(statement, (err,rows) => {
 				if (err) reject(customReject(err, "allQuestionInSession"));
 				jsonParser(rows);
+				imageGetter(rows);
 				resolve(rows);
 			});
 		});
@@ -190,6 +214,7 @@ const get = {
 			db.all(statement, (err,rows) => {
 				if (err) reject(customReject(err, "allQuestionsWithinCourse"));
 				jsonParser(rows);
+				imageGetter(rows);
 				resolve(rows);
 			});
 		});

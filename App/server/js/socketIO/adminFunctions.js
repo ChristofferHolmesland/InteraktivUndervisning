@@ -526,11 +526,11 @@ module.exports.admin = function(socket, db, user, sessions) {
 				delete question.objects.files[i].buffer;
 				
 				fs.open(filePaths[i], "a", 0755, function(error, fd) {
-					if (err) {
+					if (error) {
 						console.error("error writing image: \n\n" + err);
 						return;
 					}
-					fs.write(fd, files[i].buffer, null, "binary", function(err, written, buff) {
+					fs.write(fd, files[i].buffer, null, "base64", function(err, written, buff) {
 						fs.close(fd, function() {
 							console.log("file saved");
 						});
