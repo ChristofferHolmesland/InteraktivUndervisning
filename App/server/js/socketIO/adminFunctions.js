@@ -132,8 +132,6 @@ module.exports.admin = function(socket, db, user, sessions) {
 			for(let i = 0; i < questions.length; i++){
 				let tempQuestion = questions[i];
 				tempQuestion.resultScreen = false;
-				console.log("Hei på meg");
-				console.log(tempQuestion.solution);
 				questionList.push(new question(tempQuestion.id, tempQuestion.text, tempQuestion.description, tempQuestion.object, tempQuestion.solution, tempQuestion.type, tempQuestion.time, tempQuestion.sqId));
 			}
 

@@ -90,18 +90,11 @@ const validateChecker = {
                     solutionInfo.treeElements =  questionInformation.objects.treeElements;
                     solutionInfo.givenStartTree = questionInformation.objects.startTree;
                     break;
-                case 9:	//Graph
+                case 9: //Djikstra
                     break;
-                case 10: //Djikstra
-                    break;
-                case 11: //BellmanFord
-                    break;
-                case 12: //BFS
-                    break;
-                case 13: //Python
+                case 10: //Python
                     break;
             }
-            console.log(solutionInfo);
             let solutionTypeResult = checkers[questionType].check(solutionInfo);
             if(!solutionTypeResult.passed) {
                 result.passed = false;
