@@ -517,6 +517,7 @@ export default class Python {
 		this.gd.edges = [];
 		this.variables = [];
 		this.objects = [];
+		this.gd.nextId = 0;
 
 		let step = this.steps[this.gd.currentStep];
 		if (step._graphdrawer) return this.parseUserStep(step);
