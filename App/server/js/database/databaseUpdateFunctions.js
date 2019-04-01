@@ -31,7 +31,7 @@ const update = {
 	userRightsLevelByFeideId: function(db, feideId, courseSemester, courseCode, level) {
 		let statement = `UPDATE UserRight
 						 SET level = ${level}
-						 WHERE feideId = ${feideId}
+						 WHERE feideId = '${feideId}'
 						 AND courseSemester = '${courseSemester}'
 						 AND courseCode = '${courseCode}'`;
 		return createPromise(db, statement, "userRightsLevelByFeideId");
