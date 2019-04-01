@@ -1,7 +1,7 @@
 describe("Student tries to join a session",function () {
 	beforeEach(function () {
 		cy.clearCookies();
-		cy.visit("localhost:8081");
+		cy.visit("localhost:8082");
 		cy.get(':nth-child(2) > .nav-link').click();
 		cy.get("#anonymousButton").click();
 		cy.get("#loginButton").click();
@@ -20,7 +20,7 @@ describe("Student tries to join a session",function () {
 		cy.wait(1000);
 		cy.get('.text-center > h1').should("have.text","Quick join session!");
 		cy.get(".navbar-brand").click();
-		cy.url().should("equal","http://localhost:8081/");
+		cy.url().should("equal","http://localhost:8082/");
 		cy.get("h1").should("have.text","Homepage");
 		cy.get('#__BVID__11__BV_button_ > span').should("contain","Anonymous");
 		cy.get('#__BVID__11__BV_button_ > span').click();
