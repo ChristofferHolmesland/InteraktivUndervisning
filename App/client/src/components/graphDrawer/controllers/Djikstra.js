@@ -28,7 +28,7 @@ export default class Djikstra {
 					this.to = node;
 					node.fillColor = config.endColor;
 				}
-				this.gd.nodes.push(node);
+				this.gd.addNode(node);
 			}
 
 			for (let i = 0; i < this.graph.edges.length; i++) {
@@ -140,7 +140,7 @@ export default class Djikstra {
 					console.error(step);
 				}
 
-				this.gd.nodes.push(node);
+				this.gd.addNode(node);
 			}
 
 			for (let i = 0; i < this.graph.edges.length; i++) {

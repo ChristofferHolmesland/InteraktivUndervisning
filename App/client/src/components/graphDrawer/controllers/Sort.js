@@ -105,13 +105,11 @@ export default class Sort {
 			if (this.arrays.length == 0) {
 				this.gd.controllers["Graph0"].addNode(e);
 				let node = this.gd.nodes[this.gd.nodes.length - 1];
-				this.arrays.push(
-					{
-						position: { x: node.x, y: node.y },
-						nodes: [node],
-						links: []
-					}
-				);
+				this.arrays.push({
+					position: { x: node.x, y: node.y },
+					nodes: [node],
+					links: []
+				});
 				return true;
 			}
 
@@ -348,7 +346,7 @@ export default class Sort {
 				clone.strokeColor = undefined;
 
 				newArr.nodes.push(clone);
-				this.gd.nodes.push(clone);
+				this.gd.addNode(clone);
 			}
 
 			this.arrays.push(newArr);
@@ -512,7 +510,7 @@ export default class Sort {
 			this.arrays[event.data.ai].position.x -= clickedNode.w;
 		this._repositionNodes(event.data.ai);
 
-		this.gd.nodes.push(node);
+		this.gd.addNode(node);
 		this.gd.dirty = true;
 	}
 
@@ -925,7 +923,7 @@ export default class Sort {
 					shape: this.gd.nodeShape
 				};
 
-				this.gd.nodes.push(node);
+				this.gd.addNode(node);
 				array.nodes.push(node);
 			}
 		};

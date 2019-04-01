@@ -11,7 +11,35 @@
         "addToSession": "Legg til",
         "solutionText": "Løsning: ",
         "selectSessionText": "Velg økt: ",
-        "time": "Tid:"
+        "time": "Tid:",
+        "mediaTypes": [
+            {"text":"Bilder", "value": 0},
+            {"text":"Grafer", "value": 0},
+            {"text":"Tabeller", "value": 0}
+        ],
+        "multipleChoiceHeader": "Alternativer:",
+        "addNewMultipleChoice": "Legg til nytt alternativ",
+        "multipleChoiceDeleteBtn": "Slett",
+        "basicInfo": "Grunnleggende Informasjon",
+        "mediaErrorFileSize": "Summen av filstørrelsene overstiger maks størrelse på 1.5MB!",
+        "mediaWarningFileSize": "Summen av filstørrelsene overstiger snart maks størrelse på 1.5MB! Vurder om færre eller mindre filer er mulig.",
+        "mediaErrorFileType": " fil(er) ble lastet opp med feil filtype! Kun bilder blir godkjent.",
+
+        "binaryTreeNoElementsError": "Mangler elementene som skal være i treet!",
+        "binaryTreeWrongFormatError": "Feil format for elementene i listen!\n Kun tall og de skal separeres med et komma \",\"",
+        "BSTAVLAddMissingFieldsError": "Mangler felt for å kunne lage et spørsmål hvor elementer blir lagt til i et tre!",
+        "BSTAVLAddDuplicateElementError": "Kan ikke lege til en node med samme verdi som en eksisterende node!",
+        "BSTAVLAddInvalidResultBinarySearchTreeError": "Resultatet er ikke et godkjent Binært Søketre!",
+        "BSTAVLAddInvalidResultAVLTreeError": "Resultatet er ikke et godkjent AVL Tre",
+        "BSTAVLRemoveMissingFieldsError": "Mangler felt for å kunne lage et spørsmål hvor elementer blir fjernet fra et tre!",
+        "BSTAVLRemoveMissingElementError": "Elementet som prøves fjernes finnes ikke i treet!",
+        "BSTAVLRemoveInvalidResultBinarySearchTreeError": "Et av resultatene er ikke et godkjent Binært Søketre!",
+        "BSTAVLRemoveInvalidResultAVLTreeError": "Et av resultatene er ikke et godkjent AVL tre!",
+        "BSTAVLRootCountError": "Treet gitt har mer en en rot!",
+        "BSTAVLInvalidBinaryTreeError": "Det gitte treet er ikke et godkjent Binærtre!",
+        "BSTAVLInvalidBinarySearchTreeError": "Det gitte treet er ikke et godkjent Binært Søketre!",
+        "treeElementTypeError": "Elementene i listen skal kun inneholde tall elementer!",
+        "BSTAVLInvalidTreeActionError": "Må velge enten å legge til elementer eller å fjerne elementer på fasittype!"
     },
     "AdminSessions": {
         "newSession": "Ny økt",
@@ -115,7 +143,23 @@
         "title": "Bruker statistikk",
         "totalSessions": "Antall økter:",
         "correctAnswers": "Antall rett svar:",
-        "incorrectAnswers": "Antall feil svar:"
+        "incorrectAnswers": "Antall feil svar:",
+        "didntKnowAnswers": "Antall vet ikke svar:"
+    },
+    "SessionStat": {
+        "goBackBtn": "Tilbake",
+        "sessionStats": "Statistikk for økt",
+        "classStats": "Statistikk for klasse: ",
+        "userStats": "Statistikk for bruker: ",
+        "correct": "Riktig: ",
+        "incorrect": "Feil: ",
+        "incorrectTooltip": "Feil svar",
+        "didntKnow": "Vet ikke",
+        "questionStats": "Statistikk for spørsmål",
+        "answer": "Svar nr",
+        "noQuestions": "Ingen spørsmål",
+        "correctCard": "Riktig",
+        "incorrectCard": "Feil"
     },
     "ClientSessionQuestion": {
         "question": "Spørsmål",

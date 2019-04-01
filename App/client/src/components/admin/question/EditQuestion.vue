@@ -1,50 +1,78 @@
 <template>
-    <b-modal :id="elementId" :ref="elementRef" :no-close-on-backdrop="true" :title="getLocale.newQuestion" @ok="callOkHandler" @cancel="cancelHandler" style="text-align: left;">
+    <b-modal :id="elementId" :ref="elementRef" :no-close-on-backdrop="true" :title="getLocale.newQuestion" @ok="callOkHandler" @cancel="cancelHandler" style="text-align: left;" size="lg">
         <b-form>
-            <b-form-group 	id="questionTitle"
-                            :label="getLocale.newQuestionTitle"
-                            label-for="questionTitleInput">
-                <b-form-input 	id="questionTitleInput"
-                                type="text"
-                                v-model="newQuestion.text">
-                </b-form-input>
-            </b-form-group>
-            <b-form-group   id="questionText"
-                            :label="getLocale.newQuestionText"
-                            label-for="questionTextInput">
-                <b-form-input 	id="questionTextInput"
-                                type="text"
-                                v-model="newQuestion.description">
-                </b-form-input>
-            </b-form-group>
-            <b-form-group id="questionTime">
-                <b-col>
-                    <b-row>
-                        <b-col>
-                            <label>{{ getLocale.newQuestionTime }}</label>
-                        </b-col>
-                        <b-col>
-                            <b-form-input   id="questionTimeInput"
-                                            type="time"
-                                            v-model="timeInput"
-                                            min="00:00"
-                                            max="10:00">
-                            </b-form-input>
-                        </b-col>
-                    </b-row>
-                    <b-row>
-                        <b-col>
-                            <b-form-input   id="questionTimeInputSlider"
-                                            type="range"
-                                            v-model="time"
-                                            min="0"
-                                            max="600"
-                                            step="15">
-                            </b-form-input>
-                        </b-col>
-                    </b-row>
-                </b-col>
-            </b-form-group>
+            <b-alert    :show="validationFailure"
+                        variant="danger">
+                <p v-for="(error, index) in validationErrors" :key="index">
+                    {{getLocale.error}}
+                </p>
+            </b-alert>
+            <b-container   class="px-0"
+                            @click="changeShowBasicInfo"
+                            style="cursor: pointer;">
+                <b-row>
+                    <b-col cols="10" style="text-align: left;">
+                        <label  for="mediaSelector"
+                                style="cursor: pointer;">
+                            {{getLocale.basicInfo}}
+                        </label>
+                    </b-col>
+                    <b-col cols="2" style="text-align: right;">
+                        <p v-if="showBasicInfo">^</p>
+                        <p v-else>V</p>
+                    </b-col>
+                </b-row>
+            </b-container>
+            <div v-show="showBasicInfo">
+                <b-form-group 	id="questionTitle"
+                                :label="getLocale.newQuestionTitle"
+                                label-for="questionTitleInput">
+                    <b-form-input 	id="questionTitleInput"
+                                    type="text"
+                                    v-model="newQuestion.text">
+                    </b-form-input>
+                </b-form-group>
+                <b-form-group 	id="questionText"
+                                :label="getLocale.newQuestionText"
+                                label-for="questionTextInput">
+                    <b-form-input 	id="questionTextInput"
+                                    type="text"
+                                    v-model="newQuestion.description">
+                    </b-form-input>
+                </b-form-group>
+                <b-form-group id="questionTime">
+                    <b-col>
+                        <b-row>
+                            <b-col>
+                                <label>{{ getLocale.newQuestionTime }}</label>
+                            </b-col>
+                            <b-col>
+                                <b-form-input   id="questionTimeInput"
+                                                type="time"
+                                                v-model="timeInput"
+                                                min="00:00"
+                                                max="10:00">
+                                </b-form-input>
+                            </b-col>
+                        </b-row>
+                        <b-row>
+                            <b-col>
+                                <b-form-input   id="questionTimeInputSlider"
+                                                type="range"
+                                                v-model="time"
+                                                min="0"
+                                                max="600"
+                                                step="15">
+                                </b-form-input>
+                            </b-col>
+                        </b-row>
+                    </b-col>
+                </b-form-group>
+            </div>
+            <hr>
+
+
+
             <!-- TODO Make it possible to add objects to question
                             - Graphs
                             - Images
@@ -62,76 +90,139 @@
                     </li>
                 </ul>
             </b-form-group> -->
-            <b-form-group 	id="solutionType"
-                            :label="getLocale.newQuestionSolutionType"
-                            label-for="solutionTypeInput">
-                <b-form-select 	id="solutionTypeInput"
-                                :options="getSolutionTypes"
-                                v-model="newQuestion.solutionType">
-                </b-form-select>
-            </b-form-group>
-            <b-form-group 	id="textSolution"
-                            :label="getLocale.newQuestionSolution"
-                            label-for="solutionInput"
-                            v-if="newQuestion.solutionType === 1">
-                <b-form-input 	id="solutionInput"
-                                type="text"
-                                v-model="newQuestion.solution">
-                </b-form-input>
-            </b-form-group>
-            <b-form-group   id="multipleChoiceChoices"
-                            v-if="newQuestion.solutionType === 2">
-                <b-col cols="12">
+
+            <b-form-group   id="Media">
+                <b-container   class="px-0"
+                                @click="changeShowMedia"
+                                style="cursor: pointer;">
                     <b-row>
-                        <b-col cols="6" class="px-0">
-                            <label>Choices: {{getLocale.multipleChoiceHeader}}</label>
+                        <b-col cols="10" style="text-align: left;">
+                            <label  for="mediaSelector"
+                                    style="cursor: pointer;">
+                                Media
+                            </label>
                         </b-col>
-                        <b-col cols="6" class="px-0">
-                            <b-button @click="addNewMultipleChoice" id="addNewMultipleChoice" class="float-right">
-                                Add new choice{{ getLocale.addNewMultipleChoice }}
-                            </b-button>
+                        <b-col cols="2" style="text-align: right;">
+                            <p v-if="showMedia">^</p>
+                            <p v-else>V</p>
                         </b-col>
                     </b-row>
+                </b-container>
+                <div v-show="showMedia">
+                    <b-form-select  :options="mediaTypes"
+                                    v-model="selectedMediaType">
+                    </b-form-select>
+                    <div v-if="selectedMediaType === 0">
+                        <b-alert :show="showMediaWarning" variant="warning">{{mediaWarningText}}</b-alert>
+                        <b-alert :show="showMediaError" variant="danger">{{mediaErrorText}}</b-alert>
+                        <input type="file" @change="newFile" accept="image/*" multiple>
+                    </div>
+                    <div v-if="selectedMediaType === 1">
+                        <!-- TODO add graph objects -->
+                    </div>
+                    <div v-if="selectedMediaType === 2">
+                        <!-- TODO add table objects -->
+                    </div>
+                    <div v-if="newQuestion.objects.files.length > 0">
+                        <!--<img v-attr="src: newQuestion.objects.files[0]">-->
+                    </div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </b-form-group>
+
+            <hr>
+            
+            <b-form-group 	id="solutionType">
+                <b-container   class="px-0"
+                                @click="changeShowSolution"
+                                style="cursor: pointer;">
                     <b-row>
-                        <b-col cols="12" class="px-0 mt-2">
-                            <b-form-checkbox-group v-model="newQuestion.solution">
-                                <b-row  v-for="(choice, index) in newQuestion.objects.multipleChoices"
-                                        :key="index"
-                                        class="mb-2">
-                                    <b-col cols="10">
-                                        <b-form-input   :id="index.toString()"
-                                                        v-model="newQuestion.objects.multipleChoices[index]"
-                                                        >          
-                                        </b-form-input>
-                                    </b-col>
-                                    <b-col cols="2">
-                                        <b-form-checkbox :value="index.toString()"/>
-                                    </b-col>
-                                </b-row>
-                            </b-form-checkbox-group>
+                        <b-col cols="10" style="text-align: left;">
+                            <label  for="solutionTypeInput"
+                                    style="cursor: pointer;">
+                                {{getLocale.newQuestionSolutionType}}
+                            </label>
+                        </b-col>
+                        <b-col cols="2" style="text-align: right;">
+                            <p v-if="showSolution">^</p>
+                            <p v-else>V</p>
                         </b-col>
                     </b-row>
-                </b-col>
+                </b-container>
+                <div v-show="showSolution">
+                    <b-form-select 	id="solutionTypeInput"
+                                    :options="getSolutionTypes"
+                                    v-model="newQuestion.solutionType">
+                    </b-form-select>
+                </div>
             </b-form-group>
-            <b-form-group 	id="sortingSolution"
-                            label="Starting array (elements seperated by ,)"
-                            label-for="solutionInput"
-                            v-if="newQuestion.solutionType < 6 && newQuestion.solutionType > 2">
-                <b-form-input 	id="solutionInput"
-                                type="text"
-                                v-model="newQuestion.objects.startingArray">
-                </b-form-input>
-                <b-form-group   id="kValue"
-                                label="K start value"
-                                label-for="kValueInput"
-                                v-if="newQuestion.solutionType === 3">
-                    <b-form-input   id="kValueInput"
+            <div v-show="showSolution">
+                <b-form-group 	id="textSolution"
+                                :label="getLocale.newQuestionSolution"
+                                label-for="solutionInput"
+                                v-if="newQuestion.solutionType === 1">
+                    <b-form-input 	id="solutionInput"
                                     type="text"
-                                    v-model="newQuestion.objects.kValue">
+                                    v-model="newQuestion.solution">
                     </b-form-input>
                 </b-form-group>
-            </b-form-group>
-            <b-form-group
+                <b-form-group   id="multipleChoiceChoices"
+                                v-if="newQuestion.solutionType === 2">
+                    <b-col cols="12">
+                        <b-row>
+                            <b-col cols="6" class="px-0">
+                                <label>{{getLocale.multipleChoiceHeader}}</label>
+                            </b-col>
+                            <b-col cols="6" class="px-0">
+                                <b-button @click="addNewMultipleChoice" id="addNewMultipleChoice" class="float-right">
+                                    {{getLocale.addNewMultipleChoice}}
+                                </b-button>
+                            </b-col>
+                        </b-row>
+                        <b-row>
+                            <b-col cols="12" class="px-0 mt-2">
+                                <b-form-checkbox-group v-model="newQuestion.solution">
+                                    <b-row  v-for="(choice, index) in newQuestion.objects.multipleChoices"
+                                            :key="index"
+                                            class="mb-2">
+                                        <b-col cols="9">
+                                            <b-form-input   :id="index.toString()"
+                                                            v-model="newQuestion.objects.multipleChoices[index]"
+                                                            >          
+                                            </b-form-input>
+                                        </b-col>
+                                        <b-col cols="1">
+                                            <b-form-checkbox :value="index.toString()"/>
+                                        </b-col>
+                                        <b-col cols="2">
+                                            <b-button @click="deleteMultiChoice(index)">{{getLocale.multipleChoiceDeleteBtn}}</b-button>
+                                        </b-col>
+                                    </b-row>
+                                </b-form-checkbox-group>
+                            </b-col>
+                        </b-row>
+                    </b-col>
+                </b-form-group>
+                <b-form-group 	id="sortingSolution"
+                                label="Starting array (elements seperated by ,)"
+                                label-for="solutionInput"
+                                v-if="newQuestion.solutionType < 6 && newQuestion.solutionType > 2">
+                    <b-form-input 	id="solutionInput"
+                                    type="text"
+                                    v-model="newQuestion.objects.startingArray">
+                    </b-form-input>
+                    <b-form-group   id="kValue"
+                                    label="K start value"
+                                    label-for="kValueInput"
+                                    v-if="newQuestion.solutionType === 3">
+                        <b-form-input   id="kValueInput"
+                                        type="text"
+                                        v-model="newQuestion.objects.kValue">
+                        </b-form-input>
+                    </b-form-group>
+                </b-form-group>
+                <b-form-group
                     id="BinaryTree"
                     label="List the nodes that are going to be used in the binary tree. Elements are divided by , and [] are not required)"
                     v-if="newQuestion.solutionType === 6"
@@ -176,8 +267,6 @@
                     subType="Dijkstra"
                     exportType="Graph"
                     operatingMode="Interactive"
-                    importType="Graph"
-                    :steps="this.newQuestion.objects._graphdrawerGraph" 
                     />
             </b-form-group>
             <b-form-group 	id="pythonSolution"
@@ -198,6 +287,7 @@
             >
             <p>{{alertReason}}</p>
             </b-alert>
+            </div>
         </b-form>
     </b-modal>
 </template>
@@ -205,34 +295,52 @@
 <script>
     import GraphDrawer from "../../graphDrawer/GraphDrawer.vue";
 
+    function initializeState() {
+        return {
+            newQuestion: {
+                id: -1,
+                text: "",
+                description: "", 
+                solutionType: "",
+                solution: "",
+                time: 0,
+                objects: {
+                    code: "",
+                    multipleChoices: [],
+                    startingArray: "",
+                    startTree: undefined,
+                    treeElements: "",
+                    solutionTreeType: "Add",
+                    kValue: "",
+                    graph: undefined,
+                    files: [],
+                    graphs: [],
+                    tables: [],
+                    _graphdrawerGraph: undefined
+                }
+            },
+            solutionTypes: [],
+            requestGraphDrawerObject: false,
+            mediaTypes: [],
+            selectedMediaType: undefined,
+
+            showMedia: false,
+            showSolution: false,
+            showBasicInfo: false, // TODO set to true
+
+            mediaWarningText: "",
+            showMediaWarning: false,
+            mediaErrorText: "",
+            showMediaError: false,
+            validationFailure: false,
+            validationErrors: [],
+            time: 0
+        }
+    }
+
 	export default {
         data() {
-            return {
-                newQuestion: {
-                    id: -1,
-                    text: "",
-                    description: "", 
-              		solutionType: "",
-                    solution: "",
-                    time: 0,
-                    objects: {
-                        code: "",
-                        multipleChoices: [],
-                        startingArray: "",
-                        startTree: undefined,
-						treeElements: "",
-						solutionTreeType: "Add",
-                        kValue: "",
-                        graph: undefined,
-                        _graphdrawerGraph: undefined
-                    }
-                },
-                solutionTypes: [],
-                requestGraphDrawerObject: false,
-                useAlert: false,
-                alertReason: "",
-                time: 0
-            }
+            return initializeState();
         },
         components: {
             GraphDrawer
@@ -244,7 +352,12 @@
             doneHandler: Function
         },
         mounted() {
-            this.$socket.emit("getQuestionTypes");
+            this.$root.$on("bv::modal::show", (bvevent, modalid) => {
+                this.assignState();
+                this.$socket.emit("getQuestionTypes");
+                this.mediaTypes = this.getLocale.mediaTypes;
+                this.selectedMediaType = this.mediaTypes[0].value;
+            });
         },
         methods: {
             keyDownInTextarea(e) {
@@ -267,6 +380,64 @@
                 // Move cursor to the right position
                 codeInput.selectionStart = tabPosition + tabSize;
                 codeInput.selectionEnd = tabPosition + tabSize;
+            },
+            assignState() {
+                let n = initializeState();
+                for (let p in n) {
+                    if (n.hasOwnProperty(p)) {
+                        if (p === "newQuestion") {
+                            if (this.okHandler === "add") this.$data[p] = n[p];
+                        }
+                        else this.$data[p] = n[p];
+                    }
+                }
+            },
+            newFile(event) {
+                let files = [];
+                Array.prototype.push.apply(files, event.target.files);
+                let fileSize = 0;
+                let fileTypeErr = 0;
+
+                for (let i = 0; i < files.length; i++) {
+                    let file = files[i];
+                    
+                    let fileType = file.type.split("/");
+                    if (fileType[0] !== "image") {
+                        files.splice(i, 1);
+                        i--;
+                        fileTypeErr++;
+                        this.showMediaError = true;
+                        this.mediaErrorText = fileTypeErr.toString() + this.getLocale.mediaErrorFileType;
+                    }
+
+                    fileSize += file.size;
+                    if (fileSize > 1500000) {
+                        files = [];
+                        this.showMediaError = true;
+                        if (fileTypeErr > 0) this.mediaErrorText += "\n\n" + this.getLocale.mediaErrorFileSize;
+                        else this.mediaErrorText = this.getLocale.mediaErrorFileSize;
+                    }
+                    else if (fileSize > 500000) {
+                        this.showMediaWarning = true;
+                        this.mediaWarningText = this.getLocale.mediaWarningFileSize;
+                    }
+                    else {
+                        if (fileTypeErr === 0) {      
+                            this.showMediaError = false;
+                            this.newQuestion.objects.files.push(file);
+                        }
+                        this.showMediaWarning = false;
+                    }
+                }
+            },
+            changeShowMedia() {
+                this.showMedia = !this.showMedia;
+            },
+            changeShowSolution() {
+                this.showSolution = !this.showSolution;
+            },
+            changeShowBasicInfo() {
+                this.showBasicInfo = !this.showBasicInfo;
             },
             assignTime: function() {
                 this.newQuestion.time = JSON.parse(JSON.stringify(this.time));
@@ -338,6 +509,21 @@
             addNewMultipleChoice() {
                 this.newQuestion.objects.multipleChoices.push("");
             },
+            deleteMultiChoice(index) {
+                console.log(this.newQuestion.solution);
+                let solutionIndex = this.newQuestion.solution.indexOf(index.toString());
+                if (solutionIndex > -1) this.newQuestion.solution.splice(solutionIndex, 1);
+                for (let i = index + 1; i < this.newQuestion.objects.multipleChoices.length; i++) {
+                    let j = this.newQuestion.solution.indexOf(i.toString())
+                    console.log(j);
+                    if (j > -1) {
+                        this.newQuestion.solution[j] = (Number(this.newQuestion.solution[j]) - 1).toString();
+                    }
+                }
+                console.log(this.newQuestion.solution);
+
+                this.newQuestion.objects.multipleChoices.splice(index, 1);
+            }
         },
         computed: {
             checkRef() {
@@ -411,36 +597,16 @@
         sockets: {
             sendQuestionTypes: function(types) {
                 this.solutionTypes = types;
+                this.newQuestion.solutionType = this.solutionTypes[0].value;
             },
             confirmQuestionRequirements: function (result) {
-            	console.log(result);
-            	if (result.validation) {
+            	if (result.passed) {
                     this.$refs[this.elementRef].hide();
-                    this.useAlert = false;
-                    this.time = 0;
-                    this.newQuestion = {
-                        id: -1,
-                        text: "",
-                        description: "", 
-                        solutionType: "",
-                        solution: "",
-                        time: 0,
-                        objects: {
-                            multipleChoices: [],
-                            startingArray: "",
-                            startTree: undefined,
-                            graph: undefined,
-                            treeElements: "",
-                            _graphdrawerGraph : undefined,
-                        },
-                        solutionTypes: [],
-                        requestGraphDrawerObject: false,
-                        solutionTreeType: "Add",
-                    };
                     this.doneHandler();
                 }else {
-            	    this.useAlert = true;
-            	    this.alertReason = result.reason;
+            	    this.validationFailure = true;
+                    this.validationErrors = result.errors;
+                    console.log(this.validationErrors);
                 }
 
             }

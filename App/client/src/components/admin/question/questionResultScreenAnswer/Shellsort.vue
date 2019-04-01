@@ -4,7 +4,7 @@
 			<b-col cols="2">
 				K Value
 			</b-col>
-			<b-col v-for="(value, index) in answer[1].List" :key="index">
+			<b-col v-for="(value, index) in answer[0].List" :key="index">
 				{{ index }}
 			</b-col>
 		</b-row>
@@ -24,7 +24,7 @@ export default {
     name: "ShellsortAnswer",
     props: {
         answer: Array
-    }
+	}
 }
 </script>
 

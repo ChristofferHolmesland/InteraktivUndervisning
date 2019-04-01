@@ -30,58 +30,15 @@ import Shellsort from "../components/client/session/questionTypes/sorting/Shells
 
 export default {
 	name: "client",
-	data() {
-		return {
-			requestAnswer: false,
-			steps: [
-    {
-        type: "Initial",
-        list: [10, 9, 2, 3, 11, 7, 5],
-    },
-    {
-        type: "Split",
-        pivot: 5,
-        list: [10, 9, 2, 3, 11, 7, 5],
-        left: [2, 3],
-        right: [10, 9, 11, 7],
-    },
-    {
-        type: "Split",
-        pivot: 2,
-        list: [2, 3],
-        left: [3],
-        right: [],
-    },
-    {
-        type: "Split",
-        pivot: 10,
-        list: [10, 9, 11, 7],
-        left: [7, 9],
-        right: [11],
-    },
-    {
-        type: "Split",
-        pivot: 7,
-        list: [7, 9],
-        left: [9],
-        right: []
-    }
-]
-
-		};
-	},
 	components: {
 		JoinSession,
-		GraphDrawer,
-		Shellsort
 	},
 	created() {
 		this.$socket.emit("verifyUserLevel", 1);
 	},
 	methods: {
-		printGraphDrawer: function(data) {
-			console.log(data);
-			console.log(JSON.stringify(data));
+		printFiles(event) {
+			console.log(event);
 		}
 	}
 };

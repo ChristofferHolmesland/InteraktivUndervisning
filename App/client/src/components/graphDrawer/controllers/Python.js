@@ -259,9 +259,7 @@ export default class Python {
 		let pickThreshold = 8;
 		for (let e = 0; e < this.gd.edges.length; e++) {
 			let d = this.gd.distanceFromEdgeToPoint(this.gd.edges[e], p.x, p.y);
-			console.log("Distance " + d);
 			if (d < pickThreshold) {
-				console.log("Remove");
 				let n1 = this.findObjectById(this.gd.edges[e].n1.id);
 				let n2 = this.findObjectById(this.gd.edges[e].n2.id);
 

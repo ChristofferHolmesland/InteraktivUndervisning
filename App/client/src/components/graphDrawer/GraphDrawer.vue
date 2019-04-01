@@ -1,8 +1,10 @@
 <template>
     <div>
-        <canvas id="canvas" :width="width" :height="height" style="background-color: #fff;">
-
-        </canvas>
+        <canvas id="canvas" 
+                :width="width"
+                :height="height"
+                style="background-color: #fff; margin-left: auto; margin-right: auto; display: block; border: 2px solid black;"
+                />
     </div>
 </template>
 

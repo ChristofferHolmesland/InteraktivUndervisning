@@ -27,11 +27,6 @@ export default {
 		this.$socket.emit("verifyUserLevel", 1);
 		this.$socket.emit("verifySessionExists", this.sessionCode);
 	},
-	computed: {
-		getSessionState() {
-			return this.sessionState;
-		}
-	},
 	sockets: {
 		nextQuestion(questionInfo) {
 			this.questionInfo = questionInfo;
@@ -55,6 +50,25 @@ export default {
 	components: {
 		WaitingArea,
 		Question
+	},
+	computed: {
+		getSessionState() {
+			return this.sessionState;
+		}
+	},
+	methods: {
+		getLeaveConfirmBody() {
+			let locale = this.$store.getters.getLocale("ClientSessionQuestion").leaveSessionBody;
+			if (locale) return locale;
+			else return {};
+		}
+	},
+	beforeDestroy() {
+		if (confirm(this.getLeaveConfirmBody())) {
+			this.$socket.emit("leaveSession", this.sessionCode);
+		} else {
+			this.$router.push("/client/session/" + this.sessionCode);
+		}
 	}
 };
 </script>

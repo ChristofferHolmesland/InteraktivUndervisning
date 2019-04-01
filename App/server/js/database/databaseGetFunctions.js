@@ -87,7 +87,7 @@ const get = {
 			let userId = await this.userId(db, userInfo).catch((err) => {
 				reject(customReject(err), "sessionsToUser");
 			});
-			let statement = `SELECT S.name, C.code
+			let statement = `SELECT S.name, S.id, C.code
 							FROM Session AS S
 							INNER JOIN User_has_Session AS US ON US.sessionId = S.id
 							INNER JOIN Course AS C ON S.courseCode = C.code AND S.courseSemester = C.semester 

@@ -16,6 +16,10 @@
 						<b-col cols="8"><h6>{{getLocale.incorrectAnswers}}</h6></b-col>
 						<b-col cols="4"><p>{{totalIncorrectAnswers}}</p></b-col>
 					</b-row>
+					<b-row>
+						<b-col cols="8"><h6>{{getLocale.didntKnowAnswers}}</h6></b-col>
+						<b-col cols="4"><p>{{totalDidntKnowAnswers}}</p></b-col>
+					</b-row>
 					<b-row v-if="getFilteredSessionList.length !== 0">
 						<b-container>
 							<b-form-group	label="Course List:"
@@ -27,7 +31,9 @@
 							</b-form-group>
 							<b-list-group style="overflow-y: scroll; max-height: 300px">
 								<b-list-group-item 	v-for="item in getFilteredSessionList" 
-													:key="item.sessionName">
+													:key="item.id"
+													@click="showSession(item.id)"
+													style="cursor: pointer;">
 									{{item.name}}
 								</b-list-group-item>
 							</b-list-group>
@@ -47,6 +53,7 @@ export default {
 			totalSessions: 0,
 			totalCorrectAnswers: 0,
 			totalIncorrectAnswers: 0,
+			totalDidntKnowAnswers: 0,
 			sessionList: [],
 			filteredSessionList: [],
 			courseList: [],
@@ -62,6 +69,7 @@ export default {
 			this.totalSessions = data.totalSessions;
 			this.totalCorrectAnswers = data.totalCorrectAnswers;
 			this.totalIncorrectAnswers = data.totalIncorrectAnswers;
+			this.totalDidntKnowAnswers = data.totalDidntKnowAnswers;
 			this.sessionList = data.sessionList;
 
 			for (let i = 0; i < this.sessionList.length; i++) {
@@ -71,6 +79,11 @@ export default {
 			}
 
 			this.courseSelected = this.courseList[0];
+		}
+	},
+	methods: {
+		showSession(sessionId) {
+			this.$socket.emit("getSessionInformationRequest", sessionId);
 		}
 	},
 	computed: {
