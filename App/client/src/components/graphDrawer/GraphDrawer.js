@@ -83,7 +83,7 @@ export default class GraphDrawer {
 		// Radius of nodes.
 		this.R = 25;
 		// How often the canvas should be updated.
-		this.FPS = 60;
+		this.FPS = 24;
 		// Milliseconds between each update.
 		this.MS_PER_FRAME = 1000 / this.FPS;
 		// Device type, "Desktop" or "Mobile"
@@ -351,34 +351,7 @@ export default class GraphDrawer {
 				if (node.shape == "Rectangle") {
 					// This can be changed to only do one intersection check at a time
 					// if performance is an issue.
-					// Top
-					let t = this.lineSegmentIntersection(l1, {
-						x1: node.x,
-						y1: node.y,
-						x2: node.x + node.w,
-						y2: node.y
-					});
-					// Bottom
-					let b = this.lineSegmentIntersection(l1, {
-						x1: node.x,
-						y1: node.y + node.h,
-						x2: node.x + node.w,
-						y2: node.y + node.h
-					});
-					// Right
-					let r = this.lineSegmentIntersection(l1, {
-						x1: node.x + node.w,
-						y1: node.y,
-						x2: node.x + node.w,
-						y2: node.y + node.h
-					});
-					// Left
-					let l = this.lineSegmentIntersection(l1, {
-						x1: node.x,
-						y1: node.y,
-						x2: node.x,
-						y2: node.y + node.h
-					});
+					
 
 					if (t) a = t;
 					else if (b) a = t;
@@ -388,7 +361,6 @@ export default class GraphDrawer {
 				}
 
 				if (a !== undefined) {
-					console.log(a);
 					let headlen = 15;
 					let angle = Math.atan2(a.y - b.y, a.x - b.x);
 					this.drawContext.beginPath();
@@ -1081,6 +1053,55 @@ export default class GraphDrawer {
 				height: btnHeight
 			};
 		}
+	}
+
+	/*
+		Returns the intersection point and side, or undefined if there is
+			no intersection.
+	*/
+	lineIntersectsNode(line, node) {
+		if (node.shape == "Rectangle") {
+			// Top
+			let t = this.lineSegmentIntersection(line, {
+				x1: node.x,
+				y1: node.y,
+				x2: node.x + node.w,
+				y2: node.y
+			});
+			if (t) return { p: t, side: "Top" };
+
+			// Bottom
+			let b = this.lineSegmentIntersection(line, {
+				x1: node.x,
+				y1: node.y + node.h,
+				x2: node.x + node.w,
+				y2: node.y + node.h
+			});
+			if (b) return { p: b, side: "Bottom" };
+
+			// Right
+			let r = this.lineSegmentIntersection(line, {
+				x1: node.x + node.w,
+				y1: node.y,
+				x2: node.x + node.w,
+				y2: node.y + node.h
+			});
+			if (r) return { p: r, side: "Right" };
+
+			// Left
+			let l = this.lineSegmentIntersection(line, {
+				x1: node.x,
+				y1: node.y,
+				x2: node.x,
+				y2: node.y + node.h
+			});
+			if (l) return { p: l, side: "Left" };
+
+			return undefined;
+		}
+
+		console.error("No handler for this node");
+		return undefined;
 	}
 
 	/*

@@ -32,6 +32,7 @@ export default {
 	name: "client",
 	components: {
 		JoinSession,
+		GraphDrawer
 	},
 	created() {
 		this.$socket.emit("verifyUserLevel", 1);
