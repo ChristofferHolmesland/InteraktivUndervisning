@@ -4,7 +4,7 @@
             <b-alert    :show="validationFailure"
                         variant="danger">
                 <p v-for="(error, index) in validationErrors" :key="index">
-                    {{getLocale.error}}
+                    {{getLocale[error]}}
                 </p>
             </b-alert>
             <b-container   class="px-0"
@@ -124,7 +124,20 @@
                         <!-- TODO add table objects -->
                     </div>
                     <div v-if="newQuestion.objects.files.length > 0">
-                        <!--<img v-attr="src: newQuestion.objects.files[0]">-->
+                        <label>Files:</label>
+                        <b-container>
+                            <b-row v-for="(image, index) in newQuestion.objects.files" :key="index" class="mt-2">
+                                <b-col>
+                                    {{image.name}}
+                                </b-col>
+                                <b-col>
+                                    <b-button>Delete</b-button>
+                                </b-col>
+                                <b-col>
+                                    <img :src="getImageSrc(index)" width="200" height="200" style="border: 3px solid black;"/>
+                                </b-col>
+                            </b-row>
+                        </b-container>
                     </div>
                     <div></div>
                     <div></div>
@@ -324,7 +337,7 @@
             mediaTypes: [],
             selectedMediaType: undefined,
 
-            showMedia: false,
+            showMedia: true, // TODO set to false
             showSolution: false,
             showBasicInfo: false, // TODO set to true
 
@@ -334,7 +347,8 @@
             showMediaError: false,
             validationFailure: false,
             validationErrors: [],
-            time: 0
+            time: 0,
+            testImage: ""
         }
     }
 
@@ -395,11 +409,21 @@
             newFile(event) {
                 let files = [];
                 Array.prototype.push.apply(files, event.target.files);
-                let fileSize = 0;
+                let storedFiles = this.newQuestion.objects.files;
+
+                let totalFilesSize = 0;
+                let errorFileSize = 1500000;
+                let warningFileSize = 500000;
+                for(let i = 0; i < storedFiles.length; i++) totalFilesSize += storedFiles[i].size;
                 let fileTypeErr = 0;
 
                 for (let i = 0; i < files.length; i++) {
                     let file = files[i];
+                    let fileObject = {
+                        name: file.name,
+                        size: file.size,
+                        type: file.type
+                    }
                     
                     let fileType = file.type.split("/");
                     if (fileType[0] !== "image") {
@@ -408,27 +432,40 @@
                         fileTypeErr++;
                         this.showMediaError = true;
                         this.mediaErrorText = fileTypeErr.toString() + this.getLocale.mediaErrorFileType;
+                        continue;
                     }
 
-                    fileSize += file.size;
-                    if (fileSize > 1500000) {
-                        files = [];
+                    totalFilesSize += file.size;
+                    if (totalFilesSize > errorFileSize) {
+                        event.target.value = "";
                         this.showMediaError = true;
                         if (fileTypeErr > 0) this.mediaErrorText += "\n\n" + this.getLocale.mediaErrorFileSize;
                         else this.mediaErrorText = this.getLocale.mediaErrorFileSize;
                     }
-                    else if (fileSize > 500000) {
+                    else if (totalFilesSize > warningFileSize) {
                         this.showMediaWarning = true;
                         this.mediaWarningText = this.getLocale.mediaWarningFileSize;
                     }
                     else {
                         if (fileTypeErr === 0) {      
                             this.showMediaError = false;
-                            this.newQuestion.objects.files.push(file);
                         }
                         this.showMediaWarning = false;
                     }
+
+                    if (fileTypeErr === 0 && totalFilesSize < errorFileSize) {
+                        let callbackFunction = function(e) {
+                            fileObject.buffer = btoa(e.target.result);
+                            storedFiles.push(fileObject);
+                        }
+
+                        let reader = new FileReader();
+                        reader.onload = callbackFunction;
+                        reader.readAsBinaryString(file);
+                    }
                 }
+
+                event.target.value = "";
             },
             changeShowMedia() {
                 this.showMedia = !this.showMedia;
@@ -510,17 +547,14 @@
                 this.newQuestion.objects.multipleChoices.push("");
             },
             deleteMultiChoice(index) {
-                console.log(this.newQuestion.solution);
                 let solutionIndex = this.newQuestion.solution.indexOf(index.toString());
                 if (solutionIndex > -1) this.newQuestion.solution.splice(solutionIndex, 1);
                 for (let i = index + 1; i < this.newQuestion.objects.multipleChoices.length; i++) {
                     let j = this.newQuestion.solution.indexOf(i.toString())
-                    console.log(j);
                     if (j > -1) {
                         this.newQuestion.solution[j] = (Number(this.newQuestion.solution[j]) - 1).toString();
                     }
                 }
-                console.log(this.newQuestion.solution);
 
                 this.newQuestion.objects.multipleChoices.splice(index, 1);
             }
@@ -533,6 +567,12 @@
                 }
 
                 return false;
+            },
+            getImageSrc() {
+                return (index) => {
+                    let file = this.newQuestion.objects.files[index];
+                    return "data:" + file.type + ";base64," + file.buffer;
+                }
             },
             getLocale() {
 				let locale = this.$store.getters.getLocale("AdminQuestions");
@@ -602,7 +642,7 @@
             confirmQuestionRequirements: function (result) {
             	if (result.passed) {
                     this.$refs[this.elementRef].hide();
-                    this.doneHandler();
+                    if(this.doneHandler !== undefined) this.doneHandler();
                 }else {
             	    this.validationFailure = true;
                     this.validationErrors = result.errors;
