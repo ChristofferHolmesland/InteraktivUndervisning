@@ -69,27 +69,8 @@
                     </b-col>
                 </b-form-group>
             </div>
+
             <hr>
-
-
-
-            <!-- TODO Make it possible to add objects to question
-                            - Graphs
-                            - Images
-                            - Tables
-            <b-form-group id="objects"
-                label="Objects"
-                label-for="objectsInput">
-                <b-form-select id="objectsInput"
-                    :options="getObjectTypes"
-                    @change="objectsInputChanged($event)">
-                </b-form-select>
-                <ul>
-                    <li :key="object.i" v-for="object in getQuestionObjects">
-                        <component v-on:updateState="newQuestion[object.i].state = $event" :is="object.componentName" :index="i" :state="object.state" />
-                    </li>
-                </ul>
-            </b-form-group> -->
 
             <b-form-group   id="Media">
                 <b-container   class="px-0"
@@ -108,14 +89,18 @@
                         </b-col>
                     </b-row>
                 </b-container>
-                <div v-show="showMedia">
+                <b-container v-show="showMedia">
                     <b-form-select  :options="mediaTypes"
                                     v-model="selectedMediaType">
                     </b-form-select>
                     <div v-if="selectedMediaType === 0">
                         <b-alert :show="showMediaWarning" variant="warning">{{mediaWarningText}}</b-alert>
                         <b-alert :show="showMediaError" variant="danger">{{mediaErrorText}}</b-alert>
-                        <input type="file" @change="newFile" accept="image/*" multiple>
+                        <input  type="file" @change="newFile" accept="image/*" 
+                                multiple name="imageInput" class="imageInput"
+                                id="imageInput"
+                                />
+                        <label for="imageInput">{{getLocale.imageInputLabel}}</label>
                     </div>
                     <div v-if="selectedMediaType === 1">
                         <!-- TODO add graph objects -->
@@ -141,7 +126,7 @@
                     </div>
                     <div></div>
                     <div></div>
-                </div>
+                </b-container>
             </b-form-group>
 
             <hr>
@@ -651,4 +636,35 @@
 </script>
 
 <style scoped>
+.imageInput {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+.imageInput + label {
+    cursor: pointer;
+    font-size: 1.25em;
+    font-weight: 700;
+    color: white;
+    background-color: rgb(199, 54, 54);
+    display: inline-block;
+    height: 50px;
+    width: 400px;
+    border: 3px solid rgb(199, 54, 54);
+    border-radius: 10px;
+    text-align: center;
+    line-height: 50px;
+    
+}
+.imageInput:focus + label,
+.imageInput:hover + label {
+    width: 450px;
+}
+.imageInput:focus + label {
+    outline: 1px dotted #000;
+    outline: -webkit-focus-ring-color auto 5px;
+}
 </style>
