@@ -1,4 +1,5 @@
 const fs = require("fs");
+const path = require("path");
 
 const customReject = function(err, func){
 	return new Error(`Error in get function: ${func} \n\n ${err}`)
@@ -18,44 +19,12 @@ const imageGetter = async function (rows) {
 		let files = row.object.files;
 		for (let j = 0; j < files.length; j++) {
 			let file = files[j];
-
-			let imageReader = function (file, errCount) {
-				let promise = new Promise(function(resolve, reject) {
-					if(errCount >= 5) {
-						reject("file not found");
-						return
-					}
-					if(file.filePath !== undefined) {
-						fs.readFileSync(path.join(__dirname, file.filePath), function(err, data) {
-							if (err) {
-								console.error("Failed to read image: " + err);
-							}
-							else {
-								let base64Image = new Buffer(data, "binary").toString("base64");
-								file.buffer = base64Image;
-								delete file.filePath;
-							}
-						});
-						resolve();
-					}
-					else {
-						setTimeout (() => {
-							imageReader(file, errCount + 1).then(() => {
-								resolve();
-							}).catch((err) => {
-								reject(err);
-							});
-						}, 500);
-					}
-				});
-				return promise;
+			if(file.filePath !== undefined) {
+				let data = fs.readFileSync(path.join(__dirname, file.filePath));
+				let base64Image = data.toString("base64");
+				file.buffer = base64Image;
+				delete file.filePath;
 			}
-
-			await imageReader(file, 0).catch(function() {
-				files.splice(j, 1);
-				j--;
-			});
-
 		}
 	}
 }

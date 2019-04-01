@@ -1,6 +1,7 @@
 const dbFunctions = require("../database/databaseFunctions").dbFunctions;
 const fs = require("fs");
 const mkdirp = require('mkdirp');
+const path = require("path");
 
 const generalFunctions =  require("../generalFunctions.js").functions;
 const session = require("../session.js").Session;
@@ -417,18 +418,18 @@ module.exports.admin = function(socket, db, user, sessions) {
 			for (let i = 0; i < question.objects.files.length; i++) {
 				files.push(JSON.parse(JSON.stringify(question.objects.files[i])));
 			}
-			let filePath = path.join(__dirname, "../../public/img/questionImages/" + questionIndex.toString() +"/");
+			let filePath = path.join("../../public/img/questionImages/", questionIndex.toString(), "/");
 			let filePaths = [];
 	
-			await mkdirp(filePath, async (err) => {
-				if (err) console.error("Error making dirs!\n\n" + err);
+			try {
+				mkdirp.sync(path.join(__dirname, filePath));
 				for (let i = 0; i < files.length; i++) {
 					let type = files[i].type.split("/")[1];
 					filePaths.push(filePath + (i + 1).toString() + "." + type);
 					question.objects.files[i].filePath = filePaths[i];
 					delete question.objects.files[i].buffer;
 					
-					await fs.open(filePaths[i], "a", 0755, function(error, fd) {
+					await fs.open(path.join(__dirname, filePaths[i]), "a", 0755, function(error, fd) {
 						if (error) {
 							console.error("error writing image: \n\n" + err);
 							return;
@@ -441,8 +442,10 @@ module.exports.admin = function(socket, db, user, sessions) {
 					});
 				}
 				
-				await dbFunctions.update.question(db, questionIndex, question.text, question.description, question.objects, question.solution, question.solutionType, question.time);
-			});
+				await dbFunctions.update.question(db, questionIndex, question.text, question.description, question.objects, question.solution, question.solutionType, question.time);		
+			} catch (error) {
+				console.error("Error making dirs!\n\n" + error);
+			}
 		}
 
 		socket.emit("questionChangeComplete");
