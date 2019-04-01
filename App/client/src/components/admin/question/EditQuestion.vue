@@ -89,43 +89,82 @@
                         </b-col>
                     </b-row>
                 </b-container>
-                <b-container v-show="showMedia">
-                    <b-form-select  :options="mediaTypes"
-                                    v-model="selectedMediaType">
-                    </b-form-select>
-                    <div v-if="selectedMediaType === 0">
-                        <b-alert :show="showMediaWarning" variant="warning">{{mediaWarningText}}</b-alert>
-                        <b-alert :show="showMediaError" variant="danger">{{mediaErrorText}}</b-alert>
-                        <input  type="file" @change="newFile" accept="image/*" 
-                                multiple name="imageInput" class="imageInput"
-                                id="imageInput"
-                                />
-                        <label for="imageInput">{{getLocale.imageInputLabel}}</label>
-                    </div>
-                    <div v-if="selectedMediaType === 1">
-                        <!-- TODO add graph objects -->
-                    </div>
-                    <div v-if="selectedMediaType === 2">
-                        <!-- TODO add table objects -->
-                    </div>
-                    <div v-if="newQuestion.objects.files.length > 0">
-                        <label>Files:</label>
-                        <b-container>
-                            <b-row v-for="(image, index) in newQuestion.objects.files" :key="index" class="mt-2">
-                                <b-col>
-                                    {{image.name}}
-                                </b-col>
-                                <b-col>
-                                    <b-button>Delete</b-button>
-                                </b-col>
-                                <b-col>
-                                    <img :src="getImageSrc(index)" width="200" height="200" style="border: 3px solid black;"/>
-                                </b-col>
-                            </b-row>
-                        </b-container>
-                    </div>
-                    <div></div>
-                    <div></div>
+                <b-container v-show="showMedia" class="px-0">
+                    <b-row>
+                        <b-col>
+                            <b-form-select  :options="mediaTypes"
+                                            v-model="selectedMediaType">
+                            </b-form-select>
+                        </b-col>
+                    </b-row>
+                    <b-row style="text-align: center;" class="mt-4">
+                        <b-col>
+                            <div v-if="selectedMediaType === 0">
+                                <b-alert :show="showMediaWarning" variant="warning">{{mediaWarningText}}</b-alert>
+                                <b-alert :show="showMediaError" variant="danger">{{mediaErrorText}}</b-alert>
+                                <input  type="file" @change="newFile" accept="image/*" 
+                                        multiple name="imageInput" class="imageInput"
+                                        id="imageInput"
+                                        />
+                                <label for="imageInput">{{getLocale.imageInputLabel}}</label>
+                            </div>
+                            <div v-if="selectedMediaType === 1">
+                                <!-- TODO add graph objects -->
+                            </div>
+                            <div v-if="selectedMediaType === 2">
+                                <!-- TODO add table objects -->
+                            </div>
+                        </b-col>
+                    </b-row>
+                    <b-row v-if="newQuestion.objects.files.length > 0">
+                        <b-col>
+                            <label>Files:</label>
+                            <b-container>
+                                <b-row v-for="(image, index) in newQuestion.objects.files" :key="index" class="mt-2">
+                                    <b-col>
+                                        <b-row>
+                                            <b-col>
+                                                {{getLocale.filename}}: {{image.name}}
+                                            </b-col>
+                                        </b-row>
+                                        <b-row>
+                                            <b-col>
+                                                {{getLocale.filesize}}: {{Math.round(((image.size / 1000000) + 0.00001) * 100) / 100}} MB
+                                            </b-col>
+                                        </b-row>
+                                        <b-row>
+                                            <b-col>
+                                                {{getLocale.filetype}}: {{image.type}}
+                                            </b-col>
+                                        </b-row>
+                                    </b-col>
+                                    <b-col>
+                                        <b-button @click="deleteImage(index)" variant="danger"
+                                                    style="width: 100px; height: 50px; text-align:center;">
+                                            {{getLocale.deleteBtn}}
+                                        </b-button>
+                                    </b-col>
+                                    <b-col>
+                                        <img :src="getImageSrc(index)" width="200" height="200" style="border: 3px solid black;"/>
+                                    </b-col>
+                                </b-row>
+                            </b-container>
+                        </b-col>
+                    </b-row>
+                    <b-row>
+                        <b-col>
+                            <div>
+
+                            </div>
+                        </b-col>
+                    </b-row>
+                    <b-row>
+                        <b-col>
+                            <div>
+
+                            </div>
+                        </b-col>
+                    </b-row>
                 </b-container>
             </b-form-group>
 
@@ -373,6 +412,17 @@
                 // Move cursor to the right position
                 codeInput.selectionStart = tabPosition + tabSize;
                 codeInput.selectionEnd = tabPosition + tabSize;
+            },
+            deleteImage(index) {
+                let files = this.newQuestion.objects.files;
+                files.splice(index, 1);
+
+                let filesSize = 0;
+                for (let i = 0; i < files.length; i++) {
+                    let file = files[i];
+                    filesSize += file.size;
+                }
+                if (filesSize < 500000) this.showMediaWarning = false;
             },
             assignState() {
                 let n = initializeState();
@@ -649,11 +699,11 @@
     font-size: 1.25em;
     font-weight: 700;
     color: white;
-    background-color: rgb(199, 54, 54);
+    background-color: #007bff;
     display: inline-block;
     height: 50px;
     width: 400px;
-    border: 3px solid rgb(199, 54, 54);
+    border: 3px solid #007bff;
     border-radius: 10px;
     text-align: center;
     line-height: 50px;
@@ -662,9 +712,5 @@
 .imageInput:focus + label,
 .imageInput:hover + label {
     width: 450px;
-}
-.imageInput:focus + label {
-    outline: 1px dotted #000;
-    outline: -webkit-focus-ring-color auto 5px;
 }
 </style>

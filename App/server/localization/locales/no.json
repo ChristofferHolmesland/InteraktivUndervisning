@@ -40,7 +40,11 @@
         "treeElementTypeError": "Elementene i listen skal kun inneholde tall elementer!",
         "BSTAVLInvalidTreeActionError": "Må velge enten å legge til elementer eller å fjerne elementer på fasittype!",
         "questionTypeError": "Spørsmåltype er ikke valgt!",
-        "imageInputLabel": "Velg en fil som skal lastes opp..."
+        "imageInputLabel": "Velg en fil som skal lastes opp...",
+        "filename": "Filnavn",
+        "filesize": "Filstørrelse",
+        "filetype": "Filtype",
+        "deleteBtn": "Slett"
     },
     "AdminSessions": {
         "newSession": "Ny økt",
