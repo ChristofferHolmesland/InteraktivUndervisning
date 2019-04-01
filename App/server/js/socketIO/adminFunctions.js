@@ -503,37 +503,39 @@ module.exports.admin = function(socket, db, user, sessions) {
 		}
 		
 		let questionIndex = await dbFunctions.insert.question(db, question.text, question.description, question.solution, question.time, question.solutionType, question.courseCode, objects);
-
-		let files = [];
-		for (let i = 0; i < question.objects.files.length; i++) {
-			files.push(JSON.parse(JSON.stringify(question.objects.files[i])));
-		}
-		let filePath = "./public/img/questionImages/" + questionIndex.toString() + "/";
-		let filePaths = [];
-
-		mkdirp(filePath, (err) => {
-			if (err) console.error("Error making dirs!\n\n" + err);
-			for (let i = 0; i < files.length; i++) {
-				let type = files[i].type.split("/")[1];
-				filePaths.push(filePath + (i + 1).toString() + "." + type);
-				question.objects.files[i].filePath = filePaths[i];
-				delete question.objects.files[i].buffer;
-				
-				fs.open(filePaths[i], "a", 0755, function(error, fd) {
-					if (error) {
-						console.error("error writing image: \n\n" + err);
-						return;
-					}
-					fs.write(fd, files[i].buffer, null, "base64", function(err, written, buff) {
-						fs.close(fd, function() {
-							console.log("file saved");
+		if (question.objects.files.length > 0) {let files = [];
+			for (let i = 0; i < question.objects.files.length; i++) {
+				files.push(JSON.parse(JSON.stringify(question.objects.files[i])));
+			}
+			let filePath = path.join(__dirname, "../../public/img/questionImages/" + questionIndex.toString() +"/");
+			let filePaths = [];
+	
+			mkdirp(filePath, async (err) => {
+				if (err) console.error("Error making dirs!\n\n" + err);
+				for (let i = 0; i < files.length; i++) {
+					let type = files[i].type.split("/")[1];
+					filePaths.push(filePath + (i + 1).toString() + "." + type);
+					question.objects.files[i].filePath = filePaths[i];
+					delete question.objects.files[i].buffer;
+					
+					await fs.open(filePaths[i], "a", 0755, function(error, fd) {
+						if (error) {
+							console.error("error writing image: \n\n" + err);
+							return;
+						}
+						fs.writeSync(fd, files[i].buffer, null, "base64", function(err, written, buff) {
+							fs.close(fd, function() {
+								console.log("file saved");
+							});
 						});
 					});
-				});
-			}
-			
-			dbFunctions.update.question(db, questionIndex, question.text, question.description, question.objects, question.solution, question.solutionType, question.time);
-		});
+				}
+				
+				await dbFunctions.update.question(db, questionIndex, question.text, question.description, question.objects, question.solution, question.solutionType, question.time);
+	
+				socket.emit("questionChangeComplete");
+			});
+		}
 	});
 
 	socket.on("updateQuestion", function(question) {
