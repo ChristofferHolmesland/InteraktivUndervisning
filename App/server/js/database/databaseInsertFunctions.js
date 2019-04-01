@@ -10,12 +10,12 @@ function createPromise(db, statement, funcName) {
 const insert = {
 	feide: function (db, feideId, feideAccess, feideName, sessionToken, admin) {
 		let statement = `INSERT INTO Feide(id, accessToken, name, sessionId, admin)
-						VALUES(${feideId},'${feideAccess}','${feideName}', '${sessionToken}', ${admin});`;
+						VALUES('${feideId}','${feideAccess}','${feideName}', '${sessionToken}', ${admin});`;
 		return createPromise(db, statement, "feide");
 	},
 	feideUser: function (db, userId, feideId) {
 		let statement = `INSERT INTO User(id,feideId)
-						VALUES ('${userId}',${feideId})`;
+						VALUES ('${userId}','${feideId}')`;
 		return createPromise(db, statement, "feideUser");
 	},
 	anonymousUser: function (db, userId) {
@@ -54,6 +54,7 @@ const insert = {
 		return createPromise(db, statement, "questionNoObject");
 	},
 	_questionWithObject: function (db, questionText, questionDescription, questionObject, questionSolution, time, Type, courseCode) {
+		if(typeof(questionObject) === "object")	questionObject = JSON.stringify(questionObject);
 		let statement = `INSERT INTO Question(text,description,object,solution,time,questionType,courseCode)
 						VALUES('${questionText}','${questionDescription}','${questionObject}','${JSON.stringify(questionSolution)}',${time},${Type},'${courseCode}')`;
 		return createPromise(db, statement, "questionWithObject");
@@ -67,7 +68,7 @@ const insert = {
 	},
 	addUserToSession: function (db, userId, sessionId) {
 		let statement = `INSERT INTO User_has_Session(userId,sessionId)
-						VALUES(${userId},${sessionId})`;
+						VALUES('${userId}', ${sessionId})`;
 		return createPromise(db, statement, "addUserToSession");
 	},
 	addQuestionToSession: function (db, sessionId, questionId) {
@@ -77,7 +78,7 @@ const insert = {
 	},
 	userRightsLevelByFeideId: function (db, feideId, courseCode, courseSemester, level) {
 		let statement = `INSERT INTO UserRight(feideId, courseSemester, courseCode, level) 
-						 VALUES (${feideId}, '${courseSemester}', '${courseCode}', ${level})`;
+						 VALUES ('${feideId}', '${courseSemester}', '${courseCode}', ${level})`;
 		return createPromise(db, statement, "userRightsLevelByFeideId");
 	},
 	questionType: function (db, typeText) {

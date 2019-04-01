@@ -107,9 +107,18 @@ module.exports.getDB = function setupDatabase() {
                 reject(err);
             })
 
-
-            // TODO add more questionTypes
-            let questionTypes = ["Text", "Multiple choice", "ArraySort", "MergeSort", "QuickSort"];
+            let questionTypes = [
+                "Text", 
+                "Multiple choice", 
+                "Shellsort", 
+                "MergeSort", 
+                "QuickSort",
+                "BinaryTree",
+                "BinarySearchTree",
+                "AVLTree",
+                "Dijkstra",
+                "Python"
+            ];
             
             await dbFunctions.get.questionTypes(db).then(async (rows) => {
                 for(let i = 0; i < questionTypes.length; i++) {
@@ -119,8 +128,22 @@ module.exports.getDB = function setupDatabase() {
                 }
             }).catch((err) => {
                 reject(err);
-            })
-            
+            });
+
+            if (process.env.NODE_ENV !== "production") {
+                await dbFunctions.get.userById(db,"test").then(async (rows) => {
+                   if(rows === undefined || rows.length < 1) {
+                       dbFunctions.insert.feide(db, "test", "test", "testAdmin", "test", 4).then(() => {
+                           dbFunctions.insert.feideUser(db, "test", "test").catch((err) => {
+                               console.error(err);
+                           });
+                       }).catch((err) => {
+                           console.error(err);
+                       });
+                   }
+                });
+            }
+
             resolve(db);
         });
     });

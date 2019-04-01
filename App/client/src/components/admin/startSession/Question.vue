@@ -30,7 +30,7 @@ export default {
 	created() {
 		this.participants = this.questionInfo.participants;
 		let timeLeft = this.questionInfo.time;
-		if (timeLeft > -1) {
+		if (timeLeft > 0) {
 			this.timeLeft = timeLeft;
 			this.interval = setInterval(() => {
 				if (this.timeLeft === 0) {

@@ -1,5 +1,5 @@
 const djikstra = require("./djikstra");
 
 module.exports = {
-        djikstra: djikstra
+        dijkstra: djikstra
 }

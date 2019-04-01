@@ -1,12 +1,91 @@
 const Answer = require("../session.js").Answer;
 const dbFunctions = require("../database/databaseFunctions.js").dbFunctions;
+const solutionChecker = require("../SolutionChecker/solutionChecker.js").solutionChecker;
 
 module.exports.client = function(socket, db, user, sessions) {
+
+    socket.on("verifySessionExists", function(sessionCode) {
+        let session = sessions.get(sessionCode);
+        if (session === undefined) {
+            socket.emit("verifySessionExistsError");
+        }
+        else {
+            if (user !== undefined) {
+                if (user.feide !== undefined) {
+                    session = session.session;
+                    let userList = session.userList;
+                    for (let i = 0; i < userList.length; i++) {
+                        if (user.feide.idNumber === userList[i].feide.idNumber) {
+                            socket.join(sessionCode);
+                            if (session.currentQuestion > -1) {
+                                let answerList = session.questionList[session.currentQuestion].answerList;
+                                let answered = false;
+                                let answer = {}
+
+                                if (answered) {
+                                    
+                                }
+
+                                else {
+                                    let question = session.questionList[session.currentQuestion];
+
+
+                                    if (question.resultScreen) {
+                                        socket.emit("answerResponse", "waitingForAdmin")
+                                    }
+                                    else {
+                                        let timeLeft = -1
+                                        if (question.time > 0) {               
+                                            timeLeft = question.time - ((Date.now() - question.timeStarted) / 1000)
+                                        }     
+                        
+                                        let safeQuestion = {
+                                            "text": question.text,
+                                            "description": question.description,
+                                            "object": question.object,
+                                            "type": question.type,
+                                            "time": timeLeft,
+                                            "participants": session.currentUsers
+                                        }
+                        
+                                        socket.emit("nextQuestion", safeQuestion);
+    
+                                        let adminSocket = sessions.get(sessionCode).adminSocket;
+                            
+                                        adminSocket.emit("updateParticipantCount", session.currentUsers);
+                        
+                                        let numAnswers = question.answerList.length;
+                                        let participants = question.connectedUsers;
+                                
+                                        adminSocket.emit("updateNumberOfAnswers", numAnswers, participants);
+                                    }
+                                }
+                            } else {
+
+                            } 
+                            break;
+                        }
+                    }
+                }
+            }
+            else if (socket.rooms[sessionCode] === undefined) {
+                socket.emit("verifySessionExistsError");
+            }
+            else {
+                socket.emit("verifySessionExistsError");
+            }
+        }
+    });
 
     socket.on("quickJoinRoom", async function (sessionCode) {
         if (sessions.get(sessionCode)) {
             let userId = 1;
-            if (user.feide) userId = user.feide.token;
+            if (user.feide) userId = await dbFunctions.get.userId(db, {
+                type: "feide",
+                id: user.feide.idNumber
+            }).catch((err) => {
+                console.error(err);
+            });
 
             await dbFunctions.get.sessionHasUserByUserId(db, userId).then((row) => {
                 let session = sessions.get(sessionCode).session;
@@ -46,7 +125,7 @@ module.exports.client = function(socket, db, user, sessions) {
                     adminSocket.emit("updateNumberOfAnswers", numAnswers, participants);
                 }
             }).catch((err) => {
-                console.log(err);
+                console.error(err);
             });
         } else {
             socket.emit("sessionInActive", sessionCode);
@@ -116,11 +195,18 @@ module.exports.client = function(socket, db, user, sessions) {
         let question = session.questionList[session.currentQuestion];
         let result = -1; // Default value is -1 for the users that answers that they don't know. Changed later if they did answer
 
+        console.log("QuestionAnsweredClient");
+        console.log(question);
+
         if(answerObject === null){
             answerObject = "You didn't answer";
             socket.emit("answerResponse", "betweenQuestionsNotAnswered");
         } else {
-            checkedResult = require("../SolutionChecker/solutionChecker.js").solutionChecker.checkAnswer(answerObject, question.solution, question.type);
+            checkedResult = solutionChecker.checkAnswer(
+                JSON.parse(JSON.stringify(answerObject)),
+                JSON.parse(JSON.stringify(question.solution)),
+                question.type
+            );
 
             if (checkedResult){
                 result = 1;
@@ -139,10 +225,10 @@ module.exports.client = function(socket, db, user, sessions) {
         };
 
         if(user.feide !== undefined) {
-            dbFunctions.get.userIdByFeideId(db, user.feide.idNumber).then(async (userId) => {
+            await dbFunctions.get.userIdByFeideId(db, user.feide.idNumber).then(async (userId) => {
                 information.userId = userId.id;
             }).catch((err) => {
-                console.log(err);
+                console.error(err);
             });
         }
         
@@ -151,6 +237,30 @@ module.exports.client = function(socket, db, user, sessions) {
         question.socketsAnswered[socket.id] = true;
     });
 
+    /*
+        insertAnswerToDatabase:
+        
+        Example
+        information = 
+        { 
+            answer: [ { Type: 'Initial', K: '5', List: [Array] } ],
+            userId: 1,
+            session:
+            {
+                id: 1,
+                name: 'Shellsort testing session',
+                status: 0,
+                userList: [ [User] ],
+                courseSemester: 'H19',
+                courseName: undefined,
+                questionList: [ [Question] ],
+                sessionCode: '3421',
+                currentQuestion: 0,
+                currentUsers: 1 
+            },
+            result: 0 
+        }
+    */
     async function insertAnswerToDatabase(information) {
         let answer = new Answer(information.session.currentQuestion, information.userId, information.answer, information.result);
         let question = information.session.questionList[information.session.currentQuestion];
@@ -167,6 +277,8 @@ module.exports.client = function(socket, db, user, sessions) {
             if(numAnswers === participants) {
                 let answerList = [];
                 if (question.answerList) answerList = question.answerList;
+
+                question.resultScreen = true;
         
                 let filteredAnswerList = [];
                 let correctAnswer = 0;
@@ -203,7 +315,7 @@ module.exports.client = function(socket, db, user, sessions) {
                 adminSocket.emit("goToQuestionResultScreen", response);
             }
         }).catch((err) => {
-            console.log(err);
+            console.error(err);
         });
     }
 }

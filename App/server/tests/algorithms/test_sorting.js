@@ -71,13 +71,13 @@ describe("ShellSort", function () {
     let testArray3 = [28,60,50,71,45,4,50,53,45,15,86,79,5,51,73];
     let steps = [
         {
-            k: 5, list:[ 4, 56, 5, 54, 15, 29, 60, 50, 59, 16, 83, 79, 75, 71, 73 ]
+            K: 5, List:[ 4, 56, 5, 54, 15, 29, 60, 50, 59, 16, 83, 79, 75, 71, 73 ], Type: "Step"
         },
         {
-            k: 2, list: [ 4, 16, 5, 29, 15, 50, 59, 54, 60, 56, 73, 71, 75, 79, 83 ]
+            K: 2, List: [ 4, 16, 5, 29, 15, 50, 59, 54, 60, 56, 73, 71, 75, 79, 83 ], Type: "Step"
         },
         {
-            k: 1, list: [ 4, 5, 15, 16, 29, 50, 54, 56, 59, 60, 71, 73, 75, 79, 83 ]
+            K: 1, List: [ 4, 5, 15, 16, 29, 50, 54, 56, 59, 60, 71, 73, 75, 79, 83 ], Type: "Step"
         }
     ];
     let sorter = shellsort(5,testArray2);
@@ -93,18 +93,18 @@ describe("ShellSort", function () {
     }
 
     it("Array should be fully sorted", function () {
-        let fullySortedArray ={k:1, list:[4, 5, 15, 16, 29, 50, 54, 56, 59, 60, 71, 73, 75, 79, 83]};
+        let fullySortedArray ={K:1, List:[4, 5, 15, 16, 29, 50, 54, 56, 59, 60, 71, 73, 75, 79, 83], Type: "Step"};
             assert.deepEqual(sorter.finish(),fullySortedArray)
     });
 
     it("Array should be reset", function () {
-        let originalArray = {k:5, list: [29, 60, 50, 71, 16, 4, 56, 75, 54, 15, 83, 79, 5, 59, 73]};
+        let originalArray = {K:5, List: [29, 60, 50, 71, 16, 4, 56, 75, 54, 15, 83, 79, 5, 59, 73], Type: "Initial"};
         assert.deepEqual(sorter.reset(),originalArray);
     });
 
     it("K sort where K= 10",  function () {
         let sorter2 = shellsort(10, testArray3);
-        let expectedResult = {k:10, list: [28, 60, 5, 51, 45, 4, 50, 53, 45, 15, 86, 79, 50, 71, 73 ]};
+        let expectedResult = {K:10, List: [28, 60, 5, 51, 45, 4, 50, 53, 45, 15, 86, 79, 50, 71, 73 ], Type: "Step"};
         assert.deepEqual(sorter2.step(),expectedResult);
     });
 });

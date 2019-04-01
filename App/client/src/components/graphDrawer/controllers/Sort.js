@@ -19,15 +19,13 @@ export default class Sort {
 		// If there are some starting steps, they are parsed
 		// and put into the world.
 		if (config.steps) {
-			this.currentStep = 0;
-			if (this.operatingMode == "Interaction") {
-				this.currentStep = config.steps.length - 1;
-			}
-
 			this.steps = config.steps;
-			this._parseSteps();
-			this.gd.dirty = true;
-			this._recalculateEdges();
+			if (this.gd.operatingMode == "Presentation") {
+				this.gd.currentStep = config.steps.length - 1;
+				this.gd.addSteppingButtons();
+				this.gd.drawStatic();
+			}
+			this.parseSteps();
 		}
 	}
 
@@ -37,14 +35,6 @@ export default class Sort {
 
 	constructor(graphDrawer, config) {
 		this.gd = graphDrawer;
-		// This doesn't work on mobile, because there is no
-		// mouse
-		if (this.gd.DEVICE == "Desktop") {
-			this.gd.canvas.addEventListener("mousemove", (function (e) {
-				this.mouseMoveHandler(e);
-			}).bind(this));
-		}
-	
 		/*
 			All the arrays stored as a object
 			{
@@ -103,10 +93,6 @@ export default class Sort {
 		this.startPositionOfMove = { x: -1, y: 1 };
 
 		this.config = config;
-
-		if (this.gd.operatingMode == "Presentation") {
-			this.addSteppingButtons();
-		}
 	}
 
 	/*
@@ -119,13 +105,11 @@ export default class Sort {
 			if (this.arrays.length == 0) {
 				this.gd.controllers["Graph0"].addNode(e);
 				let node = this.gd.nodes[this.gd.nodes.length - 1];
-				this.arrays.push(
-					{
-						position: { x: node.x, y: node.y },
-						nodes: [node],
-						links: []
-					}
-				);
+				this.arrays.push({
+					position: { x: node.x, y: node.y },
+					nodes: [node],
+					links: []
+				});
 				return true;
 			}
 
@@ -160,8 +144,13 @@ export default class Sort {
 	checkNodes(e) {
 		// These need to be defined inside this function, so .bind(this) can be used
 		let checkNodesMouseUp = function(newE) {
+			newE.preventDefault();
+			this.gd.setEventOffset(newE);
 			this.gd.canvas.removeEventListener("mouseup", checkNodesMouseUp);
 			this.gd.canvas.removeEventListener("mousemove", checkNodesMouseMove);
+			this.gd.canvas.removeEventListener("touchend", checkNodesMouseUp);
+			this.gd.canvas.removeEventListener("touchcancel", checkNodesMouseUp);
+			this.gd.canvas.removeEventListener("touchmove", checkNodesMouseMove);
 
 			// If there is just one selected node,
 			// it's value can be edited, it can be removed
@@ -244,6 +233,8 @@ export default class Sort {
 		}.bind(this);
 
 		let checkNodesMouseMove = function(newE) {
+			newE.preventDefault();
+			this.gd.setEventOffset(newE);
 			let nodeAtCursor = this.gd.getNodeAtCursor(newE).node;
 			// Checks if no node is under the cursor, or it's already in the list
 			if (nodeAtCursor == undefined || this.selectedNodes.indexOf(nodeAtCursor) != -1)
@@ -288,6 +279,9 @@ export default class Sort {
 			this.selectedNodes.push(node);
 			this.gd.canvas.addEventListener("mousemove", checkNodesMouseMove);
 			this.gd.canvas.addEventListener("mouseup", checkNodesMouseUp);
+			this.gd.canvas.addEventListener("touchmove", checkNodesMouseMove);
+			this.gd.canvas.addEventListener("touchend", checkNodesMouseUp);
+			this.gd.canvas.addEventListener("touchcancel", checkNodesMouseUp);
 		} else {
 			// Click event is not consumed if no node was clicked on
 			return false;
@@ -352,7 +346,7 @@ export default class Sort {
 				clone.strokeColor = undefined;
 
 				newArr.nodes.push(clone);
-				this.gd.nodes.push(clone);
+				this.gd.addNode(clone);
 			}
 
 			this.arrays.push(newArr);
@@ -462,8 +456,8 @@ export default class Sort {
 		// Checks the + buttons between nodes
 		for (let i = 0; i < this.buttons.length; i++) {
 			let btn = this.buttons[i];
-			if (this.gd.isPointInSquare(e.offsetX, e.offsetY, btn.position.x, btn.position.y, 
-				btn.position.width)) {
+			if (this.gd.isPointInRectangle(e.offsetX, e.offsetY, btn.position.x, btn.position.y, 
+				btn.position.width, btn.position.height)) {
 				btn.handler(btn);
 				return true;
 			}
@@ -473,8 +467,8 @@ export default class Sort {
 		if (this.gd.DEVICE == "Mobile") {
 			for (let i = 0; i < this.clickedButtons.length; i++) {
 				let btn = this.clickedButtons[i];
-				if (this.gd.isPointInSquare(e.offsetX, e.offsetY, btn.position.x,
-					btn.position.y, btn.position.width)) {
+				if (this.gd.isPointInRectangle(e.offsetX, e.offsetY, btn.position.x,
+					btn.position.y, btn.position.width, btn.position.height)) {
 					btn.handler(e);
 					return true;
 				}
@@ -482,52 +476,6 @@ export default class Sort {
 		}
 
 		return false;
-	}
-
-	addSteppingButtons() {
-		this.clickedButtons = [];
-		let relSize = 0.5;
-
-		let stepBack = () => {
-			if (this.currentStep > 0) {
-				this.currentStep -= 1;
-				this._parseSteps();
-				this.addSteppingButtons();
-			}
-		};
-
-		let stepForward = () => {
-			if (this.currentStep < this.steps.length - 1) {
-				this.currentStep += 1;
-				this._parseSteps();
-				this.addSteppingButtons();
-			}
-		};
-
-		this.clickedButtons.push({
-			data: {
-				text: "<--",
-				relSize: relSize
-			},
-			handler: stepBack
-		});
-		this.clickedButtons.push({
-			data: {
-				text: (this.currentStep + 1) + " / " + this.steps.length,
-				relSize: relSize
-			},
-			handler: () => {}
-		});
-		this.clickedButtons.push({
-			data: {
-				text: "-->",
-				relSize: relSize
-			},
-			handler: stepForward
-		});
-
-		this._calculatePositionForClickedButtons();
-		this.gd.dirty = true;
 	}
 
 	/*
@@ -543,10 +491,12 @@ export default class Sort {
 	addNewNodeToArray(event) {
 		let clickedNode = this.arrays[event.data.ai].nodes[event.data.ni];
 		let node = {
-			x: clickedNode.x + (event.data.side == "left" ? -clickedNode.r : clickedNode.r),
+			x: clickedNode.x + (event.data.side == "left" ? -clickedNode.w : clickedNode.w),
 			y: clickedNode.y,
-			r: clickedNode.r,
-			v: 0
+			w: clickedNode.w,
+			h: clickedNode.h,
+			v: 0,
+			shape: clickedNode.shape
 		}
 
 		this.arrays[event.data.ai].nodes.splice(
@@ -557,10 +507,10 @@ export default class Sort {
 
 		// Recalculate node position inside the array
 		if (event.data.side == "left") 
-			this.arrays[event.data.ai].position.x -= clickedNode.r;
+			this.arrays[event.data.ai].position.x -= clickedNode.w;
 		this._repositionNodes(event.data.ai);
 
-		this.gd.nodes.push(node);
+		this.gd.addNode(node);
 		this.gd.dirty = true;
 	}
 
@@ -571,8 +521,8 @@ export default class Sort {
 		let start = this.arrays[ai].position
 		for (let ni = 0; ni < this.arrays[ai].nodes.length; ni++) {
 			let node = this.arrays[ai].nodes[ni];
-			// Assumes all the nodes have the same width
-			node.x = start.x + ni * node.r;
+			// Assumes all the nodes have the same width TODO: This assumption is no longer true
+			node.x = start.x + ni * node.w;
 			node.y = start.y;
 		}
 
@@ -648,8 +598,15 @@ export default class Sort {
 			this.gd.staticContext.closePath();
 		}
 
+		// If the operatingMode is Presentation, the stepping buttons
+		// should be drawn.
+		if (this.gd.operatingMode == "Presentation") {
+			this.gd.drawStatic();
+		}
+
 		// Render selected buttons (Mobile)
 		for (let i = 0; i < this.clickedButtons.length; i++) {
+			
 			let btn = this.clickedButtons[i];
 			this.gd.staticContext.beginPath();
 
@@ -683,10 +640,10 @@ export default class Sort {
 		Creates a + button next to a node on a given side.
 	*/
 	_renderAddNodeButton(node, side, ai, ni) {
-		let bSize = node.r / this.bsf;
-		let bX = node.x + node.r - bSize / 2;
+		let bSize = node.w / this.bsf;
+		let bX = node.x + node.w - bSize / 2;
 		if (side == "left") {
-			bX -= node.r;
+			bX -= node.w;
 		}
 
 		let point = this.gd.camera.unproject(
@@ -849,12 +806,11 @@ export default class Sort {
 				}
 
 				if (!found) {
-					let pivot = undefined;
+					let pivot = [];
 					if (this.sortType == "Quicksort") {
 						for (let n = 0; n < c.parents[0].nodes.length; n++) {
 							if (c.parents[0].nodes[n].pivot) {
-								pivot = c.parents[0].nodes[n].v;
-								break;
+								pivot.push(c.parents[0].nodes[n].v);
 							}
 						}
 					}
@@ -886,13 +842,61 @@ export default class Sort {
 			}
 		}
 
+		// Add everything as a final step
+		let edges = [];
+		for (let i = 0; i < this.gd.edges.length; i++) {
+			edges.push({
+				n1: this.gd.edges[i].n1.v,
+				n2: this.gd.edges[i].n2.v
+			});
+		}
+
+		let nodes = [];
+		for (let i = 0; i < this.gd.nodes.length; i++) {
+			let node = this.gd.nodes[i];
+			nodes.push({
+				v: node.v,
+				x: node.x,
+				y: node.y
+			});
+		}
+
+		let arrs = [];
+		for (let i = 0; i < this.arrays.length; i++) {
+			let arr = this.arrays[i];
+
+			let links = [];
+			for (let j = 0; j < arr.links.length; j++) {
+				links.push(this.arrays.indexOf(arr.links[j]));
+			}
+
+			let pivots = [];
+			for (let j = 0; j < arr.nodes.length; j++) {
+				if (arr.nodes[j].pivot) {
+					pivots.push(j);
+				}
+			}
+
+			arrs.push({
+				nodes: arrToList(arr),
+				position: arr.position,
+				links: links,
+				pivots: pivots
+			});
+		}
+
+		steps.push({
+			type: "Complete",
+			arrays: arrs
+		});
+
 		return steps;
 	}
 
 	/*
 		Parses the steps from a step list into arrays
 	*/
-	_parseSteps() {
+	parseSteps() {
 		// Reset the world
 		this.arrays = [];
 		this.gd.nodes = [];
@@ -906,18 +910,20 @@ export default class Sort {
 		let user = this.steps[0].position != undefined;
 		let yPadding = 75;
 		let xPadding = 25;
-		let r = this.gd.nodeShape == "Circle" ? this.gd.R : this.gd.R * this.gd.SQUARE_FACTOR;
+		let r = this.gd.nodeShape == "Circle" ? this.gd.R : this.gd.R * 2;
 
 		let nodesFromValueList = (list, array) => {
 			for (let i = 0; i < list.length; i++) {
 				let node = {
 					x: array.position.x + r * i,
 					y: array.position.y,
-					r: r,
-					v: list[i]
+					w: r,
+					h: r,
+					v: list[i],
+					shape: this.gd.nodeShape
 				};
 
-				this.gd.nodes.push(node);
+				this.gd.addNode(node);
 				array.nodes.push(node);
 			}
 		};
@@ -925,6 +931,8 @@ export default class Sort {
 		// The inital array is placed centered
 		// at the top of the canvas relative 
 		// to the current camera position.
+		// If this is not the first time parseInitial is ran,
+		// it will be placed at the position of the first run instead.
 		let parseInitial = (step) => {
 			let p = this.gd.camera.project(this.gd.canvas.width / 2, 0);
 
@@ -934,6 +942,13 @@ export default class Sort {
 			// Assumes same size nodes
 			let arrayWidth = step.list.length * r;
 			p.x -= arrayWidth / 2;
+
+			if (this._initialArrayPosition == undefined) {
+				this._initialArrayPosition = { x: p.x, y: p.y };
+			} else {
+				p.x -= (p.x - this._initialArrayPosition.x);
+				p.y -= (p.y - this._initialArrayPosition.y);
+			}
 
 			let newArr = this.getNewArray(p.x, p.y);
 			nodesFromValueList(step.list, newArr);
@@ -956,14 +971,14 @@ export default class Sort {
 		let parseSplit = (step, pos) => {
 			let parent = this._findArrayFromNodeValues(step.list);
 
-			if (step.left.length > 0) {
+			if (step.left !== undefined && step.left.length > 0) {
 				let left = this.getNewArray(pos.left.x, pos.left.y);
 				nodesFromValueList(step.left, left);
 				this.arrays.push(left);
 				this.arrays[parent].links.push(left);
 			}
 
-			if (step.right.length > 0) {
+			if (step.right !== undefined && step.right.length > 0) {
 				let right = this.getNewArray(pos.right.x, pos.right.y);
 				nodesFromValueList(step.right, right);
 				this.arrays.push(right);
@@ -986,12 +1001,67 @@ export default class Sort {
 
 			let p1 = this._findArrayFromNodeValues(step.list1, true);
 			let p2 = this._findArrayFromNodeValues(step.list2, true);
-			this.arrays[p1].links.push(merged);
-			this.arrays[p2].links.push(merged);
+
+			// Quicksort solutions will merge to lists and a pivot node
+			if (step.pivot) {
+				// Find array which contains the pivot node
+				for (let i = 0; i < this.arrays.length; i++) {
+					let nodes = this.arrays[i].nodes;
+					let found = false;
+					for (let j = 0; j < nodes.length; j++) {
+						if (nodes[j].pivot && nodes[j].v == step.pivot) {
+							this.arrays[i].links.push(merged);
+							found = true;
+							break;
+						}
+					}
+
+					if (found) break;
+				}
+			}
+
+			if (p1 > -1) this.arrays[p1].links.push(merged);
+			if (p2 > -1) this.arrays[p2].links.push(merged);
+		};
+
+		let parseComplete = (step, pos) => {
+			this.gd.nodes = [];
+			this.gd.edges = [];
+
+			for (let i = 0; i < step.arrays.length; i++) {
+				let arr = step.arrays[i];
+				let newArr = {
+					position: {
+						x: arr.position.x + pos.x,
+						y: arr.position.y + pos.y
+					},
+					nodes: [],
+					links: []
+				};
+				nodesFromValueList(arr.nodes, newArr);
+				this.arrays.push(newArr);
+				this.gd.centerCameraOnGraph();
+			}
+
+			for (let i = 0; i < this.arrays.length; i++) {
+				let arr = this.arrays[i];
+
+				let stepArray = step.arrays[i];
+				for (let j = 0; j < stepArray.links.length; j++) {
+					let index = stepArray.links[j];
+					arr.links.push(this.arrays[index]);
+				}
+
+				for (let j = 0; j < stepArray.pivots.length; j++) {
+					let index = stepArray.pivots[j];
+					arr.nodes[index].pivot = true;
+					arr.nodes[index].fillColor = this.pivotColor;
+				}
+			}
 		};
 
 		let offset = undefined;
-		for (let i = 0; i <= this.currentStep; i++) {
+		for (let i = 0; i <= this.gd.currentStep; i++) {
 			let step = this.steps[i];
 			let pos = {
 				x: 0,
@@ -1003,14 +1073,16 @@ export default class Sort {
 			if (step.type == "Initial") {
 				offset = parseInitial(step);
 			} else if (step.type == "Split") {
+				if (offset == undefined) continue;
+
 				if (user) {
 					if (step.position.left) {
-						pos.left.x = step.position.left.x + offset.x;
-						pos.left.y = step.position.left.y + offset.y;
+						pos.left.x = step.position.left.x + offset.dx;
+						pos.left.y = step.position.left.y + offset.dy;
 					}
-					if (step.position.right) {
-						pos.right.x = step.position.right.x + offset.x;
-						pos.right.y = step.position.right.y + offset.y;
+					if (step.position.right) {;
+						pos.right.x = step.position.right.x + offset.dx;
+						pos.right.y = step.position.right.y + offset.dy;
 					}
 				} else {
 					let parent = this._findArrayFromNodeValues(step.list);
@@ -1024,36 +1096,66 @@ export default class Sort {
 
 				parseSplit(step, pos);
 			} else if (step.type == "Merge") {
+				if (offset == undefined) continue;
+
 				// Quicksort shouldn't show the merge step
-				if (this.sortType == "Quicksort") continue;
+				//if (this.sortType == "Quicksort") continue;
+				if (step.list1 == undefined || step.list2 == undefined) {
+					continue;
+				}
 
 				if (user) {
-					pos.x = step.position.x + offset.x;
-					pos.y = step.position.y + offset.y;
+					pos.x = step.position.x + offset.dx;
+					pos.y = step.position.y + offset.dy;
 				} else {
-					// TODO: Fix placement of merged arrays
-
 					// The array should be centered between the two
 					// parent arrays in the x position.
-					let p1 = this._findArrayFromNodeValues(step.list1);
-					let p2 = this._findArrayFromNodeValues(step.list2);
-					let p1Width = this.arrays[p1].nodes.length * r;
-					let p2Width = this.arrays[p2].nodes.length * r;
-					let c1 = this.arrays[p1].position.x + p1Width / 2;
-					let c2 = this.arrays[p2].position.x + p2Width / 2;
-					let c = (c1 + c2) / 2;
-					let stepWidth = step.merged.length * r;
-					pos.x = c - stepWidth / 2;
+					let p1 = this._findArrayFromNodeValues(step.list1, true);
+					let p2 = this._findArrayFromNodeValues(step.list2, true);
 
-					let cy1 = this.arrays[p1].position.y;
-					let cy2 = this.arrays[p2].position.y;
-					let cy = (cy1 + cy2) / 2;
-					pos.y = cy + yPadding;
+					let ps = [];
+					if (p1 > -1) ps.push(this.arrays[p1]);
+					if (p2 > -1) ps.push(this.arrays[p2]);
+					// Quicksort solutions will merge to lists and a pivot node
+					if (step.pivot) {
+						for (let i = 0; i < this.arrays.length; i++) {
+							let nodes = this.arrays[i].nodes;
+							let found = false;
+							for (let j = 0; j < nodes.length; j++) {
+								if (nodes[j].pivot && nodes[j].v == step.pivot) {
+									ps.push(this.arrays[i]);
+									found = true;
+									break;
+								}
+							}
+
+							if (found) break;
+						}
+					}
+
+					let cx = 0;
+					let maxY = 0;
+					for (let i = 0; i < ps.length; i++) {
+						let width = ps[i].nodes.length * r;
+						cx += ps[i].position.x + width / 2;
+
+						if (ps[i].position.y > maxY) maxY = ps[i].position.y;
+					}
+					cx /= ps.length;
+					let stepWidth = step.merged.length * r;
+					pos.x = cx - stepWidth / 2;
+					pos.y = maxY + yPadding;
 				}
 
 				parseMerge(step, pos);
+			} else if (step.type == "Complete") {
+				if (offset !== undefined) {
+					pos.x = offset.dx;
+					pos.y = offset.dy;
+				}
+				parseComplete(step, pos);
 			} else {
-				console.log(`Found invalid step type: ${step.type} 
+				console.error(`Found invalid step type: ${step.type} 
 					at index ${i}, skipping.`);
 			}
 		}
@@ -1090,8 +1192,8 @@ export default class Sort {
 		if (hoveredNode == undefined) return;
 
 		// Delete node
-		let bSize = hoveredNode.r / this.bsf;
-		let bX = hoveredNode.x + hoveredNode.r / 2 - bSize / 2;
+		let bSize = hoveredNode.w / this.bsf;
+		let bX = hoveredNode.x + hoveredNode.w / 2 - bSize / 2;
 		let dP = this.gd.camera.unproject(
 			bX,
 			hoveredNode.y

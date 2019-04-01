@@ -2,6 +2,7 @@ import Graph0 from "./controllers/Graph0.js";
 import Graph1 from "./controllers/Graph1.js";
 import Sort from "./controllers/Sort.js";
 import Djikstra from "./controllers/Djikstra.js";
+import Python from "./controllers/Python.js";
 import Camera from "./Camera.js";
 
 /*
@@ -35,14 +36,15 @@ export default class GraphDrawer {
 	_config(config) {
 		/*
 			What shape is drawn for the nodes
-			Possible values: Circle, Square
+			Possible values: Circle, Rectangle
 		*/
-		this.nodeShape = config.nodeShape || "Square";
+		this.nodeShape = config.nodeShape || "Rectangle";
 		/*
 			Determines how the user can interact with the canvas.
 			Graph0 = Buttons are shown.
 			Graph1 = Simple mode 
 			Sort = Quicksort or Mergesort
+			Python = Python
 		*/
 		this.controlType = config.controlType || "Sort";
 		/*
@@ -80,8 +82,6 @@ export default class GraphDrawer {
 	constructor(canvas, config) {
 		// Radius of nodes.
 		this.R = 25;
-		// Relative size of square nodes compared to circle nodes.
-		this.SQUARE_FACTOR = 1.5;
 		// How often the canvas should be updated.
 		this.FPS = 60;
 		// Milliseconds between each update.
@@ -91,16 +91,25 @@ export default class GraphDrawer {
 		// Size of the font in px.
 		this.fontHeight = 10;
 
+		// Which step of the presentation the user is currently on
+		// Should be used by the controller to decide on what to display
+		this.currentStep = 0;
+		// Buttons used to change step in presentation mode.
+		this.steppingButtons = [];
+		// Decides how much of the assigned button space should be used
+		// by a button.
+		this.relSize = 0.7;
+
 		this._config(config);
 
 		/*
 			Nodes in the graph 
 			{
-				x, y, r, v, 
+				x, y, w, h, v, shape
 				selected (can be undefined), 
 				culled (can be undefined),
 				fillColor (undefined => white),
-				strokeColor (undefined => black)
+				strokeColor (undefined => black),
 			}.
 		*/
 		this.nodes = [];
@@ -114,10 +123,19 @@ export default class GraphDrawer {
 		*/
 		this.edges = [];
 
+		// This value can be used by any object needing an id.
+		// It should always be incremented after using the id.
+		this.nextId = 0;
+
 		// Flag which determines if the graph state should
 		// be redrawn. Default value is true, so the UI
 		// is rendered.
 		this.dirty = true;
+
+		// Flag which determines if the dirty flag should remain
+		// true after a draw operation. This can not stay true 
+		// after being used.
+		this.stillDirty = false;
 
 		// Canvas used to display graph.
 		this.canvas = canvas;
@@ -133,19 +151,29 @@ export default class GraphDrawer {
 		// Offscreen canvas used for drawing. This draws
 		// in world space and the camera converts it to canvas space.
 		this.drawBuffer = document.createElement("CANVAS");
-		this.drawBuffer.width = canvas.width * 3;
-		this.drawBuffer.height = canvas.height * 3;
+		this.drawBuffer.width = canvas.width * 5;
+		this.drawBuffer.height = canvas.height * 5;
 		this.drawContext = this.drawBuffer.getContext("2d");
 
-		this.canvas.addEventListener("mousedown", (function(e) {
-				let consumed = this.controllers[this.controlType].mouseDownHandler(e);
-				if (consumed) return;
+		let down = function(e) {
+			e.preventDefault();
+			this.setEventOffset(e);
 
-				// Gesture detection
-				this.detectPanGesture(e);
-				// TODO: Figure out how to detect two-finger zooming
-				// TODO: Let desktop users zoom
-			}).bind(this));
+			// Check if the user is stepping.
+			let consumed = this.checkSteppingButtons(e);
+			if (consumed) return;
+
+			// Let the controller handle the click.
+			consumed = this.controllers[this.controlType].mouseDownHandler(e);
+			if (consumed) return;
+
+			// Gesture detection.
+			this.detectPanGesture(e);
+			this.detectZoomGesture(e);
+		}.bind(this);
+
+		this.canvas.addEventListener("mousedown", down);
+		this.canvas.addEventListener("touchstart", down);
 
 		// Updates the GraphDrawer every <MS_PER_FRAME> milliseconds.
 		this.intervalId = setInterval((function() {
@@ -158,7 +186,8 @@ export default class GraphDrawer {
 			Graph0: new Graph0(this, config.graph),
 			Graph1: new Graph1(this),
 			Sort: new Sort(this, config.sort),
-			Djikstra: new Djikstra(this, config.djikstra)
+			Dijkstra: new Djikstra(this, config.dijkstra),
+			Python: new Python(this, config.python)
 		};
 
 		this.setController(this.controlType);
@@ -174,12 +203,6 @@ export default class GraphDrawer {
 
 		if (this.controllers[this.controlType].configure)
 			this.controllers[this.controlType].configure();
-	}
-
-	// TODO: Remove this, and implement a better interface
-	set zoomLevel(newZoom) {
-		this.camera.zoomLevel = newZoom;
-		this.dirty = true;
 	}
 
 	/*
@@ -198,10 +221,10 @@ export default class GraphDrawer {
 
 		this.canvasContext.drawImage(
 			this.drawBuffer,
-			camera.Left,
-			camera.Top,
-			camera.Width,
-			camera.Height,
+			camera.left,
+			camera.top,
+			camera.width,
+			camera.height,
 			0,
 			0,
 			this.canvas.width,
@@ -219,6 +242,50 @@ export default class GraphDrawer {
 			this.canvas.width,
 			this.canvas.height
 		);
+	}
+
+	/*
+		Draws the stepping buttons to the buffer.
+		Must be called by a controller.
+	*/
+	drawStatic() {
+		this.staticContext.clearRect(
+			0,
+			0,
+			this.staticBuffer.width,
+			this.staticBuffer.height
+		);
+
+		for (let i = 0; i < this.steppingButtons.length; i++) {
+			let btn = this.steppingButtons[i];
+			this.staticContext.beginPath();
+
+			// Button
+			this.staticContext.rect(
+				btn.position.x,
+				btn.position.y,
+				btn.position.width,
+				btn.position.height
+			);
+			this.staticContext.fill();
+			this.staticContext.stroke();
+
+			// Text
+			this.staticContext.fillStyle = "black";
+			let textWidth = this.staticContext.measureText(btn.data.text).width;
+			let xPadding = (btn.position.width - textWidth) / 2;
+			let yPadding = (btn.position.height + this.fontHeight) / 2;
+			this.staticContext.fillText(
+				btn.data.text,
+				btn.position.x + xPadding,
+				btn.position.y + yPadding
+			);
+			this.staticContext.fillStyle = "white";
+			this.staticContext.closePath();
+		}
+
+		if (this.controllers[this.controlType].afterDrawStatic)
+			this.controllers[this.controlType].afterDrawStatic();
 	}
 
 	/*
@@ -246,26 +313,16 @@ export default class GraphDrawer {
 		for (let i = 0; i < this.edges.length; i++) {
 			if (this.camera.cull(this.edges[i], false)) continue;
 
-			let cx1 = this.edges[i].n1.x;
-			let cy1 = this.edges[i].n1.y;
-			let cx2 = this.edges[i].n2.x;
-			let cy2 = this.edges[i].n2.y;
-
-			if (this.nodeShape == "Square") {
-				let n1 = this.edges[i].n1;
-				let n2 = this.edges[i].n2;
-				cx1 += n1.r / 2;
-				cy1 += n1.r / 2;
-				cx2 += n2.r / 2;
-				cy2 += n2.r / 2;
-			}
+			let center1 = this.getCenter(this.edges[i].n1);
+			let center2 = this.getCenter(this.edges[i].n2);
 
 			this.drawContext.beginPath();
-			this.drawContext.moveTo(cx1, cy1);
-			this.drawContext.lineTo(cx2, cy2);
+			this.drawContext.moveTo(center1.x, center1.y);
+			this.drawContext.lineTo(center2.x, center2.y);
 
-			if (this.edges[i].strokeColor)
+			if (this.edges[i].strokeColor) {
 				this.drawContext.strokeStyle = this.edges[i].strokeColor;
+			}
 			this.drawContext.stroke();
 			this.drawContext.strokeStyle = "black";
 			this.drawContext.closePath();
@@ -276,23 +333,37 @@ export default class GraphDrawer {
 				(this.edges[i].directed == undefined ||
 					this.edges[i].directed == true)
 			) {
-				let dx = cx1 - cx2;
-				let dy = cy1 - cy2;
+				// Normalize the line as (nx, ny)
+				let dx = center1.x - center2.x;
+				let dy = center1.y - center2.y;
 				let magnitude = Math.sqrt(dx * dx + dy * dy);
 				let nx = dx / magnitude;
 				let ny = dy / magnitude;
-				let a = { x: this.edges[i].n2.x, y: this.edges[i].n2.y };
-				a.x += nx * this.edges[i].n2.r;
-				a.y += ny * this.edges[i].n2.r;
-				let b = { x: a.x, y: a.y };
-				b.x += nx * this.edges[i].n2.r;
-				b.y += ny * this.edges[i].n2.r;
 
-				let headlen = 20;
+				// Distance from the center of shape to the edge
+				let dstToEdgeW = this.edges[i].n2.w;
+				let dstToEdgeH = this.edges[i].n2.h;
+				if (this.edges[i].n2.shape == "Rectangle") {
+					dstToEdgeW /= 2;
+					dstToEdgeH /= 2;
+				}
+
+				let a = { x: center2.x, y: center2.y };
+				a.x += nx * dstToEdgeW;
+				a.y += ny * dstToEdgeH;
+
+				let b = { x: a.x, y: a.y };
+				b.x += nx * dstToEdgeW;
+				b.y += ny * dstToEdgeH;
+
+				// TODO: When the nodeshape is square, the arrows
+				// are placed on the line, but not close to
+				// the last node.
+
+				let headlen = 15;
 				let angle = Math.atan2(a.y - b.y, a.x - b.x);
 				this.drawContext.beginPath();
-				this.drawContext.moveTo(b.x, b.y);
-				this.drawContext.lineTo(a.x, a.y);
+				this.drawContext.moveTo(a.x, a.y);
 				this.drawContext.lineTo(
 					a.x - headlen * Math.cos(angle - Math.PI / 6),
 					a.y - headlen * Math.sin(angle - Math.PI / 6)
@@ -302,12 +373,16 @@ export default class GraphDrawer {
 					a.x - headlen * Math.cos(angle + Math.PI / 6),
 					a.y - headlen * Math.sin(angle + Math.PI / 6)
 				);
+				if (this.edges[i].strokeColor) {
+					this.drawContext.strokeStyle = this.edges[i].strokeColor;
+				}
 				this.drawContext.stroke();
+				this.drawContext.strokeStyle = "black";
 			}
 
 			if (this.displayEdgeValues && this.edges[i].v !== undefined) {
-				let tx = (cx1 + cx2) / 2 + 5;
-				let ty = (cy1 + cy2) / 2 + 5;
+				let tx = (center1.x + center2.x) / 2 + 5;
+				let ty = (center1.y + center2.y) / 2 + 5;
 				this.drawContext.fillText(this.edges[i].v, tx, ty);
 			}
 		}
@@ -315,22 +390,7 @@ export default class GraphDrawer {
 		for (let i = 0; i < this.nodes.length; i++) {
 			if (this.camera.cull(this.nodes[i], true)) continue;
 			this.drawContext.beginPath();
-			if (this.nodeShape == "Circle") {
-				this.drawContext.arc(
-					this.nodes[i].x,
-					this.nodes[i].y,
-					this.R,
-					0,
-					2 * Math.PI
-				);
-			} else if (this.nodeShape == "Square") {
-				this.drawContext.rect(
-					this.nodes[i].x,
-					this.nodes[i].y,
-					this.nodes[i].r,
-					this.nodes[i].r
-				);
-			}
+
 			if (this.nodes[i].fillColor == undefined)
 				this.drawContext.fillStyle = "white";
 			else this.drawContext.fillStyle = this.nodes[i].fillColor;
@@ -339,28 +399,124 @@ export default class GraphDrawer {
 				this.drawContext.strokeStyle = "black";
 			else this.drawContext.strokeStyle = this.nodes[i].strokeColor;
 
+			this.drawNode(this.nodes[i], this.drawContext);
+
 			this.drawContext.fill();
 			this.drawContext.stroke();
 			this.drawContext.closePath();
 			this.drawContext.strokeStyle = "black";
+
 			// Text
+			let center = this.getCenter(this.nodes[i]);
 			this.drawContext.fillStyle = "black";
-			/*
-				Width is the only property
-				https://developer.mozilla.org/en-US/docs/Web/API/TextMetrics
-			*/
-			let textWidth = this.drawContext.measureText(this.nodes[i].v).width;
-			let ox = this.nodeShape == "Circle" ? 0 : this.nodes[i].r / 2;
-			let oy = this.nodeShape == "Circle" ? 0 : this.nodes[i].r / 2;
-			this.drawContext.fillText(
-				this.nodes[i].v,
-				this.nodes[i].x - textWidth / 2 + ox,
-				this.nodes[i].y + this.fontHeight / 2 + oy
-			);
+			let lines = [];
+			if (typeof this.nodes[i].v == "string")
+				lines = this.nodes[i].v.split("\n");
+			else lines.push("" + this.nodes[i].v);
+
+			let firstY = -(lines.length - 1) * 0.5;
+
+			// Fix nodes where the text overflows the height of the node
+			if (this.nodes[i].h < lines.length * this.fontHeight) {
+				this.nodes[i].h = lines.length * this.fontHeight + 5;
+				this.stillDirty = true;
+			}
+
+			let maxTextWidth = 0;
+			for (let l = 0; l < lines.length; l++) {
+				let textWidth = this.drawContext.measureText(lines[l]).width;
+
+				// Fix nodes where the text overflows the width of the node
+				if (this.nodes[i].w < textWidth) {
+					this.nodes[i].w = textWidth + 5;
+					this.stillDirty = true;
+				}
+
+				if (textWidth > maxTextWidth) maxTextWidth = textWidth;
+
+				this.drawContext.fillText(
+					lines[l],
+					center.x - textWidth / 2,
+					center.y + this.fontHeight / 2 + this.fontHeight * firstY + this.fontHeight * l
+				);
+			}
+
+			// If a node is wider than needed, it will be assigned a smaller
+			// width, bounded by this.R.
+			if (maxTextWidth < this.nodes[i].w) {
+				this.nodes[i].w = maxTextWidth;
+
+				let minSize = this.nodes[i].shape == "Circle" ? this.R : this.R * 2;
+				if (this.nodes[i].w < minSize) this.nodes[i].w = minSize;
+				this.stillDirty = true;
+			}
 		}
 
 		for (let i = 0; i < this.nodes.length; i++)
 			this.nodes[i].culled = undefined;
+	}
+
+	/*
+		Adds a node and returns a reference to it.
+		props should be an object with mapping from attribute->value.
+		Possible attributes: (all optional)
+			x, y, w, h, v, shape,
+			selected, culled,
+			fillColor, strokeColor
+	*/
+	addNode(props) {
+		let nextId = this.nextId;
+		this.nextId++;
+
+		// If a node comes with a defined id, it needs to be checked
+		// to see if a node with that id already exists. If a node exists
+		// this nodes id should be set to nextId, instead of the defined id.
+		if (props.id !== undefined) {
+			let n = this.getNode(props.id);
+			if (n !== undefined) props.id = nextId;
+		}
+
+		let node = {
+			id: nextId,
+			x: 0,
+			y: 0,
+			w: this.R,
+			h: this.R,
+			shape: this.nodeShape,
+			selected: undefined,
+			culled: undefined,
+			fillColor: undefined,
+			strokeColor: undefined
+		};
+
+		for (var prop in props) {
+			if (props.hasOwnProperty(prop)) {
+				node[prop] = props[prop];
+			}
+		}
+
+		// Check if the new node was given an id which is larger than the
+		// next id. If it was, nextId needs to be changed to prevent duplicate ids.
+		if (node.id >= this.nextId) nextId = node.id + 1;
+
+		this.nodes.push(node);
+		return node;
+	}
+
+	getNode(id) {
+		for (let i = 0; i < this.nodes.length; i++) {
+			if (this.nodes[i].id == id) return this.nodes[i];
+		}
+
+		return undefined;
+	}
+
+	getNodeByValue(v) {
+		for (let i = 0; i < this.nodes.length; i++) {
+			if (this.nodes[i].v == v) return this.nodes[i];
+		}
+
+		return undefined;
 	}
 
 	/*
@@ -374,9 +530,12 @@ export default class GraphDrawer {
 				this.controllers[this.controlType].dirtyUpdate();
 			}
 
+			//this.moveGraphInsideWorld();
 			this.draw();
 			this.switchBuffers();
-			this.dirty = false;
+
+			if (this.stillDirty) this.stillDirty = false;
+			else this.dirty = false;
 		}
 	}
 
@@ -393,51 +552,186 @@ export default class GraphDrawer {
 	}
 
 	/*
+		Can be called to let the user zoom using two fingers.
+	*/
+	detectZoomGesture(e) {
+		if (e.targetTouches == undefined) return;
+		if (e.targetTouches.length < 2) return;
+
+		let getFingers = function(evt) {
+			let rect = this.canvas.getBoundingClientRect();
+
+			let f1 = {
+				x: evt.targetTouches[0].clientX - rect.left,
+				y: evt.targetTouches[0].clientY - rect.top
+			};
+
+			let f2 = {
+				x: evt.targetTouches[1].clientX - rect.left,
+				y: evt.targetTouches[1].clientY - rect.top
+			};
+
+			return [f1, f2];
+		}.bind(this);
+
+		let previousFingers = getFingers(e);
+
+		let zoomHandler = function(newE) {
+			let newFingers = getFingers(newE);
+
+			let dF0x = newFingers[0].x - previousFingers[0].x;
+			let dF0y = newFingers[0].y - previousFingers[0].y;
+			let dF1x = newFingers[1].x - previousFingers[1].x;
+			let dF1y = newFingers[1].y - previousFingers[1].y;
+
+			if (
+				Math.sign(dF0x) !== Math.sign(dF1x) &&
+				Math.sign(dF0y) !== Math.sign(dF1y)
+			) {
+				let pdist = Math.hypot(
+					previousFingers[1].x - previousFingers[0].x,
+					previousFingers[1].y - previousFingers[0].y
+				);
+				let ndist = Math.hypot(
+					newFingers[1].x - newFingers[0].x,
+					newFingers[1].y - newFingers[0].y
+				);
+
+				let ax = (newFingers[0].x + newFingers[1].x) / 2;
+				let ay = (newFingers[0].y + newFingers[1].y) / 2;
+
+				// Zoom out
+				if (pdist > ndist) this.camera.changeZoom(0.05, ax, ay);
+				// Zoom in
+				else if (pdist < ndist) this.camera.changeZoom(-0.05, ax, ay);
+			}
+
+			this.dirty = true;
+			previousFingers = newFingers;
+		}.bind(this);
+
+		let zoomStopHandler = function() {
+			setTimeout((function() {
+				this.isZooming = false;
+			}).bind(this), this.FPS / 4 * this.MS_PER_FRAME);
+			this.canvas.removeEventListener("touchmove", zoomHandler);
+			this.canvas.removeEventListener("touchend", zoomStopHandler);
+			this.canvas.removeEventListener("touchcancel", zoomStopHandler);
+			this.canvas.removeEventListener("touchleave", zoomStopHandler);
+		}.bind(this);
+
+		this.isZooming = true;
+		this.canvas.addEventListener("touchmove", zoomHandler);
+		this.canvas.addEventListener("touchend", zoomStopHandler);
+		this.canvas.addEventListener("touchcancel", zoomStopHandler);
+		this.canvas.addEventListener("touchleave", zoomStopHandler);
+	}
+
+	drawNode(node, context) {
+		if (node.shape == "Circle") {
+			/*context.arc(
+				node.x,
+				node.y,
+				node.w,
+				0,
+				2 * Math.PI
+			);*/
+			context.ellipse(
+				node.x,
+				node.y,
+				node.w,
+				node.h,
+				0,
+				0,
+				2 * Math.PI
+			);
+		} else if (node.shape == "Rectangle") {
+			context.rect(
+				node.x,
+				node.y,
+				node.w,
+				node.h
+			);
+		}
+	}
+
+	/*
 		Can be called to determine if the event e is the start of a panning gesture.
 		This let's the user move the camera around the world.
 	*/
 	detectPanGesture(e) {
-		let currentPosition = this.camera.project(e.offsetX, e.offsetY);
+		// Detect if the user is trying to zoom
+		if (e.touches !== undefined) {
+			if (e.touches.length > 1) return;
+			if (e.targetTouches.length > 1) return;
+			if (e.changedTouches.length > 1) return;
+		}
+
+		if (this.isZooming == true) return;
+
+		let currentPosition = { x: e.offsetX, y: e.offsetY };
 		// How much the camera moves relative to how far the mouse is dragged.
-		const velocityFactor = 0.85;
+		let velocityFactor = 0.95;
+		velocityFactor *= this.camera.zoomLevel;
 		// How much the mouse must be moved before panning starts.
-		const threshold = 5;
+		let threshold = 5;
+		let hasMoved = false;
 
 		let panMoveHandler = function(newE) {
-			let newPosition = this.camera.project(newE.offsetX, newE.offsetY);
+			newE.preventDefault();
+			this.setEventOffset(newE);
+			let newPosition = { x: newE.offsetX, y: newE.offsetY };
 			let frustum = this.camera.getFrustumFront();
 
 			// Calculates the difference in position between last frame and this frame.
 			let dX = velocityFactor * (newPosition.x - currentPosition.x);
 			let dY = velocityFactor * (newPosition.y - currentPosition.y);
-			if (dX > threshold || dX < threshold)
+
+			if (dX > threshold || dX < -threshold) {
+				dX -= Math.sign(dX) * threshold;
 				// The camera won't put it's center close enough to the world edge,
 				// to render anything outside the world.
 				this.camera.translateX(
 					-dX,
-					frustum.Width / 2,
-					this.drawBuffer.width - frustum.Width / 2
+					frustum.width / 2,
+					this.drawBuffer.width - frustum.width / 2
 				);
-			if (dY > threshold || dY < threshold)
+				hasMoved = true;
+			}
+			if (dY > threshold || dY < -threshold) {
+				dY -= Math.sign(dY) * threshold;
 				this.camera.translateY(
 					-dY,
-					frustum.Height / 2,
-					this.drawBuffer.height - frustum.Height / 2
+					frustum.height / 2,
+					this.drawBuffer.height - frustum.height / 2
 				);
+				hasMoved = true;
+			}
 
 			this.dirty = true;
-			currentPosition = newPosition;
+			currentPosition.x = newPosition.x;
+			currentPosition.y = newPosition.y;
+			if (hasMoved) threshold = 0;
 		}.bind(this);
 
-		let panUpHandler = function() {
+		let panUpHandler = function(newE) {
+			newE.preventDefault();
 			this.canvas.removeEventListener("mousemove", panMoveHandler);
 			this.canvas.removeEventListener("mouseup", panUpHandler);
 			this.canvas.removeEventListener("mouseleave", panUpHandler);
+			this.canvas.removeEventListener("touchmove", panMoveHandler);
+			this.canvas.removeEventListener("touchend", panUpHandler);
+			this.canvas.removeEventListener("touchcancel", panUpHandler);
+			this.canvas.removeEventListener("touchleave", panUpHandler);
 		}.bind(this);
 
 		this.canvas.addEventListener("mousemove", panMoveHandler);
 		this.canvas.addEventListener("mouseup", panUpHandler);
 		this.canvas.addEventListener("mouseleave", panUpHandler);
+		this.canvas.addEventListener("touchmove", panMoveHandler);
+		this.canvas.addEventListener("touchend", panUpHandler);
+		this.canvas.addEventListener("touchcancel", panUpHandler);
+		this.canvas.addEventListener("touchleave", panUpHandler);
 	}
 
 	/*
@@ -455,7 +749,7 @@ export default class GraphDrawer {
 	*/
 	getNodeAtPoint(x, y) {
 		for (let i = 0; i < this.nodes.length; i++) {
-			if (this.isPointInNode(x, y, this.nodes[i].x, this.nodes[i].y)) {
+			if (this.isPointInNode(x, y, this.nodes[i])) {
 				return {
 					index: i,
 					node: this.nodes[i]
@@ -470,21 +764,35 @@ export default class GraphDrawer {
 	}
 
 	/*
-		Checks whether a point (x, y) is inside a node (nx, ny).
+		Checks whether a point (x, y) is inside a node.
 	*/
-	isPointInNode(x, y, nx, ny) {
-		if (this.nodeShape == "Circle") {
-			return this.isPointInCircle(x, y, nx, ny, this.R);
+	isPointInNode(x, y, node) {
+		if (node.shape == "Circle") {
+			return this.isPointInEllipse(x, y, node.x, node.y, node.w, node.h);
 		}
-		if (this.nodeShape == "Square") {
-			return this.isPointInSquare(
+		if (node.shape == "Rectangle") {
+			return this.isPointInRectangle(
 				x,
 				y,
-				nx,
-				ny,
-				this.R * this.SQUARE_FACTOR
+				node.x,
+				node.y,
+				node.w,
+				node.h
 			);
 		}
+	}
+
+	/*
+		Check wheter a point (x, y) is inside an ellipse
+		with center (nx, ny) and radius (rx, ry).
+
+
+		TODO: Check if this can be used for nodes where rx == ry
+	*/
+	isPointInEllipse(x, y, nx, ny, rx, ry) {
+		let xx = ((x - nx) * (x - nx)) / (rx * rx);
+		let yy = ((y - ny) * (y - ny)) / (ry * ry);
+		return xx + yy <= 1;
 	}
 
 	/*
@@ -496,12 +804,12 @@ export default class GraphDrawer {
 	}
 
 	/*
-		Checks whether a point (x, y) is inside a square with radius r.
+		Checks whether a point (x, y) is inside a rectangle with width w and height h.
 		Top left corner of square (nx, ny).
 	*/
-	isPointInSquare(x, y, nx, ny, r) {
-		if (x < nx || x > nx + r) return false;
-		if (y < ny || y > ny + r) return false;
+	isPointInRectangle(x, y, nx, ny, w, h) {
+		if (x < nx || x > nx + w) return false;
+		if (y < ny || y > ny + h) return false;
 		return true;
 	}
 
@@ -512,32 +820,39 @@ export default class GraphDrawer {
 		let p = {
 			x: x,
 			y: y
-		}
-
-		let p1 = {
-			x: edge.n1.x,
-			y: edge.n1.y
 		};
 
-		let p2 = {
-			x: edge.n2.x,
-			y: edge.n2.y
-		};
+		let p1 = this.getCenter(edge.n1);
+		let p2 = this.getCenter(edge.n2);
 
 		return Math.sqrt(this._distToSegmentSquared(p, p1, p2));
 	}
 
 	// ref: https://stackoverflow.com/a/1501725, 20.02.2019
 	_distToSegmentSquared(p, v, w) {
-		function sqr(x) { return x * x }
-		function dist2(v, w) { return sqr(v.x - w.x) + sqr(v.y - w.y) }
+		function sqr(x) {
+			return x * x;
+		}
+
+		function dist2(v, w) {
+			return sqr(v.x - w.x) + sqr(v.y - w.y);
+		}
 
 		var l2 = dist2(v, w);
 		if (l2 == 0) return dist2(p, v);
 		var t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
 		t = Math.max(0, Math.min(1, t));
-		return dist2(p, { x: v.x + t * (w.x - v.x),
-						y: v.y + t * (w.y - v.y) });
+		return dist2(p, {
+			x: v.x + t * (w.x - v.x),
+			y: v.y + t * (w.y - v.y)
+		});
+	}
+
+	getCenter(node) {
+		if (node.shape == "Circle") 
+			return { x: node.x, y: node.y };
+		if (node.shape == "Rectangle")
+			return { x: node.x + node.w / 2, y: node.y + node.h / 2 };
 	}
 
 	// Sort the selected nodes based on x coordinate to get them in the right order
@@ -552,5 +867,178 @@ export default class GraphDrawer {
 		if (n1.v < n2.v) return -1;
 		if (n1.v > n2.v) return 1;
 		return 0;
+	}
+
+	// Sets x,y touch position to the same variable
+	// used by mouse events.
+	setEventOffset(e) {
+		if (e.offsetX !== undefined && e.offsetY !== undefined) return;
+
+		let rect = this.canvas.getBoundingClientRect();
+
+		if (e.targetTouches !== undefined && e.targetTouches.length > 0) {
+			e.offsetX = e.targetTouches[0].clientX - rect.left;
+			e.offsetY = e.targetTouches[0].clientY - rect.top;
+		} else if (e.changedTouches !== undefined && e.changedTouches.length > 0) {
+			e.offsetX = e.changedTouches[0].clientX - rect.left;
+			e.offsetY = e.changedTouches[0].clientY - rect.top;
+		} else {
+			e.offsetX = -1;
+			e.offsetY = -1;
+		}
+	}
+
+	checkSteppingButtons(e) {
+		for (let i = 0; i < this.steppingButtons.length; i++) {
+			let btn = this.steppingButtons[i];
+			let inside = this.isPointInRectangle(
+				e.offsetX,
+				e.offsetY,
+				btn.position.x,
+				btn.position.y,
+				btn.position.width,
+				btn.position.height
+			);
+
+			if (inside) {
+				btn.handler(e);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	moveGraphInsideWorld() {
+		let dx = 0;
+		let dy = 0;
+		let maxX = this.drawBuffer.width;
+		let maxY = this.drawBuffer.height;
+
+		// Find the nodes which are the furthest away
+		// from the world border.
+		for (let i = 0; i < this.nodes.length; i++) {
+			let n = this.nodes[i];
+
+			if (n.x > maxX) {
+				// Cant move the graph if there are nodes outside both edges
+				if (Math.sign(dx) == 1) return;
+
+				let ndx = maxX - n.x;
+				if (ndx > dx) dx = ndx;
+			}
+
+			if (n.y > maxY) {
+				if (Math.sign(dy) == 1) return;
+				let ndy = maxY - n.y;
+				if (ndy > dy) dy = ndy;
+			}
+
+			if (n.x < 0) {
+				if (Math.sign(dx) == -1) return;
+				let ndx = maxX - n.x;
+				if (ndx > dx) dx = ndx;
+			}
+
+			if (n.y < 0) {
+				if (Math.sign(dy) == -1) return;
+				let ndy = maxY - n.y;
+				if (ndy > dy) dy = ndy;
+			}
+		}
+
+		if (dx !== 0 || dy !== 0) {
+			this.camera.centerX += dx;
+			this.camera.centerY += dy;
+
+			for (let i = 0; i < this.nodes.length; i++) {
+				let n = this.nodes[i];
+				n.x += dx;
+				n.y += dy;
+			}
+		}
+	}
+
+	centerCameraOnGraph() {
+		let tx = 0;
+		let ty = 0;
+
+		for (let i = 0; i < this.nodes.length; i++) {
+			let center = this.getCenter(this.nodes[i]);
+			tx += center.x;
+			ty += center.y;
+		}
+
+		this.camera.centerX = tx / this.nodes.length;
+		this.camera.centerY = ty / this.nodes.length;
+	}
+
+	addSteppingButtons() {
+		this.steppingButtons = [];
+		let numOfSteps = this.controllers[this.controlType].steps.length;
+
+		let stepBack = () => {
+			if (this.currentStep > 0) {
+				this.currentStep -= 1;
+				this.controllers[this.controlType].parseSteps();
+				this.addSteppingButtons();
+			}
+		};
+
+		let stepForward = () => {
+			if (this.currentStep < numOfSteps - 1) {
+				this.currentStep += 1;
+				this.controllers[this.controlType].parseSteps();
+				this.addSteppingButtons();
+			}
+		};
+
+		this.steppingButtons.push({
+			data: {
+				text: "<--",
+				relSize: this.relSize
+			},
+			handler: stepBack
+		});
+		this.steppingButtons.push({
+			data: {
+				text: (this.currentStep + 1) + " / " + numOfSteps,
+				relSize: this.relSize
+			},
+			handler: () => {}
+		});
+		this.steppingButtons.push({
+			data: {
+				text: "-->",
+				relSize: this.relSize
+			},
+			handler: stepForward
+		});
+
+		this.calculateSteppingButtonsPosition();
+		this.dirty = true;
+		this.drawStatic();
+	}
+
+	calculateSteppingButtonsPosition() {
+		let numBtns = this.steppingButtons.length;
+		// Every button get an equal amount of screen size
+		let maxButtonWidth = this.staticBuffer.width / numBtns;
+		let maxButtonHeight = this.staticBuffer.height / 10;
+		for (let i = 0; i < numBtns; i++) {
+			let btn = this.steppingButtons[i];
+			//  Sets the button size to the allocated size * relative button size
+			let btnWidth = maxButtonWidth * btn.data.relSize;
+			let btnHeight = maxButtonHeight * btn.data.relSize;
+			// Centers the button inside the allocated space
+			let xPadding = (maxButtonWidth - btnWidth) / 2;
+			let yPadding = (maxButtonHeight - btnHeight) / 2;
+
+			btn.position = {
+				x: i * maxButtonWidth + xPadding,
+				y: this.staticBuffer.height - maxButtonHeight + yPadding,
+				width: btnWidth,
+				height: btnHeight
+			};
+		}
 	}
 }

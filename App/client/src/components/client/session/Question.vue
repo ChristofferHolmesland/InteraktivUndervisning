@@ -23,19 +23,32 @@
                                             v-if="getQuestionType === 2"
                                             />
                                             <!--getQuestionInfo.object.choices-->
-                            <ArraySort v-if="getQuestionType === 3" 
+                            <Shellsort v-if="getQuestionType === 3" 
                                         :requestAnswer="requestAnswer"
                                         @getTextResponse="getTextValue"
+                                        :initialList="getStartArray(questionInfo.object.startingArray)"
+                                        :initialKValue="questionInfo.object.kValue"
                                         />
-                            <Mergesort v-if="getQuestionType === 4"
-                                    :requestAnswer="requestAnswer"
-                                    @getTextResponse="getTextResponse"
-                                    :steps="questionInfo.object.steps"
-                                    />
+                            <Mergesort  v-if="getQuestionType === 4"
+                                        :requestAnswer="requestAnswer"
+                                        @getTextResponse="getTextValue"
+                                        :steps="questionInfo.object.steps"
+                                        />
                             <Quicksort v-if="getQuestionType === 5"
                                 :requestAnswer="requestAnswer"
-                                @getTextResponse="getTextResponse"
+                                @getTextResponse="getTextValue"
                                 :steps="questionInfo.object.steps"
+                                />
+                            <Tree v-if="getQuestionType === 6 || getQuestionType === 7 || getQuestionType === 8"
+                                :requestAnswer="requestAnswer"
+                                @getTextResponse="getTextValue"
+                                :steps="questionInfo.object.steps"
+                                />
+                            <!--:type = "questionInfo.object.type"-->
+                            <Dijkstra v-if="getQuestionType === 9"
+                                :requestAnswer="requestAnswer"
+                                @getTextResponse="getTextValue"
+                                :steps="questionInfo.solution"
                                 />
                         </b-tab>
                         <b-tab :title="updateTimer" v-if="interval !== undefined" disabled></b-tab>
@@ -43,10 +56,14 @@
                 </b-col>
             </b-row>
             <b-row>
-                <b-col>
-                    <b-btn @click="exitSession">{{ getLocale.exitSessionBtnText }}</b-btn>
-                    <b-btn @click="questionNotAnswered">{{ getLocale.answerDontKnowBtnText }}</b-btn>
-                    <b-btn @click="questionAnswered">{{ getLocale.answerBtnText }}</b-btn>
+                <b-col cols="12" lg="4" class="mt-3">
+                    <b-btn variant="danger" @click="exitSession">{{ getLocale.exitSessionBtnText }}</b-btn>
+                </b-col>
+                <b-col cols="12" lg="4" class="mt-3">
+                    <b-btn variant="warning" @click="questionNotAnswered">{{ getLocale.answerDontKnowBtnText }}</b-btn>
+                </b-col>
+                <b-col cols="12" lg="4" class="mt-3">
+                    <b-btn variant="success" @click="questionAnswered">{{ getLocale.answerBtnText }}</b-btn>
                 </b-col>
             </b-row>
         </b-container>
@@ -56,9 +73,11 @@
 <script>
 	import TextInput from "./questionTypes/TextInput.vue";
     import MultipleChoice from "./questionTypes/MultipleChoice.vue";
-    import ArraySort from "./questionTypes/sorting/ArraySort.vue";
+    import Shellsort from "./questionTypes/sorting/Shellsort.vue";
     import Mergesort from "./questionTypes/sorting/Mergesort.vue";
     import Quicksort from "./questionTypes/sorting/Quicksort.vue";
+    import Tree from "./questionTypes/trees/Tree.vue";
+    import Dijkstra from "./questionTypes/Dijkstra.vue";
     
 	export default {
 		name: "Question",
@@ -107,6 +126,14 @@
                 if (confirm(this.getLocale.leaveSessionBody)) {
                     this.$socket.emit("leaveSession",this.sessionCode);
                 }
+            },
+            getStartArray(array) {
+                let elements = array.split(",");
+                let result = [];
+                for (let i = 0; i < elements.length; i++) {
+                    result.push(elements[i]);
+                }
+                return result;
             }
 	    },
 		computed: {
@@ -136,9 +163,11 @@
 		components: {
 			TextInput,
             MultipleChoice,
-            ArraySort,
+            Shellsort,
             Mergesort,
-            Quicksort
+            Quicksort,
+            Tree,
+            Dijkstra
         }
 	};
 </script>

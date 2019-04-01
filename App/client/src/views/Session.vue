@@ -41,6 +41,9 @@ export default {
 		},
 		endSessionScreen() {
 			this.state = 4;
+		},
+		startSessionError() {
+			this.$router.push("/admin");
 		}
 	},
 	components: {
@@ -49,8 +52,19 @@ export default {
 		QuestionResultScreen,
 		SessionOverScreen
 	},
+	methods: {
+		getLocale(localePage) {
+			let locale = this.$store.getters.getLocale(localePage);
+			if (locale) return locale;
+			else return {};
+		}
+	},
 	beforeDestroy() {
-		// TODO add logic if the admin goes to another path before the sessions ends
+		if (confirm(this.getLocale("ClientSessionQuestion").leaveSessionBody)) {
+			this.$socket.emit("adminLeaveSession", this.sessionId);
+		} else {
+			this.$router.push("/admin/session/" + this.sessionId);
+		}
 	}
 };
 </script>

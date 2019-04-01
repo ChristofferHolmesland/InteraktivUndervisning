@@ -15,6 +15,7 @@ import Question from "../components/client/session/Question.vue";
 
 export default {
 	name: "ClientSession",
+	props: ["sessionCode"],
 	data() {
 		return {
 			sessionState: 0,
@@ -24,12 +25,7 @@ export default {
 	},
 	created() {
 		this.$socket.emit("verifyUserLevel", 1);
-	},
-	props: ["sessionCode"],
-	computed: {
-		getSessionState() {
-			return this.sessionState;
-		}
+		this.$socket.emit("verifySessionExists", this.sessionCode);
 	},
 	sockets: {
 		nextQuestion(questionInfo) {
@@ -46,11 +42,33 @@ export default {
 		finishSessionResponse(localeElement) {
 			this.localeElement = localeElement;
 			this.sessionState = 0;
+		},
+		verifySessionExistsError() {
+			this.$router.push("/client");
 		}
 	},
 	components: {
 		WaitingArea,
 		Question
+	},
+	computed: {
+		getSessionState() {
+			return this.sessionState;
+		}
+	},
+	methods: {
+		getLeaveConfirmBody() {
+			let locale = this.$store.getters.getLocale("ClientSessionQuestion").leaveSessionBody;
+			if (locale) return locale;
+			else return {};
+		}
+	},
+	beforeDestroy() {
+		if (confirm(this.getLeaveConfirmBody())) {
+			this.$socket.emit("leaveSession", this.sessionCode);
+		} else {
+			this.$router.push("/client/session/" + this.sessionCode);
+		}
 	}
 };
 </script>

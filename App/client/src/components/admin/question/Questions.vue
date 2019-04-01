@@ -17,7 +17,7 @@
 					+
 					<span style="visibility: hidden;">+</span>
 				</b-button>
-				<EditQuestion elementId="newQuestionModal" :okHandler="addNewQuestionHandler"></EditQuestion>
+				<EditQuestion elementRef="innerModal" elementId="newQuestionModal" okHandler="add"></EditQuestion>
 			</b-col>
 			<b-col cols="2"></b-col>
 		</b-row>
@@ -25,7 +25,7 @@
 			<b-col cols="0" lg="2"></b-col>
 			<b-col cols="12" lg="8">
 				<b-list-group style="min-height: 300px; max-height: 300px; overflow-y:scroll;">
-					<EditQuestion elementRef="innerModal" ref="editQuestionModal" :okHandler="editQuestionHandler"></EditQuestion>
+					<EditQuestion elementRef="innerModal" ref="editQuestionModal" okHandler="edit"></EditQuestion>
 					<ShowQuestion elementRef="innerModal" ref="showQuestionModal"></ShowQuestion>
 					<AddQuestionToSession elementRef="innerModal" ref="addQuestionToSessionModal"></AddQuestionToSession>
 
@@ -77,8 +77,11 @@
 			AddQuestionToSession,
 			SelectCourse
 		},
-		created() {
-			this.$socket.emit("getAllQuestionsWithinCourse", this.$store.getters.getSelectedCourse.split(" ")[0]);
+		mounted() {
+			this.$socket.emit(
+				"getAllQuestionsWithinCourse", 
+				this.$store.getters.getSelectedCourse.split(" ")[0]
+			);
 		},
 		computed: {
 			currentQuestions: function() {
@@ -103,11 +106,18 @@
 			}
 		},
 		sockets: {
-			sendAllQuestionsWithinCourse: function(questions) {
+			sendAllQuestionsWithinCourse(questions) {
 				this.questionList = questions;
+			},
+			questionChangeComplete() {
+				this.requestNewQuestions();
 			}
 		},
 		methods: {
+			requestNewQuestions: function() {
+				this.$socket.emit("getAllQuestionsWithinCourse",
+					this.$store.getters.getSelectedCourse.split(" ")[0]);
+			},
 			courseChanged: function(newCourse) {
 				let c = newCourse.split(" ");
 				this.$socket.emit("getAllQuestionsWithinCourse", c[0]);
@@ -126,17 +136,6 @@
 				this.$refs.addQuestionToSessionModal._data.question.id = item.id;
 				this.$refs.addQuestionToSessionModal._data.question.text = item.text;
 				this.$refs.addQuestionToSessionModal.$refs.innerModal.show();
-			},
-			addNewQuestionHandler: function(newQuestion) {
-				if (newQuestion.time === 0) newQuestion.time = -1;
-				this.$socket.emit("addNewQuestion", Object.assign({}, newQuestion, {courseCode: this.$store.getters.getSelectedCourse.split(" ")[0]}));
-				this.$socket.emit("getAllQuestionsWithinCourse", this.$store.getters.getSelectedCourse.split(" ")[0]);
-			},
-			editQuestionHandler: function(updatedQuestion) {
-				if (updatedQuestion.time === 0) updatedQuestion.time = -1;
-				this.$socket.emit("updateQuestion", updatedQuestion);
-				this.$socket.emit("getAllQuestionsWithinCourse", this.$store.getters.getSelectedCourse.split(" ")[0]);
-
 			}
 		}
 	}

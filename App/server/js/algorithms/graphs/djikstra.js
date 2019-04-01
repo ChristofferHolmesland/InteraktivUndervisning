@@ -27,6 +27,22 @@ module.exports = function(graph, from, to) {
             unvisited.push(node);
         }
 
+        // When the nodes come from the GraphDrawer, the references
+        // won't match anymore, so they have to be matched on value instead.
+        for (let i = 0; i < graph.nodes.length; i++) {
+            let node = graph.nodes[i];
+            for (let j = 0; j < graph.edges.length; j++) {
+                let edge = graph.edges[j];
+                if (node.v == edge.n1.v) edge.n1 = node;
+                else if (node.v == edge.n2.v) edge.n2 = node;
+            }
+        }
+
+        // Edges from GraphDrawer have their edge values as a string
+        for (let i = 0; i < graph.edges.length; i++) {
+            graph.edges[i].v = Number(graph.edges[i].v);
+        }
+
         let current = from;
         current.distance = undefined;
 
@@ -51,7 +67,7 @@ module.exports = function(graph, from, to) {
 
             for (let i = 0; i < graph.edges.length; i++) {
                 let edge = graph.edges[i];
-                if (edge.n1 == current) {
+                if (edge.n1.v == current.v) {
                     if (edge.n1.visited) continue;
 
                     let distance = edge.v;
@@ -67,7 +83,7 @@ module.exports = function(graph, from, to) {
                         current: current.v,
                         node: edge.n2.v
                     });
-                } else if (edge.n2 == current && !graph.directed) {
+                } else if (edge.n2.v == current.v && !graph.directed) {
                     if (edge.n2.visited) continue;
 
                     let distance = edge.v;
@@ -135,24 +151,17 @@ module.exports = function(graph, from, to) {
 };
 
 
-/* Test data
-let n1 = { v: 1 };
-let n2 = { v: 2 };
-let n3 = { v: 3 };
-let n4 = { v: 4 };
-let n5 = { v: 5 };
-let n6 = { v: 6 };
+/*
+let n1 = { v: "A" };
+let n2 = { v: "B" };
+let n3 = { v: "C" };
+let n4 = { v: "D" };
 
 let edges = [
     {
         n1: n1,
         n2: n2,
-        v: 7
-    },
-    {
-        n1: n1,
-        n2: n6,
-        v: 14
+        v: 33
     },
     {
         n1: n1,
@@ -160,46 +169,31 @@ let edges = [
         v: 9
     },
     {
-        n1: n2,
-        n2: n3,
-        v: 10
-    },
-    {
-        n1: n2,
+        n1: n1,
         n2: n4,
-        v: 15
-    },
-    {
-        n1: n3,
-        n2: n6,
         v: 2
     },
     {
         n1: n3,
-        n2: n4,
-        v: 11
-    },
-    {
-        n1: n6,
-        n2: n5,
-        v: 9
+        n2: n2,
+        v: 10
     },
     {
         n1: n4,
-        n2: n5,
-        v: 6
+        n2: n2,
+        v: 222
     }
 ]
 
 let graph = {
     directed: false,
-    nodes: [n1, n2, n3, n4, n5, n6],
+    nodes: [n1, n2, n3, n4],
     edges: edges
 };
 
-let stepper = d(graph, n1, n5);
+let stepper = d(graph, n1, n2);
 console.log(stepper.get());
 
 while (!stepper.isDone()) {
     console.log(stepper.step());
-} */
+}*/

@@ -1,8 +1,11 @@
 <template>
     <div id="Mergesort">
-        <GraphDrawer controlType="Sort" sortType="Mergesort" 
-                    :steps="steps" :requestAnswer="requestAnswerFromDrawer" 
-                    @getValueResponse="getValueResponse"/>
+        <GraphDrawer    controlType="Sort" 
+                        sortType="Mergesort" 
+                        :steps="steps"
+                        :requestAnswer="requestAnswerFromDrawer" 
+                        @getValueResponse="getValueResponse"
+                        />
     </div>
 </template>
 

@@ -12,8 +12,11 @@
     			<GraphDrawer 
 					@getValueResponse="printGraphDrawer" 
 					:requestAnswer="requestAnswer" 
-					controlType="Djikstra" />
+					controlType="Python"
+					operatingMode="Interactive"
+				/>
 				<b-button @click="requestAnswer = !requestAnswer" >Export</b-button>
+<!--				<shellsort :initialList="[	]" :initialKValue="3"/> -->
 				</b-col>
 			</b-row>
 		</b-container>
@@ -23,25 +26,19 @@
 <script>
 import JoinSession from "../components/client/JoinSession.vue";
 import GraphDrawer from "../components/graphDrawer/GraphDrawer.vue";
+import Shellsort from "../components/client/session/questionTypes/sorting/Shellsort.vue"
 
 export default {
 	name: "client",
-	data() {
-		return {
-			requestAnswer: false
-		};
-	},
 	components: {
 		JoinSession,
-		GraphDrawer
 	},
 	created() {
 		this.$socket.emit("verifyUserLevel", 1);
 	},
 	methods: {
-		printGraphDrawer: function(data) {
-			console.log(data);
-			console.log(JSON.stringify(data));
+		printFiles(event) {
+			console.log(event);
 		}
 	}
 };
