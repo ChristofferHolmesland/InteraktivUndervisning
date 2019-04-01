@@ -126,7 +126,7 @@
                     <div v-if="newQuestion.objects.files.length > 0">
                         <label>Files:</label>
                         <b-container>
-                            <b-row v-for="(image, index) in newQuestion.objects.files" :key="index">
+                            <b-row v-for="(image, index) in newQuestion.objects.files" :key="index" class="mt-2">
                                 <b-col>
                                     {{image.name}}
                                 </b-col>
@@ -134,7 +134,7 @@
                                     <b-button>Delete</b-button>
                                 </b-col>
                                 <b-col>
-                                    <img :src="getImageSrc(index)"/>
+                                    <img :src="getImageSrc(index)" width="200" height="200" style="border: 3px solid black;"/>
                                 </b-col>
                             </b-row>
                         </b-container>
@@ -590,7 +590,7 @@
             confirmQuestionRequirements: function (result) {
             	if (result.passed) {
                     this.$refs[this.elementRef].hide();
-                    this.doneHandler();
+                    if(this.doneHandler !== undefined) this.doneHandler();
                 }else {
             	    this.validationFailure = true;
                     this.validationErrors = result.errors;

@@ -17,7 +17,7 @@
 					+
 					<span style="visibility: hidden;">+</span>
 				</b-button>
-				<EditQuestion elementRef="innerModal" elementId="newQuestionModal" okHandler="add" :doneHandler="requestNewQuestions"></EditQuestion>
+				<EditQuestion elementRef="innerModal" elementId="newQuestionModal" okHandler="add"></EditQuestion>
 			</b-col>
 			<b-col cols="2"></b-col>
 		</b-row>
@@ -25,7 +25,7 @@
 			<b-col cols="0" lg="2"></b-col>
 			<b-col cols="12" lg="8">
 				<b-list-group style="min-height: 300px; max-height: 300px; overflow-y:scroll;">
-					<EditQuestion elementRef="innerModal" ref="editQuestionModal" okHandler="edit" :doneHandler="requestNewQuestions"></EditQuestion>
+					<EditQuestion elementRef="innerModal" ref="editQuestionModal" okHandler="edit"></EditQuestion>
 					<ShowQuestion elementRef="innerModal" ref="showQuestionModal"></ShowQuestion>
 					<AddQuestionToSession elementRef="innerModal" ref="addQuestionToSessionModal"></AddQuestionToSession>
 
@@ -104,8 +104,11 @@
 			}
 		},
 		sockets: {
-			sendAllQuestionsWithinCourse: function(questions) {
+			sendAllQuestionsWithinCourse(questions) {
 				this.questionList = questions;
+			},
+			questionChangeComplete() {
+				this.requestNewQuestions();
 			}
 		},
 		methods: {
