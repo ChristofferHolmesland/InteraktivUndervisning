@@ -25,14 +25,12 @@ const imageGetter = async function (rows) {
 						reject("file not found");
 						return
 					}
-					console.log(file.filePath)
 					if(file.filePath !== undefined) {
 						fs.readFileSync(path.join(__dirname, file.filePath), function(err, data) {
 							if (err) {
 								console.error("Failed to read image: " + err);
 							}
 							else {
-								console.log("buffer")
 								let base64Image = new Buffer(data, "binary").toString("base64");
 								file.buffer = base64Image;
 								delete file.filePath;
@@ -57,11 +55,9 @@ const imageGetter = async function (rows) {
 				files.splice(j, 1);
 				j--;
 			});
-			console.log("file finsihed")
 
 		}
 	}
-	console.log("function finished")
 }
 
 const get = {

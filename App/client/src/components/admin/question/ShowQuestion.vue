@@ -21,12 +21,12 @@
                         :steps="question.solution"
                         operatingMode="Presentation"
                         />
-        <GraphDrawer    v-if="question.solutionType === 10"
+        <GraphDrawer    v-if="question.solutionType === 9"
                         controlType="Dijkstra"
                         operatingMode="Presentation"
                         :steps="question.solution"
                         />
-        <GraphDrawer    v-if="question.solutionType === 13"
+        <GraphDrawer    v-if="question.solutionType === 10"
                         controlType="Python"
                         operatingMode="Presentation"
                         :steps="question.solution"

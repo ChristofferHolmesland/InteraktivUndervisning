@@ -103,7 +103,7 @@ function generateSolution(question) {
 		question.solution = solutionArray;
 		question.objects.steps = [solutionArray[0]];
 }
-	else if (solutionType == 10) {
+	else if (solutionType === 9) {
 		let algo = algorithms.graphs.dijkstra;
 		let from = undefined;
 		let to = undefined;
@@ -117,7 +117,7 @@ function generateSolution(question) {
 		question.solution = stepper.getSteps();
 		question.objects.steps = [stepper.reset()];
 	}
-	else if (solutionType == 13) {
+	else if (solutionType === 10) {
 		let algo = algorithms.python;
 		let stepper = algo(question.solution);
 		question.solution = stepper.getSteps();
@@ -521,7 +521,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 			let filePath = path.join(__dirname, "../../public/img/questionImages/" + questionIndex.toString() +"/");
 			let filePaths = [];
 	
-			mkdirp(filePath, async (err) => {
+			await mkdirp(filePath, async (err) => {
 				if (err) console.error("Error making dirs!\n\n" + err);
 				for (let i = 0; i < files.length; i++) {
 					let type = files[i].type.split("/")[1];
@@ -536,17 +536,17 @@ module.exports.admin = function(socket, db, user, sessions) {
 						}
 						fs.writeSync(fd, files[i].buffer, null, "base64", function(err, written, buff) {
 							fs.close(fd, function() {
-								console.log("file saved");
+								
 							});
 						});
 					});
 				}
 				
 				await dbFunctions.update.question(db, questionIndex, question.text, question.description, question.objects, question.solution, question.solutionType, question.time);
-	
-				socket.emit("questionChangeComplete");
 			});
 		}
+
+		socket.emit("questionChangeComplete");
 	});
 
 	socket.on("updateQuestion", function(question) {

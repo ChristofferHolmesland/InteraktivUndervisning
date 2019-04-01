@@ -45,7 +45,7 @@
                                 :steps="questionInfo.object.steps"
                                 />
                             <!--:type = "questionInfo.object.type"-->
-                            <Dijkstra v-if="getQuestionType === 10"
+                            <Dijkstra v-if="getQuestionType === 9"
                                 :requestAnswer="requestAnswer"
                                 @getTextResponse="getTextValue"
                                 :steps="questionInfo.solution"

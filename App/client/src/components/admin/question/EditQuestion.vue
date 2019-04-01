@@ -1,5 +1,5 @@
 <template>
-    <b-modal :id="elementId" :ref="elementRef" :no-close-on-backdrop="true" :title="getLocale.newQuestion" @ok="callOkHandler" @cancel="cancelHandler" style="text-align: left;" size="lg">
+    <b-modal :id="elementId" :ref="elementRef" :no-close-on-backdrop="true" :title="getLocale.newQuestion" @ok="callOkHandler" style="text-align: left;" size="lg">
         <b-form>
             <b-alert    :show="validationFailure"
                         variant="danger">
@@ -272,7 +272,7 @@
             <b-form-group 	
                     id="dijkstraSolution"
                     label="Draw the graph, and mark start (green) and end (red) nodes"
-                    v-if="newQuestion.solutionType === 10">
+                    v-if="newQuestion.solutionType === 9">
                 <GraphDrawer 
                     @getValueResponse="gotGraphDrawerObject" 
                     :requestAnswer="requestGraphDrawerObject" 
@@ -285,7 +285,7 @@
             <b-form-group 	id="pythonSolution"
                             :label="getLocale.newQuestionSolution"
                             label-for="solutionInput"
-                            v-if="newQuestion.solutionType === 13">
+                            v-if="newQuestion.solutionType === 10">
                 <div v-show="checkRef">klar</div>
                     <b-form-textarea 	id="pythonCodeInput"
                                         placeholder="Write Python code here..."
@@ -294,12 +294,6 @@
                                         @keydown.native.tab="keyDownInTextarea">
                     </b-form-textarea>
             </b-form-group>
-            <b-alert
-            :show="useAlert"
-            variant="danger"
-            >
-            <p>{{alertReason}}</p>
-            </b-alert>
             </div>
         </b-form>
     </b-modal>
@@ -500,7 +494,7 @@
 			},
             returnToOkHandler: function() {
                 this.assignTime();
-                if (this.newQuestion.solutionType == 13) {
+                if (this.newQuestion.solutionType === 10) {
                     this.newQuestion.solution = this.newQuestion.objects.code;
                 }
                 
@@ -532,10 +526,6 @@
                 } else {
                     this.returnToOkHandler();
                 }
-            },
-            cancelHandler: function() {
-                this.useAlert = false;
-                this.alertReason = "";
             },
             objectsInputChanged(newObject) {
                 if (newObject == undefined) return;
@@ -655,9 +645,6 @@
             "newQuestion.solutionType": function(newType, oldType) {
                 if (newType === 1) this.newQuestion.solution = "";
                 else if (newType === 2) this.newQuestion.solution = [];
-                else if (newType === 13) {
-
-                }
             }
         },
     }

@@ -29,7 +29,7 @@
                                 <TreeSolution       v-if="resultInfo.question.type === 7 || resultInfo.question.type === 8"
                                                     :solution="resultInfo.solution"
                                                     />
-                                <DijkstraSolution v-if="resultInfo.question.type === 10"
+                                <DijkstraSolution v-if="resultInfo.question.type === 9"
                                                     :solution="resultInfo.solution"
                                                     />
                             </div>
@@ -56,7 +56,7 @@
                                     <TreeAnswer         v-if="resultInfo.question.type === 7 || resultInfo.question.type === 8"
                                                         :answer="resultInfo.answerList[selectedAnswer].answerObject"
                                                     />
-                                    <DijkstraAnswer     v-if="resultInfo.question.type === 10"
+                                    <DijkstraAnswer     v-if="resultInfo.question.type === 9"
                                                         :answer="resultInfo.answerList[selectedAnswer].answerObject"
                                                         />  
                                 </div>
