@@ -33,7 +33,7 @@ describe("Test admin content",function () {
 			cy.url().should("include","/questions");
 			cy.get("#courseSelect").select("TEST100 H18");
 		});
-		/*it("Create and Edit Text question",function () {
+		it("Create and Edit Text question",function () {
 			let title = "Title Text Test";
 			let info = "Info Text Test";
 			let solution = "Solution Text Test";
@@ -106,7 +106,7 @@ describe("Test admin content",function () {
 			cy.get('#__BVID__47___BV_modal_body_ > :nth-child(2)').should("have.text","Tid: 00:00");
 			cy.wait(1000);
 			cy.get('#__BVID__47___BV_modal_footer_ > .btn-primary').click();
-		});*/
+		});
 		it("Create and Edit Multichoice question",function () {
 			let title = "Title Multichoice Test";
 			let info = "Info Multichoice Test";
@@ -167,8 +167,9 @@ describe("Test admin content",function () {
 			cy.wait(1000);
 			cy.get('#__BVID__47___BV_modal_footer_ > .btn-primary').click();
 
+			//TODO finish edit and check edit for MultiChoice questions after the solution type bug is fixed
 			//check editfunction works, and then use it to edit the previously made question.
-			cy.get('.list-group > :nth-child(5)')
+			/*cy.get('.list-group > :nth-child(5)')
 				.find(".container")
 				.contains("E")
 				.click();
@@ -183,14 +184,14 @@ describe("Test admin content",function () {
 				.clear()
 				.type(infoEdited);
 			cy.get("#__BVID__32___BV_modal_body_ > form > :nth-child(2) > #questionTime > [role=\"group\"] > :nth-child(1) > :nth-child(1) > :nth-child(2) > #questionTimeInput").type("00:00");
-			/*cy.get('#__BVID__32___BV_modal_body_ > form > :nth-child(7) > #textSolution > div > #solutionInput')
+			cy.get('#__BVID__32___BV_modal_body_ > form > :nth-child(7) > #textSolution > div > #solutionInput')
 				.should("have.value",solution)
 				.clear()
 				.type(solutionEdited);
-			cy.get('#__BVID__32___BV_modal_footer_ > .btn-primary').click();*/
+			cy.get('#__BVID__32___BV_modal_footer_ > .btn-primary').click();
 
 			//check that the question has been edited
-			/*cy.get('.list-group > :nth-child(4)').should("be.visible");
+			cy.get('.list-group > :nth-child(4)').should("be.visible");
 			cy.get(':nth-child(4) > .container > .row > .col-8').should("contain",titleEdited);
 			cy.get('.list-group > :nth-child(4)')
 				.find(".container")
@@ -203,15 +204,172 @@ describe("Test admin content",function () {
 			cy.wait(1000);
 			cy.get('#__BVID__47___BV_modal_footer_ > .btn-primary').click();
 			*/
-		});
-		/*it("Create and Edit ShellSort question",function () {
+
 
 		});
+
+		it("Create and Edit ShellSort question",function () {
+			let title = "Title ShellSort Test";
+			let info = "Info ShellSort Test";
+			let titleEdited = "Title Edited ShellSort Test";
+			let infoEdited = "Info Edited ShellSort Test";
+			let time = "03:00";
+			let arrayValues = "2,88,11,36,66,37,29,15,62,10";
+			let k = '5';
+			cy.get('.pl-0 > [data-v-0ae92b14=""][type="button"]').click();
+
+			//create ShellSort
+			cy.get("#newQuestionModal___BV_modal_header_ > .modal-title").should("have.text","Nytt spørsmål");
+			cy.get("#newQuestionModal___BV_modal_body_ > form > :nth-child(1) > .row > .col-10 > label")
+				.should("contain","Grunnleggende Informasjon")
+				.click();
+			cy.get("#questionTitleInput").type(title);
+			cy.get("#questionTextInput").type(info);
+			cy.get("#questionTimeInput").type(time);
+			cy.get('#newQuestionModal___BV_modal_body_ > form > #solutionType > [role="group"] > .px-0 > .row > .col-10 > label')
+				.should("contain","Løsnings type")
+				.click();
+			cy.get("#solutionTypeInput").select("Shellsort");
+			cy.get('#sortingSolution__BV_label_').should("has.text","Starting array (elements seperated by ,)");
+			cy.get('#kValue__BV_label_').should("has.text","K start value");
+			cy.get('#sortingSolution > :nth-child(2) > #solutionInput').type(arrayValues);
+			cy.get('#kValueInput').type(k);
+			cy.get('#newQuestionModal___BV_modal_footer_ > .btn-primary').click();
+
+			//show current question information
+			cy.get('.list-group > :nth-child(6)').should("be.visible");
+			cy.get(':nth-child(6) > .container > .row > .col-8').should("contain",title);
+			cy.get('.list-group > :nth-child(6)')
+				.find(".container")
+				.contains("V")
+				.click();
+			cy.get('#__BVID__47___BV_modal_header_ > .modal-title').should("have.text",title);
+			cy.get('#__BVID__47___BV_modal_body_ > :nth-child(1)').should("have.text",info);
+			cy.get('#__BVID__47___BV_modal_body_ > :nth-child(2)').should("have.text","Tid: "+time);
+			cy.wait(1000);
+			cy.get('#__BVID__47___BV_modal_footer_ > .btn-primary').click();
+
+			//TODO Write the edit and show edit for shellSort
+		});
+
 		it("Create and Edit MergeSort question",function () {
+			let title = "Title MergeSort Test";
+			let info = "Info MergeSort Test";
+			let titleEdited = "Title Edited MergeSort Test";
+			let infoEdited = "Info Edited MergeSort Test";
+			let time = "03:30";
+			let arrayValues = "12,78,55,28,40,62,81,57,51,25";
+			cy.get('.pl-0 > [data-v-0ae92b14=""][type="button"]').click();
 
+			//create MergeSort
+			cy.get("#newQuestionModal___BV_modal_header_ > .modal-title").should("have.text","Nytt spørsmål");
+			cy.get("#newQuestionModal___BV_modal_body_ > form > :nth-child(1) > .row > .col-10 > label")
+				.should("contain","Grunnleggende Informasjon")
+				.click();
+			cy.get("#questionTitleInput").type(title);
+			cy.get("#questionTextInput").type(info);
+			cy.get("#questionTimeInput").type(time);
+			cy.get('#newQuestionModal___BV_modal_body_ > form > #solutionType > [role="group"] > .px-0 > .row > .col-10 > label')
+				.should("contain","Løsnings type")
+				.click();
+			cy.get("#solutionTypeInput").select("MergeSort");
+			cy.get('#sortingSolution__BV_label_').should("have.text","Starting array (elements seperated by ,)");
+			cy.get('#sortingSolution > div > #solutionInput').type(arrayValues);
+			cy.get('#newQuestionModal___BV_modal_footer_ > .btn-primary').click();
+
+			//show Mergesort
+			cy.get('.list-group > :nth-child(7)').should("be.visible");
+			cy.get(':nth-child(7) > .container > .row > .col-8').should("contain",title);
+			cy.get('.list-group > :nth-child(7)')
+				.find(".container")
+				.contains("V")
+				.click();
+			cy.get('#__BVID__47___BV_modal_header_ > .modal-title').should("have.text",title);
+			cy.get('#__BVID__47___BV_modal_body_ > :nth-child(1)').should("have.text",info);
+			cy.get('#__BVID__47___BV_modal_body_ > :nth-child(2)').should("have.text","Tid: "+time);
+			cy.wait(1000);
+			cy.get('#__BVID__47___BV_modal_footer_ > .btn-primary').click();
+			//TODO finish edit and show edit function for mergesort
+			/*cy.get('#sortingSolution__BV_label_').should("has.text","Starting array (elements seperated by ,)");
+			cy.get('#kValue__BV_label_').should("has.text","K start value");
+			cy.get('#sortingSolution > :nth-child(2) > #solutionInput').type(arrayValues);
+			cy.get('#kValueInput').type(k);
+			cy.get('#newQuestionModal___BV_modal_footer_ > .btn-primary').click();
+
+			//show current question information
+			cy.get('.list-group > :nth-child(7)').should("be.visible");
+			cy.get(':nth-child(7) > .container > .row > .col-8').should("contain",title);
+			cy.get('.list-group > :nth-child(7)')
+				.find(".container")
+				.contains("V")
+				.click();
+			cy.get('#__BVID__47___BV_modal_header_ > .modal-title').should("have.text",title);
+			cy.get('#__BVID__47___BV_modal_body_ > :nth-child(1)').should("have.text",info);
+			cy.get('#__BVID__47___BV_modal_body_ > :nth-child(2)').should("have.text","Tid: "+time);
+			cy.wait(1000);
+			cy.get('#__BVID__47___BV_modal_footer_ > .btn-primary').click();
+			*/
 		});
-		it("Create and Edit QuickSort question",function () {
 
-		});*/
+		it("Create and Edit QuickSort question",function () {
+			let title = "Title QuickSort Test";
+			let info = "Info QuickSort Test";
+			let titleEdited = "Title Edited QuickSort Test";
+			let infoEdited = "Info Edited QuickSort Test";
+			let time = "04:00";
+			let arrayValues = "14,98,91,21,14,68,18,25,47,88";
+			cy.get('.pl-0 > [data-v-0ae92b14=""][type="button"]').click();
+
+			//create QuickSort
+			cy.get("#newQuestionModal___BV_modal_header_ > .modal-title").should("have.text","Nytt spørsmål");
+			cy.get("#newQuestionModal___BV_modal_body_ > form > :nth-child(1) > .row > .col-10 > label")
+				.should("contain","Grunnleggende Informasjon")
+				.click();
+			cy.get("#questionTitleInput").type(title);
+			cy.get("#questionTextInput").type(info);
+			cy.get("#questionTimeInput").type(time);
+			cy.get('#newQuestionModal___BV_modal_body_ > form > #solutionType > [role="group"] > .px-0 > .row > .col-10 > label')
+				.should("contain","Løsnings type")
+				.click();
+			cy.get("#solutionTypeInput").select("MergeSort");
+			cy.get('#sortingSolution__BV_label_').should("have.text","Starting array (elements seperated by ,)");
+			cy.get('#sortingSolution > div > #solutionInput').type(arrayValues);
+			cy.get('#newQuestionModal___BV_modal_footer_ > .btn-primary').click();
+
+			//show Quicksort
+			cy.get('.list-group').scrollTo("bottom");
+			cy.get('.list-group > :nth-child(8)').should("be.visible");
+			cy.get(':nth-child(8) > .container > .row > .col-8').should("contain",title);
+			cy.get('.list-group > :nth-child(8)')
+				.find(".container")
+				.contains("V")
+				.click();
+			cy.get('#__BVID__47___BV_modal_header_ > .modal-title').should("have.text",title);
+			cy.get('#__BVID__47___BV_modal_body_ > :nth-child(1)').should("have.text",info);
+			cy.get('#__BVID__47___BV_modal_body_ > :nth-child(2)').should("have.text","Tid: "+time);
+			cy.wait(1000);
+			cy.get('#__BVID__47___BV_modal_footer_ > .btn-primary').click();
+
+			//TODO finish edit and showEdit test to QuickSort
+			/*cy.get('#sortingSolution__BV_label_').should("has.text","Starting array (elements seperated by ,)");
+			cy.get('#kValue__BV_label_').should("has.text","K start value");
+			cy.get('#sortingSolution > :nth-child(2) > #solutionInput').type(arrayValues);
+			cy.get('#kValueInput').type(k);
+			cy.get('#newQuestionModal___BV_modal_footer_ > .btn-primary').click();
+
+			//show current question information
+			cy.get('.list-group > :nth-child(8)').should("be.visible");
+			cy.get(':nth-child(8) > .container > .row > .col-8').should("contain",title);
+			cy.get('.list-group > :nth-child(8)')
+				.find(".container")
+				.contains("V")
+				.click();
+			cy.get('#__BVID__47___BV_modal_header_ > .modal-title').should("have.text",title);
+			cy.get('#__BVID__47___BV_modal_body_ > :nth-child(1)').should("have.text",info);
+			cy.get('#__BVID__47___BV_modal_body_ > :nth-child(2)').should("have.text","Tid: "+time);
+			cy.wait(1000);
+			cy.get('#__BVID__47___BV_modal_footer_ > .btn-primary').click();
+			*/
+		});
 	});
 });
