@@ -6,7 +6,9 @@
 					:requestAnswer="requestAnswerFromGraphDrawer" 
 					controlType="Dijkstra"
 					operatingMode="Interactive"
-					:graph="getGraphFromSteps" />
+					:graph="getGraphFromSteps"
+					displayEdgeValues="true"
+					/>
 		</b-container>
 	</div>
 </template>
