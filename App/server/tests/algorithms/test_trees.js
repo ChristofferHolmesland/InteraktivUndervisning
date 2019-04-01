@@ -443,12 +443,9 @@ describe('TestBinaryTrees', function () {
 				solutionNode8.addParent(solutionNode7);
 				solutionTree.nodes = [solutionRootNode,solutionNode1,solutionNode2,solutionNode3,solutionNode4,solutionNode5,solutionNode6,solutionNode7,solutionNode8];
 				solutionTree.root = solutionRootNode;
-				//solutionTree.printTree();
 				let answerTree = BinarySearchTreeFunctions.removeNodeFromBSTTree(startNode9,startTree,startTree.nodes.indexOf(startNode9));
-				//answerTree[0].printTree();
 				assert(GeneralTreeFunctions.checkStudentAnswer(answerTree[0],solutionTree));
 				startTree = answerTree[0];
-				//startTree.printTree();
 			});
 			it("Delete node 92 in order to test deleting node with 1 children",function () {
 				let solutionTree = new Tree();
@@ -469,11 +466,8 @@ describe('TestBinaryTrees', function () {
 				solutionNode8.addParent(solutionNode5);
 				solutionTree.nodes = [solutionRootNode,solutionNode1,solutionNode2,solutionNode3,solutionNode4,solutionNode5,solutionNode6,solutionNode8];
 				solutionTree.root = solutionRootNode;
-				//solutionTree.printTree();
 
 				let answerTree = BinarySearchTreeFunctions.removeNodeFromBSTTree(startNode7,startTree,startTree.findNodeInNodesUsingNode(startNode7));
-				//answerTree[0].printTree();
-				//solutionTree.printTree();
 				assert(GeneralTreeFunctions.checkStudentAnswer(answerTree[0],solutionTree));
 				startTree = answerTree[0];
 			});
@@ -513,8 +507,6 @@ describe('TestBinaryTrees', function () {
 				solutionTree2.root = solutionRootNode2;
 
 				let answerTree = BinarySearchTreeFunctions.removeNodeFromBSTTree(rootNode,startTree,startTree.findNodeInNodesUsingNode(rootNode));
-				//answerTree[0].printTree();
-				//answerTree[1].printTree();
 				assert.ok(answerTree.length === 2);
 				assert(GeneralTreeFunctions.checkStudentAnswer(answerTree[1],solutionTree1));
 				assert(GeneralTreeFunctions.checkStudentAnswer(answerTree[0],solutionTree2));
@@ -536,12 +528,10 @@ describe('TestBinaryTrees', function () {
 				testTree.nodes = [rootNode,testNode1,testNode2,testNode3,testNode4,testNode5];
 				it("Get replacement nodes when deleting node 44",function () {
 					let nodelist = GeneralTreeFunctions.getBestReplacementNodes(testNode2);
-					console.log(nodelist);
 					assert.ok(nodelist[0] === testNode4 && nodelist[1] === testNode5);
 				});
 				it("Get replacement nodes when deleting root ",function () {
 					let nodelist = GeneralTreeFunctions.getBestReplacementNodes(rootNode);
-					console.log(nodelist);
 					assert.ok(nodelist[0] === testNode1 && nodelist[1] === testNode3);
 				})
 			});
@@ -576,11 +566,9 @@ describe('TestBinaryTrees', function () {
 					node80.children[0] = node10;
 					node10.parent = node80;
 					SolutionTree.nodes.splice(SolutionTree.findNodeInNodesUsingValue(48),1);
-					//SolutionTree.printTree();
 					let treeList2 = BinarySearchTreeFunctions.createBinarySearchTree(removedEntries,false,testTree);
 
 					assert.ok(treeList2.length === 1);
-					//treeList2[0].printTree();
 					assert(GeneralTreeFunctions.checkStudentAnswer(treeList2[0],SolutionTree));
 				});
 				it("Only remove 1 entry in the tree and return a list of 2 tree element. This means a node of 2 children will be deleted",function () {
@@ -683,7 +671,6 @@ describe('TestBinaryTrees', function () {
 		solutionAVLTree.nodes = [solutionRootNode,solutionNode1,solutionNode2,solutionNode3,solutionNode4,solutionNode5,solutionNode6,solutionNode7,solutionNode8];
 		it("Create an AVL tree using only an array of elements", function () {
 			let createdTree = AVLFunctions.createAVLTree(testarray,true)[0];
-			//createdTree.printTree();
 			let solutionRootNode = new BinaryTreeNode(testarray[2]);
 			let solutionTree = new Tree(solutionRootNode);
 			let solutionNode4 = new BinaryTreeNode(4);
@@ -703,8 +690,6 @@ describe('TestBinaryTrees', function () {
 			solutionNode31.addParent(solutionNode30);
 			solutionNode9.addParent(solutionNode20);
 			solutionTree.nodes = [solutionRootNode,solutionNode4,solutionNode3,solutionNode2,solutionNode5,solutionNode20,solutionNode9,solutionNode30,solutionNode31];
-			//createdTree.printTree();
-			//solutionTree.printTree();
 			assert(GeneralTreeFunctions.checkStudentAnswer(createdTree,solutionTree));
 		});
 		it("Create an AVL tree using only an existing tree", function () {
@@ -758,7 +743,6 @@ describe('TestBinaryTrees', function () {
 					let solutionTree = BinarySearchTreeFunctions.createBinarySearchTree([83,80,34,82,85,88],true)[0];
 					let resultTreeList = AVLFunctions.removeNodeFromAVLTree(chosenBinaryNode,startTree,startTree.findNodeInNodesUsingNode(chosenBinaryNode));
 					assert.ok(resultTreeList.length === 1);
-					//resultTreeList[0].printTree();
 					assert(GeneralTreeFunctions.checkStudentAnswer(resultTreeList[0],solutionTree))
 				});
 				it("Remove a node with 1 child, the tree should be re-balanced after node deletion",function () {
@@ -766,7 +750,6 @@ describe('TestBinaryTrees', function () {
 					let solutionTree = BinarySearchTreeFunctions.createBinarySearchTree([83,80,4,82,85,88],true)[0];
 					let resultTreeList = AVLFunctions.removeNodeFromAVLTree(chosenBinaryNode,startTree,startTree.findNodeInNodesUsingNode(chosenBinaryNode));
 					assert.ok(resultTreeList.length === 1);
-					//resultTreeList[0].printTree();
 					assert(GeneralTreeFunctions.checkStudentAnswer(resultTreeList[0],solutionTree))
 				});
 				it("Remove a node with 2 children, the tree should be re-balanced after node deletion",function () {
@@ -774,7 +757,6 @@ describe('TestBinaryTrees', function () {
 					let solutionTree = BinarySearchTreeFunctions.createBinarySearchTree([80,34,4,85,82,88],true)[0];
 					let resultTreeList = AVLFunctions.removeNodeFromAVLTree(chosenBinaryNode,startTree,startTree.findNodeInNodesUsingNode(chosenBinaryNode));
 					assert.ok(resultTreeList.length === 2);
-					//resultTreeList[0].printTree();
 					assert(GeneralTreeFunctions.checkStudentAnswer(resultTreeList[0],solutionTree));
 					assert(GeneralTreeFunctions.checkStudentAnswer(resultTreeList[1],solutionTree));
 				});
@@ -800,10 +782,8 @@ describe('TestBinaryTrees', function () {
 				it("Deleting 1 element with 1 child",function () {
 					let listEntries2 = [26,15,14,79,41,96,100];
 					let startTree3 = BinarySearchTreeFunctions.createBinarySearchTree(listEntries2,true)[0];
-					//startTree3.printTree();
 					let solutionTree = BinarySearchTreeFunctions.createBinarySearchTree([79,26,14,41,96,100],true)[0];
 					let resultTreeList = AVLFunctions.createAVLTree([15],false,startTree3);
-					//resultTreeList[0].printTree();
 					assert.ok(resultTreeList.length === 1);
 					assert(GeneralTreeFunctions.checkStudentAnswer(resultTreeList[0],solutionTree));
 				});
@@ -894,10 +874,6 @@ describe('TestBinaryTrees', function () {
 			treeStepDone.nodes = [rootNodeStepDone,node41,node42,node43,node44];
 
 			let treeSolutionObject = BinarySearchTreeFunctions.createBinarySearchTreeSolution(elements,true);
-			//console.log(treeSolutionObject);
-			//treeSolutionObject[0].treeInfo[0].printTree();
-			//treeSolutionObject[1].treeInfo[0].printTree();
-			//treeStep1.printTree();
 			for (let i=0;i<treeSolutionObject.length;i++) {
 				if (i===0) assert(GeneralTreeFunctions.checkStudentAnswer(treeSolutionObject[i].treeInfo[0],treeInitial));
 				else if(i===1) assert(GeneralTreeFunctions.checkStudentAnswer(treeSolutionObject[i].treeInfo[0],treeStep1));
@@ -1044,8 +1020,6 @@ describe('TestBinaryTrees', function () {
 			let step3Remove = [step3RemoveSubTree,step3RemoveSubTree2];
 			let step3Rotate = AVLFunctions.createAVLTree(removedNodes,false,balancedTree);
 			let step1Rotation = BinarySearchTreeFunctions.createBinarySearchTree([80,5,21,6,68,95],true)[0];
-			//console.log(solutionObject);
-			console.log(step3Rotate);
 			for (let k=0;k<solutionObject.length;k++) {
 				for(let l=0;l<solutionObject[k].treeInfo.length;l++) {
 					if(k === 0)	assert(GeneralTreeFunctions.checkStudentAnswer(solutionObject[k].treeInfo[l],initialTree));
@@ -1112,8 +1086,6 @@ describe('TestBinaryTrees', function () {
 			node2.parent = solutionRoot.value;
 			solutionTree.nodes = [solutionRoot,node1,node2];
 			testTree.makeTreeReadyForExport();
-			testTree.printTree();
-			solutionTree.printTree();
 			assert(GeneralTreeFunctions.checkStudentAnswer(solutionTree,testTree));
 		});
 		it("Test makeBSTAVLTreeReadyForImport tree function",function () {
@@ -1128,10 +1100,6 @@ describe('TestBinaryTrees', function () {
 			let testTree = new Tree(rootNode);
 			testTree.nodes = [rootNode,node1,node2];
 			GeneralTreeFunctions.makeBSTAVLTreeReadyForImport(testTree);
-			console.log("Solution");
-			solutionTree.printTree();
-			console.log("Test");
-			testTree.printTree();
 			assert(GeneralTreeFunctions.checkStudentAnswer(solutionTree,testTree));
 		});
 		//TODO THIS TEST MUST PASS BEFORE makeBSTAVLTREEREADYFORIMPORT FUNCTION WORKS CORRECTLY!!!
@@ -1154,7 +1122,6 @@ describe('TestBinaryTrees', function () {
 			node3.children[1] = node4;
 			let tree = {root:rootNode,nodes:[rootNode,node1,node2,node3,node4]};
 			GeneralTreeFunctions.makeBSTAVLTreeReadyForImport(tree);
-			console.log(tree.nodes);
 			assert(GeneralTreeFunctions.checkStudentAnswer(solutionTree,tree));
 		});
 	})
