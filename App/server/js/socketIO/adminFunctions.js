@@ -3,16 +3,10 @@ const fs = require("fs");
 const mkdirp = require('mkdirp');
 
 const generalFunctions =  require("../generalFunctions.js").functions;
-const algorithms = require("../algorithms/algorithms");
-const Tree = require("../algorithms/trees/Tree.js").Tree;
-const BinaryTreeNode = require("../algorithms/trees/Tree").BinaryTreeNode;
 const session = require("../session.js").Session;
 const question = require("../session.js").Question;
-const answer = require("../session.js").Answer;
 const validateChecker = require("../ValidateChecker/validateChecker.js").validateChecker;
-const GeneralTreeFunctions = require("../algorithms/trees/GeneralTreeFunctions");
-const AVLTreeFunctions = require("../algorithms/trees/AVLTree");
-const BinarySearchTreeFunctions = require("../algorithms/trees/BinarySearchTree");
+const generateSolution = require("../SolutionGenerator/SolutionGenerator.js");
 
 let courseListRequestHandler = function(socket, db, user, sessions) {
 	if (user.feide) feideId = user.feide.idNumber;
@@ -32,99 +26,6 @@ let courseListRequestHandler = function(socket, db, user, sessions) {
 }
 
 var currentSession = undefined;
-
-function generateSolution(question) {
-	let solutionType = question.solutionType;
-	if (solutionType === 1 || solutionType === 2) {
-		return question;
-	}
-	else if (solutionType >= 3 && solutionType <= 5) {
-		// Determine sorting function
-		let sorter = undefined;
-		if (solutionType === 3) sorter = algorithms.sorting.shellsort;
-		else if (solutionType === 4) sorter = algorithms.sorting.mergesort;
-		else if (solutionType === 5) sorter = algorithms.sorting.quicksort;
-	
-		// Check if the array contains numbers and remove whitespace
-		let isNumbers = true;
-		let elements = question.objects.startingArray.split(",");
-		for (let i = 0; i < elements.length; i++) {
-			elements[i] = elements[i].trim();
-			if (isNaN(Number(elements[i]))) isNumbers = false;
-		}
-		// This is done in a seperate loop, because an array of strings
-		// might contain some elements which are numbers.
-		if (isNumbers) {
-			for (let i = 0; i < elements.length; i++) {
-				elements[i] = Number(elements[i]);
-			}
-		}
-
-		let steppingFunctions = undefined;
-
-		if (solutionType === 3) steppingFunctions = sorter(question.objects.kValue, elements);
-		else steppingFunctions = sorter(elements);
-		// Store all the steps in the solution
-		//question.objects.startingArray = undefined;
-		question.solution = steppingFunctions.getSteps();
-		// Assign the first step to the objects, so the user can
-		// manipulate it.
-		question.objects.steps = [steppingFunctions.reset()];
-	}
-	else if(solutionType === 6) { //TODO create solution object for binary Tree & Update solutionChecker for normal Binary Trees
-		//store the tree elements
-		let binaryTree = new Tree(new BinaryTreeNode(question.objects.treeElements[0]));
-		binaryTree.nodes = question.objects.treeElements;
-		question.solution = binaryTree
-	}else if(solutionType === 7 || solutionType === 8) {
-		let elements = question.objects.treeElements;
-		let startCanvasTree = question.objects.startTree;
-		let startTree = [];
-		let arrayOfElements = [];
-		let solutionArray = [];
-
-		if (elements !== "" && elements !== undefined) {
-			arrayOfElements = elements.split(",");
-		}
-		if (startCanvasTree !== undefined && startCanvasTree.roots.length !== 0) startTree = GeneralTreeFunctions.createTreeObjectFromCanvasObjectver1(startCanvasTree);
-		startTree[0].printTree();
-		if (solutionType === 7) {
-			if (question.objects.solutionTreeType === "Add") solutionArray = BinarySearchTreeFunctions.createBinarySearchTreeSolution(arrayOfElements, true, startTree[0]);
-			else solutionArray = BinarySearchTreeFunctions.createBinarySearchTreeSolution(arrayOfElements, false, startTree[0]);
-		} else {
-			if (question.objects.solutionTreeType === "Add") solutionArray = AVLTreeFunctions.createAVLTreeSolution(arrayOfElements, true, startTree[0]);
-			else solutionArray = AVLTreeFunctions.createAVLTreeSolution(arrayOfElements, false, startTree[0]);
-		}
-		for(let s=0;s<solutionArray.length;s++){
-			for(let t=0;t<solutionArray[s].treeInfo.length;t++){
-				solutionArray[s].treeInfo[t].makeTreeReadyForExport();
-			}
-		}
-		question.solution = solutionArray;
-		question.objects.steps = [solutionArray[0]];
-}
-	else if (solutionType === 9) {
-		let algo = algorithms.graphs.dijkstra;
-		let from = undefined;
-		let to = undefined;
-		for (let i = 0; i < question.objects.graph.nodes.length; i++) {
-			let node = question.objects.graph.nodes[i];
-			if (node.marked == "Start") from = node;
-			else if (node.marked == "End") to = node;
-		}
-
-		let stepper = algo(question.objects.graph, from, to);
-		question.solution = stepper.getSteps();
-		question.objects.steps = [stepper.reset()];
-	}
-	else if (solutionType === 10) {
-		let algo = algorithms.python;
-		let stepper = algo(question.solution);
-		question.solution = stepper.getSteps();
-	}
-
-	return question;
-}
 
 module.exports.admin = function(socket, db, user, sessions) {
 
@@ -231,8 +132,6 @@ module.exports.admin = function(socket, db, user, sessions) {
 			for(let i = 0; i < questions.length; i++){
 				let tempQuestion = questions[i];
 				tempQuestion.resultScreen = false;
-				console.log("Hei på meg");
-				console.log(tempQuestion.solution);
 				questionList.push(new question(tempQuestion.id, tempQuestion.text, tempQuestion.description, tempQuestion.object, tempQuestion.solution, tempQuestion.type, tempQuestion.time, tempQuestion.sqId));
 			}
 
