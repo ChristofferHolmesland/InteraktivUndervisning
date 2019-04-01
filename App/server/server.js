@@ -68,7 +68,7 @@ require('./js/database/database').getDB().then(function(value) {
 
     // Starts the server and the socket.io websocket
     const server = app.listen(port, function() {
-        console.log(`Server listening on localhost:${ port }! Use ctrl + c to stop the server!`)
+        console.log(`Server listening on localhost:${ port }! Use ctrl + c to stop the server!`);
     });
     require('./js/socketIO/generalFunctions').listen(server, users, db);
 }).catch(function (err) {
