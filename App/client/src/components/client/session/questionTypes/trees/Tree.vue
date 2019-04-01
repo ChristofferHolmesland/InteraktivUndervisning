@@ -5,15 +5,17 @@
                     @getValueResponse="gotGraphDrawer"
                     :requestAnswer = requestAnswerFromGraphDrawer
                     controlType="Graph0"
-                    operationMode="Interactive"
+					importType="Tree"
+                    operatingMode="Interactive"
                     exportType="Tree"
+					:steps="steps"
             />
         </b-container>
     </div>
 </template>
 
 <script>
-	import GraphDrawer from "../../../../graphDrawer/GraphDrawer";
+	import GraphDrawer from "../../../../graphDrawer/GraphDrawer.vue";
 	export default {
 		name: "Tree",
 		data() {
@@ -21,7 +23,10 @@
 				requestAnswerFromGraphDrawer: false
 			}
 		},
-        props: ["requestAnswer"],
+        props: [
+			"requestAnswer",
+			"steps"
+		],
         methods: {
 			gotGraphDrawer: function (result) {
                 this.$emit("getTextResponse",result);

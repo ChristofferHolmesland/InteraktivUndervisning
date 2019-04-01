@@ -36,28 +36,33 @@
 						</b-tab>
 						<b-tab :title="getLocale.answer" v-if="resultInfo.answerList.length > 0">
                             <div v-if="tabIndex === 2">
-                                <TextAnswer v-if="resultInfo.question.type === 1"
-                                            :answer="resultInfo.answerList[selectedAnswer].answerObject"
-                                            />
-                                <MultipleChoiceAnswer   v-if="resultInfo.question.type === 2" 
-                                                        :answers="resultInfo.answerList[selectedAnswer].answerObject"
-                                                        :choices="resultInfo.question.object.multipleChoices"
+                                <div v-if="getResult > -1">
+                                    <TextAnswer v-if="resultInfo.question.type === 1"
+                                                :answer="resultInfo.answerList[selectedAnswer].answerObject"
+                                                />
+                                    <MultipleChoiceAnswer   v-if="resultInfo.question.type === 2" 
+                                                            :answers="resultInfo.answerList[selectedAnswer].answerObject"
+                                                            :choices="resultInfo.question.object.multipleChoices"
+                                                            />
+                                    <ShellsortAnswer    v-if="resultInfo.question.type === 3"
+                                                        :answer="resultInfo.answerList[selectedAnswer].answerObject"
                                                         />
-                                <ShellsortAnswer    v-if="resultInfo.question.type === 3"
-                                                    :answer="resultInfo.answerList[selectedAnswer].answerObject"
+                                    <MergesortAnswer    v-if="resultInfo.question.type === 4"
+                                                        :answer="resultInfo.solution"
+                                                        />
+                                    <QuicksortAnswer    v-if="resultInfo.question.type === 5"
+                                                        :answer="resultInfo.answerList[selectedAnswer].answerObject"
+                                                        />
+                                    <TreeAnswer         v-if="resultInfo.question.type === 7 || resultInfo.question.type === 8"
+                                                        :answer="resultInfo.answerList[selectedAnswer].answerObject"
                                                     />
-                                <MergesortAnswer    v-if="resultInfo.question.type === 4"
-                                                    :answer="resultInfo.solution"
-                                                    />
-                                <QuicksortAnswer    v-if="resultInfo.question.type === 5"
-                                                    :answer="resultInfo.answerList[selectedAnswer].answerObject"
-                                                    />
-                                <TreeAnswer         v-if="resultInfo.question.type === 7 || resultInfo.question.type === 8"
-                                                    :answer="resultInfo.answerList[selectedAnswer].answerObject"
-                                                   />
-                                <DijkstraAnswer     v-if="resultInfo.question.type === 10"
-                                                    :answer="resultInfo.answerList[selectedAnswer].answerObject"
-                                                    />
+                                    <DijkstraAnswer     v-if="resultInfo.question.type === 10"
+                                                        :answer="resultInfo.answerList[selectedAnswer].answerObject"
+                                                        />  
+                                </div>
+                                <div v-else>
+                                    <text-answer    :answer="didntAnswerString"/>
+                                </div>
                             </div>
 						</b-tab>
 					</b-tabs>
@@ -70,16 +75,22 @@
 <script>
 import MultipleChoiceAnswer from "./questionResultScreenAnswer/MultipleChoice.vue";
 import MultipleChoiceSolution from "./questionResultScreenSolution/MultipleChoice.vue";
+
 import TextAnswer from "./questionResultScreenAnswer/Text.vue";
 import TextSolution from "./questionResultScreenSolution/Text.vue";
+
 import ShellsortAnswer from "./questionResultScreenAnswer/Shellsort.vue";
 import ShellsortSolution from "./questionResultScreenSolution/Shellsort.vue";
+
 import MergesortAnswer from "./questionResultScreenAnswer/Mergesort.vue";
 import MergesortSolution from "./questionResultScreenSolution/Mergesort.vue";
+
 import QuicksortAnswer from "./questionResultScreenAnswer/Quicksort.vue";
 import QuicksortSolution from "./questionResultScreenSolution/Quicksort.vue";
+
 import TreeAnswer from "./questionResultScreenAnswer/Tree.vue";
 import TreeSolution from "./questionResultScreenSolution/Tree.vue";
+
 import DijkstraAnswer from "./questionResultScreenAnswer/Dijkstra.vue";
 import DijkstraSolution from "./questionResultScreenSolution/Dijkstra.vue";
 
@@ -92,8 +103,8 @@ export default {
     },
     data() {
         return {
-            selectedResult: Number,
-            tabIndex: Number
+            tabIndex: Number,
+            didntAnswerString: "You answered: I don't know!"
         }
     },
     computed: {
@@ -101,7 +112,12 @@ export default {
 			let locale = this.$store.getters.getLocale("DisplayQuestion");
 			if (locale) return locale;
 			else return {};
-		},
+        },
+        getResult() {
+            let answer = this.resultInfo.answerList[this.selectedAnswer];
+            if(answer.result !== undefined) return answer.result;
+            return 1
+        }
     },
     methods: {
         setTab(event) {

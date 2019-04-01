@@ -16,7 +16,20 @@ export default class Graph0 {
 			if (config.importType) this.importType = config.importType;
 			else console.error("Got configuration steps, but importType is undefined");
 
+			// If a tree is imported, it can either come from an algorithm,
+			// which is an array of steps. Or it can come from an student which
+			// means that it comes from this.exportAsTree()
+			if (this.importType == "Tree") {
+				if (
+					config.steps.length == 1 &&
+					config.steps[0].hasOwnProperty("roots")
+				) {
+					this.importSource = "Student";
+				} else this.importSource = "Algorithm";
+			}
+
 			this.steps = config.steps;
+
 			if (this.gd.operatingMode == "Presentation") {
 				this.gd.currentStep = config.steps.length - 1;
 				this.gd.addSteppingButtons();
@@ -38,16 +51,6 @@ export default class Graph0 {
 				this.stateHandlers.Mark = this.markNode.bind(this);
 				this.drawStatic();
 			}
-		}
-
-		if (config.steps) {
-			this.steps = config.steps;
-			if (this.gd.operatingMode == "Presentation") {
-				this.gd.addSteppingButtons();
-				this.gd.drawStatic();
-				this.gd.currentStep = config.steps.length - 1;
-			}
-			this.parseSteps();
 		}
 	}
 
@@ -82,11 +85,17 @@ export default class Graph0 {
 
 		// Decides which of the trees is being displayed
 		this.treeIndex = 0;
+		// This contains the buttons to navigate between trees
+		this.steppingButtons = [];
 
 		this.config = config;
 	}
 
 	mouseDownHandler(e) {
+		if (this.gd.operatingMode == "Presentation")
+			return this.detectTreeSteppingInput(e);
+		
+
 		// UI
 		let consumed = this.detectUIInput(e);
 		if (consumed) return consumed;
@@ -295,7 +304,68 @@ export default class Graph0 {
 		return true;
 	}
 
-	  /*
+	/*
+		Checks if the event (click) happened inside one of the tree stepping buttons.
+	*/
+	detectTreeSteppingInput(e) {
+		for (let i = 0; i < this.steppingButtons.length; i++) {
+			let btn = this.steppingButtons[i];
+
+			let inside = this.gd.isPointInRectangle(
+				e.offsetX,
+				e.offsetY,
+				btn.position.x,
+				btn.position.y,
+				btn.position.width,
+				btn.position.height
+			);
+
+			if (inside) {
+				btn.handler();
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/*
+		Draws the tree stepping buttons
+	*/
+	drawTreeSteppingButtons() {
+		// Draw tree stepping buttons if they exist
+		if (this.steppingButtons.length > 0) {
+			for (let i = 0; i < this.steppingButtons.length; i++) {
+				this.gd.staticContext.beginPath();
+				let btn = this.steppingButtons[i];
+				this.gd.staticContext.fillStyle = "white";
+
+				this.gd.staticContext.rect(
+					btn.position.x,
+					btn.position.y,
+					btn.position.width,
+					btn.position.height
+				);
+				this.gd.staticContext.fill();
+				this.gd.staticContext.stroke();
+
+				// Text
+				this.gd.staticContext.fillStyle = "black";
+				let textWidth = this.gd.staticContext.measureText(btn.data.text).width;
+				let xPadding = (btn.position.width - textWidth) / 2;
+				let yPadding = (btn.position.height + this.gd.fontHeight) / 2;
+				this.gd.staticContext.fillText(
+					btn.data.text,
+					btn.position.x + xPadding,
+					btn.position.y + yPadding
+				);
+				this.gd.staticContext.fillStyle = "white";
+				this.gd.staticContext.closePath();
+			}
+		}
+	}
+
+	/*
 		Draws the UI to the staticBuffer.
 	*/
 	drawStatic() {
@@ -335,9 +405,79 @@ export default class Graph0 {
 		this.gd.staticContext.closePath();
 	}
 
+	addTreeSteppingButtons(treeCount) {
+		this.steppingButtons = [];
+		let numOfSteps = treeCount;
+
+		let stepBack = () => {
+			if (this.treeIndex > 0) {
+				this.treeIndex -= 1;
+				this.parseSteps();
+				this.gd.drawStatic();
+			}
+		};
+
+		let stepForward = () => {
+			if (this.treeIndex < numOfSteps - 1) {
+				this.treeIndex += 1;
+				this.parseSteps();
+				this.gd.drawStatic();
+			}
+		};
+
+		this.steppingButtons.push({
+			data: {
+				text: "<-- Tree",
+				relSize: this.gd.relSize
+			},
+			handler: stepBack
+		});
+		this.steppingButtons.push({
+			data: {
+				text: (this.treeIndex + 1) + " / " + numOfSteps,
+				relSize: this.gd.relSize
+			},
+			handler: () => {}
+		});
+		this.steppingButtons.push({
+			data: {
+				text: "Tree -->",
+				relSize: this.gd.relSize
+			},
+			handler: stepForward
+		});
+
+		let numBtns = this.steppingButtons.length;
+		// Every button get an equal amount of screen size
+		let maxButtonWidth = this.gd.staticBuffer.width / numBtns;
+		let maxButtonHeight = this.gd.staticBuffer.height / 10;
+		for (let i = 0; i < numBtns; i++) {
+			let btn = this.steppingButtons[i];
+			//  Sets the button size to the allocated size * relative button size
+			let btnWidth = maxButtonWidth * btn.data.relSize;
+			let btnHeight = maxButtonHeight * btn.data.relSize;
+			// Centers the button inside the allocated space
+			let xPadding = (maxButtonWidth - btnWidth) / 2;
+			let yPadding = (maxButtonHeight - btnHeight) / 2;
+
+			btn.position = {
+				x: i * maxButtonWidth + xPadding,
+				y: this.gd.staticBuffer.height - 2 * maxButtonHeight + yPadding,
+				width: btnWidth,
+				height: btnHeight
+			};
+		}
+
+		this.dirty = true;
+	}
+
 	parseSteps() {
 		if (this.importType == "Graph") this._parseGraphSteps();
 		else this._parseTreeSteps();
+	}
+
+	afterDrawStatic() {
+		this.drawTreeSteppingButtons();
 	}
 
 	_parseTreeSteps() {
@@ -346,20 +486,65 @@ export default class Graph0 {
 		this.gd.dirty = true;
 
 		let getTree = (step) => {
-			if (this.treeIndex > step.treeInfo.length)
+			if (this.treeIndex >= step.treeInfo.length)
 				return step.treeInfo[step.treeInfo.length - 1];
 			else return step.treeInfo[this.treeIndex];
-		}
+		};
+
+		let fixTree = (tree) => {
+			let root = {};
+			root.value = tree.root.value;
+			root.children = [];
+			root.parent = undefined;
+
+			let nodeParser = function(node, parent) {
+				if (node === undefined || node === null) return undefined;
+				node.parent = parent;
+				node.visited = false;
+				nodeParser(node.children[0], node);
+				nodeParser(node.children[1], node);
+			};
+
+			nodeParser(tree.root.children[0], root);
+			nodeParser(tree.root.children[1], root);
+			root.children[0] = tree.root.children[0];
+			root.children[1] = tree.root.children[1];
+			tree.root = root;
+
+			tree.nodes[0].parent = undefined;
+
+			let fixNull = function(node) {
+				if (node.children.length > 0) {
+					for (let i = 0; i < node.children.length; i++)
+						if (node.children[i] === null)
+							node.children[i] = undefined;
+
+					if (node.children[0] !== undefined)
+						fixNull(node.children[0]);
+					if (node.children[1] !== undefined)
+						fixNull(node.children[1]);
+				}
+			};
+
+			fixNull(tree.root);
+		};
 
 		// This assumes that the nodeshape is Circle
 		let r = this.gd.R;
 
-		let parseInitial = (step) => {
+		let parseStep = (step) => {
 			let tree = getTree(step);
+			fixTree(tree);
+
+			// If there are more than one tree, there should be
+			// buttons to navigate between them.
+			if (step.treeInfo.length > 1)
+				this.addTreeSteppingButtons(step.treeInfo.length);
+			else this.steppingButtons = [];
 
 			let p = this.gd.camera.project(this.gd.canvas.width / 2, 0);
 			// Add some padding between canvas top and the top of the tree
-			p.y += r / 2;
+			p.y += r * 2.5;
 
 			/*
 				Searches a tree with root node for the node with the lowest cost.
@@ -401,8 +586,8 @@ export default class Graph0 {
 				else return r;
 			};
 
-			let xPadding = 25;
-			let yPadding = 30;
+			let xPadding = this.gd.R * 2.5;
+			let yPadding = this.gd.R * 2.5;
 
 			let addGraphDrawerNode = (node, x, y, dir) => {
 				if (node == undefined) return;
@@ -414,7 +599,7 @@ export default class Graph0 {
 				if (dir == 0) tx -= x * xPadding;
 				else if (dir == 1) tx += x * xPadding;
 
-				this.gd.nodes.push({
+				this.gd.addNode({
 					x: tx,
 					y: p.y + y * yPadding,
 					w: r,
@@ -429,7 +614,6 @@ export default class Graph0 {
 				// Add child nodes
 				addGraphDrawerNode(node.children[0], left, y + 1, dir);
 				addGraphDrawerNode(node.children[1], right, y + 1, dir);
-				console.log(node);
 				// Add parent node
 				let parentDir = 0;
 				if (node.parent.children[0] == node) parentDir = right;
@@ -440,17 +624,17 @@ export default class Graph0 {
 			// Find the node furthest to the right on the left side of the tree
 			let left = tree.root.children[0];
 			let rightest = search(left, 0, 0, 1);
-			addGraphDrawerNode(rightest.node, 1, rightest.depth, 0);
+			if (rightest)
+				addGraphDrawerNode(rightest.node, 1, rightest.depth, 0);
 
 			// Find the node furthest to the left on the right side of the tree
 			let right = tree.root.children[1];
 			let leftest = search(right, 0, 1, 1);
-			addGraphDrawerNode(leftest.node, 1, leftest.depth, 1);
+			if (leftest) addGraphDrawerNode(leftest.node, 1, leftest.depth, 1);
 
 			// Add root node
-			console.log(tree);
 			let root = tree.root;
-			this.gd.nodes.push({
+			this.gd.addNode({
 				x: p.x,
 				y: p.y,
 				w: r,
@@ -458,34 +642,64 @@ export default class Graph0 {
 				shape: this.gd.nodeShape,
 				v: root.value
 			});
+
+			// Create edges between the nodes
+			let createEdges = (node) => {
+				if (node == undefined) return;
+				for (let i = 0; i < 2; i++) {
+					if (node.children[i] !== undefined) {
+						this.gd.edges.push({
+							n1: this.gd.getNodeByValue(node.value),
+							n2: this.gd.getNodeByValue(node.children[i].value)
+						});
+						createEdges(node.children[i]);
+					}
+				}
+			};
+			createEdges(root);
 		};
 
-		let parseAdd = (step) => {};
+		let parseStudentStep = (step) => {
+			// Every node is responsible for adding itself and its children.
+			let addStudentNode = (node) => {
+				if (node == undefined || node == null) return;
 
-		let parseRemove = (step) => {};
+				// Create and get the node
+				let id = node.id;
+				let n = this.gd.getNode(id);
+				if (n == undefined) n = this.gd.addNode(node);
+				node.id = n;
 
-		let parseRotate = (step) => {};
+				// Create and get all the children.
+				// Edges are also created.
+				for (let i = 0; i < node.children.length; i++) {
+					let c = node.children[i];
+					if (c == undefined || c == null) continue;
 
-		let parseComplete = (step) => {};
+					let cNode = this.gd.getNode(c.id);
+					if (cNode == undefined) cNode = this.gd.addNode(c);
+					c.id = cNode.id;
 
-		for (let i = 0; i <= this.gd.currentStep; i++) {
-			let step = this.steps[i];
+					this.gd.edges.push({
+						n1: n,
+						n2: cNode
+					});
 
-			if (step.type == "Initial") {
-				parseInitial(step);
-			} else if (step.type == "Add") {
-				parseAdd(step);
-			} else if (step.type == "Remove") {
-				parseRemove(step);
-			} else if (step.type == "Rotated") {
-				parseRotate(step);
-			} else if (step.type == "Done") {
-				parseComplete(step);
-			} else {
-				console.error(`Found invalid step type: ${step.type} 
-					at index ${i}, skipping.`);
+					addStudentNode(c);
+				}
+			};
+
+			for (let i = 0; i < step.roots.length; i++) {
+				let root = step.roots[i];
+				addStudentNode(root);
 			}
-		}
+
+			this.gd.centerCameraOnGraph();
+		};
+
+		let step = this.steps[this.gd.currentStep];
+		if (this.importSource == "Algorithm") parseStep(step);
+		else if (this.importSource == "Student") parseStudentStep(step);
 	}
 
 	_parseGraphSteps() {

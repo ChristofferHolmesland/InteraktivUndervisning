@@ -98,7 +98,7 @@ export default class GraphDrawer {
 		this.steppingButtons = [];
 		// Decides how much of the assigned button space should be used
 		// by a button.
-		this.relSize = 0.6;
+		this.relSize = 0.7;
 
 		this._config(config);
 
@@ -283,6 +283,9 @@ export default class GraphDrawer {
 			this.staticContext.fillStyle = "white";
 			this.staticContext.closePath();
 		}
+
+		if (this.controllers[this.controlType].afterDrawStatic)
+			this.controllers[this.controlType].afterDrawStatic();
 	}
 
 	/*
@@ -465,6 +468,14 @@ export default class GraphDrawer {
 		let nextId = this.nextId;
 		this.nextId++;
 
+		// If a node comes with a defined id, it needs to be checked
+		// to see if a node with that id already exists. If a node exists
+		// this nodes id should be set to nextId, instead of the defined id.
+		if (props.id !== undefined) {
+			let n = this.getNode(props.id);
+			if (n !== undefined) props.id = nextId;
+		}
+
 		let node = {
 			id: nextId,
 			x: 0,
@@ -495,6 +506,14 @@ export default class GraphDrawer {
 	getNode(id) {
 		for (let i = 0; i < this.nodes.length; i++) {
 			if (this.nodes[i].id == id) return this.nodes[i];
+		}
+
+		return undefined;
+	}
+
+	getNodeByValue(v) {
+		for (let i = 0; i < this.nodes.length; i++) {
+			if (this.nodes[i].v == v) return this.nodes[i];
 		}
 
 		return undefined;
