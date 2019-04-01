@@ -116,10 +116,7 @@ module.exports.getDB = function setupDatabase() {
                 "BinaryTree",
                 "BinarySearchTree",
                 "AVLTree",
-                "Graph",
                 "Dijkstra",
-                "BellmanFord",
-                "BreadthFirstSearch",
                 "Python"
             ];
             
@@ -131,8 +128,22 @@ module.exports.getDB = function setupDatabase() {
                 }
             }).catch((err) => {
                 reject(err);
-            })
-            
+            });
+
+            if (process.env.NODE_ENV !== "production") {
+                await dbFunctions.get.userById(db,"test").then(async (rows) => {
+                   if(rows === undefined || rows.length < 1) {
+                       dbFunctions.insert.feide(db, "test", "test", "testAdmin", "test", 4).then(() => {
+                           dbFunctions.insert.feideUser(db, "test", "test").catch((err) => {
+                               console.error(err);
+                           });
+                       }).catch((err) => {
+                           console.error(err);
+                       });
+                   }
+                });
+            }
+
             resolve(db);
         });
     });

@@ -9,6 +9,9 @@ let checkers = {
     8: require("./binaryTree.js"),
     9: require("./text.js"),
     10: require("./djikstra.js"),
+    11: require("./text.js"), // Not implemented yet
+    12:require("./text.js"), // Not implemented yet
+    13: require("./python.js")
 };
 
 const solutionChecker = {

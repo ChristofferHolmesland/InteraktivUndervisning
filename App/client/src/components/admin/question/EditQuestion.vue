@@ -1,10 +1,10 @@
 <template>
-    <b-modal :id="elementId" :ref="elementRef" :no-close-on-backdrop="true" :title="getLocale.newQuestion" @ok="callOkHandler" @cancel="cancelHandler" style="text-align: left;" size="lg">
+    <b-modal :id="elementId" :ref="elementRef" :no-close-on-backdrop="true" :title="getLocale.newQuestion" @ok="callOkHandler" style="text-align: left;" size="lg">
         <b-form>
             <b-alert    :show="validationFailure"
                         variant="danger">
                 <p v-for="(error, index) in validationErrors" :key="index">
-                    {{getLocale.error}}
+                    {{getLocale[error]}}
                 </p>
             </b-alert>
             <b-container   class="px-0"
@@ -124,7 +124,20 @@
                         <!-- TODO add table objects -->
                     </div>
                     <div v-if="newQuestion.objects.files.length > 0">
-                        <!--<img v-attr="src: newQuestion.objects.files[0]">-->
+                        <label>Files:</label>
+                        <b-container>
+                            <b-row v-for="(image, index) in newQuestion.objects.files" :key="index" class="mt-2">
+                                <b-col>
+                                    {{image.name}}
+                                </b-col>
+                                <b-col>
+                                    <b-button>Delete</b-button>
+                                </b-col>
+                                <b-col>
+                                    <img :src="getImageSrc(index)" width="200" height="200" style="border: 3px solid black;"/>
+                                </b-col>
+                            </b-row>
+                        </b-container>
                     </div>
                     <div></div>
                     <div></div>
@@ -259,7 +272,7 @@
             <b-form-group 	
                     id="dijkstraSolution"
                     label="Draw the graph, and mark start (green) and end (red) nodes"
-                    v-if="newQuestion.solutionType === 10">
+                    v-if="newQuestion.solutionType === 9">
                 <GraphDrawer 
                     @getValueResponse="gotGraphDrawerObject" 
                     :requestAnswer="requestGraphDrawerObject" 
@@ -268,6 +281,18 @@
                     exportType="Graph"
                     operatingMode="Interactive"
                     />
+            </b-form-group>
+            <b-form-group 	id="pythonSolution"
+                            :label="getLocale.newQuestionSolution"
+                            label-for="solutionInput"
+                            v-if="newQuestion.solutionType === 10">
+                <div v-show="checkRef">klar</div>
+                    <b-form-textarea 	id="pythonCodeInput"
+                                        placeholder="Write Python code here..."
+                                        v-model="newQuestion.objects.code"
+                                        ref="codeInput"
+                                        @keydown.native.tab="keyDownInTextarea">
+                    </b-form-textarea>
             </b-form-group>
             </div>
         </b-form>
@@ -287,6 +312,7 @@
                 solution: "",
                 time: 0,
                 objects: {
+                    code: "",
                     multipleChoices: [],
                     startingArray: "",
                     startTree: undefined,
@@ -305,7 +331,7 @@
             mediaTypes: [],
             selectedMediaType: undefined,
 
-            showMedia: false,
+            showMedia: true, // TODO set to false
             showSolution: false,
             showBasicInfo: false, // TODO set to true
 
@@ -315,7 +341,8 @@
             showMediaError: false,
             validationFailure: false,
             validationErrors: [],
-            time: 0
+            time: 0,
+            testImage: ""
         }
     }
 
@@ -341,6 +368,27 @@
             });
         },
         methods: {
+            keyDownInTextarea(e) {
+                // Only accept the Tab key
+                if (e.key !== "Tab" && e.which !== "9") return;
+
+                // Prevent shifting focus from the element
+                e.preventDefault();
+
+                let codeInput = this.$refs.codeInput.$refs.input;
+
+                // Add 4 spaces
+                let tabSize = 4;
+                let tabPosition = codeInput.selectionStart;
+                let textWithSpaces = codeInput.value.substring(0, tabPosition);
+                for (let i = 0; i < tabSize; i++) textWithSpaces += " ";
+                textWithSpaces += codeInput.value.substring(tabPosition);
+
+                codeInput.value = textWithSpaces;
+                // Move cursor to the right position
+                codeInput.selectionStart = tabPosition + tabSize;
+                codeInput.selectionEnd = tabPosition + tabSize;
+            },
             assignState() {
                 let n = initializeState();
                 for (let p in n) {
@@ -355,11 +403,21 @@
             newFile(event) {
                 let files = [];
                 Array.prototype.push.apply(files, event.target.files);
-                let fileSize = 0;
+                let storedFiles = this.newQuestion.objects.files;
+
+                let totalFilesSize = 0;
+                let errorFileSize = 1500000;
+                let warningFileSize = 500000;
+                for(let i = 0; i < storedFiles.length; i++) totalFilesSize += storedFiles[i].size;
                 let fileTypeErr = 0;
 
                 for (let i = 0; i < files.length; i++) {
                     let file = files[i];
+                    let fileObject = {
+                        name: file.name,
+                        size: file.size,
+                        type: file.type
+                    }
                     
                     let fileType = file.type.split("/");
                     if (fileType[0] !== "image") {
@@ -368,27 +426,40 @@
                         fileTypeErr++;
                         this.showMediaError = true;
                         this.mediaErrorText = fileTypeErr.toString() + this.getLocale.mediaErrorFileType;
+                        continue;
                     }
 
-                    fileSize += file.size;
-                    if (fileSize > 1500000) {
-                        files = [];
+                    totalFilesSize += file.size;
+                    if (totalFilesSize > errorFileSize) {
+                        event.target.value = "";
                         this.showMediaError = true;
                         if (fileTypeErr > 0) this.mediaErrorText += "\n\n" + this.getLocale.mediaErrorFileSize;
                         else this.mediaErrorText = this.getLocale.mediaErrorFileSize;
                     }
-                    else if (fileSize > 500000) {
+                    else if (totalFilesSize > warningFileSize) {
                         this.showMediaWarning = true;
                         this.mediaWarningText = this.getLocale.mediaWarningFileSize;
                     }
                     else {
                         if (fileTypeErr === 0) {      
                             this.showMediaError = false;
-                            this.newQuestion.objects.files.push(file);
                         }
                         this.showMediaWarning = false;
                     }
+
+                    if (fileTypeErr === 0 && totalFilesSize < errorFileSize) {
+                        let callbackFunction = function(e) {
+                            fileObject.buffer = btoa(e.target.result);
+                            storedFiles.push(fileObject);
+                        }
+
+                        let reader = new FileReader();
+                        reader.onload = callbackFunction;
+                        reader.readAsBinaryString(file);
+                    }
                 }
+
+                event.target.value = "";
             },
             changeShowMedia() {
                 this.showMedia = !this.showMedia;
@@ -423,6 +494,10 @@
 			},
             returnToOkHandler: function() {
                 this.assignTime();
+                if (this.newQuestion.solutionType === 10) {
+                    this.newQuestion.solution = this.newQuestion.objects.code;
+                }
+                
                 if (this.okHandler == "add") this.addNewQuestionHandler();
                 else if (this.okHandler == "edit") this.editQuestionHandler();
             },
@@ -446,15 +521,11 @@
             	//if the component is using the Graph Drawer, Graph drawer is used on Binary Tree 7 up to BFS 13
                 //Need a admin socket function for validating the question information given.
                 e.preventDefault();
-                if (this.newQuestion.solutionType > 6 && this.newQuestion.solutionType <= 13) {
+                if (this.newQuestion.solutionType > 6 && this.newQuestion.solutionType < 13) {
                         this.requestGraphDrawerObject = !this.requestGraphDrawerObject;
                 } else {
                     this.returnToOkHandler();
                 }
-            },
-            cancelHandler: function() {
-                this.useAlert = false;
-                this.alertReason = "";
             },
             objectsInputChanged(newObject) {
                 if (newObject == undefined) return;
@@ -466,22 +537,33 @@
                 this.newQuestion.objects.multipleChoices.push("");
             },
             deleteMultiChoice(index) {
-                console.log(this.newQuestion.solution);
                 let solutionIndex = this.newQuestion.solution.indexOf(index.toString());
                 if (solutionIndex > -1) this.newQuestion.solution.splice(solutionIndex, 1);
                 for (let i = index + 1; i < this.newQuestion.objects.multipleChoices.length; i++) {
                     let j = this.newQuestion.solution.indexOf(i.toString())
-                    console.log(j);
                     if (j > -1) {
                         this.newQuestion.solution[j] = (Number(this.newQuestion.solution[j]) - 1).toString();
                     }
                 }
-                console.log(this.newQuestion.solution);
 
                 this.newQuestion.objects.multipleChoices.splice(index, 1);
             }
         },
         computed: {
+            checkRef() {
+                if (this.$refs["codeInput"] !== undefined) {
+                    this.$refs["codeInput"].onkeydown = this.keyDownInTextarea;
+                    return true;
+                }
+
+                return false;
+            },
+            getImageSrc() {
+                return (index) => {
+                    let file = this.newQuestion.objects.files[index];
+                    return "data:" + file.type + ";base64," + file.buffer;
+                }
+            },
             getLocale() {
 				let locale = this.$store.getters.getLocale("AdminQuestions");
                 if(locale) return locale;
@@ -550,7 +632,7 @@
             confirmQuestionRequirements: function (result) {
             	if (result.passed) {
                     this.$refs[this.elementRef].hide();
-                    this.doneHandler();
+                    if(this.doneHandler !== undefined) this.doneHandler();
                 }else {
             	    this.validationFailure = true;
                     this.validationErrors = result.errors;
@@ -560,13 +642,12 @@
             }
 	    },
         watch: {
-            "newQuestion.solutionType": function() {
-                if (this.solutionType === 1) this.newQuestion.solution = "";
-                else if (this.solutionType === 2) this.newQuestion.solution = [];
+            "newQuestion.solutionType": function(newType, oldType) {
+                if (newType === 1) this.newQuestion.solution = "";
+                else if (newType === 2) this.newQuestion.solution = [];
             }
         },
     }
-
 </script>
 
 <style scoped>

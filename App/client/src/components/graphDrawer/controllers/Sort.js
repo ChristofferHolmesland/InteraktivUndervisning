@@ -456,8 +456,8 @@ export default class Sort {
 		// Checks the + buttons between nodes
 		for (let i = 0; i < this.buttons.length; i++) {
 			let btn = this.buttons[i];
-			if (this.gd.isPointInSquare(e.offsetX, e.offsetY, btn.position.x, btn.position.y, 
-				btn.position.width)) {
+			if (this.gd.isPointInRectangle(e.offsetX, e.offsetY, btn.position.x, btn.position.y, 
+				btn.position.width, btn.position.height)) {
 				btn.handler(btn);
 				return true;
 			}
@@ -467,8 +467,8 @@ export default class Sort {
 		if (this.gd.DEVICE == "Mobile") {
 			for (let i = 0; i < this.clickedButtons.length; i++) {
 				let btn = this.clickedButtons[i];
-				if (this.gd.isPointInSquare(e.offsetX, e.offsetY, btn.position.x,
-					btn.position.y, btn.position.width)) {
+				if (this.gd.isPointInRectangle(e.offsetX, e.offsetY, btn.position.x,
+					btn.position.y, btn.position.width, btn.position.height)) {
 					btn.handler(e);
 					return true;
 				}

@@ -7,7 +7,16 @@
 					<JoinSession/>
 				</b-col>
 				<b-col cols="12" lg="8">
-					<input type="file" @change="printFiles" accept="image/*" multiple/>
+
+<!-- TODO: Remove GraphDrawer from this file. Currently used for testing -->
+    			<GraphDrawer 
+					@getValueResponse="printGraphDrawer" 
+					:requestAnswer="requestAnswer" 
+					controlType="Python"
+					operatingMode="Interactive"
+				/>
+				<b-button @click="requestAnswer = !requestAnswer" >Export</b-button>
+<!--				<shellsort :initialList="[	]" :initialKValue="3"/> -->
 				</b-col>
 			</b-row>
 		</b-container>
