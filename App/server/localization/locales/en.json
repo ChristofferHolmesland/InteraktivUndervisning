@@ -40,7 +40,11 @@
         "treeElementTypeError": "The element list should only contain numbered-valued elements!",
         "BSTAVLInvalidTreeActionError": "Neither add tree question or remove tree question was chosen!",
         "questionTypeError": "No question type was selected!",
-        "imageInputLabel": "Choose a file upload..."
+        "imageInputLabel": "Choose a file upload...",
+        "filename": "Filename",
+        "filesize": "Filesize",
+        "filetype": "filetype",
+        "deleteBtn": "Delete"
     },
     "AdminSessions": {
         "newSession": "New session",
