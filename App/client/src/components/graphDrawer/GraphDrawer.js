@@ -463,8 +463,10 @@ export default class GraphDrawer {
 			x, y, w, h, v, shape,
 			selected, culled,
 			fillColor, strokeColor
+
+		If ref is true, then the object in props is added to the nodes list.
 	*/
-	addNode(props) {
+	addNode(props, ref) {
 		let nextId = this.nextId;
 		this.nextId++;
 
@@ -489,10 +491,19 @@ export default class GraphDrawer {
 			strokeColor: undefined
 		};
 
-		for (var prop in props) {
-			if (props.hasOwnProperty(prop)) {
-				node[prop] = props[prop];
+		if (ref == undefined || ref == false) {
+			for (var prop in props) {
+				if (props.hasOwnProperty(prop)) {
+					node[prop] = props[prop];
+				}
 			}
+		} else {
+			for (var nodeprop in node) {
+				if (!props.hasOwnProperty(nodeprop)) {
+					props[nodeprop] = node[nodeprop];
+				}
+			}
+			node = props;
 		}
 
 		// Check if the new node was given an id which is larger than the
