@@ -51,7 +51,6 @@ module.exports.createBinarySearchTree = function(elements,add,existingTreeObject
 	let rootNode;
 	let treelist = [];
 	if (add) {
-		console.log("Adding\n");
 		let a = 0;
 		if (existingTreeObject !== undefined) {	//there is an existing tree
 			tree = existingTreeObject.createDuplicateTree();
@@ -69,7 +68,6 @@ module.exports.createBinarySearchTree = function(elements,add,existingTreeObject
 		}
 		treelist.push(tree);
 	}else if(!add){
-		console.log("Removing\n");
 		if (existingTreeObject !== undefined) {
 			tree = existingTreeObject.createDuplicateTree();
 			treelist.push(tree);
@@ -92,7 +90,7 @@ module.exports.createBinarySearchTree = function(elements,add,existingTreeObject
 			}
 			if (treelist.length > 1)	treelist = GeneralTreeFunctions.removeDuplicateTreeResult(treelist);
 		}else {
-			console.log("Non-existent tree cannot have removed entries.")
+			console.error("Non-existent tree cannot have removed entries.")
 		}
 	}
 	return treelist
@@ -105,7 +103,6 @@ module.exports.createBinarySearchTreeSolution = function(elements, add, existing
 	let steps = [];
 	let treelist = [];
 	if (add) {
-		console.log("Adding\n");
 		let a = 0;
 		if (existingTreeObject !== undefined) {	//there is an existing tree
 			tree = existingTreeObject.createDuplicateTree();
@@ -135,7 +132,6 @@ module.exports.createBinarySearchTreeSolution = function(elements, add, existing
 		}
 		treelist.push(tree);
 	}else if(!add){
-		console.log("Removing\n");
 		if (existingTreeObject !== undefined) {
 			tree = existingTreeObject.createDuplicateTree()
 			;
@@ -159,19 +155,17 @@ module.exports.createBinarySearchTreeSolution = function(elements, add, existing
 					}
 				}
 				if (b === elements.length-1) {
-					//console.log(treelist);
 					if (treelist.length > 1)	treelist = GeneralTreeFunctions.removeDuplicateTreeResult(treelist);
 					let step = GeneralTreeFunctions.createStepArray("Done","BST",treelist);
 					steps.push(step);
 				}
 				else {
-					//console.log(treelist);
 					let step = GeneralTreeFunctions.createStepArray("Remove","BST",treelist);
 					steps.push(step);
 				}
 			}
 		}else {
-			console.log("Non-existent tree cannot have removed entries.")
+			console.error("Non-existent tree cannot have removed entries.")
 		}
 	}
 	return steps
@@ -181,15 +175,11 @@ module.exports.createBinarySearchTreeSolution = function(elements, add, existing
 //The operations done on the tree is dependent on how many children the deleted node has.
 function removeNodeFromBSTTree(node,tree,index) {
 	let newTreeList = [];
-	//console.log(node);
-	//console.log(tree);
-	//console.log(index);
 	if (node !== undefined && tree !== undefined && index !== -1) {
 		let newTree = tree.createDuplicateTree();
 		let newNode = newTree.nodes[index];
 		let parent = newNode.parent;
 		if (newNode.childrenAmount === 1) {
-			console.log("1 children");
 			let childrenNode;
 			if (newNode.children[0] !== undefined) childrenNode = newNode.children[0];
 			else childrenNode = newNode.children[1];
@@ -204,7 +194,6 @@ function removeNodeFromBSTTree(node,tree,index) {
 			newTree.nodes.splice(index, 1);
 			newTreeList.push(newTree);
 		} else if (newNode.childrenAmount === 2) {
-			console.log("2 children");
 			let tempNodeArray = GeneralTreeFunctions.getBestReplacementNodes(newNode, newTree);
 			for (let t = 0; t < tempNodeArray.length; t++) {
 				let newSubTree = newTree.createDuplicateTree();
@@ -242,7 +231,6 @@ function removeNodeFromBSTTree(node,tree,index) {
 				newTreeList.push(newSubTree);
 			}
 		} else {	//no children
-			console.log("No children");
 			if (parent.children[0] === newNode) parent.children[0] = undefined;
 			else parent.children[1] = undefined;
 			newTree.nodes.splice(index, 1);
