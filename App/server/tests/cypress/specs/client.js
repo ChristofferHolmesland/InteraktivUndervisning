@@ -13,6 +13,10 @@ describe("Student tries to join a session",function () {
 		cy.get('#__BVID__8__BV_button_').should("have.text","Språk").click();
 		cy.get("#en").click();
 		cy.get('#__BVID__8__BV_button_').should("have.text","Language");
+		console.log("HELLO DAD");
+		let x = cy.get(".text-center > h1");
+		console.log(x);
+		console.log("BYE DAD");
 		cy.get('.text-center > h1').should("have.text","Quick join session!");
 		cy.get('#__BVID__14').type("001");
 		cy.get(".btn").click();

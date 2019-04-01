@@ -131,8 +131,24 @@ module.exports.getDB = function setupDatabase() {
                 }
             }).catch((err) => {
                 reject(err);
-            })
-            
+            });
+
+            if (process.env.NODE_ENV !== "production") {
+                await dbFunctions.get.userById(db,"test").then(async (rows) => {
+                    console.log(rows);
+                   if(rows.length < 1) {
+                       console.log("yay");
+                       dbFunctions.insert.feide(db, "test", "test", "testAdmin", "test", 4).then(() => {
+                           dbFunctions.insert.feideUser(db, "test", "test").catch((err) => {
+                               console.error(err);
+                           });
+                       }).catch((err) => {
+                           console.error(err);
+                       });
+                   }
+                });
+            }
+
             resolve(db);
         });
     });
