@@ -333,51 +333,81 @@ export default class GraphDrawer {
 				(this.edges[i].directed == undefined ||
 					this.edges[i].directed == true)
 			) {
-				// Normalize the line as (nx, ny)
-				let dx = center1.x - center2.x;
-				let dy = center1.y - center2.y;
-				let magnitude = Math.sqrt(dx * dx + dy * dy);
-				let nx = dx / magnitude;
-				let ny = dy / magnitude;
+				let b = {
+					x: center1.x,
+					y: center1.y
+				};
 
-				// Distance from the center of shape to the edge
-				let dstToEdgeW = this.edges[i].n2.w;
-				let dstToEdgeH = this.edges[i].n2.h;
-				if (this.edges[i].n2.shape == "Rectangle") {
-					dstToEdgeW /= 2;
-					dstToEdgeH /= 2;
+				// a is the intersection point
+				let a = {};
+				let node = this.edges[i].n1;
+				let l1 = {
+					x1: center1.x,
+					y1: center1.y,
+					x2: center2.x,
+					y2: center2.y
+				};
+
+				if (node.shape == "Rectangle") {
+					// This can be changed to only do one intersection check at a time
+					// if performance is an issue.
+					// Top
+					let t = this.lineSegmentIntersection(l1, {
+						x1: node.x,
+						y1: node.y,
+						x2: node.x + node.w,
+						y2: node.y
+					});
+					// Bottom
+					let b = this.lineSegmentIntersection(l1, {
+						x1: node.x,
+						y1: node.y + node.h,
+						x2: node.x + node.w,
+						y2: node.y + node.h
+					});
+					// Right
+					let r = this.lineSegmentIntersection(l1, {
+						x1: node.x + node.w,
+						y1: node.y,
+						x2: node.x + node.w,
+						y2: node.y + node.h
+					});
+					// Left
+					let l = this.lineSegmentIntersection(l1, {
+						x1: node.x,
+						y1: node.y,
+						x2: node.x,
+						y2: node.y + node.h
+					});
+
+					if (t) a = t;
+					else if (b) a = t;
+					else if (r) a = r;
+					else if (l) a = l;
+					else console.error("No intersection!");
 				}
 
-				let a = { x: center2.x, y: center2.y };
-				a.x += nx * dstToEdgeW;
-				a.y += ny * dstToEdgeH;
-
-				let b = { x: a.x, y: a.y };
-				b.x += nx * dstToEdgeW;
-				b.y += ny * dstToEdgeH;
-
-				// TODO: When the nodeshape is square, the arrows
-				// are placed on the line, but not close to
-				// the last node.
-
-				let headlen = 15;
-				let angle = Math.atan2(a.y - b.y, a.x - b.x);
-				this.drawContext.beginPath();
-				this.drawContext.moveTo(a.x, a.y);
-				this.drawContext.lineTo(
-					a.x - headlen * Math.cos(angle - Math.PI / 6),
-					a.y - headlen * Math.sin(angle - Math.PI / 6)
-				);
-				this.drawContext.moveTo(a.x, a.y);
-				this.drawContext.lineTo(
-					a.x - headlen * Math.cos(angle + Math.PI / 6),
-					a.y - headlen * Math.sin(angle + Math.PI / 6)
-				);
-				if (this.edges[i].strokeColor) {
-					this.drawContext.strokeStyle = this.edges[i].strokeColor;
+				if (a !== undefined) {
+					console.log(a);
+					let headlen = 15;
+					let angle = Math.atan2(a.y - b.y, a.x - b.x);
+					this.drawContext.beginPath();
+					this.drawContext.moveTo(a.x, a.y);
+					this.drawContext.lineTo(
+						a.x - headlen * Math.cos(angle - Math.PI / 6),
+						a.y - headlen * Math.sin(angle - Math.PI / 6)
+					);
+					this.drawContext.moveTo(a.x, a.y);
+					this.drawContext.lineTo(
+						a.x - headlen * Math.cos(angle + Math.PI / 6),
+						a.y - headlen * Math.sin(angle + Math.PI / 6)
+					);
+					if (this.edges[i].strokeColor) {
+						this.drawContext.strokeStyle = this.edges[i].strokeColor;
+					}
+					this.drawContext.stroke();
+					this.drawContext.strokeStyle = "black";
 				}
-				this.drawContext.stroke();
-				this.drawContext.strokeStyle = "black";
 			}
 
 			if (this.displayEdgeValues && this.edges[i].v !== undefined) {
@@ -1051,5 +1081,37 @@ export default class GraphDrawer {
 				height: btnHeight
 			};
 		}
+	}
+
+	/*
+		Returns the intersection point of two line segments.
+		Modified version of https://stackoverflow.com/a/1968345/ (01.04.2019)
+
+		Line 1 is defined by (l1.x1, l1.y1) and (l1.x2, l1.y2)
+		Line 2 is defined by (l2.x1, l2.y1) and (l2.x2, l2.y2)
+
+		Returns { x, y } if there was an intersection, or
+			undefined if there is no intersection.
+	*/
+	lineSegmentIntersection(l1, l2) {
+		let s1_x, s1_y, s2_x, s2_y;
+		s1_x = l1.x2 - l1.x1;
+		s1_y = l1.y2 - l1.y1;
+		s2_x = l2.x2 - l2.x1;
+		s2_y = l2.y2 - l2.y1;
+
+		let s, t;
+		s = (-s1_y * (l1.x1 - l2.x1) + s1_x * (l1.y1 - l2.y1)) / (-s2_x * s1_y + s1_x * s2_y);
+		t = ( s2_x * (l1.y1 - l2.y1) - s2_y * (l1.x1 - l2.x1)) / (-s2_x * s1_y + s1_x * s2_y);
+
+		if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
+			// Collision detected
+			return {
+				x: l1.x1 + (t * s1_x),
+				y: l1.y1 + (t * s1_y)
+			};
+		}
+
+		return undefined; // No collision
 	}
 }
