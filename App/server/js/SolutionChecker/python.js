@@ -1,5 +1,5 @@
 const check = function(answer, solution) {
-    let solution = solution[solution.length - 1];
+    solution = solution[solution.length - 1];
 
     // Check that they have the same global variables.
     if (answer.variables.length !== solution.objects.length)
