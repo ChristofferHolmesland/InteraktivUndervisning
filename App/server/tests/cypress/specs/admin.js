@@ -35,7 +35,11 @@ describe("Test admin content",function () {
 		it("Create and Edit Text question",function () {
 			cy.get('[data-v-0ae92b14=""][type="button"]').click();
 			cy.get('#newQuestionModal___BV_modal_header_ > .modal-title').should("have.text","Nytt spørsmål");
-			cy.get('#newQuestionModal___BV_modal_body_ > form > #questionTitle > div > #questionTitleInput').type("Title Text Test");
+			let grunnleggendeInformasjon = cy.get('#newQuestionModal___BV_modal_body_ > form > :nth-child(1) > .row > .col-10 > label');
+			grunnleggendeInformasjon.should("contain","Grunnleggende Informasjon");
+			grunnleggendeInformasjon.click();
+			cy.get("#questionTitleInput").type("Title Text Test");
+			cy.get("#questionTextInput").type("Info Text Test");
 
 		});
 		/*it("Create and Edit Multichoice question",function () {
