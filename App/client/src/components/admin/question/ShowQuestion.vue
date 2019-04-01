@@ -26,6 +26,12 @@
                         operatingMode="Presentation"
                         :steps="question.solution"
                         />
+        <GraphDrawer    v-if="question.solutionType === 13"
+                        controlType="Python"
+                        operatingMode="Presentation"
+                        :steps="question.solution"
+                        />
+
     </b-modal>
 </template>
 

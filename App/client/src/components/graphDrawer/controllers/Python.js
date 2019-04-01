@@ -1,22 +1,26 @@
 export default class Python {
 	_config(config) {
 		if (config && config.steps) {
+			this.steps = config.steps.slice(0, config.steps.length - 1);
+
 			// Read last step to find the data types defined by the script
-			let lastStep = config.steps[config.steps.length - 1];
-			let types = lastStep.classes;
+			this.lastStep = config.steps[config.steps.length - 1];
+			let types = this.lastStep.classes;
 			let completed = ["String", "Number", "Boolean"];
 
-			types.forEach((t) => {
+			for (let t in types) {
+				if (!types.hasOwnProperty(t)) continue;
+
 				let fields = [];
 
 				if (!completed.includes(t.name)) {
 					completed.push(t.name);
 
-					let fieldNames = [...t.objects.keys()];
+					let fieldNames = this.getProps(t.objects);
 					for (let i = 0; i < fieldNames.length; i++) {
 						fields.push({
 							name: fieldNames[i],
-							type: t.data[t.objects.get(fieldNames[i])].type
+							type: t.data[t.objects[fieldNames[i]]].type
 						});
 					}
 				}
@@ -25,38 +29,16 @@ export default class Python {
 					name: t.name,
 					fields: fields
 				});
-			});
+			}
+
+			if (this.gd.operatingMode == "Presentation") {
+				this.gd.currentStep = this.steps.length - 1;
+				this.gd.addSteppingButtons();
+				this.parseSteps();
+			}
 		}
 
-		// TODO: Remove this
-		this.objectTypes.push({
-			name: "Navn",
-			fields: [
-				{
-					name: "fornavn",
-					type: "String"
-				},
-				{
-					name: "etternavn",
-					type: "String"
-				}
-			]
-		});
-		this.objectTypes.push({
-			name: "Person",
-			fields: [
-				{
-					name: "navn",
-					type: "Navn"
-				},
-				{
-					name: "alder",
-					type: "Number"
-				}
-			]
-		});
-
-		this.drawStatic();
+		if (this.gd.operatingMode == "Interactive") this.drawStatic();
 	}
 
 	configure() {
@@ -335,6 +317,27 @@ export default class Python {
 		return true;
 	}
 
+	addVariable(v) {
+		let variable = {
+			name: v.name,
+			links: []
+		};
+
+		this.variables.push(variable);
+
+		let node = this.gd.addNode({
+			x: v.x,
+			y: v.y,
+			w: this.gd.R * 1.5,
+			h: this.gd.R,
+			v: "",
+			shape: "Circle"
+		});
+
+		variable.id = node.id;
+		this.generateNodeText(variable.id);
+	}
+
 	addVariableHandler(e) {
 		let variableName = "";
 		while (variableName == "") {
@@ -345,24 +348,11 @@ export default class Python {
 
 		let p = this.gd.camera.project(e.offsetX, e.offsetY);
 
-		let variable = {
+		this.addVariable({
 			name: variableName,
-			links: []
-		};
-
-		this.variables.push(variable);
-
-		let node = this.gd.addNode({
 			x: p.x,
-			y: p.y,
-			w: this.gd.R * 1.5,
-			h: this.gd.R,
-			v: "",
-			shape: "Circle"
+			y: p.y
 		});
-
-		variable.id = node.id;
-		this.generateNodeText(variable.id);
 
 		this.gd.dirty = true;
 		return true;
@@ -507,7 +497,62 @@ export default class Python {
 		this.gd.staticContext.closePath();
 	}
 
-	export() {}
+	export() {
+		return {
+			variables: this.variables,
+			objects: this.objects,
+			_graphdrawer: this.gd.controllers["Graph0"].exportAsGraph()
+		};
+	}
+
+	parseUserStep(step) {
+		this.gd.controllers["Graph0"].steps = [
+			Object.assign({ type: "Complete" }, step._graphdrawer)
+		];
+		this.gd.controllers["Graph0"]._parseGraphSteps();
+	}
+
+	parseSteps() {
+		this.gd.nodes = [];
+		this.gd.edges = [];
+		this.variables = [];
+		this.objects = [];
+		this.gd.nextId = 0;
+
+		let step = this.steps[this.gd.currentStep];
+		if (step._graphdrawer) return this.parseUserStep(step);
+		// Add variables
+		let variables = this.getProps(step.objects);
+		let margin = 25;
+		let left = this.gd.camera.project(margin, margin);
+		let right = this.gd.camera.project(
+			this.gd.canvas.width - margin,
+			margin
+		);
+		let width = right.x - left.x;
+		let variableWidth = width / variables.length;
+		for (let i = 0; i < variables.length; i++) {
+			this.addVariable({
+				name: variables[i],
+				x: left.x + variableWidth / 2 + i * variableWidth,
+				y: left.y
+			});
+		}
+
+		// Add objects
+		let uniqueIdToId = {};
+		let objects = [];
+		let findAllObjects = (objectList) => {
+			let objectNames = this.getProps(objectList);
+
+			for (let i = 0; i < objectNames.length; i++) {
+				// Not implemented yet
+			}
+		};
+		findAllObjects(step.data);
+
+		this.gd.centerCameraOnGraph();
+	}
 
 	typeExists(typeName) {
 		for (let i = 0; i < this.objectTypes.length; i++) {
@@ -609,5 +654,13 @@ export default class Python {
 				this.generateNodeText(o.id);
 			}
 		}
+	}	
+	
+	getProps(object) {
+		let props = [];
+		for (let prop in object) {
+			if (object.hasOwnProperty(prop)) props.push(prop);
+		}
+		return props;
 	}
 }

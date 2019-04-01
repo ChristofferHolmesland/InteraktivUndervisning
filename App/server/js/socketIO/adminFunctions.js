@@ -117,6 +117,11 @@ function generateSolution(question) {
 		question.solution = stepper.getSteps();
 		question.objects.steps = [stepper.reset()];
 	}
+	else if (solutionType == 13) {
+		let algo = algorithms.python;
+		let stepper = algo(question.solution);
+		question.solution = stepper.getSteps();
+	}
 
 	return question;
 }

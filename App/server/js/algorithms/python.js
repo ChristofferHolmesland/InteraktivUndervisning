@@ -1,50 +1,36 @@
-/*
-    Interpreter for single file python scripts.
-
-    Instructions:
-        Open python.html
-        Write code in the text area
-        Open webconsole and type "parseCode()"
-
-    Features not supported:
-        - List comprehension
-        - Inner classes
-        - Inner functions (Class functions are ok)
-        - The standard library
-        - Shared class variables
-        - Class inheritance
-
-    TODO (?): 
-        - Lists
-        - len() function
-        - operators
-            - is not (js !=)
-*/
-
-let codeInput = document.getElementById("code");
-
-codeInput.addEventListener("keydown", function(e) {
-    // Only accept the Tab key
-    if (e.key !== "Tab" && e.which !== "9") return;
-
-    // Prevent shifting focus from the element
-    e.preventDefault();
-
-    // Add 4 spaces
-    let tabSize = 4;
-    let tabPosition = codeInput.selectionStart;
-    let textWithSpaces = codeInput.value.substring(0, tabPosition);
-    for (let i = 0; i < tabSize; i++) textWithSpaces += " ";
-    textWithSpaces += codeInput.value.substring(tabPosition);
-
-    codeInput.value = textWithSpaces;
-    // Move cursor to the right position
-    codeInput.selectionStart = tabPosition + tabSize;
-    codeInput.selectionEnd = tabPosition + tabSize;
-});
-
-function parseCode() {
-    return parse(codeInput.value);
+module.exports = function(code) {
+    let steps = parse(code);
+    let currentStep = 0;
+    
+    return {
+        isSorted: function() {
+            return currentStep == steps.length - 1;
+        },
+        get: function() {
+            return steps[currentStep];
+        },
+        step: function() {
+            if (currentStep < steps.length - 1)
+                currentStep++;
+            return steps[currentStep];
+        },
+        back: function() {
+            if (currentStep > 0)
+                currentStep++;
+            return steps[currentStep];
+        },
+        finish: function() {
+            currentStep = steps.length - 1;
+            return steps[currentStep];
+        },
+        reset: function() {
+            currentStep = 0;
+            return steps[currentStep];
+        },
+        getSteps: function() {
+            return steps;
+        }
+    }
 }
 
 let uniqueId = 0;
@@ -760,88 +746,3 @@ function parse(code) {
     steps.push(globalScope);
     return steps;
 }
-
-/*
-    Examples of valid code that should run in this version
-
-    # 1
-def add(a, b):
-    c = a + b
-    return c + 10 + 10
-
-a = 2
-b = 3
-
-f = add((b + 3) / a, 2) 
-
-# 2
-class MyClass:
-def __init__(self, a, b):
-    self.c = a + b
-
-def assignF(self, a):
-    self.f = a
-
-d = MyClass(2, 9)
-d.e = "Hei på deg"
-d.assignF(99)
-
-    # 3
-class Point:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-    def translate(self, dx, dy):
-        self.x = self.x + dx
-        self.y = self.y + dy
-
-class Line:
-    def __init__(self, from, to):
-        self.p1 = from
-        self.p2 = to
-
-a = Point(0, 0)
-b = Point(1, 1)
-
-c = Line(a, b)
-
-a.translate(10, 10)
-
-    # 4
-def under10(num):
-if num < 10:
-    return True
-else:
-    return False
-
-class MyNumbers:
-    def __init__(self, num1, num2):
-        self.num1 = num1
-        self.num2 = num2
-
-    def atleastOneOver9(self):
-        return !(under10(self.num1) and under10(self.num2))
-
-a = MyNumbers(9, 3)
-
-b = a.atleastOneOver9()
-
-a.num1 = 10
-
-c = a.atleastOneOver9()
-
-    # 5
-class Point:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-class Line:
-    def __init__(self, p1, p2):
-        self.p1 = p1
-        self.p2 = p2
-
-a = Line(Point(0, 0), Point(1, 1))
-b = Line(a.p1, Point(a.p2.x, 9))
-*/

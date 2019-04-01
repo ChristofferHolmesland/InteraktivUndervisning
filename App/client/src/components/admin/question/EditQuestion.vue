@@ -282,6 +282,24 @@
                     operatingMode="Interactive"
                     />
             </b-form-group>
+            <b-form-group 	id="pythonSolution"
+                            :label="getLocale.newQuestionSolution"
+                            label-for="solutionInput"
+                            v-if="newQuestion.solutionType === 13">
+                <div v-show="checkRef">klar</div>
+                    <b-form-textarea 	id="pythonCodeInput"
+                                        placeholder="Write Python code here..."
+                                        v-model="newQuestion.objects.code"
+                                        ref="codeInput"
+                                        @keydown.native.tab="keyDownInTextarea">
+                    </b-form-textarea>
+            </b-form-group>
+            <b-alert
+            :show="useAlert"
+            variant="danger"
+            >
+            <p>{{alertReason}}</p>
+            </b-alert>
             </div>
         </b-form>
     </b-modal>
@@ -300,6 +318,7 @@
                 solution: "",
                 time: 0,
                 objects: {
+                    code: "",
                     multipleChoices: [],
                     startingArray: "",
                     startTree: undefined,
@@ -355,6 +374,27 @@
             });
         },
         methods: {
+            keyDownInTextarea(e) {
+                // Only accept the Tab key
+                if (e.key !== "Tab" && e.which !== "9") return;
+
+                // Prevent shifting focus from the element
+                e.preventDefault();
+
+                let codeInput = this.$refs.codeInput.$refs.input;
+
+                // Add 4 spaces
+                let tabSize = 4;
+                let tabPosition = codeInput.selectionStart;
+                let textWithSpaces = codeInput.value.substring(0, tabPosition);
+                for (let i = 0; i < tabSize; i++) textWithSpaces += " ";
+                textWithSpaces += codeInput.value.substring(tabPosition);
+
+                codeInput.value = textWithSpaces;
+                // Move cursor to the right position
+                codeInput.selectionStart = tabPosition + tabSize;
+                codeInput.selectionEnd = tabPosition + tabSize;
+            },
             assignState() {
                 let n = initializeState();
                 for (let p in n) {
@@ -460,6 +500,10 @@
 			},
             returnToOkHandler: function() {
                 this.assignTime();
+                if (this.newQuestion.solutionType == 13) {
+                    this.newQuestion.solution = this.newQuestion.objects.code;
+                }
+                
                 if (this.okHandler == "add") this.addNewQuestionHandler();
                 else if (this.okHandler == "edit") this.editQuestionHandler();
             },
@@ -483,7 +527,7 @@
             	//if the component is using the Graph Drawer, Graph drawer is used on Binary Tree 7 up to BFS 13
                 //Need a admin socket function for validating the question information given.
                 e.preventDefault();
-                if (this.newQuestion.solutionType > 6 && this.newQuestion.solutionType <= 13) {
+                if (this.newQuestion.solutionType > 6 && this.newQuestion.solutionType < 13) {
                         this.requestGraphDrawerObject = !this.requestGraphDrawerObject;
                 } else {
                     this.returnToOkHandler();
@@ -516,6 +560,14 @@
             }
         },
         computed: {
+            checkRef() {
+                if (this.$refs["codeInput"] !== undefined) {
+                    this.$refs["codeInput"].onkeydown = this.keyDownInTextarea;
+                    return true;
+                }
+
+                return false;
+            },
             getImageSrc() {
                 return (index) => {
                     let file = this.newQuestion.objects.files[index];
@@ -600,13 +652,15 @@
             }
 	    },
         watch: {
-            "newQuestion.solutionType": function() {
-                if (this.solutionType === 1) this.newQuestion.solution = "";
-                else if (this.solutionType === 2) this.newQuestion.solution = [];
+            "newQuestion.solutionType": function(newType, oldType) {
+                if (newType === 1) this.newQuestion.solution = "";
+                else if (newType === 2) this.newQuestion.solution = [];
+                else if (newType === 13) {
+
+                }
             }
         },
     }
-
 </script>
 
 <style scoped>
