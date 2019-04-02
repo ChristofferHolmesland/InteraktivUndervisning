@@ -340,24 +340,17 @@ export default class GraphDrawer {
 
 				// a is the intersection point
 				let a = {};
-				let node = this.edges[i].n1;
-				let l1 = {
+				let node = this.edges[i].n2;
+				let line = {
 					x1: center1.x,
 					y1: center1.y,
 					x2: center2.x,
 					y2: center2.y
 				};
 
-				if (node.shape == "Rectangle") {
-					// This can be changed to only do one intersection check at a time
-					// if performance is an issue.
-					
-
-					if (t) a = t;
-					else if (b) a = t;
-					else if (r) a = r;
-					else if (l) a = l;
-					else console.error("No intersection!");
+				let intersection = this.lineIntersectsNode(line, node);
+				if (intersection !== undefined) {
+					a = intersection.p;
 				}
 
 				if (a !== undefined) {
@@ -379,6 +372,8 @@ export default class GraphDrawer {
 					}
 					this.drawContext.stroke();
 					this.drawContext.strokeStyle = "black";
+				} else {
+					console.error("No intersection");
 				}
 			}
 
@@ -642,29 +637,9 @@ export default class GraphDrawer {
 
 	drawNode(node, context) {
 		if (node.shape == "Circle") {
-			/*context.arc(
-				node.x,
-				node.y,
-				node.w,
-				0,
-				2 * Math.PI
-			);*/
-			context.ellipse(
-				node.x,
-				node.y,
-				node.w,
-				node.h,
-				0,
-				0,
-				2 * Math.PI
-			);
+			context.ellipse(node.x, node.y, node.w, node.h, 0, 0, 2 * Math.PI);
 		} else if (node.shape == "Rectangle") {
-			context.rect(
-				node.x,
-				node.y,
-				node.w,
-				node.h
-			);
+			context.rect(node.x, node.y, node.w, node.h);
 		}
 	}
 
@@ -862,8 +837,7 @@ export default class GraphDrawer {
 	}
 
 	getCenter(node) {
-		if (node.shape == "Circle") 
-			return { x: node.x, y: node.y };
+		if (node.shape == "Circle") return { x: node.x, y: node.y };
 		if (node.shape == "Rectangle")
 			return { x: node.x + node.w / 2, y: node.y + node.h / 2 };
 	}
@@ -1098,10 +1072,84 @@ export default class GraphDrawer {
 			if (l) return { p: l, side: "Left" };
 
 			return undefined;
+		} else if (node.shape == "Circle") {
+			let intersections = this.lineSegmentEllipseIntersection(line, node);
+			if (intersections.length > 1)
+				console.error("More than one intersection!");
+			if (intersections.length == 0) {
+				console.error("No intersection :(");
+				return undefined;
+			}
+
+			return { p: intersections[0] };
 		}
 
 		console.error("No handler for this node");
 		return undefined;
+	}
+
+	/*
+		Returns the intersection point of a line segment and an ellipse.
+		Modified version of: (02.04.2019)
+		http://csharphelper.com/blog/2017/08/calculate-where-a-line-segment-and-an-ellipse-intersect-in-c/
+	*/
+	lineSegmentEllipseIntersection(line, ellipse) {
+		// Because the function changes the x,y properties of the ellipse,
+		// a copy should be used.
+		ellipse = JSON.parse(JSON.stringify(ellipse));
+
+		let pt1 = { x: line.x1, y: line.y1 };
+		let pt2 = { x: line.x2, y: line.y2 };
+
+		// Translate so the ellipse is centered at the origin.
+		let cx = ellipse.x;
+		let cy = ellipse.y;
+		ellipse.x -= cx;
+		ellipse.y -= cy;
+		pt1.x -= cx;
+		pt1.y -= cy;
+		pt2.x -= cx;
+		pt2.y -= cy;
+
+		// Get the semimajor and semiminor axes.
+		let a = ellipse.w;
+		let b = ellipse.h;
+
+		// Calculate the quadratic parameters.
+		let A = (pt2.x - pt1.x) * (pt2.x - pt1.x) / a / a + (pt2.y - pt1.y) * (pt2.y - pt1.y) / b / b;
+		let B = 2 * pt1.x * (pt2.x - pt1.x) / a / a + 2 * pt1.y * (pt2.y - pt1.y) / b / b;
+		let C = pt1.x * pt1.x / a / a + pt1.y * pt1.y / b / b - 1;
+
+		// Make a list of t values.
+		let t_values = [];
+
+		// Calculate the discriminant.
+		let discriminant = B * B - 4 * A * C;
+
+		if (discriminant == 0) {
+			// One real solution.
+			t_values.push(-B / 2 / A);
+		} else if (discriminant > 0) {
+			// Two real solutions.
+			t_values.push((-B + Math.sqrt(discriminant)) / 2 / A);
+			t_values.push((-B - Math.sqrt(discriminant)) / 2 / A);
+		}
+
+		// Convert the t values into points.
+		let points = [];
+		for (let i = 0; i < t_values.length; i++) {
+			let t = t_values[i];
+			// If the points are on the segment (or we
+			// don't care if they are), add them to the list.
+			if (t >= 0 && t <= 1) {
+				let x = pt1.x + (pt2.x - pt1.x) * t + cx;
+				let y = pt1.y + (pt2.y - pt1.y) * t + cy;
+				points.push({ x: x, y: y });
+			}
+		}
+
+		// Return the points.
+		return points;
 	}
 
 	/*
