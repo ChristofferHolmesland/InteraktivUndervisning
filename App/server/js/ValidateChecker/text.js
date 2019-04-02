@@ -1,12 +1,15 @@
 const check = function (solutionInfo) {
 	let result = {
-        passed: true,
-        errors: []
-    }
+		passed: true,
+		errors: []
+	};
 
-    // TODO validate text solution
-
-    return result;
+	let stringSolution = String(solutionInfo.solution);
+	if (stringSolution === undefined || stringSolution === "") {
+		result.passed = false;
+		result.errors.push("EmptyTextSolutionError");
+	}
+	return result;
 };
 
 module.exports.check = check;
