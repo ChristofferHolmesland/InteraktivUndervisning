@@ -1,5 +1,6 @@
 <template>
 	<div id="Dijkstra">
+		test tekst
 		<b-container>
 			<GraphDrawer 
 					@getValueResponse="gotGraphDrawer" 
