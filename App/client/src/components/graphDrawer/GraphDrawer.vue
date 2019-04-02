@@ -48,6 +48,10 @@
 			displayEdgeValues: {
             	default: false,
                 type: Boolean
+            },
+            directedEdges: {
+                default: true,
+                type: Boolean
             }
         },
         watch: {
@@ -67,8 +71,8 @@
                 nodeShape: nodeShape,
                 controlType: this.controlType,
                 operatingMode: this.operatingMode,
-                displayEdgeValues: false,
-                directedEdges: true,
+                displayEdgeValues: this.displayEdgeValues,
+                directedEdges: this.directedEdges,
 
                 dijkstra: {
                     startColor: "LightGreen",

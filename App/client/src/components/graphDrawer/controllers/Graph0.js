@@ -47,6 +47,7 @@ export default class Graph0 {
 			this.endNodeColor = config.endNodeColor || "LightCoral";
 
 			if (this.subType == "Dijkstra") {
+				this.nextNodeMarking = undefined;
 				this.buttons.push("Mark");
 				this.stateHandlers.Mark = this.markNode.bind(this);
 				this.drawStatic();
@@ -178,9 +179,14 @@ export default class Graph0 {
 		let node = this.gd.getNodeAtCursor(e).node;
 		if (node == undefined) return false;
 
-		if (node.marked == undefined) {
+		if (this.nextNodeMarking !== undefined) {
+			node.marked = "End";
+			node.fillColor = this.endNodeColor;
+			this.nextNodeMarking = undefined;
+		} else if (node.marked == undefined) {
 			node.marked = "Start";
 			node.fillColor = this.startNodeColor;
+			this.nextNodeMarking = true;
 		} else if (node.marked == "Start") {
 			node.marked = "End";
 			node.fillColor = this.endNodeColor;
