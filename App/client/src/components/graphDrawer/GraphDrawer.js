@@ -83,7 +83,7 @@ export default class GraphDrawer {
 		// Radius of nodes.
 		this.R = 25;
 		// How often the canvas should be updated.
-		this.FPS = 24;
+		this.FPS = 60;
 		// Milliseconds between each update.
 		this.MS_PER_FRAME = 1000 / this.FPS;
 		// Device type, "Desktop" or "Mobile"
@@ -440,12 +440,14 @@ export default class GraphDrawer {
 
 			// If a node is wider than needed, it will be assigned a smaller
 			// width, bounded by this.R.
-			if (maxTextWidth < this.nodes[i].w) {
-				this.nodes[i].w = maxTextWidth;
+			let minSize = this.nodes[i].shape == "Circle" ? this.R : this.R * 2;
 
-				let minSize = this.nodes[i].shape == "Circle" ? this.R : this.R * 2;
-				if (this.nodes[i].w < minSize) this.nodes[i].w = minSize;
-				this.stillDirty = true;
+			if (maxTextWidth < this.nodes[i].w) {
+				if (this.nodes[i].w !== minSize) {
+					this.nodes[i].w = maxTextWidth;	
+					if (this.nodes[i].w < minSize) this.nodes[i].w = minSize;
+					this.stillDirty = true;
+				}
 			}
 		}
 
