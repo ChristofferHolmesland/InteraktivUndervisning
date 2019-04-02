@@ -23,7 +23,7 @@ let checkers = {
     The function will return an object containing the following information:
     result: {
         passed: Boolean // Informing if the validation has passed or not.
-        errors: Array // Contains a list of errors that should infor the user what went wrong in the validation process
+        errors: Array // Contains a list of errors that should inform the user what went wrong in the validation process
     }
 */
 const validateChecker = {
@@ -93,6 +93,7 @@ const validateChecker = {
                     solutionInfo.givenStartTree = questionInformation.objects.startTree;
                     break;
                 case 9: //Djikstra
+                    solutionInfo.graph = questionInformation.objects.graph;
                     break;
                 case 10: //Python
                     break;
