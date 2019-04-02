@@ -1,5 +1,5 @@
 <template>
-    <b-modal :id="elementId" :ref="elementRef" :no-close-on-backdrop="true" :title="getLocale.newQuestion" @ok="callOkHandler" style="text-align: left;" size="lg">
+    <b-modal :id="elementId" :ref="elementRef" :no-close-on-backdrop="true" :title="getTitle" @ok="callOkHandler" style="text-align: left;" size="lg">
         <b-form>
             <b-alert    :show="validationFailure"
                         variant="danger">
@@ -192,6 +192,7 @@
                                     :options="getSolutionTypes"
                                     v-model="newQuestion.solutionType">
                     </b-form-select>
+                    {{getSolutionType}}
                 </div>
             </b-form-group>
             <div v-show="showSolution">
@@ -355,9 +356,10 @@
             mediaTypes: [],
             selectedMediaType: undefined,
 
-            showMedia: true, // TODO set to false
+
+            showBasicInfo: true,
+            showMedia: false,
             showSolution: false,
-            showBasicInfo: false, // TODO set to true
 
             mediaWarningText: "",
             showMediaWarning: false,
@@ -381,14 +383,18 @@
             elementRef: String,
             elementId: String,
             okHandler: String,
+            question: Object,
             doneHandler: Function
+
         },
         mounted() {
-            this.$root.$on("bv::modal::show", (bvevent, modalid) => {
+            this.$root.$on("bv::modal::show", (bvevent) => {
+                let target = bvevent.target;
                 this.assignState();
                 this.$socket.emit("getQuestionTypes");
                 this.mediaTypes = this.getLocale.mediaTypes;
                 this.selectedMediaType = this.mediaTypes[0].value;
+                if (this.question !== undefined) this.newQuestion = this.question;
             });
         },
         methods: {
@@ -426,14 +432,23 @@
             },
             assignState() {
                 let n = initializeState();
+                console.log(this.okHandler);
                 for (let p in n) {
                     if (n.hasOwnProperty(p)) {
                         if (p === "newQuestion") {
-                            if (this.okHandler === "add") this.$data[p] = n[p];
+                            if (this.okHandler === "add") {
+                                console.log("reset");
+                                
+                                this.$data[p] = n[p];
+                            }
                         }
-                        else this.$data[p] = n[p];
+                        else {
+                            this.$data[p] = n[p];
+                        }
                     }
                 }
+                console.log(this.newQuestion);
+                this.$nextTick();
             },
             newFile(event) {
                 let files = [];
@@ -585,6 +600,12 @@
             }
         },
         computed: {
+            getTitle() {
+                return this.getLocale[this.okHandler + "Title"];
+            },
+            getSolutionType() {
+                return this.newQuestion.solutionType;
+            },
             checkRef() {
                 if (this.$refs["codeInput"] !== undefined) {
                     this.$refs["codeInput"].onkeydown = this.keyDownInTextarea;
@@ -662,7 +683,8 @@
         sockets: {
             sendQuestionTypes: function(types) {
                 this.solutionTypes = types;
-                this.newQuestion.solutionType = this.solutionTypes[0].value;
+                if (this.newQuestion.solutionType === "")
+                    this.newQuestion.solutionType = this.solutionTypes[0].value;
             },
             confirmQuestionRequirements: function (result) {
             	if (result.passed) {

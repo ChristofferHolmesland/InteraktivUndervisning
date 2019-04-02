@@ -1,7 +1,8 @@
 {
     "AdminQuestions": {
         "emptyQuestionList": "Ingen spørsmål.",
-        "newQuestion": "Nytt spørsmål",
+        "addTitle": "Nytt spørsmål",
+        "editTitle": "Endre spørsmål",
         "searchQuestion": "Søk etter spørsmål",
         "newQuestionTitle": "Spørsmål tittel:",
         "newQuestionText": "Spørsmål tekst:",

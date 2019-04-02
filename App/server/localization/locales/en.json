@@ -1,7 +1,8 @@
 {
     "AdminQuestions": {
         "emptyQuestionList": "No questions.",
-        "newQuestion": "New question",
+        "addTitle": "New question",
+        "editTitle": "Change question",
         "searchQuestion": "Search for a question",
         "newQuestionTitle": "Question title:",
         "newQuestionText": "Question text:",
