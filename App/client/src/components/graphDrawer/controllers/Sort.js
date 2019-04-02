@@ -345,8 +345,7 @@ export default class Sort {
 				clone.fillColor = undefined;
 				clone.strokeColor = undefined;
 
-				newArr.nodes.push(clone);
-				this.gd.addNode(clone);
+				newArr.nodes.push(clone, true);
 			}
 
 			this.arrays.push(newArr);
@@ -497,20 +496,20 @@ export default class Sort {
 			h: clickedNode.h,
 			v: 0,
 			shape: clickedNode.shape
-		}
+		};
 
 		this.arrays[event.data.ai].nodes.splice(
 			event.data.ni + (event.data.side == "left" ? 0 : 1),
 			0,
 			node
-		)
+		);
 
 		// Recalculate node position inside the array
 		if (event.data.side == "left") 
 			this.arrays[event.data.ai].position.x -= clickedNode.w;
 		this._repositionNodes(event.data.ai);
 
-		this.gd.addNode(node);
+		this.gd.addNode(node, true);
 		this.gd.dirty = true;
 	}
 
@@ -923,7 +922,7 @@ export default class Sort {
 					shape: this.gd.nodeShape
 				};
 
-				this.gd.addNode(node);
+				this.gd.addNode(node, true);
 				array.nodes.push(node);
 			}
 		};

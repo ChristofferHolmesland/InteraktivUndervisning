@@ -25,6 +25,7 @@
                         controlType="Dijkstra"
                         operatingMode="Presentation"
                         :steps="question.solution"
+                        displayEdgeValues="true"
                         />
         <GraphDrawer    v-if="question.solutionType === 10"
                         controlType="Python"

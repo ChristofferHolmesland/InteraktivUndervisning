@@ -48,7 +48,7 @@
                             <Dijkstra v-if="getQuestionType === 9"
                                 :requestAnswer="requestAnswer"
                                 @getTextResponse="getTextValue"
-                                :steps="questionInfo.solution"
+                                :steps="questionInfo.object.steps"
                                 />
                         </b-tab>
                         <b-tab :title="updateTimer" v-if="interval !== undefined" disabled></b-tab>
@@ -95,7 +95,7 @@
         created() {
             let timeLeft = this.questionInfo.time;
             if (timeLeft === -1) {
-                
+
             } else {
                 this.timeLeft = timeLeft;
                 this.interval = setInterval(() => {

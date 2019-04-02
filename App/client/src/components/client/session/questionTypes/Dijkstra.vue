@@ -1,12 +1,15 @@
 <template>
 	<div id="Dijkstra">
+		test tekst
 		<b-container>
 			<GraphDrawer 
 					@getValueResponse="gotGraphDrawer" 
 					:requestAnswer="requestAnswerFromGraphDrawer" 
 					controlType="Dijkstra"
 					operatingMode="Interactive"
-					:graph="getGraphFromSteps" />
+					:graph="getGraphFromSteps"
+					displayEdgeValues="true"
+					/>
 		</b-container>
 	</div>
 </template>

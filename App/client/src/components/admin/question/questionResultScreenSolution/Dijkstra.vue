@@ -2,6 +2,7 @@
 <GraphDrawer    id="DijkstraSolution"
                 controlType="Dijkstra"
                 operatingMode="Presentation"
+                displayEdgeValues="true"
                 :steps="solution"
                 :height="400"
                 :width="500"
