@@ -174,6 +174,8 @@ export default class GraphDrawer {
 
 		this.canvas.addEventListener("mousedown", down);
 		this.canvas.addEventListener("touchstart", down);
+		this.canvas.addEventListener("wheel", this.detectZoomWheel.bind(this));
+
 
 		// Updates the GraphDrawer every <MS_PER_FRAME> milliseconds.
 		this.intervalId = setInterval((function() {
@@ -562,12 +564,29 @@ export default class GraphDrawer {
 	}
 
 	/*
+		Let's the user scroll using a mouse wheel.
+	*/
+	detectZoomWheel(e) {
+		// Prevent scrolling the page.
+		e.preventDefault();
+
+		let dir = -Math.sign(e.deltaY);
+		let rect = this.canvas.getBoundingClientRect();
+		let x = e.clientX - rect.left;
+		let y = e.clientY - rect.top;
+		this.camera.changeZoom(0.075 * dir, x, y);
+		this.dirty = true;
+	}
+
+	/*
 		Can be called to let the user zoom using two fingers.
 	*/
 	detectZoomGesture(e) {
+		// Non touchscreen zooming
 		if (e.targetTouches == undefined) return;
 		if (e.targetTouches.length < 2) return;
 
+		// Touchscreen zooming
 		let getFingers = function(evt) {
 			let rect = this.canvas.getBoundingClientRect();
 
