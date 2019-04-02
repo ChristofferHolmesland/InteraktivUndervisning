@@ -436,7 +436,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 						}
 						fs.writeSync(fd, files[i].buffer, null, "base64", function(err, written, buff) {
 							fs.close(fd, function() {
-								
+								console.log("file saved");
 							});
 						});
 					});
