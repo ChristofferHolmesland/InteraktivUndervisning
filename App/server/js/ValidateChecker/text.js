@@ -1,12 +1,12 @@
 const check = function (solutionInfo) {
 	let result = {
-        passed: true,
-        errors: []
-    }
+		passed: true,
+		errors: []
+	}
 
-    // TODO validate text solution
+	// TODO validate text solution
 
-    return result;
+	return result;
 };
 
 module.exports.check = check;
