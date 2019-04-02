@@ -420,7 +420,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 			for (let i = 0; i < question.objects.files.length; i++) {
 				files.push(JSON.parse(JSON.stringify(question.objects.files[i])));
 			}
-			let filePath = path.join("../../public/img/questionImages/", questionIndex.toString(), "/");
+			let filePath = path.join("../../images/questionImages/", questionIndex.toString(), "/");
 			let filePaths = [];
 	
 			try {
@@ -461,7 +461,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 
 		question = generateSolution(question);
 
-		let filePath = path.join("../../public/img/questionImages/", question.id.toString(), "/");
+		let filePath = path.join("../../images/questionImages/", question.id.toString(), "/");
 		await del(path.join(__dirname, filePath, "**"));
 
 		if (question.objects.files.length > 0) {

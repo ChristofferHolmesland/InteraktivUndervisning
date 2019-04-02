@@ -192,7 +192,6 @@
                                     :options="getSolutionTypes"
                                     v-model="newQuestion.solutionType">
                     </b-form-select>
-                    {{getSolutionType}}
                 </div>
             </b-form-group>
             <div v-show="showSolution">
