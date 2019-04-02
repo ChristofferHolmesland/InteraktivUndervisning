@@ -20,9 +20,11 @@ const imageGetter = async function (rows) {
 		for (let j = 0; j < files.length; j++) {
 			let file = files[j];
 			if(file.filePath !== undefined) {
-				let data = fs.readFileSync(path.join(__dirname, file.filePath));
-				let base64Image = data.toString("base64");
-				file.buffer = base64Image;
+				if (fs.existsSync(path.join(__dirname, file.filePath))) {
+					let data = fs.readFileSync(path.join(__dirname, file.filePath));
+					let base64Image = data.toString("base64");
+					file.buffer = base64Image;
+				}
 				delete file.filePath;
 			}
 		}

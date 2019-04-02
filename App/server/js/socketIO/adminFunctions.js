@@ -2,6 +2,7 @@ const dbFunctions = require("../database/databaseFunctions").dbFunctions;
 const fs = require("fs");
 const mkdirp = require('mkdirp');
 const path = require("path");
+const del = require("del");
 
 const generalFunctions =  require("../generalFunctions.js").functions;
 const session = require("../session.js").Session;
@@ -414,7 +415,8 @@ module.exports.admin = function(socket, db, user, sessions) {
 		}
 		
 		let questionIndex = await dbFunctions.insert.question(db, question.text, question.description, question.solution, question.time, question.solutionType, question.courseCode, objects);
-		if (question.objects.files.length > 0) {let files = [];
+		if (question.objects.files.length > 0) {
+			let files = [];
 			for (let i = 0; i < question.objects.files.length; i++) {
 				files.push(JSON.parse(JSON.stringify(question.objects.files[i])));
 			}
@@ -443,7 +445,8 @@ module.exports.admin = function(socket, db, user, sessions) {
 				}
 				
 				await dbFunctions.update.question(db, questionIndex, question.text, question.description, question.objects, question.solution, question.solutionType, question.time);		
-			} catch (error) {
+			} 
+			catch (error) {
 				console.error("Error making dirs!\n\n" + error);
 			}
 		}
@@ -451,14 +454,46 @@ module.exports.admin = function(socket, db, user, sessions) {
 		socket.emit("questionChangeComplete");
 	});
 
-	socket.on("updateQuestion", function(question) {
+	socket.on("updateQuestion", async function(question) {
 		let valid = validateChecker.checkQuestion(question);
 		socket.emit("confirmQuestionRequirements", valid);
 		if (!valid.passed) return;
 
 		question = generateSolution(question);
 
-		dbFunctions.update.question(db, question.id, question.text, question.description, question.objects, question.solution, question.solutionType, question.time);
+		let filePath = path.join("../../public/img/questionImages/", question.id.toString(), "/");
+		await del(path.join(__dirname, filePath, "**"));
+
+		if (question.objects.files.length > 0) {
+			let files = [];
+			for (let i = 0; i < question.objects.files.length; i++) {
+				files.push(JSON.parse(JSON.stringify(question.objects.files[i])));
+			}
+			let filePaths = [];
+	
+			try {
+				mkdirp.sync(path.join(__dirname, filePath));
+				for (let i = 0; i < files.length; i++) {
+					let type = files[i].type.split("/")[1];
+					filePaths.push(filePath + (i + 1).toString() + "." + type);
+					question.objects.files[i].filePath = filePaths[i];
+					delete question.objects.files[i].buffer;
+					
+					await fs.open(path.join(__dirname, filePaths[i]), "a", 0755, function(error, fd) {
+						if (error) {
+							console.error("error writing image: \n\n" + err);
+							return;
+						}
+						fs.writeSync(fd, files[i].buffer, null, "base64");
+					});
+				}
+			} 
+			catch (error) {
+				console.error("Error making dirs!\n\n" + error);
+			}
+		}
+
+		await dbFunctions.update.question(db, question.id, question.text, question.description, question.objects, question.solution, question.solutionType, question.time);
 	});
 
 	socket.on("getQuestionTypes", function() {
