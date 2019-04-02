@@ -25,7 +25,7 @@
                                                         />
                                             </b-col>
                                         </b-row>
-                                        <b-row style="text-align: center;">
+                                        <b-row style="text-align: center;" v-if="getImagesLength > 1">
                                             <b-col cols="4">
                                                 <b-button variant="primary" @click="changeSelectedImage(-1)">previous</b-button>
                                             </b-col>

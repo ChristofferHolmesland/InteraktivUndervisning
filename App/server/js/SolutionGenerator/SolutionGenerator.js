@@ -22,6 +22,5 @@ let solutionGenerators = {
 };
 
 module.exports = function (question) {
-    console.log(question);
     return solutionGenerators[question.solutionType](question);
 };
