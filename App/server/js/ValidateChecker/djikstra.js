@@ -41,23 +41,19 @@ const check = function (solutionInfo) {
 				let newNodeList = [];
 				for (let f = 0; f < graphObject.edges.length; f++) {
 					let currentEdge = graphObject.edges[f];
-					/*console.log("Check Content");
-					console.log(visitedNodes.indexOf(currentEdge.n1.id));
-					console.log(currentEdge.n1.id);
-					console.log(visitedNodes);
-					console.log(visitedNodes.length);*/
 					if (visitedNodes.length > 0 && visitedNodes.indexOf(currentEdge.n1.id) !== -1) {
 						console.log("DUPLICATES DETECTED!");
 						let index = visitedNodes.indexOf(currentEdge.n1.id);
 						let nodeObject = newNodeList[index];
-						nodeObject.edges.push(currentEdge.n2.id);
+						nodeObject.toEdges.push(currentEdge.n2.id);
 					}
 					else {
 						if (currentEdge.n1.marked === undefined) {
 							let node = {
 								id: currentEdge.n1.id,
 								value: currentEdge.n1.v,
-								edges: [currentEdge.n2.id],
+								toEdges: [currentEdge.n2.id],
+								fromEdges: [],
 								status: "Normal"
 							};
 							newNodeList.push(node);
@@ -66,7 +62,8 @@ const check = function (solutionInfo) {
 							let node = {
 								id: currentEdge.n1.id,
 								value: currentEdge.n1.v,
-								edges: [currentEdge.n2.id],
+								toEdges: [currentEdge.n2.id],
+								fromEdges: [],
 								status: currentEdge.n1.marked
 							};
 							newNodeList.push(node);
@@ -77,14 +74,15 @@ const check = function (solutionInfo) {
 						console.log("DUPLICATES DETECTED!");
 						let index = visitedNodes.indexOf(currentEdge.n2.id);
 						let nodeObject = newNodeList[index];
-						nodeObject.edges.push(currentEdge.n1.id);
+						nodeObject.fromEdges.push(currentEdge.n1.id);
 					}
 					else {
 						if (currentEdge.n2.marked === undefined) {
 							let node = {
 								id: currentEdge.n2.id,
 								value: currentEdge.n2.v,
-								edges: [currentEdge.n1.id],
+								toEdges: [],
+								fromEdges: [currentEdge.n1.id],
 								status: "Normal"
 							};
 							newNodeList.push(node);
@@ -93,7 +91,8 @@ const check = function (solutionInfo) {
 							let node = {
 								id: currentEdge.n2.id,
 								value: currentEdge.n2.v,
-								edges: [currentEdge.n1.id],
+								toEdges: [],
+								fromEdges: [currentEdge.n1.id],
 								status: currentEdge.n2.marked
 							};
 							newNodeList.push(node);
@@ -101,11 +100,6 @@ const check = function (solutionInfo) {
 						}
 					}
 				}
-				console.log("VisitedNodes");
-				console.log(visitedNodes);
-				console.log("NewNodeList");
-				console.log(newNodeList);
-				let checkedNodes = [];
 				let startNode = newNodeList[visitedNodes.indexOf(nodeStart.id)];
 				let endNode = newNodeList[visitedNodes.indexOf(nodeEnd.id)];
 				let importantCounter = 0;
@@ -144,7 +138,6 @@ const check = function (solutionInfo) {
 		}
 	}
 
-	console.log(result.passed);
 	return result;
 };
 
@@ -158,10 +151,10 @@ function checkGraphNode(node,endNode,nodelist,indexes,previousNodes) {
 	if (node.id === endNode.id) {
 		return true
 	}
-	if (node === undefined || node.edges.length > 0) {
-		for (let i = 0; i < node.edges.length; i++) {
-			let nextNode = nodelist[indexes.indexOf(node.edges[i])];
-			if (previousNodes.length === 0 || previousNodes.indexOf(nextNode.id) === -1){
+	if (node === undefined || node.toEdges.length > 0) {
+		for (let i = 0; i < node.toEdges.length; i++) {
+			let nextNode = nodelist[indexes.indexOf(node.toEdges[i])];
+			if (previousNodes.length === 0 || previousNodes.indexOf(nextNode.id) === -1) {
 				previousNodes.push(node.id);
 				pathwayPossible = checkGraphNode(nextNode,endNode,nodelist,indexes,previousNodes);
 			}
