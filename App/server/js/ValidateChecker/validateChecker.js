@@ -5,17 +5,14 @@ let checkers = {
     1: require("./text.js"),
     2: require("./multipleChoice.js"),
     3: require("./shellsort.js"),
-    4: require("./mergesort.js"),
-    5: require("./quicksort.js"),
+    4: require("./mergeQuickSort.js"),
+    5: require("./mergeQuickSort.js"),
     6: require("./binaryTree.js"),
     7: require("./binarySearchTreeAVLTree.js"),
     8: require("./binarySearchTreeAVLTree.js"),
-    9: require("./text.js"),
-    10: require("./djikstra.js"),
-    11: require("./text.js"),
-    12: require("./text.js"),
-    13: require("./text.js"),
-    14: require("./text.js")
+    9: require("./djikstra.js"),
+    10: require("./python.js"),
+
 };
 
 
@@ -71,14 +68,19 @@ const validateChecker = {
             let solutionInfo = {};
             switch(questionType) {
                 case 1:	//Text input
+                    solutionInfo.solution = questionInformation.solution;
                     break;
                 case 2:	//Multiple choice
+                    solutionInfo.multipleChoices = questionInformation.objects.multipleChoices;
+                    solutionInfo.solution = questionInformation.solution;
                     break;
                 case 3:	//Shellsort
+                    solutionInfo.startingArray = questionInformation.objects.startingArray;
+                    solutionInfo.kValue = questionInformation.objects.kValue;
                     break;
                 case 4: //Mergesort
-                    break;
                 case 5:	//Quicksort
+                    solutionInfo.startingArray = questionInformation.objects.startingArray;
                     break;
                 case 6: //Binary Tree
                     solutionInfo.treeElements = questionInformation.objects.treeElements;

@@ -7,7 +7,7 @@ const check = function (solutionInfo) {
 	let result = {
         passed: true,
         errors: []
-    }
+    };
 
     let treeAction = solutionInfo.treeAction;
     let questionType = solutionInfo.questionType;
@@ -44,6 +44,10 @@ const check = function (solutionInfo) {
                     if(isNaN(treeArray[i])){
                         result.passed = false;
                         result.errors.push("treeElementTypeError");
+                        break;
+                    }else if(treeArray[i] === "") {
+                        result.passed = false;
+                        result.errors.push("treeElementEmptyError");
                         break;
                     }
                 }
@@ -95,6 +99,10 @@ const check = function (solutionInfo) {
                     result.passed = false;
                     result.errors.push("treeElementTypeError");
                     break;
+                }else if(treeArray[i] === "") {
+                    result.passed = false;
+                    result.errors.push("treeElementEmptyError");
+                    break;
                 }
             }
             startTree = GeneralTreeFunctions.createTreeObjectFromCanvasObjectver1(givenStartTree);
@@ -112,14 +120,14 @@ const check = function (solutionInfo) {
             }
             if(!startTree[0].areValuesInTree(treeArray)){
                 result.passed = false;
-                result.errors("BSTAVLRemoveMissingElementError");
+                result.errors.push("BSTAVLRemoveMissingElementError");
             }
             if(questionType === 7 && result.passed) {
                 let treeObject = BinarySearchTreeFunctions.createBinarySearchTree(treeArray,false,startTree[0]);
                 for(let i=0;i<treeObject.length;i++) {
                     if(!BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(treeObject[i])) {
                         result.passed = false;
-                        result.errors("BSTAVLRemoveInvalidResultBinarySearchTreeError");
+                        result.errors.push("BSTAVLRemoveInvalidResultBinarySearchTreeError");
                     }
                     if (!result.passed) break;
                 }
@@ -129,7 +137,7 @@ const check = function (solutionInfo) {
                 for(let i=0;i<treeObject.length;i++) {
                     if(!BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(treeObject[i]) || !AVLTreeFunctions.checkBalance(treeObject[i].root)) {
                         result.passed = false;
-                        result.errors("BSTAVLRemoveInvalidResultAVLTreeError");
+                        result.errors.push("BSTAVLRemoveInvalidResultAVLTreeError");
                     }
                     if (!result.passed) break;
                 }
