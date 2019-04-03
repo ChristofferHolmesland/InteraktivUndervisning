@@ -34,13 +34,11 @@ const check = function (solutionInfo) {
 					}
 				}
 				//probably set a if result.passed here?
-				console.log("Its showtime!");
 				let visitedNodes = [];
 				let newNodeList = [];
 				for (let f = 0; f < graphObject.edges.length; f++) {
 					let currentEdge = graphObject.edges[f];
 					if (visitedNodes.length > 0 && visitedNodes.indexOf(currentEdge.n1.id) !== -1) {
-						console.log("DUPLICATES DETECTED!");
 						let index = visitedNodes.indexOf(currentEdge.n1.id);
 						let nodeObject = newNodeList[index];
 						nodeObject.toEdges.push(currentEdge.n2.id);
@@ -69,7 +67,6 @@ const check = function (solutionInfo) {
 						}
 					}
 					if (visitedNodes.length > 0 && visitedNodes.indexOf(currentEdge.n2.id) !== -1) {
-						console.log("DUPLICATES DETECTED!");
 						let index = visitedNodes.indexOf(currentEdge.n2.id);
 						let nodeObject = newNodeList[index];
 						nodeObject.fromEdges.push(currentEdge.n1.id);
@@ -143,9 +140,6 @@ module.exports.check = check;
 
 function checkGraphNode(node,endNode,nodelist,indexes,previousNodes) {
 	let pathwayPossible = false;
-	console.log("Current Node: ");
-	console.log(node);
-	console.log(previousNodes);
 	if (node.id === endNode.id) {
 		return true
 	}

@@ -38,7 +38,7 @@ const validateChecker = {
             title: questionInformation.text,
             description: questionInformation.description,
             time: questionInformation.time
-        }
+        };
         let basicInfoResult = checkers["basicInfo"].check(basicInfo);
         if(!basicInfoResult.passed) {
             result.passed = false;
@@ -52,7 +52,7 @@ const validateChecker = {
             files: questionInformation.objects.files,
             graphs: questionInformation.objects.graphs,
             tables: questionInformation.objects.tables
-        }
+        };
         let mediaInfoResult = checkers["mediaInfo"].check(mediaInfo);
         if(!mediaInfoResult.passed) {
             result.passed = false;
