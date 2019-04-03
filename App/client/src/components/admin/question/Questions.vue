@@ -1,5 +1,17 @@
 <template>
 	<b-container class="jumbotron vertical-center" style="margin-top: 2rem;">
+		<EditQuestion 	elementId="editQuestionModal"
+						elementRef="innerModalEditAdd"
+						ref="editQuestionModal"
+						:okHandler="okHandler"
+						:question="question"
+						/>
+		<ShowQuestion 	elementRef="innerModalShow"
+						ref="showQuestionModal"
+						/>
+		<AddQuestionToSession 	elementRef="innerModalAddToSession"
+								ref="addQuestionToSessionModal"
+								/>
 		<b-row>
 			<b-col cols="2"></b-col>
 			<b-col cols="2" class="text-center">
@@ -12,12 +24,11 @@
 				</b-form-input>
 			</b-col>
 			<b-col cols="1" class="text-center mb-5 pl-0">
-				<b-button v-b-modal.newQuestionModal variant="primary">
+				<b-button @click="showAddQuestionModal" variant="primary">
 					<span style="visibility: hidden;">+</span>
 					+
 					<span style="visibility: hidden;">+</span>
 				</b-button>
-				<EditQuestion elementRef="innerModal" elementId="newQuestionModal" okHandler="add"></EditQuestion>
 			</b-col>
 			<b-col cols="2"></b-col>
 		</b-row>
@@ -25,10 +36,6 @@
 			<b-col cols="0" lg="2"></b-col>
 			<b-col cols="12" lg="8">
 				<b-list-group style="min-height: 300px; max-height: 300px; overflow-y:scroll;">
-					<EditQuestion elementRef="innerModal" ref="editQuestionModal" okHandler="edit"></EditQuestion>
-					<ShowQuestion elementRef="innerModal" ref="showQuestionModal"></ShowQuestion>
-					<AddQuestionToSession elementRef="innerModal" ref="addQuestionToSessionModal"></AddQuestionToSession>
-
                     <b-list-group-item class="border-0" :key="item.id" v-for="item in currentQuestions">
 						<b-container>
 							<b-row>
@@ -68,7 +75,9 @@
 		data() {
 			return {
 				questionSearchText: "",
-				questionList: []
+				questionList: [],
+				okHandler: "add",
+				question: undefined
 			}
 		},
 		components: {
@@ -107,6 +116,7 @@
 		},
 		sockets: {
 			sendAllQuestionsWithinCourse(questions) {
+				console.log(questions);
 				this.questionList = questions;
 			},
 			questionChangeComplete() {
@@ -114,28 +124,39 @@
 			}
 		},
 		methods: {
-			requestNewQuestions: function() {
+			requestNewQuestions() {
 				this.$socket.emit("getAllQuestionsWithinCourse",
 					this.$store.getters.getSelectedCourse.split(" ")[0]);
 			},
-			courseChanged: function(newCourse) {
+			courseChanged(newCourse) {
 				let c = newCourse.split(" ");
 				this.$socket.emit("getAllQuestionsWithinCourse", c[0]);
 			},
-			showEditQuestionModal: function(item) {
+			showEditQuestionModal(item) {
+				this.okHandler = "edit";
 				if (item.time === -1) item.time = 0;
-				this.$refs.editQuestionModal._data.newQuestion = item;
-				this.$refs.editQuestionModal.$refs.innerModal.show();
+				this.question = item;
+				this.$nextTick(function() {
+					this.$refs.editQuestionModal.$refs.innerModalEditAdd.show();
+				});
 			},
-			showShowQuestionModal: function(item) {
+			showAddQuestionModal() {
+				this.okHandler = "add";
+				this.question = undefined;
+				this.$nextTick(function() {
+					this.$refs.editQuestionModal.$refs.innerModalEditAdd.show();
+				});
+			},
+			showShowQuestionModal(item) {
+				this.$refs.showQuestionModal.$refs.innerModalShow.show();
 				if (item.time === -1) item.time = 0;
 				this.$refs.showQuestionModal._data.question = item;
-				this.$refs.showQuestionModal.$refs.innerModal.show();
 			},
-			showAddQuestionToSessionModal: function(item) {
+			showAddQuestionToSessionModal(item) {
+				this.okHandler = "add";
+				this.$refs.addQuestionToSessionModal.$refs.innerModalAddToSession.show();
 				this.$refs.addQuestionToSessionModal._data.question.id = item.id;
 				this.$refs.addQuestionToSessionModal._data.question.text = item.text;
-				this.$refs.addQuestionToSessionModal.$refs.innerModal.show();
 			}
 		}
 	}
