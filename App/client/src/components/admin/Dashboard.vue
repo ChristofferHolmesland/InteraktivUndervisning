@@ -143,31 +143,35 @@
 
 <script>
 import SelectCourse from "./SelectCourse.vue";
-import EditQuestion from "./question/EditQuestion.vue";
 import SessionsOverview from "./startSession/SessionsOverview.vue";
 
 export default {
-	name: 'Dashboard',
+	name: "Dashboard",
 	data() {
 		return {
 			newCourse: {
-				"code": "",
-				"semester": "",
-				"name": ""
+				code: "",
+				semester: "",
+				name: ""
 			},
 			newAdminFeideId: "",
 			newAssistantFeideId: "",
 			courseAdmins: [],
 			courseAssistants: []
-		}
+		};
 	},
 	computed: {
 		selectedCourse() {
 			return this.$store.getters.getSelectedCourse;
+		},
+		getLocale() {
+			let locale = this.$store.getters.getLocale("AdminDashboard");
+			if (locale) return locale;
+			else return {};
 		}
 	},
 	watch: {
-		selectedCourse(newCourse, oldCourse) {
+		selectedCourse: function() {
 			this.getUserRightsFromDatabase();
 		}
 	},
@@ -235,16 +239,8 @@ export default {
 			});
 		}
 	},
-	computed: {
-		getLocale() {
-			let locale = this.$store.getters.getLocale("AdminDashboard");
-			if (locale) return locale;
-			else return {};
-		}
-	},
 	components: {
 		SelectCourse,
-		EditQuestion,
 		SessionsOverview
 	}
 };
