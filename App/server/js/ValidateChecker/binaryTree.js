@@ -2,7 +2,7 @@ const check = function (solutionInfo) {
 	let result = {
         passed: true,
         errors: []
-    }
+    };
 
     let treeElements = solutionInfo.treeElements;
 
@@ -21,6 +21,10 @@ const check = function (solutionInfo) {
                 if (isNaN(treeArray[i])){
                     result.passed = false;
                     result.errors.push("treeElementTypeError");
+                    break;
+                }else if(treeArray[i] === "") {
+                    result.passed = false;
+                    result.errors.push("treeElementEmptyError");
                     break;
                 }
             }

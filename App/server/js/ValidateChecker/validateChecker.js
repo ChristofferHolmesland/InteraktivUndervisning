@@ -5,17 +5,14 @@ let checkers = {
     1: require("./text.js"),
     2: require("./multipleChoice.js"),
     3: require("./shellsort.js"),
-    4: require("./mergesort.js"),
-    5: require("./quicksort.js"),
+    4: require("./mergeQuickSort.js"),
+    5: require("./mergeQuickSort.js"),
     6: require("./binaryTree.js"),
     7: require("./binarySearchTreeAVLTree.js"),
     8: require("./binarySearchTreeAVLTree.js"),
-    9: require("./text.js"),
-    10: require("./djikstra.js"),
-    11: require("./text.js"),
-    12: require("./text.js"),
-    13: require("./text.js"),
-    14: require("./text.js")
+    9: require("./djikstra.js"),
+    10: require("./python.js"),
+
 };
 
 
@@ -26,7 +23,7 @@ let checkers = {
     The function will return an object containing the following information:
     result: {
         passed: Boolean // Informing if the validation has passed or not.
-        errors: Array // Contains a list of errors that should infor the user what went wrong in the validation process
+        errors: Array // Contains a list of errors that should inform the user what went wrong in the validation process
     }
 */
 const validateChecker = {
@@ -41,7 +38,7 @@ const validateChecker = {
             title: questionInformation.text,
             description: questionInformation.description,
             time: questionInformation.time
-        }
+        };
         let basicInfoResult = checkers["basicInfo"].check(basicInfo);
         if(!basicInfoResult.passed) {
             result.passed = false;
@@ -55,7 +52,7 @@ const validateChecker = {
             files: questionInformation.objects.files,
             graphs: questionInformation.objects.graphs,
             tables: questionInformation.objects.tables
-        }
+        };
         let mediaInfoResult = checkers["mediaInfo"].check(mediaInfo);
         if(!mediaInfoResult.passed) {
             result.passed = false;
@@ -71,14 +68,19 @@ const validateChecker = {
             let solutionInfo = {};
             switch(questionType) {
                 case 1:	//Text input
+                    solutionInfo.solution = questionInformation.solution;
                     break;
                 case 2:	//Multiple choice
+                    solutionInfo.multipleChoices = questionInformation.objects.multipleChoices;
+                    solutionInfo.solution = questionInformation.solution;
                     break;
                 case 3:	//Shellsort
+                    solutionInfo.startingArray = questionInformation.objects.startingArray;
+                    solutionInfo.kValue = questionInformation.objects.kValue;
                     break;
                 case 4: //Mergesort
-                    break;
                 case 5:	//Quicksort
+                    solutionInfo.startingArray = questionInformation.objects.startingArray;
                     break;
                 case 6: //Binary Tree
                     solutionInfo.treeElements = questionInformation.objects.treeElements;
@@ -91,6 +93,7 @@ const validateChecker = {
                     solutionInfo.givenStartTree = questionInformation.objects.startTree;
                     break;
                 case 9: //Djikstra
+                    solutionInfo.graph = questionInformation.objects.graph;
                     break;
                 case 10: //Python
                     break;
