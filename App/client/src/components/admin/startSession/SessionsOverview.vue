@@ -2,30 +2,28 @@
 	<b-container class="session">
 		<b-row>
 			<b-col cols="10">
-                <b-form-select 	id="courseSelect"
-                                :options="getSessions"
-                                v-model="selectedSession">
-                </b-form-select>
+				<b-form-select 	id="courseSelect"
+								:options="getSessions"
+								v-model="selectedSession">
+				</b-form-select>
 			</b-col>
-            <b-col cols="2" class="pl-0">
-                <b-button @click="initializeSession(selectedSession)">
-                    Start
-                </b-button>
-            </b-col>
+			<b-col cols="2" class="pl-0">
+				<b-button @click="initializeSession(selectedSession)">
+					Start
+				</b-button>
+			</b-col>
 		</b-row>
 	</b-container>
 </template>
 
 <script>
-import SelectCourse from "../SelectCourse.vue";
-
 export default {
 	name: "session",
 	data() {
 		return {
-            sessionList: undefined,
-            selectedSession: undefined,
-            selectedCourse: undefined
+			sessionList: undefined,
+			selectedSession: undefined,
+			selectedCourse: undefined
 		};
 	},
 	created() {
@@ -43,10 +41,10 @@ export default {
 			// TODO add logic to error handling
 		},
 		sessionOverviewResponse(sessions) {
-            if (sessions.length !== 0) {
-                this.sessionList = sessions;
-                this.selectedSession = sessions[0].value;
-            }
+			if (sessions.length !== 0) {
+				this.sessionList = sessions;
+				this.selectedSession = sessions[0].value;
+			}
 		},
 		sessionOverviewErrorResponse() {
 			// TODO add logic to error handling
@@ -66,17 +64,17 @@ export default {
 	},
 	computed: {
 		getSessions() {
-            if (this.sessionList === undefined) return [];
+			if (this.sessionList === undefined) return [];
 			return this.sessionList;
-        },
-        SelectedCourse() {
+		},
+		getSelectedCourse() {
 			return this.$store.getters.getSelectedCourse;
 		}
-    },
+	},
 	watch: {
-		selectedCourse(newCourse, oldCourse) {
+		getSelectedCourse: function(newCourse) {
 			this.courseChanged(newCourse);
 		}
-	},
+	}
 };
 </script>
