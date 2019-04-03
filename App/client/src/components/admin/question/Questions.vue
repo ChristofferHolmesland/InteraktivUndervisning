@@ -116,7 +116,6 @@
 		},
 		sockets: {
 			sendAllQuestionsWithinCourse(questions) {
-				console.log(questions);
 				this.questionList = questions;
 			},
 			questionChangeComplete() {

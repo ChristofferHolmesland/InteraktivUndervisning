@@ -80,9 +80,7 @@ export default {
 			return this.questionInfo.object.files.length;
 		},
 		getImgSrc() {
-			console.log(this.questionInfo.object.files);
 			let file = this.questionInfo.object.files[this.selectedImageIndex];
-			console.log(file);
             return "data:" + file.type + ";base64," + file.buffer;
 		}
 	},

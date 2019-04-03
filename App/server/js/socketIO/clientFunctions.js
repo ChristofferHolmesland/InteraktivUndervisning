@@ -77,7 +77,7 @@ module.exports.client = function(socket, db, user, sessions) {
         }
     });
 
-    socket.on("quickJoinRoom", async function (sessionCode) {
+    socket.on("quickJoinRoom", async function(sessionCode) {
         if (sessions.get(sessionCode)) {
             let userId = 1;
             if (user.feide) userId = await dbFunctions.get.userId(db, {
@@ -133,6 +133,7 @@ module.exports.client = function(socket, db, user, sessions) {
     });
 
     socket.on("leaveSession",function (sessionCode) {
+        if (!sessions.get(sessionCode)) return;
         let session = sessions.get(sessionCode).session;
         let question = session.questionList[session.currentQuestion];
         let adminSocket = sessions.get(sessionCode).adminSocket;
@@ -194,9 +195,6 @@ module.exports.client = function(socket, db, user, sessions) {
         let session = sessions.get(sessionCode).session;
         let question = session.questionList[session.currentQuestion];
         let result = -1; // Default value is -1 for the users that answers that they don't know. Changed later if they did answer
-
-        console.log("QuestionAnsweredClient");
-        console.log(question);
 
         if(answerObject === null){
             answerObject = "You didn't answer";

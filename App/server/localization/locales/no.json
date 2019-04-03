@@ -173,7 +173,8 @@
         "exitSessionBtnText": "Forlat økt",
         "answerDontKnowBtnText": "Svar: \"Jeg vet ikke\"",
         "answerBtnText": "Send inn svar",
-        "leaveSessionBody": "Ved å klikke ok, så vil du koble deg fra denne økten.\nAlle svare frem til nå vil være lagret."
+        "leaveSessionBody": "Ved å klikke ok, så vil du koble deg fra denne økten.\nAlle svare frem til nå vil være lagret.",
+        "leaveSessionBodyAdmin": "Du forlater nå økten. Økten vil bli satt på pause i 5 minutter før den fjernes. Hvis du kommer tilbake hit så vil økten fortsette. Alle svarene fra studentene opp til nå har blitt lagret."
     },
     "ClientSessionWaitingArea": {
         "title": "Venteområde",
