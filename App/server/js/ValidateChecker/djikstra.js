@@ -4,8 +4,6 @@ const check = function (solutionInfo) {
 		errors: []
 	};
 
-	console.log(solutionInfo.graph);
-	console.log(solutionInfo.graph.edges);
 	let graphObject = solutionInfo.graph;
 	if (graphObject === undefined){
 		result.passed = false;

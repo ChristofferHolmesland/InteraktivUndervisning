@@ -4,8 +4,6 @@ const check = function (solutionInfo) {
 		errors: []
 	};
 
-	console.log(solutionInfo.startingArray);
-	console.log(solutionInfo.kValue);
 	let startArray = solutionInfo.startingArray;
 	let kValue = solutionInfo.kValue;
 	if (kValue === undefined || kValue === "") {
