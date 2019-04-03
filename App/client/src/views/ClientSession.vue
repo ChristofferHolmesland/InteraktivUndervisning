@@ -58,16 +58,19 @@ export default {
 	},
 	methods: {
 		getLeaveConfirmBody() {
-			let locale = this.$store.getters.getLocale("ClientSessionQuestion").leaveSessionBody;
+			let locale = this.$store.getters.getLocale("ClientSessionQuestion")
+				.leaveSessionBody;
 			if (locale) return locale;
 			else return {};
 		}
 	},
 	beforeDestroy() {
-		if (confirm(this.getLeaveConfirmBody())) {
-			this.$socket.emit("leaveSession", this.sessionCode);
-		} else {
-			this.$router.push("/client/session/" + this.sessionCode);
+		if (this.localeElement !== "sessionFinished") {
+			if (confirm(this.getLeaveConfirmBody())) {
+				this.$socket.emit("leaveSession", this.sessionCode);
+			} else {
+				this.$router.push("/client/session/" + this.sessionCode);
+			}
 		}
 	}
 };

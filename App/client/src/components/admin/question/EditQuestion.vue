@@ -432,12 +432,10 @@
             },
             assignState() {
                 let n = initializeState();
-                console.log(this.okHandler);
                 for (let p in n) {
                     if (n.hasOwnProperty(p)) {
                         if (p === "newQuestion") {
                             if (this.okHandler === "add") {
-                                console.log("reset");
                                 
                                 this.$data[p] = n[p];
                             }
@@ -447,7 +445,6 @@
                         }
                     }
                 }
-                console.log(this.newQuestion);
                 this.$nextTick();
             },
             newFile(event) {
@@ -693,7 +690,6 @@
                 }else {
             	    this.validationFailure = true;
                     this.validationErrors = result.errors;
-                    console.log(this.validationErrors);
                 }
 
             }
