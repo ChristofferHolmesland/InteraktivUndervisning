@@ -1,7 +1,8 @@
 {
     "AdminQuestions": {
         "emptyQuestionList": "Ingen spørsmål.",
-        "newQuestion": "Nytt spørsmål",
+        "addTitle": "Nytt spørsmål",
+        "editTitle": "Endre spørsmål",
         "searchQuestion": "Søk etter spørsmål",
         "newQuestionTitle": "Spørsmål tittel:",
         "newQuestionText": "Spørsmål tekst:",
@@ -39,7 +40,12 @@
         "BSTAVLInvalidBinarySearchTreeError": "Det gitte treet er ikke et godkjent Binært Søketre!",
         "treeElementTypeError": "Elementene i listen skal kun inneholde tall elementer!",
         "BSTAVLInvalidTreeActionError": "Må velge enten å legge til elementer eller å fjerne elementer på fasittype!",
-        "questionTypeError": "Spørsmåltype er ikke valgt!"
+        "questionTypeError": "Spørsmåltype er ikke valgt!",
+        "imageInputLabel": "Velg en fil som skal lastes opp...",
+        "filename": "Filnavn",
+        "filesize": "Filstørrelse",
+        "filetype": "Filtype",
+        "deleteBtn": "Slett"
     },
     "AdminSessions": {
         "newSession": "Ny økt",

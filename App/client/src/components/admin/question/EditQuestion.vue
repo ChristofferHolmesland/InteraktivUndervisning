@@ -1,5 +1,5 @@
 <template>
-    <b-modal :id="elementId" :ref="elementRef" :no-close-on-backdrop="true" :title="getLocale.newQuestion" @ok="callOkHandler" style="text-align: left;" size="lg">
+    <b-modal :id="elementId" :ref="elementRef" :no-close-on-backdrop="true" :title="getTitle" @ok="callOkHandler" style="text-align: left;" size="lg">
         <b-form>
             <b-alert    :show="validationFailure"
                         variant="danger">
@@ -69,27 +69,8 @@
                     </b-col>
                 </b-form-group>
             </div>
+
             <hr>
-
-
-
-            <!-- TODO Make it possible to add objects to question
-                            - Graphs
-                            - Images
-                            - Tables
-            <b-form-group id="objects"
-                label="Objects"
-                label-for="objectsInput">
-                <b-form-select id="objectsInput"
-                    :options="getObjectTypes"
-                    @change="objectsInputChanged($event)">
-                </b-form-select>
-                <ul>
-                    <li :key="object.i" v-for="object in getQuestionObjects">
-                        <component v-on:updateState="newQuestion[object.i].state = $event" :is="object.componentName" :index="i" :state="object.state" />
-                    </li>
-                </ul>
-            </b-form-group> -->
 
             <b-form-group   id="Media">
                 <b-container   class="px-0"
@@ -108,40 +89,83 @@
                         </b-col>
                     </b-row>
                 </b-container>
-                <div v-show="showMedia">
-                    <b-form-select  :options="mediaTypes"
-                                    v-model="selectedMediaType">
-                    </b-form-select>
-                    <div v-if="selectedMediaType === 0">
-                        <b-alert :show="showMediaWarning" variant="warning">{{mediaWarningText}}</b-alert>
-                        <b-alert :show="showMediaError" variant="danger">{{mediaErrorText}}</b-alert>
-                        <input type="file" @change="newFile" accept="image/*" multiple>
-                    </div>
-                    <div v-if="selectedMediaType === 1">
-                        <!-- TODO add graph objects -->
-                    </div>
-                    <div v-if="selectedMediaType === 2">
-                        <!-- TODO add table objects -->
-                    </div>
-                    <div v-if="newQuestion.objects.files.length > 0">
-                        <label>Files:</label>
-                        <b-container>
-                            <b-row v-for="(image, index) in newQuestion.objects.files" :key="index" class="mt-2">
-                                <b-col>
-                                    {{image.name}}
-                                </b-col>
-                                <b-col>
-                                    <b-button>Delete</b-button>
-                                </b-col>
-                                <b-col>
-                                    <img :src="getImageSrc(index)" width="200" height="200" style="border: 3px solid black;"/>
-                                </b-col>
-                            </b-row>
-                        </b-container>
-                    </div>
-                    <div></div>
-                    <div></div>
-                </div>
+                <b-container v-show="showMedia" class="px-0">
+                    <b-row>
+                        <b-col>
+                            <b-form-select  :options="mediaTypes"
+                                            v-model="selectedMediaType">
+                            </b-form-select>
+                        </b-col>
+                    </b-row>
+                    <b-row style="text-align: center;" class="mt-4">
+                        <b-col>
+                            <div v-if="selectedMediaType === 0">
+                                <b-alert :show="showMediaWarning" variant="warning">{{mediaWarningText}}</b-alert>
+                                <b-alert :show="showMediaError" variant="danger">{{mediaErrorText}}</b-alert>
+                                <input  type="file" @change="newFile" accept="image/*" 
+                                        multiple name="imageInput" class="imageInput"
+                                        id="imageInput"
+                                        />
+                                <label for="imageInput">{{getLocale.imageInputLabel}}</label>
+                            </div>
+                            <div v-if="selectedMediaType === 1">
+                                <!-- TODO add graph objects -->
+                            </div>
+                            <div v-if="selectedMediaType === 2">
+                                <!-- TODO add table objects -->
+                            </div>
+                        </b-col>
+                    </b-row>
+                    <b-row v-if="newQuestion.objects.files.length > 0">
+                        <b-col>
+                            <label>Files:</label>
+                            <b-container>
+                                <b-row v-for="(image, index) in newQuestion.objects.files" :key="index" class="mt-2">
+                                    <b-col>
+                                        <b-row>
+                                            <b-col>
+                                                {{getLocale.filename}}: {{image.name}}
+                                            </b-col>
+                                        </b-row>
+                                        <b-row>
+                                            <b-col>
+                                                {{getLocale.filesize}}: {{Math.round(((image.size / 1000000) + 0.00001) * 100) / 100}} MB
+                                            </b-col>
+                                        </b-row>
+                                        <b-row>
+                                            <b-col>
+                                                {{getLocale.filetype}}: {{image.type}}
+                                            </b-col>
+                                        </b-row>
+                                    </b-col>
+                                    <b-col>
+                                        <b-button @click="deleteImage(index)" variant="danger"
+                                                    style="width: 100px; height: 50px; text-align:center;">
+                                            {{getLocale.deleteBtn}}
+                                        </b-button>
+                                    </b-col>
+                                    <b-col>
+                                        <img :src="getImageSrc(index)" width="200" height="200" style="border: 3px solid black;"/>
+                                    </b-col>
+                                </b-row>
+                            </b-container>
+                        </b-col>
+                    </b-row>
+                    <b-row>
+                        <b-col>
+                            <div>
+
+                            </div>
+                        </b-col>
+                    </b-row>
+                    <b-row>
+                        <b-col>
+                            <div>
+
+                            </div>
+                        </b-col>
+                    </b-row>
+                </b-container>
             </b-form-group>
 
             <hr>
@@ -168,6 +192,7 @@
                                     :options="getSolutionTypes"
                                     v-model="newQuestion.solutionType">
                     </b-form-select>
+                    {{getSolutionType}}
                 </div>
             </b-form-group>
             <div v-show="showSolution">
@@ -331,9 +356,10 @@
             mediaTypes: [],
             selectedMediaType: undefined,
 
-            showMedia: true, // TODO set to false
+
+            showBasicInfo: true,
+            showMedia: false,
             showSolution: false,
-            showBasicInfo: false, // TODO set to true
 
             mediaWarningText: "",
             showMediaWarning: false,
@@ -357,14 +383,18 @@
             elementRef: String,
             elementId: String,
             okHandler: String,
+            question: Object,
             doneHandler: Function
+
         },
         mounted() {
-            this.$root.$on("bv::modal::show", (bvevent, modalid) => {
+            this.$root.$on("bv::modal::show", (bvevent) => {
+                let target = bvevent.target;
                 this.assignState();
                 this.$socket.emit("getQuestionTypes");
                 this.mediaTypes = this.getLocale.mediaTypes;
                 this.selectedMediaType = this.mediaTypes[0].value;
+                if (this.question !== undefined) this.newQuestion = this.question;
             });
         },
         methods: {
@@ -389,16 +419,36 @@
                 codeInput.selectionStart = tabPosition + tabSize;
                 codeInput.selectionEnd = tabPosition + tabSize;
             },
+            deleteImage(index) {
+                let files = this.newQuestion.objects.files;
+                files.splice(index, 1);
+
+                let filesSize = 0;
+                for (let i = 0; i < files.length; i++) {
+                    let file = files[i];
+                    filesSize += file.size;
+                }
+                if (filesSize < 500000) this.showMediaWarning = false;
+            },
             assignState() {
                 let n = initializeState();
+                console.log(this.okHandler);
                 for (let p in n) {
                     if (n.hasOwnProperty(p)) {
                         if (p === "newQuestion") {
-                            if (this.okHandler === "add") this.$data[p] = n[p];
+                            if (this.okHandler === "add") {
+                                console.log("reset");
+                                
+                                this.$data[p] = n[p];
+                            }
                         }
-                        else this.$data[p] = n[p];
+                        else {
+                            this.$data[p] = n[p];
+                        }
                     }
                 }
+                console.log(this.newQuestion);
+                this.$nextTick();
             },
             newFile(event) {
                 let files = [];
@@ -550,6 +600,12 @@
             }
         },
         computed: {
+            getTitle() {
+                return this.getLocale[this.okHandler + "Title"];
+            },
+            getSolutionType() {
+                return this.newQuestion.solutionType;
+            },
             checkRef() {
                 if (this.$refs["codeInput"] !== undefined) {
                     this.$refs["codeInput"].onkeydown = this.keyDownInTextarea;
@@ -627,7 +683,8 @@
         sockets: {
             sendQuestionTypes: function(types) {
                 this.solutionTypes = types;
-                this.newQuestion.solutionType = this.solutionTypes[0].value;
+                if (this.newQuestion.solutionType === "")
+                    this.newQuestion.solutionType = this.solutionTypes[0].value;
             },
             confirmQuestionRequirements: function (result) {
             	if (result.passed) {
@@ -651,4 +708,31 @@
 </script>
 
 <style scoped>
+.imageInput {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+.imageInput + label {
+    cursor: pointer;
+    font-size: 1.25em;
+    font-weight: 700;
+    color: white;
+    background-color: #007bff;
+    display: inline-block;
+    height: 50px;
+    width: 400px;
+    border: 3px solid #007bff;
+    border-radius: 10px;
+    text-align: center;
+    line-height: 50px;
+    
+}
+.imageInput:focus + label,
+.imageInput:hover + label {
+    width: 450px;
+}
 </style>

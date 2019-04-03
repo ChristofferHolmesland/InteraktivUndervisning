@@ -5,8 +5,40 @@
                 <b-card no-body>
 					<b-tabs card @input="setTab($event)">
 						<b-tab :title="getLocale.question">
-							<h1>{{ resultInfo.question.text }}</h1>
-							<p>{{ resultInfo.question.description }}</p>
+                            <b-container>
+                                <b-row>
+                                    <b-col>
+							            <h1>{{ resultInfo.question.text }}</h1>
+                                    </b-col>
+                                </b-row>
+                                <b-row>
+                                    <b-col>
+							            <p>{{ resultInfo.question.description }}</p>
+                                    </b-col>
+                                </b-row>
+                                <b-row v-if="getImagesLength > 0">
+                                    <b-col cols="12">
+                                        <b-row>
+                                            <b-col>   
+                                                <img    :src="getImgSrc" width="500" height="500"
+                                                        style="border: 3px solid black;"
+                                                        />
+                                            </b-col>
+                                        </b-row>
+                                        <b-row style="text-align: center;" v-if="getImagesLength > 1">
+                                            <b-col cols="4">
+                                                <b-button variant="primary" @click="changeSelectedImage(-1)">previous</b-button>
+                                            </b-col>
+                                            <b-col cols="4">
+                                                {{selectedImageIndex + 1}} / {{getImagesLength}}
+                                            </b-col>
+                                            <b-col cols="4">                                            
+                                                <b-button variant="primary" @click="changeSelectedImage(1)">next</b-button>
+                                            </b-col>
+                                        </b-row>
+                                    </b-col>
+                                </b-row>
+                            </b-container>
 						</b-tab>
 						<b-tab :title="getLocale.solution">
                             <div v-if="tabIndex === 1">
@@ -104,7 +136,8 @@ export default {
     data() {
         return {
             tabIndex: Number,
-            didntAnswerString: "You answered: I don't know!"
+            didntAnswerString: "You answered: I don't know!",
+            selectedImageIndex: 0
         }
     },
     computed: {
@@ -117,11 +150,26 @@ export default {
             let answer = this.resultInfo.answerList[this.selectedAnswer];
             if(answer.result !== undefined) return answer.result;
             return 1
+        },
+        getImgSrc() {
+            let file = this.resultInfo.question.object.files[this.selectedImageIndex];
+            return "data:" + file.type + ";base64," + file.buffer;
+        },
+        getImagesLength() {
+            return this.resultInfo.question.object.files.length;
         }
     },
     methods: {
         setTab(event) {
             this.tabIndex = event;
+        },
+        changeSelectedImage(step) {
+            if (
+                this.selectedImageIndex + step >= 0 && 
+                this.selectedImageIndex + step < this.getImagesLength
+                ) {
+                    this.selectedImageIndex += step;
+                }
         }
     },
     components: {
@@ -142,3 +190,12 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+img{
+    width: 100%;
+    max-width: 500px;
+    height: 100%;
+    max-height: 500px;
+}
+</style>

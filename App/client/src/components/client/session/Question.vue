@@ -9,7 +9,30 @@
                                 <p v-if="getQuestionInfo.description !== undefined">
                                     {{ getQuestionInfo.description }}
                                 </p>
-                                <!-- TODO add code to include question object if it is there -->
+                                <b-container class="px-0">
+                                    <b-row v-if="getImagesLength > 0">
+                                        <b-col cols="12">
+                                            <b-row>
+                                                <b-col>   
+                                                    <img    :src="getImgSrc" width="500" height="500"
+                                                            style="border: 3px solid black;"
+                                                            />
+                                                </b-col>
+                                            </b-row>
+                                            <b-row style="text-align: center;" v-if="getImagesLength > 1">
+                                                <b-col cols="4">
+                                                    <b-button variant="primary" @click="changeSelectedImage(-1)">previous</b-button>
+                                                </b-col>
+                                                <b-col cols="4">
+                                                    {{selectedImageIndex + 1}} / {{getImagesLength}}
+                                                </b-col>
+                                                <b-col cols="4">                                            
+                                                    <b-button variant="primary" @click="changeSelectedImage(1)">next</b-button>
+                                                </b-col>
+                                            </b-row>
+                                        </b-col>
+                                    </b-row>
+                                </b-container>
                             </b-card>
                         </b-tab>
                         <b-tab :title="getLocale.answer" active>
@@ -85,7 +108,8 @@
 			return {
                 interval: undefined,
                 requestAnswer: false,
-                timeLeft: undefined
+                timeLeft: undefined,
+                selectedImageIndex: 0
 			};
         },
         props: [
@@ -134,6 +158,14 @@
                     result.push(elements[i]);
                 }
                 return result;
+            },
+            changeSelectedImage(step) {
+                if (
+                    this.selectedImageIndex + step >= 0 && 
+                    this.selectedImageIndex + step < this.getImagesLength
+                    ) {
+                        this.selectedImageIndex += step;
+                    }
             }
 	    },
 		computed: {
@@ -153,6 +185,13 @@
             },
             getQuestionType() {
                 return this.questionInfo.type;
+            },
+            getImagesLength() {
+                return this.getQuestionInfo.object.files.length;
+            },
+            getImgSrc() {
+                let file = this.getQuestionInfo.object.files[this.selectedImageIndex];
+                return "data:" + file.type + ";base64," + file.buffer;
             }
         },
         sockets: {
