@@ -10,24 +10,28 @@
         <p>{{getLocale.solutionText}}</p>
         <p v-if="question.solutionType === 1">{{question.solution}}</p>
         <GraphDrawer    v-if="question.solutionType === 4"
+                        ref="graphdrawer"
                         controlType="Sort"
                         sortType="Mergesort"
                         :steps="question.solution"
                         operatingMode="Presentation"
                         />
         <GraphDrawer    v-if="question.solutionType === 5"
+                        ref="graphdrawer"
                         controlType="Sort"
                         sortType="Quicksort"
                         :steps="question.solution"
                         operatingMode="Presentation"
                         />
         <GraphDrawer    v-if="question.solutionType === 9"
+                        ref="graphdrawer"
                         controlType="Dijkstra"
                         operatingMode="Presentation"
                         :steps="question.solution"
-                        displayEdgeValues="true"
+                        :displayEdgeValues="true"
                         />
         <GraphDrawer    v-if="question.solutionType === 10"
+                        ref="graphdrawer"
                         controlType="Python"
                         operatingMode="Presentation"
                         :steps="question.solution"
@@ -72,6 +76,15 @@ export default {
     },
     components: {
         GraphDrawer
+    },
+    watch: {
+        "question.solutionType": function() {
+            this.$nextTick(function() {
+                // After changing the solutionType, the graphdrawer object needs to be
+                // recreated.
+                this.$refs.graphdrawer.createDrawer();
+            });
+        }
     }
 };
 </script>

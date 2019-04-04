@@ -438,11 +438,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 							console.error("Error writing image: \n\n" + err);
 							return;
 						}
-						fs.writeSync(fd, files[i].buffer, null, "base64", function(err, written, buff) {
-							fs.close(fd, function() {
-								console.log("file saved");
-							});
-						});
+						fs.writeSync(fd, files[i].buffer, null, "base64");
 					});
 				}
 				

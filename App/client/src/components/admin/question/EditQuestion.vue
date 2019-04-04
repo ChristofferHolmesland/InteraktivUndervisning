@@ -286,10 +286,10 @@
                 <GraphDrawer
                     @getValueResponse="gotTreeDrawerObject"
                     :requestAnswer="requestGraphDrawerObject"
-                    control-type="Graph0"
-                    export-type="Both"
+                    controlType="Graph0"
+                    exportType="Both"
                     operationMode="Interactive"
-                    import-type="Graph"
+                    importType="Graph"
                     :steps="this.newQuestion.objects._graphdrawerGraph"
                 />
             </b-form-group>
@@ -301,9 +301,12 @@
                     @getValueResponse="gotGraphDrawerObject" 
                     :requestAnswer="requestGraphDrawerObject" 
                     controlType="Graph0"
+                    importType="Graph"
                     subType="Dijkstra"
                     exportType="Graph"
+                    :displayEdgeValues="true"
                     operatingMode="Interactive"
+                    :steps="this.newQuestion.objects._graphdrawerGraph"
                     />
             </b-form-group>
             <b-form-group 	id="pythonSolution"
@@ -431,12 +434,10 @@
             },
             assignState() {
                 let n = initializeState();
-                console.log(this.okHandler);
                 for (let p in n) {
                     if (n.hasOwnProperty(p)) {
                         if (p === "newQuestion") {
                             if (this.okHandler === "add") {
-                                console.log("reset");
                                 
                                 this.$data[p] = n[p];
                             }
@@ -446,7 +447,6 @@
                         }
                     }
                 }
-                console.log(this.newQuestion);
                 this.$nextTick();
             },
             newFile(event) {
@@ -692,7 +692,6 @@
                 }else {
             	    this.validationFailure = true;
                     this.validationErrors = result.errors;
-                    console.log(this.validationErrors);
                 }
 
             }

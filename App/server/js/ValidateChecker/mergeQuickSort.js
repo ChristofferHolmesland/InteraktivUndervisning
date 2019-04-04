@@ -5,34 +5,25 @@ const check = function (solutionInfo) {
 	};
 
 	let startArray = solutionInfo.startingArray;
-	let kValue = solutionInfo.kValue;
-	if (kValue === undefined || kValue === "") {
-		result.passed = false;
-		result.errors.push("NoKValueError");
-	}
 	if (startArray === undefined || startArray === "") {
 		result.passed = false;
-		result.errors.push("ShellSortNoElementsError");
+		result.errors.push("MergeQuickSortNoElementsError");
 	}
 	if (result.passed) {
 		let realArray = startArray.split(",");
 		if (realArray.length === 0){
 			result.passed = false;
-			result.reason.push("ShellSortArrayWrongFormatError");
+			result.reason.push("MergeQuickSortArrayWrongFormatError");
 		}
 		else {
-			if(isNaN(kValue) || parseInt(kValue) >= startArray.length) {
-				result.passed = false;
-				result.errors.push("InvalidKValueError");
-			}
 			for (let i = 0; i < realArray.length; i++) {
 				if (isNaN(realArray[i])){
 					result.passed = false;
-					result.errors.push("ShellSortArrayDataTypeError");
+					result.errors.push("MergeQuickSortArrayDataTypeError");
 					break;
 				}else if(realArray[i] === "") {
 					result.passed = false;
-					result.errors.push("ShellSortEmptyArrayElementError");
+					result.errors.push("MergeQuickSortEmptyArrayElementError");
 					break;
 				}
 			}

@@ -60,10 +60,17 @@ export default {
 		}
 	},
 	beforeDestroy() {
-		if (confirm(this.getLocale("ClientSessionQuestion").leaveSessionBody)) {
-			this.$socket.emit("adminLeaveSession", this.sessionId);
-		} else {
-			this.$router.push("/admin/session/" + this.sessionId);
+		if (this.state !== 4) {
+			if (
+				confirm(
+					this.getLocale("ClientSessionQuestion")
+						.leaveSessionBodyAdmin
+				)
+			) {
+				this.$socket.emit("adminLeaveSession", this.sessionId);
+			} else {
+				this.$router.push("/admin/session/" + this.sessionId);
+			}
 		}
 	}
 };

@@ -77,15 +77,15 @@ module.exports.client = function(socket, db, user, sessions) {
 		}
 	});
 
-	socket.on("quickJoinRoom", async function (sessionCode) {
-		if (sessions.get(sessionCode)) {
-			let userId = 1;
-			if (user.feide) userId = await dbFunctions.get.userId(db, {
-				type: "feide",
-				id: user.feide.idNumber
-			}).catch((err) => {
-				console.error(err);
-			});
+    socket.on("quickJoinRoom", async function(sessionCode) {
+        if (sessions.get(sessionCode)) {
+            let userId = 1;
+            if (user.feide) userId = await dbFunctions.get.userId(db, {
+                type: "feide",
+                id: user.feide.idNumber
+            }).catch((err) => {
+                console.error(err);
+            });
 
 			await dbFunctions.get.sessionHasUserByUserId(db, userId).then((row) => {
 				let session = sessions.get(sessionCode).session;
@@ -132,10 +132,11 @@ module.exports.client = function(socket, db, user, sessions) {
 		}
 	});
 
-	socket.on("leaveSession",function (sessionCode) {
-		let session = sessions.get(sessionCode).session;
-		let question = session.questionList[session.currentQuestion];
-		let adminSocket = sessions.get(sessionCode).adminSocket;
+    socket.on("leaveSession",function (sessionCode) {
+        if (!sessions.get(sessionCode)) return;
+        let session = sessions.get(sessionCode).session;
+        let question = session.questionList[session.currentQuestion];
+        let adminSocket = sessions.get(sessionCode).adminSocket;
 
 		session.userLeaving(socket.id);
 		socket.leave(sessionCode);
@@ -195,18 +196,15 @@ module.exports.client = function(socket, db, user, sessions) {
 		let question = session.questionList[session.currentQuestion];
 		let result = -1; // Default value is -1 for the users that answers that they don't know. Changed later if they did answer
 
-		console.log("QuestionAnsweredClient");
-		console.log(question);
-
-		if(answerObject === null){
-			answerObject = "You didn't answer";
-			socket.emit("answerResponse", "betweenQuestionsNotAnswered");
-		} else {
-			checkedResult = solutionChecker.checkAnswer(
-				JSON.parse(JSON.stringify(answerObject)),
-				JSON.parse(JSON.stringify(question.solution)),
-				question.type
-			);
+        if(answerObject === null){
+            answerObject = "You didn't answer";
+            socket.emit("answerResponse", "betweenQuestionsNotAnswered");
+        } else {
+            checkedResult = solutionChecker.checkAnswer(
+                JSON.parse(JSON.stringify(answerObject)),
+                JSON.parse(JSON.stringify(question.solution)),
+                question.type
+            );
 
 			if (checkedResult){
 				result = 1;
