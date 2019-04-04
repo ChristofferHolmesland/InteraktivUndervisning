@@ -90,9 +90,9 @@ module.exports.client = function(socket, db, user, sessions) {
                 console.error(err);
             });
 
-            await dbFunctions.get.sessionHasUserByUserId(db, userId).then((row) => {
+            await dbFunctions.get.sessionHasUserByUserId(db, userId.id).then((row) => {
                 let session = sessions.get(sessionCode).session;
-                if (!row) dbFunctions.insert.addUserToSession(db, userId, session.id);
+                if (!row) dbFunctions.insert.addUserToSession(db, userId.id, session.id);
                 
                 let question = session.questionList[session.currentQuestion];
                 let adminSocket = sessions.get(sessionCode).adminSocket;

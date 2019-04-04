@@ -20,7 +20,9 @@ module.exports.feide = function(socket, db, user){
         }
         */
 
-        dbFunctions.get.sessionsToUser(db, {id: user.feide.idNumber, type: "feide"}).then(async function(sessions) {
+        dbFunctions.get.sessionsToUser(
+            db, {id: user.feide.idNumber, type: "feide"}
+        ).then(async function(sessions) {
             result = {};
             if (sessions !== undefined){
                 result.sessionList = sessions;
