@@ -100,6 +100,8 @@ export default class Python {
 	}
 
 	mouseDownHandler(e) {
+		if (this.gd.operatingMode == "Presentation") return false;
+
 		let consumed = this.detectUIInput(e);
 		if (consumed) return;
 
@@ -400,19 +402,46 @@ export default class Python {
 		let objectValue = undefined;
 		if (baseType) objectValue = prompt("Enter object value:", "");
 
-		let object = {
-			type: objectType,
+		let node = this.addObject({
+			objectType: objectType,
 			baseType: baseType,
-			value: objectValue,
-			links: baseType ? undefined : []
+			objectValue: objectValue,
+			x: p.x,
+			y: p.y
+		}).node;
+
+		// Move the node center to the mouse click
+		node.x -= node.w / 2;
+		node.y -= node.h / 2;
+
+		this.gd.dirty = true;
+		return true;
+	}
+
+	/*
+		Creates and adds an object, and returns { object, node }.
+
+		o needs to have the followwing properties:
+			objectType (String, Number, Boolean, ....)
+			baseType
+			objectValue (Can be undefined if baseType is false)
+			x
+			y
+	*/
+	addObject(o) {
+		let object = {
+			type: o.objectType,
+			baseType: o.baseType,
+			value: o.objectValue,
+			links: o.baseType ? undefined : []
 		};
 
-		if (!baseType) {
+		if (!o.baseType) {
 			object.fields = [];
 
 			for (let i = 0; i < this.objectTypes.length; i++) {
 				let type = this.objectTypes[i];
-				if (type.name == objectType) {
+				if (type.name == o.objectType) {
 					for (let j = 0; j < type.fields.length; j++) {
 						object.fields.push({
 							name: type.fields[j].name,
@@ -427,23 +456,20 @@ export default class Python {
 		this.objects.push(object);
 
 		let node = this.gd.addNode({
-			x: p.x,
-			y: p.y,
+			x: o.x,
+			y: o.y,
 			w: this.gd.R * 2,
 			h: this.gd.R * 2,
 			v: "",
 			shape: this.gd.nodeShape
 		});
 
-		// Move the node center to the mouse click
-		node.x -= node.w / 2;
-		node.y -= node.h / 2;
-
 		object.id = node.id;
 		this.generateNodeText(object.id);
-
-		this.gd.dirty = true;
-		return true;
+		return {
+			object: object,
+			node: node
+		};
 	}
 
 	detectUIInput(e) {
@@ -522,7 +548,7 @@ export default class Python {
 		let step = this.steps[this.gd.currentStep];
 		if (step._graphdrawer) return this.parseUserStep(step);
 		// Add variables
-		let variables = this.getProps(step.objects);
+		let vars = this.getProps(step.objects);
 		let margin = 25;
 		let left = this.gd.camera.project(margin, margin);
 		let right = this.gd.camera.project(
@@ -530,26 +556,44 @@ export default class Python {
 			margin
 		);
 		let width = right.x - left.x;
-		let variableWidth = width / variables.length;
-		for (let i = 0; i < variables.length; i++) {
+		let variableWidth = width / vars.length;
+
+		let startX = this.gd.drawBuffer.width / 2;
+		let startY = this.gd.drawBuffer.height / 2;
+
+		for (let i = 0; i < vars.length; i++) {
 			this.addVariable({
-				name: variables[i],
-				x: left.x + variableWidth / 2 + i * variableWidth,
-				y: left.y
+				name: vars[i],
+				x: startX + variableWidth / 2 + i * variableWidth,
+				y: startY
 			});
 		}
 
-		// Add objects
-		let uniqueIdToId = {};
-		let objects = [];
-		let findAllObjects = (objectList) => {
-			let objectNames = this.getProps(objectList);
-
-			for (let i = 0; i < objectNames.length; i++) {
-				// Not implemented yet
+		let generateAndLinkObjects = (parentNode, objectList) => {
+			for (let i = 0; i < objectList.length; i++) {
+				let obj = objectList[i];
+				let info = this.addObject({
+					objectType: obj.type,
+					baseType: this.baseType(obj.type),
+					objectValue: obj.value,
+					x: parentNode.x,
+					y: parentNode.y + 100
+				});
+				info.node.x -= info.node.w / 2;
 			}
 		};
-		findAllObjects(step.data);
+
+		for (let i = 0; i < this.variables.length; i++) {
+			let variable = this.variables[i];
+			let node = this.gd.getNode(variable.id);
+
+			generateAndLinkObjects(node, [
+				step.data[step.objects[variable.name]]
+			]);
+		}
+
+		console.log("STEP");
+		console.log(step);
 
 		this.gd.centerCameraOnGraph();
 	}
@@ -654,8 +698,8 @@ export default class Python {
 				this.generateNodeText(o.id);
 			}
 		}
-	}	
-	
+	}
+
 	getProps(object) {
 		let props = [];
 		for (let prop in object) {
