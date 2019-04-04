@@ -696,11 +696,10 @@
                 }
 
             }
-	    },
+        },
         watch: {
-            "newQuestion.solutionType": function(newType, oldType) {
+            "newQuestion.solutionType": function(newType) {
                 if (newType === 1) this.newQuestion.solution = "";
-                else if (newType === 2) this.newQuestion.solution = [];
             }
         },
     }
