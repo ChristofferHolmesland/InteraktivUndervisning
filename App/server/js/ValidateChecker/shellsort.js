@@ -21,9 +21,13 @@ const check = function (solutionInfo) {
 			result.reason.push("ShellSortArrayWrongFormatError");
 		}
 		else {
-			if(isNaN(kValue) || parseInt(kValue) >= startArray.length) {
+			if(isNaN(kValue)) {
 				result.passed = false;
 				result.errors.push("InvalidKValueError");
+			}
+			if (parseInt(kValue) >= realArray.length) {
+				result.passed = false;
+				result.errors.push("KValueTooBigError");
 			}
 			for (let i = 0; i < realArray.length; i++) {
 				if (isNaN(realArray[i])){
