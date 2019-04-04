@@ -81,15 +81,19 @@
                                                         />
                                     <MergesortAnswer    v-if="resultInfo.question.type === 4"
                                                         :answer="resultInfo.solution"
+                                                        ref="graphdrawerContainer"
                                                         />
                                     <QuicksortAnswer    v-if="resultInfo.question.type === 5"
                                                         :answer="resultInfo.answerList[selectedAnswer].answerObject"
+                                                        ref="graphdrawerContainer"
                                                         />
                                     <TreeAnswer         v-if="resultInfo.question.type === 7 || resultInfo.question.type === 8"
                                                         :answer="resultInfo.answerList[selectedAnswer].answerObject"
+                                                        ref="graphdrawerContainer"
                                                     />
                                     <DijkstraAnswer     v-if="resultInfo.question.type === 9"
                                                         :answer="resultInfo.answerList[selectedAnswer].answerObject"
+                                                        ref="graphdrawerContainer"
                                                         />  
                                 </div>
                                 <div v-else>

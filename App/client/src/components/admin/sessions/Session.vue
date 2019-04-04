@@ -38,8 +38,11 @@
 				</b-list-group>
 			</b-col>
 			<b-col lg="8">
-				<DisplayQuestion :selectedAnswer="selectedAnswer"
-									:resultInfo="getSession.questions[selectedQuestion]"/>
+				<DisplayQuestion
+								:selectedAnswer="selectedAnswer"
+								:resultInfo="getSession.questions[selectedQuestion]"
+								ref="displayQuestion"
+								/>
 			</b-col>
 		</b-row>
 		<b-row class="mt-3" v-if="getAnswerListSize">
@@ -109,11 +112,16 @@ export default {
 			return this.incorrectAnswers[this.selectedAnswer].answer;
 		},
 		getAnswerListSize() {
-			if (!this.getSession) return false;
-			if (!this.getSession.questions) return false;
-			if (!this.getSession.questions[this.selectedQuestion]) return false;
-			if (!this.getSession.questions[this.selectedQuestion].answerList) return false;
-			if (this.getSession.questions[this.selectedQuestion].answerList.length > 0) return true;
+			if (!this.getSession) 
+				return false;
+			if (!this.getSession.questions) 
+				return false;
+			if (!this.getSession.questions[this.selectedQuestion]) 
+				return false;
+			if (!this.getSession.questions[this.selectedQuestion].answerList) 
+				return false;
+			if (this.getSession.questions[this.selectedQuestion].answerList.length > 0) 
+				return true;
 			return false;
 		},
 		getQuestionslength() {
@@ -124,6 +132,14 @@ export default {
 	methods: {
 		changeAnswer(event) {
 			this.selectedAnswer = Number(event.target.id);
+
+			// This is used to change the content of the graphdrawer.
+			let displayQuestion = this.$refs.displayQuestion;
+			if (displayQuestion.$refs.graphdrawerContainer !== undefined) {
+				this.$nextTick(function() {
+					this.$refs.displayQuestion.$refs.graphdrawerContainer.$refs.graphdrawer.createDrawer();
+				});
+			}
 		},
 		changeQuestion(event) {
 			this.selectedQuestion = Number(event.target.id);
