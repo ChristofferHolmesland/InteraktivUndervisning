@@ -116,7 +116,6 @@
 		},
 		sockets: {
 			sendAllQuestionsWithinCourse(questions) {
-				console.log(questions);
 				this.questionList = questions;
 			},
 			questionChangeComplete() {
@@ -148,9 +147,11 @@
 				});
 			},
 			showShowQuestionModal(item) {
-				this.$refs.showQuestionModal.$refs.innerModalShow.show();
 				if (item.time === -1) item.time = 0;
 				this.$refs.showQuestionModal._data.question = item;
+				this.$nextTick(function() {
+					this.$refs.showQuestionModal.$refs.innerModalShow.show();
+				});
 			},
 			showAddQuestionToSessionModal(item) {
 				this.okHandler = "add";
