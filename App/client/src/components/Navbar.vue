@@ -6,7 +6,7 @@
 			<b-collapse is-nav id="nav_collapse">
 
 				<!-- Center aligned nav items -->
-				<b-navbar-nav class="ml-auto" v-if="getUser.loggedIn">
+				<b-navbar-nav class="ml-auto" v-if="getUser.loggedIn" data-cy="adminOptions">
 					<b-nav-item center @click="clientRedirect">{{getLocale.dashboard}}</b-nav-item>
 
 					<b-nav-item center @click="adminRedirect" v-if="getUser.userRights == 4 && getUser.loggedIn">{{getLocale.admin}}</b-nav-item>
@@ -19,11 +19,11 @@
 				<!-- Right aligned nav items -->
 				<b-navbar-nav class="ml-auto">
 
-					<b-nav-item-dropdown :text="getLocale.lang" right class="mr-3">
+					<b-nav-item-dropdown :text="getLocale.lang" right class="mr-3" data-cy="Language">
 						<b-dropdown-item-button @click="localeChange($event)" :id="localeItem" :key="localeItem" v-for="localeItem in getLocaleList"  :value="localeItem">{{localeItem}}</b-dropdown-item-button>
 					</b-nav-item-dropdown>
 
-					<b-nav-item-dropdown right v-if="getUser.loggedIn" :text="getUser.username">
+					<b-nav-item-dropdown right v-if="getUser.loggedIn" :text="getUser.username" data-cy="loginButton">
 						<b-dropdown-item v-if="getUser.userRights > 1" @click="userProfileRedirect">
 							{{getLocale.profile}}
 						</b-dropdown-item>

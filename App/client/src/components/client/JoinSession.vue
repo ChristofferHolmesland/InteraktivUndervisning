@@ -7,7 +7,7 @@
 		</b-row>
 		<b-row align-h="center">
 			<b-col cols="12" class="text-center mb-5">
-				<b-form-input v-model="sessionCode" type="text" :placeholder="getLocale.inputPlaceholder"/>
+				<b-form-input v-model="sessionCode" type="text" :placeholder="getLocale.inputPlaceholder" data-cy="joinSession"/>
 			</b-col>
 		</b-row>
 		<b-row align-h="center">
