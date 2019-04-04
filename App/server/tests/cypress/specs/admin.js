@@ -114,6 +114,9 @@ describe("Test admin content",function () {
 			let choice2 = "The second choice";
 			let choice3 = "The chosen choice";
 			let choice4 = "The chosen choice again :)";
+			let choice1Edited = "The first Edited choice";
+			let choice2Edited = "The second Edited choice";
+			let solutionEdited = "The true chosen element";
 			let titleEdited = "Title Edited Multichoice Test";
 			let infoEdited = "Info Edited Multichoice Test";
 			cy.get('.pl-0 > [data-v-0ae92b14=""][type="button"]').click();
@@ -167,43 +170,58 @@ describe("Test admin content",function () {
 
 			//TODO finish edit and check edit for MultiChoice questions after the solution type bug is fixed
 			//check editfunction works, and then use it to edit the previously made question.
-			/*cy.get('.list-group > :nth-child(5)')
+			cy.get('.list-group > :nth-child(2)')
 				.find(".container")
 				.contains("E")
 				.click();
-			cy.get('#__BVID__32___BV_modal_body_ > form > :nth-child(1) > .row > .col-10 > label').click();
-			cy.get('#__BVID__32___BV_modal_body_ > form > #solutionType > [role="group"] > .px-0 > .row > .col-10 > label').click();
-			cy.get('#__BVID__32___BV_modal_body_ > form > :nth-child(2) > #questionTitle > div > #questionTitleInput')
+			cy.get('#solutionType > [role="group"] > .px-0 > .row > .col-10 > label').click();
+			cy.get('#questionTitleInput')
 				.should("have.value",title)
 				.clear()
 				.type(titleEdited);
-			cy.get('#__BVID__32___BV_modal_body_ > form > :nth-child(2) > #questionText > div > #questionTextInput')
+			cy.get('#questionTextInput')
 				.should("have.value",info)
 				.clear()
 				.type(infoEdited);
-			cy.get("#__BVID__32___BV_modal_body_ > form > :nth-child(2) > #questionTime > [role=\"group\"] > :nth-child(1) > :nth-child(1) > :nth-child(2) > #questionTimeInput").type("00:00");
-			cy.get('#__BVID__32___BV_modal_body_ > form > :nth-child(7) > #textSolution > div > #solutionInput')
-				.should("have.value",solution)
+			cy.get("#questionTimeInput").type("00:00");
+			//cy.get(":nth-child(3) > .col-1 > .custom-control").should("have.attr","checked");
+			//cy.get(":nth-child(4) > .col-1 > .custom-control").should("have.attr","checked");
+			cy.get(":nth-child(4) > .col-2 > .btn").click();
+			cy.get(":nth-child(3) > .col-2 > .btn").click();
+			cy.get('#addNewMultipleChoice').click();
+			cy.get('#multipleChoiceChoices')
+				.find("input#0.form-control")
+				.clear()
+				.type(choice1Edited);
+			cy.get("#multipleChoiceChoices")
+				.find("input#1.form-control")
+				.clear()
+				.type(choice2Edited);
+			cy.get("#multipleChoiceChoices")
+				.find("input#2.form-control")
 				.clear()
 				.type(solutionEdited);
-			cy.get('#__BVID__32___BV_modal_footer_ > .btn-primary').click();
+			cy.get(":nth-child(3) > .col-1 > .custom-control").click();
+			cy.pause();
+			cy.get('#editQuestionModal___BV_modal_footer_ > .btn-primary').click();
 
 			//check that the question has been edited
-			cy.get('.list-group > :nth-child(4)').should("be.visible");
-			cy.get(':nth-child(4) > .container > .row > .col-8').should("contain",titleEdited);
-			cy.get('.list-group > :nth-child(4)')
+			cy.get('.list-group > :nth-child(2)').should("be.visible");
+			cy.get(':nth-child(2) > .container > .row > .col-8').should("contain",titleEdited);
+			cy.get('.list-group > :nth-child(2)')
 				.find(".container")
 				.contains("V")
 				.click();
-			cy.get('#__BVID__47___BV_modal_header_ > .modal-title').should("have.text",titleEdited);
-			cy.get('#__BVID__47___BV_modal_body_ > :nth-child(1)').should("have.text",infoEdited);
-			cy.get('#__BVID__47___BV_modal_body_ > :nth-child(4)').should("have.text",solutionEdited);
-			cy.get('#__BVID__47___BV_modal_body_ > :nth-child(2)').should("have.text","Tid: 00:00");
+			cy.get('#__BVID__29___BV_modal_header_ > .modal-title').should("have.text",titleEdited);
+			cy.get('#__BVID__29___BV_modal_body_ > :nth-child(1)').should("have.text",infoEdited);
+			cy.get('#__BVID__29___BV_modal_body_ > :nth-child(2)').should("have.text","Tid: 00:00");
+			for (let j = j; j <= 3; j++) {
+				if (j === 1)	cy.get("#__BVID__29___BV_modal_body_ > .container > :nth-child(" + j +")").should("contain",choice1Edited);
+				else if(j === 2)	cy.get("#__BVID__29___BV_modal_body_ > .container > :nth-child(" + j +")").should("contain",choice2Edited);
+				else if (j === 3)	cy.get("#__BVID__29___BV_modal_body_ > .container > :nth-child(" + j +")").should("contain",solutionEdited);
+			}
 			cy.wait(1000);
-			cy.get('#__BVID__47___BV_modal_footer_ > .btn-primary').click();
-
-			*/
-
+			cy.get('#__BVID__29___BV_modal_footer_ > .btn-primary').click();
 		});
 		/*
 		it("Create and Edit ShellSort question",function () {
