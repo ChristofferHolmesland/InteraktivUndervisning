@@ -25,10 +25,10 @@
                         />
         <GraphDrawer    v-if="question-solutionType === 7 || 8"
                         controlType="Graph0"
-                        importType="3"
+                        importType="Tree"
                         operatingMode = "Presentation"
                         :steps="question.solution"
-                        displayEdgeValues = "false"
+                        :displayEdgeValues = "false"
         />
         <GraphDrawer    v-if="question.solutionType === 9"
                         ref="graphdrawer"
