@@ -141,13 +141,13 @@ describe("Test admin content",function () {
 			cy.get('#__BVID__43 > :nth-child(1) > .col-2 > .btn')
 				.should("have.text","Slett")
 				.click();
-			cy.get('#__BVID__43').find("input#0.form-control").type(choice1);
-			cy.get("#__BVID__43").find("input#1.form-control").type(choice2);
-			cy.get("#__BVID__43").find("input#2.form-control").type(choice3);
-			cy.get("#__BVID__43").find("input#3.form-control").type(choice4);
-			cy.get(':nth-child(3) > .col-1 > .custom-control').click();
+			cy.get("#multipleChoiceChoices").find("input#0.form-control").type(choice1);
+			cy.get("#multipleChoiceChoices").find("input#1.form-control").type(choice2);
+			cy.get("#multipleChoiceChoices").find("input#2.form-control").type(choice3);
+			cy.get("#multipleChoiceChoices").find("input#3.form-control").type(choice4);
+			cy.get(":nth-child(3) > .col-1 > .custom-control").click();
 			cy.get(":nth-child(4) > .col-1 > .custom-control").click();
-			cy.get('#editQuestionModal___BV_modal_footer_ > .btn-primary').click();
+			cy.get("#editQuestionModal___BV_modal_footer_ > .btn-primary").click();
 
 			//show current question information
 			cy.get('.list-group > :nth-child(2)').should("be.visible");
@@ -202,7 +202,6 @@ describe("Test admin content",function () {
 				.clear()
 				.type(solutionEdited);
 			cy.get(":nth-child(3) > .col-1 > .custom-control").click();
-			cy.pause();
 			cy.get('#editQuestionModal___BV_modal_footer_ > .btn-primary').click();
 
 			//check that the question has been edited
@@ -215,7 +214,7 @@ describe("Test admin content",function () {
 			cy.get('#__BVID__29___BV_modal_header_ > .modal-title').should("have.text",titleEdited);
 			cy.get('#__BVID__29___BV_modal_body_ > :nth-child(1)').should("have.text",infoEdited);
 			cy.get('#__BVID__29___BV_modal_body_ > :nth-child(2)').should("have.text","Tid: 00:00");
-			for (let j = j; j <= 3; j++) {
+			for (let j = 1; j <= 3; j++) {
 				if (j === 1)	cy.get("#__BVID__29___BV_modal_body_ > .container > :nth-child(" + j +")").should("contain",choice1Edited);
 				else if(j === 2)	cy.get("#__BVID__29___BV_modal_body_ > .container > :nth-child(" + j +")").should("contain",choice2Edited);
 				else if (j === 3)	cy.get("#__BVID__29___BV_modal_body_ > .container > :nth-child(" + j +")").should("contain",solutionEdited);
