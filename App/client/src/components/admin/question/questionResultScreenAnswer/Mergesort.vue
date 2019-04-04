@@ -6,6 +6,7 @@
                 :steps="answer"
                 :height="400"
                 :width="500"
+                ref="graphdrawer"
                 />
 </template>
 

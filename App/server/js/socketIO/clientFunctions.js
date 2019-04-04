@@ -15,6 +15,9 @@ module.exports.client = function(socket, db, user, sessions) {
                     session = session.session;
                     let userList = session.userList;
                     for (let i = 0; i < userList.length; i++) {
+                        // Anonymous users doesn't have the feide property
+                        if (userList[i].feide == undefined) continue;
+
                         if (user.feide.idNumber === userList[i].feide.idNumber) {
                             socket.join(sessionCode);
                             if (session.currentQuestion > -1) {
