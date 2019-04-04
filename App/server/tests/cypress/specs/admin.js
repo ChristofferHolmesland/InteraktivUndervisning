@@ -1,4 +1,4 @@
-//NOTE delete the database dev.db before inputing cypress:open in order for these tests to succeed!
+//BVID are unpreditable and most likely should use vue data tags instead
 describe("Test admin content",function () {
 	before(function () {
 		//Cypress.Cookies.preserveOnce("sessionId");
@@ -43,70 +43,70 @@ describe("Test admin content",function () {
 			cy.get('.pl-0 > [data-v-0ae92b14=""][type="button"]').click();
 
 			//check modal information is correct and create a new question by typing information to the input fields and click on the ok button.
-			cy.get("#newQuestionModal___BV_modal_header_ > .modal-title").should("have.text","Nytt spørsmål");
-			let grunnleggendeInformasjon = cy.get("#newQuestionModal___BV_modal_body_ > form > :nth-child(1) > .row > .col-10 > label");
-			grunnleggendeInformasjon.should("contain","Grunnleggende Informasjon");
-			grunnleggendeInformasjon.click();
+			//cy.get("#newQuestionModal___BV_modal_header_ > .modal-title").should("have.text","Nytt spørsmål");
+			cy.get("#editQuestionModal___BV_modal_header_ > .modal-title").should("have.text","Nytt spørsmål");
+			cy.get('form > :nth-child(1) > .row > .col-10').should("contain","Grunnleggende Informasjon");	//is open by default, therefore no clicks are necessary
+
 			cy.get("#questionTitleInput").type(title);
 			cy.get("#questionTextInput").type(info);
 			cy.get("#questionTimeInput").type("01:30");
-			cy.get('#newQuestionModal___BV_modal_body_ > form > #solutionType > [role="group"] > .px-0 > .row > .col-10 > label')
+			cy.get('#solutionType > [role="group"] > .px-0 > .row > .col-10 > label')
 				.should("contain","Løsnings type")
 				.click();
 			cy.get("#solutionTypeInput").select("Text");
 			cy.get("#solutionInput").type(solution);
-			cy.get('#newQuestionModal___BV_modal_footer_ > .btn-primary').click();
+			cy.get('#editQuestionModal___BV_modal_footer_ > .btn-primary').click();
 
 			//show current question information
-			cy.get('.list-group > :nth-child(4)').should("be.visible");
-			cy.get(':nth-child(4) > .container > .row > .col-8').should("contain",title);
-			cy.get('.list-group > :nth-child(4)')
+			cy.get('.list-group > :nth-child(1)').should("be.visible");
+			cy.get(':nth-child(1) > .container > .row > .col-8').should("contain",title);
+			cy.get('.list-group > :nth-child(1)')
 				.find(".container")
 				.contains("V")
 				.click();
-			cy.get('#__BVID__47___BV_modal_header_ > .modal-title').should("have.text",title);
-			cy.get('#__BVID__47___BV_modal_body_ > :nth-child(1)').should("have.text",info);
-			cy.get('#__BVID__47___BV_modal_body_ > :nth-child(2)').should("have.text","Tid: 01:30");
-			cy.get('#__BVID__47___BV_modal_body_ > :nth-child(4)').should("have.text",solution);
+			cy.get('#__BVID__29___BV_modal_header_ > .modal-title').should("have.text",title);
+			cy.get('#__BVID__29___BV_modal_body_ > :nth-child(1)').should("have.text",info);
+			cy.get('#__BVID__29___BV_modal_body_ > :nth-child(2)').should("have.text","Tid: 01:30");
+			cy.get('#__BVID__29___BV_modal_body_ > :nth-child(4)').should("have.text",solution);
 			cy.wait(1000);
-			cy.get('#__BVID__47___BV_modal_footer_ > .btn-primary').click();
+			cy.get('#__BVID__29___BV_modal_footer_ > .btn-primary').click();
 
 			//check editfunction works, and then use it to edit the previously made question.
-			cy.get('.list-group > :nth-child(4)')
+			cy.get('.list-group > :nth-child(1)')
 				.find(".container")
 				.contains("E")
 				.click();
-			cy.get('#__BVID__32___BV_modal_body_ > form > :nth-child(1) > .row > .col-10 > label').click();
-			cy.get('#__BVID__32___BV_modal_body_ > form > #solutionType > [role="group"] > .px-0 > .row > .col-10 > label').click();
-			cy.get('#__BVID__32___BV_modal_body_ > form > :nth-child(2) > #questionTitle > div > #questionTitleInput')
+			cy.get('#solutionType > [role="group"] > .px-0 > .row > .col-10 > label').click();
+			cy.get('#questionTitleInput')
 				.should("have.value",title)
 				.clear()
 				.type(titleEdited);
-			cy.get('#__BVID__32___BV_modal_body_ > form > :nth-child(2) > #questionText > div > #questionTextInput')
+			cy.get('#questionTextInput')
 				.should("have.value",info)
 				.clear()
 				.type(infoEdited);
-			cy.get("#__BVID__32___BV_modal_body_ > form > :nth-child(2) > #questionTime > [role=\"group\"] > :nth-child(1) > :nth-child(1) > :nth-child(2) > #questionTimeInput").type("00:00");
-			cy.get('#__BVID__32___BV_modal_body_ > form > :nth-child(7) > #textSolution > div > #solutionInput')
+			cy.get("#questionTimeInput").type("00:00");
+			cy.get('#solutionInput')
 				.should("have.value",solution)
 				.clear()
 				.type(solutionEdited);
-			cy.get('#__BVID__32___BV_modal_footer_ > .btn-primary').click();
+			cy.get('#editQuestionModal___BV_modal_footer_ > .btn-primary').click();
 
 			//check that the question has been edited
-			cy.get('.list-group > :nth-child(4)').should("be.visible");
-			cy.get(':nth-child(4) > .container > .row > .col-8').should("contain",titleEdited);
-			cy.get('.list-group > :nth-child(4)')
+			cy.get('.list-group > :nth-child(1)').should("be.visible");
+			cy.get(':nth-child(1) > .container > .row > .col-8').should("contain",titleEdited);
+			cy.get('.list-group > :nth-child(1)')
 				.find(".container")
 				.contains("V")
 				.click();
-			cy.get('#__BVID__47___BV_modal_header_ > .modal-title').should("have.text",titleEdited);
-			cy.get('#__BVID__47___BV_modal_body_ > :nth-child(1)').should("have.text",infoEdited);
-			cy.get('#__BVID__47___BV_modal_body_ > :nth-child(4)').should("have.text",solutionEdited);
-			cy.get('#__BVID__47___BV_modal_body_ > :nth-child(2)').should("have.text","Tid: 00:00");
+			cy.get('#__BVID__29___BV_modal_header_ > .modal-title').should("have.text",titleEdited);
+			cy.get('#__BVID__29___BV_modal_body_ > :nth-child(1)').should("have.text",infoEdited);
+			cy.get('#__BVID__29___BV_modal_body_ > :nth-child(4)').should("have.text",solutionEdited);
+			cy.get('#__BVID__29___BV_modal_body_ > :nth-child(2)').should("have.text","Tid: 00:00");
 			cy.wait(1000);
-			cy.get('#__BVID__47___BV_modal_footer_ > .btn-primary').click();
+			cy.get('#__BVID__29___BV_modal_footer_ > .btn-primary').click();
 		});
+
 		it("Create and Edit Multichoice question",function () {
 			let title = "Title Multichoice Test";
 			let info = "Info Multichoice Test";
@@ -119,14 +119,12 @@ describe("Test admin content",function () {
 			cy.get('.pl-0 > [data-v-0ae92b14=""][type="button"]').click();
 
 			//create multi choice question
-			cy.get("#newQuestionModal___BV_modal_header_ > .modal-title").should("have.text","Nytt spørsmål");
-			let grunnleggendeInformasjon = cy.get("#newQuestionModal___BV_modal_body_ > form > :nth-child(1) > .row > .col-10 > label");
-			grunnleggendeInformasjon.should("contain","Grunnleggende Informasjon");
-			grunnleggendeInformasjon.click();
+			cy.get("#editQuestionModal___BV_modal_header_ > .modal-title").should("have.text","Nytt spørsmål");
+			cy.get('form > :nth-child(1) > .row > .col-10 > label').should("contain","Grunnleggende Informasjon");
 			cy.get("#questionTitleInput").type(title);
 			cy.get("#questionTextInput").type(info);
 			cy.get("#questionTimeInput").type("02:00");
-			cy.get('#newQuestionModal___BV_modal_body_ > form > #solutionType > [role="group"] > .px-0 > .row > .col-10 > label')
+			cy.get('#editQuestionModal___BV_modal_body_ > form > #solutionType > [role="group"] > .px-0 > .row > .col-10 > label')
 				.should("contain","Løsnings type")
 				.click();
 			cy.get("#solutionTypeInput").select("Multiple choice");
@@ -137,35 +135,35 @@ describe("Test admin content",function () {
 				.click()
 				.click()
 				.click();
-			cy.get('#__BVID__62 > :nth-child(1) > .col-2 > .btn')
+			cy.get('#__BVID__43 > :nth-child(1) > .col-2 > .btn')
 				.should("have.text","Slett")
 				.click();
-			cy.get('#__BVID__62').find("input#0.form-control").type(choice1);
-			cy.get("#__BVID__62").find("input#1.form-control").type(choice2);
-			cy.get("#__BVID__62").find("input#2.form-control").type(choice3);
-			cy.get("#__BVID__62").find("input#3.form-control").type(choice4);
+			cy.get('#__BVID__43').find("input#0.form-control").type(choice1);
+			cy.get("#__BVID__43").find("input#1.form-control").type(choice2);
+			cy.get("#__BVID__43").find("input#2.form-control").type(choice3);
+			cy.get("#__BVID__43").find("input#3.form-control").type(choice4);
 			cy.get(':nth-child(3) > .col-1 > .custom-control').click();
 			cy.get(":nth-child(4) > .col-1 > .custom-control").click();
-			cy.get('#newQuestionModal___BV_modal_footer_ > .btn-primary').click();
+			cy.get('#editQuestionModal___BV_modal_footer_ > .btn-primary').click();
 
 			//show current question information
-			cy.get('.list-group > :nth-child(5)').should("be.visible");
-			cy.get(':nth-child(5) > .container > .row > .col-8').should("contain",title);
-			cy.get('.list-group > :nth-child(5)')
+			cy.get('.list-group > :nth-child(2)').should("be.visible");
+			cy.get(':nth-child(2) > .container > .row > .col-8').should("contain",title);
+			cy.get('.list-group > :nth-child(2)')
 				.find(".container")
 				.contains("V")
 				.click();
-			cy.get('#__BVID__47___BV_modal_header_ > .modal-title').should("have.text",title);
-			cy.get('#__BVID__47___BV_modal_body_ > :nth-child(1)').should("have.text",info);
-			cy.get('#__BVID__47___BV_modal_body_ > :nth-child(2)').should("have.text","Tid: 02:00");
+			cy.get('#__BVID__29___BV_modal_header_ > .modal-title').should("have.text",title);
+			cy.get('#__BVID__29___BV_modal_body_ > :nth-child(1)').should("have.text",info);
+			cy.get('#__BVID__29___BV_modal_body_ > :nth-child(2)').should("have.text","Tid: 02:00");
 			for (let i = 1; i <= 4; i++) {
-				if (i === 1)	cy.get("#__BVID__47___BV_modal_body_ > .container > :nth-child(" +i+")").should("contain",choice1);
-				else if(i === 2)	cy.get("#__BVID__47___BV_modal_body_ > .container > :nth-child(" +i+")").should("contain",choice2);
-				else if (i === 3)	cy.get("#__BVID__47___BV_modal_body_ > .container > :nth-child(" +i+")").should("contain",choice3);
-				else if (i === 4)	cy.get("#__BVID__47___BV_modal_body_ > .container > :nth-child(" +i+")").should("contain",choice4);
+				if (i === 1)	cy.get("#__BVID__29___BV_modal_body_ > .container > :nth-child(" +i+")").should("contain",choice1);
+				else if(i === 2)	cy.get("#__BVID__29___BV_modal_body_ > .container > :nth-child(" +i+")").should("contain",choice2);
+				else if (i === 3)	cy.get("#__BVID__29___BV_modal_body_ > .container > :nth-child(" +i+")").should("contain",choice3);
+				else if (i === 4)	cy.get("#__BVID__29___BV_modal_body_ > .container > :nth-child(" +i+")").should("contain",choice4);
 			}
 			cy.wait(1000);
-			cy.get('#__BVID__47___BV_modal_footer_ > .btn-primary').click();
+			cy.get('#__BVID__29___BV_modal_footer_ > .btn-primary').click();
 
 			//TODO finish edit and check edit for MultiChoice questions after the solution type bug is fixed
 			//check editfunction works, and then use it to edit the previously made question.
@@ -203,11 +201,11 @@ describe("Test admin content",function () {
 			cy.get('#__BVID__47___BV_modal_body_ > :nth-child(2)').should("have.text","Tid: 00:00");
 			cy.wait(1000);
 			cy.get('#__BVID__47___BV_modal_footer_ > .btn-primary').click();
+
 			*/
 
-
 		});
-
+		/*
 		it("Create and Edit ShellSort question",function () {
 			let title = "Title ShellSort Test";
 			let info = "Info ShellSort Test";
@@ -308,7 +306,7 @@ describe("Test admin content",function () {
 			cy.get('#__BVID__47___BV_modal_body_ > :nth-child(2)').should("have.text","Tid: "+time);
 			cy.wait(1000);
 			cy.get('#__BVID__47___BV_modal_footer_ > .btn-primary').click();
-			*/
+
 		});
 
 		it("Create and Edit QuickSort question",function () {
@@ -351,7 +349,7 @@ describe("Test admin content",function () {
 			cy.get('#__BVID__47___BV_modal_footer_ > .btn-primary').click();
 
 			//TODO finish edit and showEdit test to QuickSort
-			/*cy.get('#sortingSolution__BV_label_').should("has.text","Starting array (elements seperated by ,)");
+			cy.get('#sortingSolution__BV_label_').should("has.text","Starting array (elements seperated by ,)");
 			cy.get('#kValue__BV_label_').should("has.text","K start value");
 			cy.get('#sortingSolution > :nth-child(2) > #solutionInput').type(arrayValues);
 			cy.get('#kValueInput').type(k);
@@ -370,6 +368,6 @@ describe("Test admin content",function () {
 			cy.wait(1000);
 			cy.get('#__BVID__47___BV_modal_footer_ > .btn-primary').click();
 			*/
-		});
+		//});
 	});
 });
