@@ -24,7 +24,8 @@
                         operatingMode="Presentation"
                         />
         <GraphDrawer    v-if="question-solutionType === 7 || 8"
-                        control-type="Tree"
+                        controlType="Graph0"
+                        importType="3"
                         operatingMode = "Presentation"
                         :steps="question.solution"
                         displayEdgeValues = "false"
