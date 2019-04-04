@@ -592,9 +592,6 @@ export default class Python {
 			]);
 		}
 
-		console.log("STEP");
-		console.log(step);
-
 		this.gd.centerCameraOnGraph();
 	}
 
