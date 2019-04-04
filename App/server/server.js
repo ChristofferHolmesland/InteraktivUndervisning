@@ -13,10 +13,11 @@ const dbFunctions = require("./js/database/databaseFunctions").dbFunctions;
 
 // Imports and checks environment variables
 const env = require('./js/environment.js');
-if(!env.load()) { return; }
-if(!env.validate()) { return; }
+if (!env.load()) { return; }
+if (!env.validate()) { return; }
 
-const admins = process.env.ADMINS.split(",");
+var admins = [];
+if (process.env.ADMINS.length > 0) admins = process.env.ADMINS.split(",");
 
 const app = express();
 const port = process.env.PORT || 8081;
@@ -92,7 +93,8 @@ app.get('/login/callback/feide', passport.authenticate('passport-openid-connect'
     temp = temp.split("@");
     temp = temp[0].split(":");
     let idNumber = temp[1];
-	let admin = 2;
+    let admin = 2;
+    console.log(admins)
 	if (admins.indexOf(idNumber) > -1) admin = 4;
     
     dbFunctions.get.userRightByFeideId(db, idNumber).then((rows) => {
