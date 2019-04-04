@@ -57,8 +57,6 @@ module.exports.feide = function(socket, db, user){
                 result.totalDidntKnowAnswers = "Not available at this time."
             });
 
-            console.log(result);
-
             socket.emit("getUserStatsResponse", result);
         }).catch((err) => {
             console.error(err);
