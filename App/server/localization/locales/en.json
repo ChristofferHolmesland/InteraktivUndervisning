@@ -73,7 +73,8 @@
     "DisplayQuestion": {
         "question": "Question",
         "solution": "Solution",
-        "answer": "Answer"
+        "answer": "Answer",
+        "binaryTreeSolutionText": "The answer would be correct if the drawn tree fulfilled the requirements of a binary tree and consisted of the following nodes:"
     },
     "Navbar": {
         "lang": "Language",

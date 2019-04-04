@@ -73,7 +73,8 @@
     "DisplayQuestion": {
         "question": "Spørsmål",
         "solution": "Løsning",
-        "answer": "Svar"
+        "answer": "Svar",
+        "binaryTreeSolutionText": "Det ville blitt regnet som riktig svar hvis treet som ble gitt følger alle reglene til et Binear Tree og treet besto av følgende noder:"
     },
     "Navbar": {
         "lang": "Språk",

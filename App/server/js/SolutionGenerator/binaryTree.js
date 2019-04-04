@@ -3,9 +3,10 @@ const Tree = trees.Tree;
 const BinaryTreeNode = trees.BinaryTreeNode;
 
 module.exports = function(question) {
-    let binaryTree = new Tree(new BinaryTreeNode(question.objects.treeElements[0]));
-    binaryTree.nodes = question.objects.treeElements;
-    question.solution = binaryTree;
-    
-    return question;
+	let array = question.objects.treeElements.split(",");
+	console.log(array);
+	let binaryTree = new Tree(new BinaryTreeNode(array[0]));
+	binaryTree.nodes = array;
+	question.solution = binaryTree;
+	return question;
 };
