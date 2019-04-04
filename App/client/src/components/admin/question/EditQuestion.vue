@@ -284,6 +284,7 @@
                                  v-model="newQuestion.objects.treeElements">
                 </b-form-input>
                 <GraphDrawer
+                    ref="graphdrawer"
                     @getValueResponse="gotTreeDrawerObject"
                     :requestAnswer="requestGraphDrawerObject"
                     controlType="Graph0"
@@ -297,7 +298,8 @@
                     id="dijkstraSolution"
                     label="Draw the graph, and mark start (green) and end (red) nodes"
                     v-if="newQuestion.solutionType === 9">
-                <GraphDrawer 
+                <GraphDrawer
+                    ref="graphdrawer"
                     @getValueResponse="gotGraphDrawerObject" 
                     :requestAnswer="requestGraphDrawerObject" 
                     controlType="Graph0"
@@ -397,6 +399,12 @@
                 this.mediaTypes = this.getLocale.mediaTypes;
                 this.selectedMediaType = this.mediaTypes[0].value;
                 if (this.question !== undefined) this.newQuestion = this.question;
+
+                if (this.$refs.graphdrawer !== undefined) {
+                    this.$nextTick(function() {
+                        this.$refs.graphdrawer.createDrawer();
+                    });
+                }
             });
         },
         methods: {
