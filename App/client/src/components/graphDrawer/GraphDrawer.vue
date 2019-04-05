@@ -60,51 +60,56 @@
             }
         },
         mounted() {
-            let c = document.getElementById("canvas");
+            this.createDrawer();
+        },
+        methods: {
+            createDrawer: function() {
+                let c = document.getElementById("canvas");
 
-            let nodeShape = "Circle";
-            if (this.controlType == "Sort" || this.controlType == "Python") {
-                nodeShape = "Rectangle"
-            }
-
-            this.graphDrawer = new GraphDrawer(c, {
-                nodeShape: nodeShape,
-                controlType: this.controlType,
-                operatingMode: this.operatingMode,
-                displayEdgeValues: this.displayEdgeValues,
-                directedEdges: this.directedEdges,
-
-                dijkstra: {
-                    startColor: "LightGreen",
-                    endColor: "LightCoral",
-                    edgeColor: "LightGray",
-                    graph: this.graph,
-                    steps: this.steps
-                },
-
-                graph: {
-                    exportType: this.exportType,
-                    subType: this.subType,
-                    startNodeColor: "LightGreen",
-                    endNodeColor: "LightCoral",
-                    steps: this.steps,
-                    importType: this.importType
-                },
-                
-                sort: {
-                    sortType: this.sortType,
-                    bsf: 2.75,
-                    pivotColor: "#add8e6",
-                    selectedColor: "red",
-                    extractType: "xSorter",
-                    joinType: "vSorter",
-                    steps: this.steps
-                },
-
-                python: {
-                    steps: this.steps
+                let nodeShape = "Circle";
+                if (this.controlType == "Sort" || this.controlType == "Python") {
+                    nodeShape = "Rectangle"
                 }
-            });
+
+                this.graphDrawer = new GraphDrawer(c, {
+                    nodeShape: nodeShape,
+                    controlType: this.controlType,
+                    operatingMode: this.operatingMode,
+                    displayEdgeValues: this.displayEdgeValues,
+                    directedEdges: this.directedEdges,
+
+                    dijkstra: {
+                        startColor: "LightGreen",
+                        endColor: "LightCoral",
+                        edgeColor: "LightGray",
+                        graph: this.graph,
+                        steps: this.steps
+                    },
+
+                    graph: {
+                        exportType: this.exportType,
+                        subType: this.subType,
+                        startNodeColor: "LightGreen",
+                        endNodeColor: "LightCoral",
+                        steps: this.steps,
+                        importType: this.importType
+                    },
+                    
+                    sort: {
+                        sortType: this.sortType,
+                        bsf: 2.75,
+                        pivotColor: "#add8e6",
+                        selectedColor: "red",
+                        extractType: "xSorter",
+                        joinType: "vSorter",
+                        steps: this.steps
+                    },
+
+                    python: {
+                        steps: this.steps
+                    }
+                });
+            }
         }
     }
 

@@ -168,159 +168,163 @@
 				</b-container>
 			</b-form-group>
 
-			<hr>
-			
-			<b-form-group 	id="solutionType">
-				<b-container   class="px-0"
-								@click="changeShowSolution"
-								style="cursor: pointer;">
-					<b-row>
-						<b-col cols="10" style="text-align: left;">
-							<label  for="solutionTypeInput"
-									style="cursor: pointer;">
-								{{getLocale.newQuestionSolutionType}}
-							</label>
-						</b-col>
-						<b-col cols="2" style="text-align: right;">
-							<p v-if="showSolution">^</p>
-							<p v-else>V</p>
-						</b-col>
-					</b-row>
-				</b-container>
-				<div v-show="showSolution">
-					<b-form-select 	id="solutionTypeInput"
-									:options="getSolutionTypes"
-									v-model="newQuestion.solutionType">
-					</b-form-select>
-				</div>
-			</b-form-group>
-			<div v-show="showSolution">
-				<b-form-group 	id="textSolution"
-								:label="getLocale.newQuestionSolution"
-								label-for="solutionInput"
-								v-if="newQuestion.solutionType === 1">
-					<b-form-input 	id="solutionInput"
-									type="text"
-									v-model="newQuestion.solution">
-					</b-form-input>
-				</b-form-group>
-				<b-form-group   id="multipleChoiceChoices"
-								v-if="newQuestion.solutionType === 2">
-					<b-col cols="12">
-						<b-row>
-							<b-col cols="6" class="px-0">
-								<label>{{getLocale.multipleChoiceHeader}}</label>
-							</b-col>
-							<b-col cols="6" class="px-0">
-								<b-button @click="addNewMultipleChoice" id="addNewMultipleChoice" class="float-right">
-									{{getLocale.addNewMultipleChoice}}
-								</b-button>
-							</b-col>
-						</b-row>
-						<b-row>
-							<b-col cols="12" class="px-0 mt-2">
-								<b-form-checkbox-group v-model="newQuestion.solution">
-									<b-row  v-for="(choice, index) in newQuestion.objects.multipleChoices"
-											:key="index"
-											class="mb-2">
-										<b-col cols="9">
-											<b-form-input   :id="index.toString()"
-															v-model="newQuestion.objects.multipleChoices[index]"
-															>          
-											</b-form-input>
-										</b-col>
-										<b-col cols="1">
-											<b-form-checkbox :value="index.toString()"/>
-										</b-col>
-										<b-col cols="2">
-											<b-button @click="deleteMultiChoice(index)">{{getLocale.multipleChoiceDeleteBtn}}</b-button>
-										</b-col>
-									</b-row>
-								</b-form-checkbox-group>
-							</b-col>
-						</b-row>
-					</b-col>
-				</b-form-group>
-				<b-form-group 	id="sortingSolution"
-								label="Starting array (elements seperated by ,)"
-								label-for="solutionInput"
-								v-if="newQuestion.solutionType < 6 && newQuestion.solutionType > 2">
-					<b-form-input 	id="solutionInput"
-									type="text"
-									v-model="newQuestion.objects.startingArray">
-					</b-form-input>
-					<b-form-group   id="kValue"
-									label="K start value"
-									label-for="kValueInput"
-									v-if="newQuestion.solutionType === 3">
-						<b-form-input   id="kValueInput"
-										type="text"
-										v-model="newQuestion.objects.kValue">
-						</b-form-input>
-					</b-form-group>
-				</b-form-group>
-				<b-form-group
-					id="BinaryTree"
-					label="List the nodes that are going to be used in the binary tree. Elements are divided by , and [] are not required)"
-					v-if="newQuestion.solutionType === 6"
-					>
-				<b-form-input   id="nodeElements"
-								type="text"
-								v-model="newQuestion.objects.treeElements"
-								>
-				</b-form-input>
-			</b-form-group>
-			<b-form-group
-					id="BinarySearchTrees"
-					label="Draw the tree, or give an array to build the solution tree"
-					v-if="newQuestion.solutionType === 7 || newQuestion.solutionType === 8"
-					>
-				<label for="Add">Add</label><input type="radio" id="Add" v-model="newQuestion.objects.solutionTreeType" value="Add" /><br/>
-				<label for="Remove">Remove</label><input type="radio" id="Remove" v-model="newQuestion.objects.solutionTreeType" value="Remove"/>
-				<label v-if="newQuestion.objects.solutionTreeType === 'Add'" for="solutionListElements">Input elements to be added to the tree. The elements are seperated by ,</label>
-				<label v-else-if="newQuestion.objects.solutionTreeType === 'Remove'" for="solutionListElements">Input elements to be removed from the tree. The elements are seperated by ,</label>
-				<b-form-input 	id="solutionListElements"
-								 type="text"
-								 v-model="newQuestion.objects.treeElements">
-				</b-form-input>
-				<GraphDrawer
-					@getValueResponse="gotTreeDrawerObject"
-					:requestAnswer="requestGraphDrawerObject"
-					control-type="Graph0"
-					export-type="Both"
-					operationMode="Interactive"
-					import-type="Graph"
-					:steps="this.newQuestion.objects._graphdrawerGraph"
-				/>
-			</b-form-group>
-			<b-form-group 	
-					id="dijkstraSolution"
-					label="Draw the graph, and mark start (green) and end (red) nodes"
-					v-if="newQuestion.solutionType === 9">
-				<GraphDrawer 
-					@getValueResponse="gotGraphDrawerObject" 
-					:requestAnswer="requestGraphDrawerObject" 
-					controlType="Graph0"
-					subType="Dijkstra"
-					exportType="Graph"
-					operatingMode="Interactive"
-					/>
-			</b-form-group>
-			<b-form-group 	id="pythonSolution"
-							:label="getLocale.newQuestionSolution"
-							label-for="solutionInput"
-							v-if="newQuestion.solutionType === 10">
-				<div v-show="checkRef">klar</div>
-					<b-form-textarea 	id="pythonCodeInput"
-										placeholder="Write Python code here..."
-										v-model="newQuestion.objects.code"
-										ref="codeInput"
-										@keydown.native.tab="keyDownInTextarea">
-					</b-form-textarea>
-			</b-form-group>
-			</div>
-		</b-form>
-	</b-modal>
+            <hr>
+            
+            <b-form-group 	id="solutionType">
+                <b-container   class="px-0"
+                                @click="changeShowSolution"
+                                style="cursor: pointer;">
+                    <b-row>
+                        <b-col cols="10" style="text-align: left;">
+                            <label  for="solutionTypeInput"
+                                    style="cursor: pointer;">
+                                {{getLocale.newQuestionSolutionType}}
+                            </label>
+                        </b-col>
+                        <b-col cols="2" style="text-align: right;">
+                            <p v-if="showSolution">^</p>
+                            <p v-else>V</p>
+                        </b-col>
+                    </b-row>
+                </b-container>
+                <div v-show="showSolution">
+                    <b-form-select 	id="solutionTypeInput"
+                                    :options="getSolutionTypes"
+                                    v-model="newQuestion.solutionType">
+                    </b-form-select>
+                    {{getSolutionType}}
+                </div>
+            </b-form-group>
+            <div v-show="showSolution">
+                <b-form-group 	id="textSolution"
+                                :label="getLocale.newQuestionSolution"
+                                label-for="solutionInput"
+                                v-if="newQuestion.solutionType === 1">
+                    <b-form-input 	id="solutionInput"
+                                    type="text"
+                                    v-model="newQuestion.solution">
+                    </b-form-input>
+                </b-form-group>
+                <b-form-group   id="multipleChoiceChoices"
+                                v-if="newQuestion.solutionType === 2">
+                    <b-col cols="12">
+                        <b-row>
+                            <b-col cols="6" class="px-0">
+                                <label>{{getLocale.multipleChoiceHeader}}</label>
+                            </b-col>
+                            <b-col cols="6" class="px-0">
+                                <b-button @click="addNewMultipleChoice" id="addNewMultipleChoice" class="float-right">
+                                    {{getLocale.addNewMultipleChoice}}
+                                </b-button>
+                            </b-col>
+                        </b-row>
+                        <b-row>
+                            <b-col cols="12" class="px-0 mt-2">
+                                <b-form-checkbox-group v-model="newQuestion.solution">
+                                    <b-row  v-for="(choice, index) in newQuestion.objects.multipleChoices"
+                                            :key="index"
+                                            class="mb-2">
+                                        <b-col cols="9">
+                                            <b-form-input   :id="index.toString()"
+                                                            v-model="newQuestion.objects.multipleChoices[index]"
+                                                            >          
+                                            </b-form-input>
+                                        </b-col>
+                                        <b-col cols="1">
+                                            <b-form-checkbox :value="index.toString()"/>
+                                        </b-col>
+                                        <b-col cols="2">
+                                            <b-button @click="deleteMultiChoice(index)">{{getLocale.multipleChoiceDeleteBtn}}</b-button>
+                                        </b-col>
+                                    </b-row>
+                                </b-form-checkbox-group>
+                            </b-col>
+                        </b-row>
+                    </b-col>
+                </b-form-group>
+                <b-form-group 	id="sortingSolution"
+                                label="Starting array (elements seperated by ,)"
+                                label-for="solutionInput"
+                                v-if="newQuestion.solutionType < 6 && newQuestion.solutionType > 2">
+                    <b-form-input 	id="solutionInput"
+                                    type="text"
+                                    v-model="newQuestion.objects.startingArray">
+                    </b-form-input>
+                    <b-form-group   id="kValue"
+                                    label="K start value"
+                                    label-for="kValueInput"
+                                    v-if="newQuestion.solutionType === 3">
+                        <b-form-input   id="kValueInput"
+                                        type="text"
+                                        v-model="newQuestion.objects.kValue">
+                        </b-form-input>
+                    </b-form-group>
+                </b-form-group>
+                <b-form-group
+                    id="BinaryTree"
+                    label="List the nodes that are going to be used in the binary tree. Elements are divided by , and [] are not required)"
+                    v-if="newQuestion.solutionType === 6"
+                    >
+                <b-form-input   id="nodeElements"
+                                type="text"
+                                v-model="newQuestion.objects.treeElements"
+                                >
+                </b-form-input>
+            </b-form-group>
+            <b-form-group
+                    id="BinarySearchTrees"
+                    label="Draw the tree, or give an array to build the solution tree"
+                    v-if="newQuestion.solutionType === 7 || newQuestion.solutionType === 8"
+                    >
+                <label for="Add">Add</label><input type="radio" id="Add" v-model="newQuestion.objects.solutionTreeType" value="Add" /><br/>
+                <label for="Remove">Remove</label><input type="radio" id="Remove" v-model="newQuestion.objects.solutionTreeType" value="Remove"/>
+                <label v-if="newQuestion.objects.solutionTreeType === 'Add'" for="solutionListElements">Input elements to be added to the tree. The elements are seperated by ,</label>
+                <label v-else-if="newQuestion.objects.solutionTreeType === 'Remove'" for="solutionListElements">Input elements to be removed from the tree. The elements are seperated by ,</label>
+                <b-form-input 	id="solutionListElements"
+                                 type="text"
+                                 v-model="newQuestion.objects.treeElements">
+                </b-form-input>
+                <GraphDrawer
+                    @getValueResponse="gotTreeDrawerObject"
+                    :requestAnswer="requestGraphDrawerObject"
+                    controlType="Graph0"
+                    exportType="Both"
+                    operationMode="Interactive"
+                    importType="Graph"
+                    :steps="this.newQuestion.objects._graphdrawerGraph"
+                />
+            </b-form-group>
+            <b-form-group 	
+                    id="dijkstraSolution"
+                    label="Draw the graph, and mark start (green) and end (red) nodes"
+                    v-if="newQuestion.solutionType === 9">
+                <GraphDrawer 
+                    @getValueResponse="gotGraphDrawerObject" 
+                    :requestAnswer="requestGraphDrawerObject" 
+                    controlType="Graph0"
+                    importType="Graph"
+                    subType="Dijkstra"
+                    exportType="Graph"
+                    :displayEdgeValues="true"
+                    operatingMode="Interactive"
+                    :steps="this.newQuestion.objects._graphdrawerGraph"
+                    />
+            </b-form-group>
+            <b-form-group 	id="pythonSolution"
+                            :label="getLocale.newQuestionSolution"
+                            label-for="solutionInput"
+                            v-if="newQuestion.solutionType === 10">
+                <div v-show="checkRef">klar</div>
+                    <b-form-textarea 	id="pythonCodeInput"
+                                        placeholder="Write Python code here..."
+                                        v-model="newQuestion.objects.code"
+                                        ref="codeInput"
+                                        @keydown.native.tab="keyDownInTextarea">
+                    </b-form-textarea>
+            </b-form-group>
+            </div>
+        </b-form>
+    </b-modal>
 </template>
 
 <script>
@@ -423,8 +427,7 @@ export default {
 				filesSize += file.size;
 			}
 			if (filesSize < 500000) this.showMediaWarning = false;
-		},
-		assignState() {
+		},assignState() {
 			let n = initializeState();
 			for (let p in n) {
 				if (n.hasOwnProperty(p)) {
@@ -443,63 +446,47 @@ export default {
 			let files = [];
 			Array.prototype.push.apply(files, event.target.files);
 			let storedFiles = this.newQuestion.objects.files;
+			
+			let fileType = file.type.split("/");
+			if (fileType[0] !== "image") {
+				files.splice(i, 1);
+				i--;
+				fileTypeErr++;
+				this.showMediaError = true;
+				this.mediaErrorText =
+					fileTypeErr.toString() +
+					this.getLocale.mediaErrorFileType;
+				continue;
+			}
 
-			let totalFilesSize = 0;
-			let errorFileSize = 1500000;
-			let warningFileSize = 500000;
-			for (let i = 0; i < storedFiles.length; i++)
-				totalFilesSize += storedFiles[i].size;
-			let fileTypeErr = 0;
+			totalFilesSize += file.size;
+			if (totalFilesSize > errorFileSize) {
+				event.target.value = "";
+				this.showMediaError = true;
+				if (fileTypeErr > 0)
+					this.mediaErrorText +=
+						"\n\n" + this.getLocale.mediaErrorFileSize;
+				else
+					this.mediaErrorText = this.getLocale.mediaErrorFileSize;
+			} else if (totalFilesSize > warningFileSize) {
+				this.showMediaWarning = true;
+				this.mediaWarningText = this.getLocale.mediaWarningFileSize;
+			} else {
+				if (fileTypeErr === 0) {
+					this.showMediaError = false;
+				}
+				this.showMediaWarning = false;
+			}
 
-			for (let i = 0; i < files.length; i++) {
-				let file = files[i];
-				let fileObject = {
-					name: file.name,
-					size: file.size,
-					type: file.type
+			if (fileTypeErr === 0 && totalFilesSize < errorFileSize) {
+				let callbackFunction = function(e) {
+					fileObject.buffer = btoa(e.target.result);
+					storedFiles.push(fileObject);
 				};
 
-				let fileType = file.type.split("/");
-				if (fileType[0] !== "image") {
-					files.splice(i, 1);
-					i--;
-					fileTypeErr++;
-					this.showMediaError = true;
-					this.mediaErrorText =
-						fileTypeErr.toString() +
-						this.getLocale.mediaErrorFileType;
-					continue;
-				}
-
-				totalFilesSize += file.size;
-				if (totalFilesSize > errorFileSize) {
-					event.target.value = "";
-					this.showMediaError = true;
-					if (fileTypeErr > 0)
-						this.mediaErrorText +=
-							"\n\n" + this.getLocale.mediaErrorFileSize;
-					else
-						this.mediaErrorText = this.getLocale.mediaErrorFileSize;
-				} else if (totalFilesSize > warningFileSize) {
-					this.showMediaWarning = true;
-					this.mediaWarningText = this.getLocale.mediaWarningFileSize;
-				} else {
-					if (fileTypeErr === 0) {
-						this.showMediaError = false;
-					}
-					this.showMediaWarning = false;
-				}
-
-				if (fileTypeErr === 0 && totalFilesSize < errorFileSize) {
-					let callbackFunction = function(e) {
-						fileObject.buffer = btoa(e.target.result);
-						storedFiles.push(fileObject);
-					};
-
-					let reader = new FileReader();
-					reader.onload = callbackFunction;
-					reader.readAsBinaryString(file);
-				}
+				let reader = new FileReader();
+				reader.onload = callbackFunction;
+				reader.readAsBinaryString(file);
 			}
 
 			event.target.value = "";
@@ -701,7 +688,6 @@ export default {
 	watch: {
 		"newQuestion.solutionType": function(newType) {
 			if (newType === 1) this.newQuestion.solution = "";
-			else if (newType === 2) this.newQuestion.solution = [];
 		}
 	}
 };
