@@ -23,6 +23,14 @@
                         :steps="question.solution"
                         operatingMode="Presentation"
                         />
+        <GraphDrawer    v-if="question.solutionType === 7 || question.solutionType === 8"
+                        ref="graphdrawer"
+                        controlType="Graph0"
+                        importType="Tree"
+                        operatingMode = "Presentation"
+                        :steps="question.solution"
+                        :displayEdgeValues = "false"
+        />
         <GraphDrawer    v-if="question.solutionType === 9"
                         ref="graphdrawer"
                         controlType="Dijkstra"

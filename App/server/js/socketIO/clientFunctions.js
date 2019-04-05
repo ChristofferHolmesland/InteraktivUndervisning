@@ -4,23 +4,26 @@ const solutionChecker = require("../SolutionChecker/solutionChecker.js").solutio
 
 module.exports.client = function(socket, db, user, sessions) {
 
-	socket.on("verifySessionExists", function(sessionCode) {
-		let session = sessions.get(sessionCode);
-		if (session === undefined) {
-			socket.emit("verifySessionExistsError");
-		}
-		else {
-			if (user !== undefined) {
-				if (user.feide !== undefined) {
-					session = session.session;
-					let userList = session.userList;
-					for (let i = 0; i < userList.length; i++) {
-						if (user.feide.idNumber === userList[i].feide.idNumber) {
-							socket.join(sessionCode);
-							if (session.currentQuestion > -1) {
-								let answerList = session.questionList[session.currentQuestion].answerList;
-								let answered = false;
-								let answer = {}
+    socket.on("verifySessionExists", function(sessionCode) {
+        let session = sessions.get(sessionCode);
+        if (session === undefined) {
+            socket.emit("verifySessionExistsError");
+        }
+        else {
+            if (user !== undefined) {
+                if (user.feide !== undefined) {
+                    session = session.session;
+                    let userList = session.userList;
+                    for (let i = 0; i < userList.length; i++) {
+                        // Anonymous users doesn't have the feide property
+                        if (userList[i].feide == undefined) continue;
+
+                        if (user.feide.idNumber === userList[i].feide.idNumber) {
+                            socket.join(sessionCode);
+                            if (session.currentQuestion > -1) {
+                                let answerList = session.questionList[session.currentQuestion].answerList;
+                                let answered = false;
+                                let answer = {}
 
 								if (answered) {
 									
@@ -87,50 +90,50 @@ module.exports.client = function(socket, db, user, sessions) {
                 console.error(err);
             });
 
-			await dbFunctions.get.sessionHasUserByUserId(db, userId).then((row) => {
-				let session = sessions.get(sessionCode).session;
-				if (!row) dbFunctions.insert.addUserToSession(db, userId, session.id);
-				
-				let question = session.questionList[session.currentQuestion];
-				let adminSocket = sessions.get(sessionCode).adminSocket;
-	
-				session.addUser(user);
-				socket.join(sessionCode);
-	
-				socket.emit("joinSession", sessionCode);
-				
-				if (session.currentQuestion > -1) {
-					let question = session.questionList[session.currentQuestion];
-	
-					let timeLeft = question.time - ((Date.now() - question.timeStarted) / 1000)
-	
-					let safeQuestion = {
-						"text": question.text,
-						"description": question.description,
-						"object": question.object,
-						"type": question.type,
-						"time": timeLeft,
-						"participants": session.currentUsers
-					}
-	
-					socket.emit("nextQuestion", safeQuestion);
-				}
-	
-				adminSocket.emit("updateParticipantCount", session.currentUsers);
-	
-				if (session.currentQuestion > -1) {
-					let numAnswers = question.answerList.length;
-					let participants = question.connectedUsers;
-			
-					adminSocket.emit("updateNumberOfAnswers", numAnswers, participants);
-				}
-			}).catch((err) => {
-				console.error(err);
-			});
-		} else {
-			socket.emit("sessionInActive", sessionCode);
-		}
-	});
+            await dbFunctions.get.sessionHasUserByUserId(db, userId.id).then((row) => {
+                let session = sessions.get(sessionCode).session;
+                if (!row) dbFunctions.insert.addUserToSession(db, userId.id, session.id);
+                
+                let question = session.questionList[session.currentQuestion];
+                let adminSocket = sessions.get(sessionCode).adminSocket;
+    
+                session.addUser(user);
+                socket.join(sessionCode);
+    
+                socket.emit("joinSession", sessionCode);
+                
+                if (session.currentQuestion > -1) {
+                    let question = session.questionList[session.currentQuestion];
+    
+                    let timeLeft = question.time - ((Date.now() - question.timeStarted) / 1000)
+    
+                    let safeQuestion = {
+                        "text": question.text,
+                        "description": question.description,
+                        "object": question.object,
+                        "type": question.type,
+                        "time": timeLeft,
+                        "participants": session.currentUsers
+                    }
+    
+                    socket.emit("nextQuestion", safeQuestion);
+                }
+    
+                adminSocket.emit("updateParticipantCount", session.currentUsers);
+    
+                if (session.currentQuestion > -1) {
+                    let numAnswers = question.answerList.length;
+                    let participants = question.connectedUsers;
+            
+                    adminSocket.emit("updateNumberOfAnswers", numAnswers, participants);
+                }
+            }).catch((err) => {
+                console.error(err);
+            });
+        } else {
+            socket.emit("sessionInActive", sessionCode);
+        }
+    });
 
     socket.on("leaveSession",function (sessionCode) {
         if (!sessions.get(sessionCode)) return;

@@ -19,6 +19,11 @@ export default new Router({
 			component: () => import("./views/Client.vue")
 		},
 		{
+			path: "/client/sandbox",
+			name: "clientSandbox",
+			component: () => import("./views/Sandbox.vue")
+		},
+		{
 			path: "/client/session/:sessionCode",
 			props: true,
 			name: "clientSession",
