@@ -9,13 +9,13 @@ const check = function (solutionInfo) {
         errors: []
     };
 
-    let treeAction = solutionInfo.treeAction;
-    let questionType = solutionInfo.questionType;
-    let treeElements =  solutionInfo.treeElements;
-    let givenStartTree = solutionInfo.givenStartTree;
+	let treeAction = solutionInfo.treeAction;
+	let questionType = solutionInfo.questionType;
+	let treeElements =  solutionInfo.treeElements;
+	let givenStartTree = solutionInfo.givenStartTree;
 
-    let startTree = [];
-    let treeArray = [];
+	let startTree = [];
+	let treeArray = [];
 
     if (treeAction === "Add") {
         if((givenStartTree === undefined || givenStartTree.roots.length === 0) && (treeElements === undefined || treeElements === "")) {
@@ -148,7 +148,7 @@ const check = function (solutionInfo) {
         result.errors.push("BSTAVLInvalidTreeActionError");
     }
 
-    return result;
+	return result;
 };
 
 module.exports.check = check;
