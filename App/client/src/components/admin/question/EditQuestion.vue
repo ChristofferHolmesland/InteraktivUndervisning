@@ -446,50 +446,51 @@ export default {
 			let files = [];
 			Array.prototype.push.apply(files, event.target.files);
 			let storedFiles = this.newQuestion.objects.files;
-			
-			let fileType = file.type.split("/");
-			if (fileType[0] !== "image") {
-				files.splice(i, 1);
-				i--;
-				fileTypeErr++;
-				this.showMediaError = true;
-				this.mediaErrorText =
-					fileTypeErr.toString() +
-					this.getLocale.mediaErrorFileType;
-				continue;
-			}
-
-			totalFilesSize += file.size;
-			if (totalFilesSize > errorFileSize) {
-				event.target.value = "";
-				this.showMediaError = true;
-				if (fileTypeErr > 0)
-					this.mediaErrorText +=
-						"\n\n" + this.getLocale.mediaErrorFileSize;
-				else
-					this.mediaErrorText = this.getLocale.mediaErrorFileSize;
-			} else if (totalFilesSize > warningFileSize) {
-				this.showMediaWarning = true;
-				this.mediaWarningText = this.getLocale.mediaWarningFileSize;
-			} else {
-				if (fileTypeErr === 0) {
-					this.showMediaError = false;
+			for (let i = 0; i < files.length; i++) {
+				let fileType = file.type.split("/");
+				if (fileType[0] !== "image") {
+					files.splice(i, 1);
+					i--;
+					fileTypeErr++;
+					this.showMediaError = true;
+					this.mediaErrorText =
+						fileTypeErr.toString() +
+						this.getLocale.mediaErrorFileType;
+					continue;
 				}
-				this.showMediaWarning = false;
+
+				totalFilesSize += file.size;
+				if (totalFilesSize > errorFileSize) {
+					event.target.value = "";
+					this.showMediaError = true;
+					if (fileTypeErr > 0)
+						this.mediaErrorText +=
+							"\n\n" + this.getLocale.mediaErrorFileSize;
+					else
+						this.mediaErrorText = this.getLocale.mediaErrorFileSize;
+				} else if (totalFilesSize > warningFileSize) {
+					this.showMediaWarning = true;
+					this.mediaWarningText = this.getLocale.mediaWarningFileSize;
+				} else {
+					if (fileTypeErr === 0) {
+						this.showMediaError = false;
+					}
+					this.showMediaWarning = false;
+				}
+
+				if (fileTypeErr === 0 && totalFilesSize < errorFileSize) {
+					let callbackFunction = function(e) {
+						fileObject.buffer = btoa(e.target.result);
+						storedFiles.push(fileObject);
+					};
+
+					let reader = new FileReader();
+					reader.onload = callbackFunction;
+					reader.readAsBinaryString(file);
+				}
+
+				event.target.value = "";
 			}
-
-			if (fileTypeErr === 0 && totalFilesSize < errorFileSize) {
-				let callbackFunction = function(e) {
-					fileObject.buffer = btoa(e.target.result);
-					storedFiles.push(fileObject);
-				};
-
-				let reader = new FileReader();
-				reader.onload = callbackFunction;
-				reader.readAsBinaryString(file);
-			}
-
-			event.target.value = "";
 		},
 		changeShowMedia() {
 			this.showMedia = !this.showMedia;
