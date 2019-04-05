@@ -308,7 +308,17 @@ const get = {
 				if (err) reject(customReject(err, "feideUsersInSession"));
 				resolve(rows);
 			});
-		})
+		});
+	},
+	seasons(db) {
+		return new Promise(async (resolve, reject) => {
+			let statement = `SELECT *
+							FROM Season`;
+			db.all(statement, (err, rows) => {
+				if (err) reject(customReject(err, "seasons"));
+				resolve(rows);
+			});
+		});
 	}
 };
 
