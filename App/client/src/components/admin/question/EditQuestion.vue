@@ -291,6 +291,7 @@
                                  v-model="newQuestion.objects.treeElements">
                 </b-form-input>
                 <GraphDrawer
+                    ref="graphdrawer"
                     @getValueResponse="gotTreeDrawerObject"
                     :requestAnswer="requestGraphDrawerObject"
                     controlType="Graph0"
@@ -304,7 +305,8 @@
                     id="dijkstraSolution"
                     label="Draw the graph, and mark start (green) and end (red) nodes"
                     v-if="newQuestion.solutionType === 9">
-                <GraphDrawer 
+                <GraphDrawer
+                    ref="graphdrawer"
                     @getValueResponse="gotGraphDrawerObject" 
                     :requestAnswer="requestGraphDrawerObject" 
                     controlType="Graph0"
@@ -393,12 +395,19 @@ export default {
 		doneHandler: Function
 	},
 	mounted() {
-		this.$root.$on("bv::modal::show", () => {
+		this.$root.$on("bv::modal::show", (bvevent) => {
+			let target = bvevent.target;
 			this.assignState();
 			this.$socket.emit("getQuestionTypes");
 			this.mediaTypes = this.getLocale.mediaTypes;
 			this.selectedMediaType = this.mediaTypes[0].value;
 			if (this.question !== undefined) this.newQuestion = this.question;
+
+			if (this.$refs.graphdrawer !== undefined) {
+				this.$nextTick(function() {
+					this.$refs.graphdrawer.createDrawer();
+				});
+			}
 		});
 	},
 	methods: {
@@ -408,7 +417,7 @@ export default {
 
 			// Prevent shifting focus from the element
 			e.preventDefault();
-
+			
 			let codeInput = this.$refs.codeInput.$refs.input;
 
 			// Add 4 spaces
