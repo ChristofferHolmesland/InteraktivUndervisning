@@ -10,18 +10,21 @@ export default class Python {
 
 			for (let t in types) {
 				if (!types.hasOwnProperty(t)) continue;
+				t = types[t];
 
 				let fields = [];
 
 				if (!completed.includes(t.name)) {
 					completed.push(t.name);
 
-					let fieldNames = this.getProps(t.objects);
-					for (let i = 0; i < fieldNames.length; i++) {
-						fields.push({
-							name: fieldNames[i],
-							type: t.data[t.objects[fieldNames[i]]].type
-						});
+					for (let i = 0; i < t.code.length; i++) {
+						let code = t.code[i].trim();
+						if (code.startsWith("self.")) {
+							let objectName = code.split(" ")[0].slice(5);
+							fields.push({
+								name: objectName
+							});
+						}
 					}
 				}
 
@@ -432,8 +435,7 @@ export default class Python {
 		let object = {
 			type: o.objectType,
 			baseType: o.baseType,
-			value: o.objectValue,
-			links: o.baseType ? undefined : []
+			value: o.objectValue
 		};
 
 		if (!o.baseType) {
@@ -569,17 +571,117 @@ export default class Python {
 			});
 		}
 
-		let generateAndLinkObjects = (parentNode, objectList) => {
-			for (let i = 0; i < objectList.length; i++) {
-				let obj = objectList[i];
-				let info = this.addObject({
+		const TO_PARENT = 0;
+		const TO_CHILD = 1;
+
+		/*
+			Array of ui->id mappings,
+			where the ui is the _uniqueId from the parser,
+			and id is the unique id assigned by the GraphDrawer.
+
+			{
+				ui: Number,
+				id: Number
+			}
+		*/
+		let uniqueToGraphDrawerId = [];
+
+		console.log("new step");
+		let generateAndLinkObjects = (parentNode, obj, direction, parsedParentObject) => {
+			console.log(obj);
+
+			let info;
+			let newObjectCreated = true;
+
+			// This checks if the steps are too old to read.
+			// If they are, the code needs to be parsed again
+			// before the GraphDrawer can understand them.
+			if (!obj.hasOwnProperty("_uniqueId")) {
+				console.error(
+					"The python code you are trying to render, " + 
+					"was parsed by an older version which didn't support the GraphDrawer. " +
+					"Please parse the code again using the newest version."
+				);
+				return;
+			}
+			
+			let ui = obj._uniqueId;
+			for (let i = 0; i < uniqueToGraphDrawerId.length; i++) {
+				let mapping = uniqueToGraphDrawerId[i];
+				if (mapping.ui == ui) {
+					newObjectCreated = false;
+					info = this.findObjectById(mapping.id);
+					break;
+				}
+			}
+
+			if (newObjectCreated) {			
+				info = this.addObject({
 					objectType: obj.type,
 					baseType: this.baseType(obj.type),
-					objectValue: obj.value,
+					objectValue: obj.data,
 					x: parentNode.x,
 					y: parentNode.y + 100
 				});
 				info.node.x -= info.node.w / 2;
+			}
+
+			let parent = this.findObjectById(parentNode.id);
+
+			if (direction == TO_CHILD) {
+				// If the direction of the link is towards the child, the
+				// parent must be a variable.
+				parent.object.links.push(info.object);
+				this.gd.edges.push({
+					n1: parentNode,
+					n2: info.node
+				});
+			} else if (direction == TO_PARENT) {
+				// If the direction of the link is towards the parent,
+				// the parent must be an object.
+
+				// Find position of obj in data array
+				let dataIndex = -1;
+				let data = parsedParentObject.data;
+				for (let i = 0; i < data.length; i++) {
+					if (data[i].type == obj.type && data[i].data == obj.data) {
+						dataIndex = i;
+						break;
+					}
+				}
+				
+				// Find variable name
+				let variableName = "";
+				let possibleNames = this.getProps(parsedParentObject.objects);
+				for (let i = 0; i < possibleNames.length; i++) {
+					let name = possibleNames[i];
+					if (parsedParentObject.objects[name] == dataIndex) {
+						variableName = name;
+						break;
+					}
+				}
+
+				// Link id of info.node to the parent.fields object
+				for (let i = 0; i < parent.object.fields.length; i++) {
+					let field = parent.object.fields[i];
+					if (field.name == variableName) {
+						field.value = info.node.id;
+						break;
+					}
+				}
+
+				this.generateNodeText(parent.object.id);
+			}
+
+			// If the object is not a basetype, then it is an object
+			// which can contain objects.
+			if (!info.object.baseType && newObjectCreated) {
+				let subObjectNames = this.getProps(obj.objects);
+				for (let i = 0; i < subObjectNames.length; i++) {
+					let subObjectIndex = obj.objects[subObjectNames[i]];
+					let subObject = obj.data[subObjectIndex];
+					generateAndLinkObjects(info.node, subObject, TO_PARENT, obj);
+				}
 			}
 		};
 
@@ -587,9 +689,11 @@ export default class Python {
 			let variable = this.variables[i];
 			let node = this.gd.getNode(variable.id);
 
-			generateAndLinkObjects(node, [
-				step.data[step.objects[variable.name]]
-			]);
+			generateAndLinkObjects(
+				node, 
+				step.data[step.objects[variable.name]], 
+				TO_CHILD
+			);
 		}
 
 		this.gd.centerCameraOnGraph();

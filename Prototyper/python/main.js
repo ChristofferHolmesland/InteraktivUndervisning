@@ -310,25 +310,29 @@ function parse(code) {
             if (print) console.log("base type");
             return { 
                 data: Number(expression), 
-                type: "Number" 
+                type: "Number",
+                _uniqueId: uniqueId++
             };
         } else if (expression.startsWith("\"") && expression.endsWith("\"")) {
             if (print) console.log("base type");
             return {
                 data: expression.substring(1, expression.length - 1),
-                type: "String"
+                type: "String",
+                _uniqueId: uniqueId++
             };
         } else if (expression == "True") {
             if (print) console.log("base type");
             return {
                 data: true,
-                type: "Boolean"
+                type: "Boolean",
+                _uniqueId: uniqueId++
             };
         } else if (expression == "False") {
             if (print) console.log("base type");
             return {
                 data: false,
-                type: "Boolean"
+                type: "Boolean",
+                _uniqueId: uniqueId++
             };
         }
 
