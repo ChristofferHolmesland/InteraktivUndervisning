@@ -24,10 +24,21 @@
 						</b-col>
 					</b-row>
 					<b-row 	v-for="subject in getUser.adminSubjects" 
-							:key="subject.subjectName">
-						<b-col cols="6">{{subject.subjectName}}</b-col>
-						<b-col cols="6" v-if="subject.userRights == 3">{{getLocale.studentAssistant}}</b-col>
-						<b-col cols="6" v-if="subject.userRights == 4">{{getLocale.admin}}</b-col>
+							:key="subject.subjectName"
+							style="text-align: center;">
+						<b-col cols="2">
+							<p>{{ subject.code }}</p>
+						</b-col>
+						<b-col cols="2">
+							<p>{{ getLocale[subject.season] }}</p>
+						</b-col>
+						<b-col cols="2">
+							<p>{{ subject.year }}</p>
+						</b-col>
+						<b-col style="text-align: right;">
+							<p v-if="subject.userRights == 3">{{getLocale.studentAssistant}}</p>
+							<p v-if="subject.userRights == 4">{{getLocale.admin}}</p>
+						</b-col>
 					</b-row>
 				</div>
 			</b-col>

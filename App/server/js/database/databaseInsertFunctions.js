@@ -23,40 +23,40 @@ const insert = {
 						VALUES ('${userId}')`;
 		return createPromise(db, statement, "anonymousUser");
 	},
-	session: function(db, sessionName, courseSemester, courseCode) {
-		let statement = `INSERT INTO Session(name, courseSemester, courseCode, status, participants)
-						VALUES ('${sessionName}','${courseSemester}','${courseCode}', 0, 0);`;
+	session: function(db, sessionName, courseId) {
+		let statement = `INSERT INTO Session(name, courseId , status, participants)
+						VALUES ('${sessionName}', ${courseId}, 0, 0);`;
 		return createPromise(db, statement, "session");
 	},
-	course: function(db, courseSemester, courseCode, courseName) {
-		let statement = `INSERT INTO Course(semester,code,name)
-						VALUES ('${courseSemester}','${courseCode}','${courseName}');`;
+	course: function(db, course) {
+		let statement = `INSERT INTO Course(name, codeId, semesterId)
+						VALUES ('${course.name}', ${course.code}, ${course.semester});`;
 		return createPromise(db, statement, "course");
 	},
-	courseAdmin: function(db, courseSemester, courseCode, feideId) {
-		let statement = `INSERT INTO UserRight(feideId, courseSemester, courseCode, level)
-						VALUES ('${feideId}', '${courseSemester}', '${courseCode}', 4);`;
+	courseAdmin: function(db, data) {
+		let statement = `INSERT INTO UserRight(feideId, courseId, level)
+						VALUES ('${data.feideId}', ${data.courseId}, 4);`;
 		return createPromise(db, statement, "courseAdmin");
 	},
-	question: function(db, questionText, questionDescription, questionSolution, time, Type, courseCode, questionObject) {
+	question: function(db, questionText, questionDescription, questionSolution, time, Type, courseId, questionObject) {
 		if (questionObject === undefined) {
-			return this._questionNoObject(db, questionText, questionDescription, questionSolution, time, Type, courseCode);
+			return this._questionNoObject(db, questionText, questionDescription, questionSolution, time, Type, courseId);
 		}
 		
 		questionObject = JSON.stringify(questionObject);
 		questionObject = questionObject.replace("'", "\'\'");
 
-		return this._questionWithObject(db, questionText,questionDescription,questionObject,questionSolution, time, Type, courseCode);
+		return this._questionWithObject(db, questionText,questionDescription,questionObject,questionSolution, time, Type, courseId);
 	},
-	_questionNoObject: function(db, questionText, questionDescription, questionSolution, time, Type, courseCode) {
-		let statement = `INSERT INTO Question(text,description,solution,time,questionType,courseCode)
-						VALUES('${questionText}','${questionDescription}','${JSON.stringify(questionSolution)}',${time},${Type},'${courseCode}')`;
+	_questionNoObject: function(db, questionText, questionDescription, questionSolution, time, Type, courseId) {
+		let statement = `INSERT INTO Question(text,description,solution,time,questionType,courseId)
+						VALUES('${questionText}','${questionDescription}','${JSON.stringify(questionSolution)}',${time},${Type},'${courseId}')`;
 		return createPromise(db, statement, "questionNoObject");
 	},
-	_questionWithObject: function(db, questionText, questionDescription, questionObject, questionSolution, time, Type, courseCode) {
+	_questionWithObject: function(db, questionText, questionDescription, questionObject, questionSolution, time, Type, courseId) {
 		if(typeof(questionObject) === "object")	questionObject = JSON.stringify(questionObject);
-		let statement = `INSERT INTO Question(text,description,object,solution,time,questionType,courseCode)
-						VALUES('${questionText}','${questionDescription}','${questionObject}','${JSON.stringify(questionSolution)}',${time},${Type},'${courseCode}')`;
+		let statement = `INSERT INTO Question(text, description, object, solution, time, questionType, courseId)
+						VALUES('${questionText}', '${questionDescription}', '${questionObject}', '${JSON.stringify(questionSolution)}', ${time}, ${Type}, ${courseId})`;
 		return createPromise(db, statement, "questionWithObject");
 	},
 	storeAnswer: function(db, answer, result, sqId, userId) {
@@ -67,18 +67,18 @@ const insert = {
 		return createPromise(db, statement, "storeAnswer");
 	},
 	addUserToSession: function(db, userId, sessionId) {
-		let statement = `INSERT INTO User_has_Session(userId,sessionId)
+		let statement = `INSERT INTO UserHasSession(userId,sessionId)
 						VALUES('${userId}', ${sessionId})`;
 		return createPromise(db, statement, "addUserToSession");
 	},
 	addQuestionToSession: function(db, sessionId, questionId) {
-		let statement = `INSERT INTO Session_has_Question(sessionId,questionId)
-						VALUES(${sessionId},${questionId})`;
+		let statement = `INSERT INTO SessionHasQuestion(sessionId, questionId)
+						VALUES(${sessionId}, ${questionId})`;
 		return createPromise(db, statement, "addQuestionToSession");
 	},
-	userRightsLevelByFeideId: function(db, feideId, courseCode, courseSemester, level) {
-		let statement = `INSERT INTO UserRight(feideId, courseSemester, courseCode, level) 
-						 VALUES ('${feideId}', '${courseSemester}', '${courseCode}', ${level})`;
+	userRightsLevelByFeideId: function(db, data) {
+		let statement = `INSERT INTO UserRight(feideId, courseId, level) 
+						 VALUES ('${data.feideId}', ${courseId}, ${level})`;
 		return createPromise(db, statement, "userRightsLevelByFeideId");
 	},
 	questionType: function(db, typeText) {
@@ -90,6 +90,21 @@ const insert = {
 		let statement = `INSERT INTO Season(season)
 						VALUES('${season}')`;
 		return createPromise(db, statement, "season");
+	},
+	year: function(db, year) {
+		let statement = `INSERT INTO Year(year)
+						VALUES(${year})`;
+		return createPromise(db, statement, "year");
+	},
+	courseCode: function(db, courseCode) {
+		let statement = `INSERT INTO CourseCode(code)
+						VALUES('${courseCode}')`;
+		return createPromise(db, statement, "courseCode");
+	},
+	courseSemester: function(db, semester) {
+		let statement = `INSERT INTO CourseSemester(seasonId, yearId)
+						VALUES(${semester.season}, ${semester.year})`;
+		return createPromise(db, statement, "semester");
 	}
 };
 

@@ -45,7 +45,8 @@
         "filename": "Filename",
         "filesize": "Filesize",
         "filetype": "filetype",
-        "deleteBtn": "Delete"
+        "deleteBtn": "Delete",
+        "courseMissing": "No course is selected. Please select a course or go to Admin tab and create a new course."
     },
     "AdminSessions": {
         "newSession": "New session",
@@ -64,11 +65,7 @@
         "addNewQuestionBtnText": "Add new question",
         "newQuestion": "New question",
         "viewLastSession": "View last session",
-        "openLastSession": "Open",
-        "addCourseTitle": "New course",
-        "addCourseCourseCode": "Course code:",
-        "addCourseCourseSemester": "Course semester:",
-        "addCourseCourseName": "Course name:"
+        "openLastSession": "Open"
     },
     "DisplayQuestion": {
         "question": "Question",
@@ -143,7 +140,9 @@
         "deleteBtnTitle": "Delete my data",
         "userRightsTitle": "User rights",
         "studentAssistant": "Student assistant",
-        "admin": "Administrator"
+        "admin": "Administrator",
+        "spring": "Spring",
+        "autumn": "Autumn"
     },
     "UserStats": {
         "title": "User stats",
@@ -195,5 +194,36 @@
     },
     "clientSessionTextInput": {
         "placeholder": "Input your answer here!"
+    },
+    "AddNewCourse": {
+        "title": "New course",
+        "code": "Course code:",
+        "semester": "Course semester:",
+        "name": "Course name:",
+        "spring": "Spring",
+        "autumn": "Autumn",
+        "addNewCourseCode": "Add new Course code:",
+        "addNewSemester": "Add new Semester:",
+        "AddNewSemesterSeason": "Choose season:",
+        "AddNewSemesterYear": "Choose a year:",
+        "add": "Add",
+        "errorMessage": {
+            "courseCodeMissing": "Input field for course code is empty.",
+            "courseCodeWrongPattern": "Input field for course code is following the wrong pattern.\nThe code should be 3 capital letters followed by 3 numbers.",
+            "courseCodeExists": "The entered course code already exists.",
+            "insertCourseCodeError": "An error occured when creating the course code.\nPlease try again later.",
+            "dbError": "An error occured with the database.\nPlease try again later.",
+            "semesterExists": "This semester already exists.",
+            "seasonDoesTExist": "The selected season does not exist.",
+            "semesterDoesnTExist": "The semester doesn't exist.",
+            "yearDoesTExist": "The selected year does not exist.",
+            "addNewSemesterInsert": "An error occured when creating the semester.\nPlease try again later.",
+            "courseCodeDoesnTExist": "The course code does not exist.",
+            "nameMissing": "Course is missing a name.",
+            "courseExists": "Course already exists."
+        }
+    },
+    "SelectCourse": {
+        "noCourseText": "No course. Add new course"
     }
 }
