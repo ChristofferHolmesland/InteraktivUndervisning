@@ -541,6 +541,8 @@ export default class Python {
 	}
 
 	parseSteps() {
+		console.log("PARSE STEPS");
+
 		this.gd.nodes = [];
 		this.gd.edges = [];
 		this.variables = [];
@@ -586,10 +588,7 @@ export default class Python {
 		*/
 		let uniqueToGraphDrawerId = [];
 
-		console.log("new step");
 		let generateAndLinkObjects = (parentNode, obj, direction, parsedParentObject) => {
-			console.log(obj);
-
 			let info;
 			let newObjectCreated = true;
 
@@ -610,20 +609,56 @@ export default class Python {
 				let mapping = uniqueToGraphDrawerId[i];
 				if (mapping.ui == ui) {
 					newObjectCreated = false;
-					info = this.findObjectById(mapping.id);
+					info = {
+						object: this.findObjectById(mapping.id),
+						node: this.gd.getNode(mapping.id)
+					};
 					break;
 				}
 			}
 
-			if (newObjectCreated) {			
+			if (newObjectCreated) {
+				// If the parent object has more than one child,
+				// they should be evenly spaced below the parent.
+				let myX = undefined;
+				if (parsedParentObject !== undefined) {
+					let myUi = obj._uniqueId;
+					let childrenCount = parsedParentObject.data.length
+					let myIndex = -1;
+					for (let i = 0; i < childrenCount; i++) {
+						let c = parsedParentObject.data[i];
+						if (c._uniqueId == myUi) {
+							myIndex = i;
+							break;
+						}
+					}
+
+					let assumedSize = this.gd.R * 2;
+					let padding = this.gd.R;
+					let totalChildWidth = childrenCount * (assumedSize + padding);
+					let startX = parentNode.x + parentNode.w / 2 - (totalChildWidth / 2);
+				
+					myX = startX + myIndex * (assumedSize + padding);
+				}
+
+
 				info = this.addObject({
 					objectType: obj.type,
 					baseType: this.baseType(obj.type),
 					objectValue: obj.data,
-					x: parentNode.x,
-					y: parentNode.y + 100
+					x: myX == undefined ? parentNode.x : myX,
+					y: parentNode.y + 75 + Math.random() * 50
 				});
-				info.node.x -= info.node.w / 2;
+
+				// This is not the right amount to move the node by, because it's width
+				// isn't correctly set before it has been rendered once.
+				// But it is close enough.
+				if (myX == undefined) info.node.x -= info.node.w / 2;
+				
+				uniqueToGraphDrawerId.push({
+					ui: ui,
+					id: info.node.id
+				});
 			}
 
 			let parent = this.findObjectById(parentNode.id);
@@ -669,6 +704,11 @@ export default class Python {
 						break;
 					}
 				}
+
+				this.gd.edges.push({
+					n1: info.node,
+					n2: parentNode
+				});
 
 				this.generateNodeText(parent.object.id);
 			}
