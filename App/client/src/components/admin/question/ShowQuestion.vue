@@ -85,12 +85,23 @@ export default {
     components: {
         GraphDrawer
     },
+    mounted() {
+        this.$root.$on("bv::modal::show", () => {
+                if (this.$refs.graphdrawer !== undefined) {
+                    this.$nextTick(function() {
+                        this.$refs.graphdrawer.createDrawer();
+                    });
+                }
+            });
+
+    },
     watch: {
         "question.solutionType": function() {
             this.$nextTick(function() {
                 // After changing the solutionType, the graphdrawer object needs to be
                 // recreated.
-                this.$refs.graphdrawer.createDrawer();
+                if(this.$refs.graphdrawer !== undefined)
+                    this.$refs.graphdrawer.createDrawer();
             });
         }
     }
