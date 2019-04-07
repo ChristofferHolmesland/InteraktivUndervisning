@@ -39,7 +39,7 @@ module.exports.getDB = function setupDatabase() {
 			db.run(
 				`CREATE TABLE IF NOT EXISTS Year(
 					id INTEGER PRIMARY KEY AUTOINCREMENT,
-					year TEXT NOT NULL
+					year INTEGER NOT NULL
 				);`, (err) => { if (err) reject(err) }
 			);
 
@@ -63,6 +63,7 @@ module.exports.getDB = function setupDatabase() {
 			db.run(
 				`CREATE TABLE IF NOT EXISTS Course(
 					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					name TEXT NOT NULL,
 					codeId INTEGER NOT NULL,
 					semesterId INTEGER NOT NULL,
 					FOREIGN KEY(codeId) REFERENCES CourseCode(id)
@@ -104,7 +105,7 @@ module.exports.getDB = function setupDatabase() {
 
 			db.run(
 				`CREATE TABLE IF NOT EXISTS Type(
-					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					type INTEGER PRIMARY KEY AUTOINCREMENT,
 					name TEXT NOT NULL
 				);`, (err) => { if (err) reject(err) }
 			);
@@ -187,6 +188,21 @@ module.exports.getDB = function setupDatabase() {
 						});
 					}
 				}
+			}).catch(err => {
+				reject(err);
+			});
+
+			await dbFunctions.get.years(db).then(async (rows) => {
+				let currentYear = new Date().getFullYear();
+				for (let i = currentYear; i <= currentYear + 3; i++) {
+					if (rows.findIndex(row => Number(row.year) === i) === -1) {
+						await dbFunctions.insert.year(db, i).catch((err) => {
+							reject(err);
+						});
+					}
+				}
+			}).catch(err => {
+				reject(err);
 			});
 
 			if (process.env.NODE_ENV !== "production") {
@@ -194,10 +210,12 @@ module.exports.getDB = function setupDatabase() {
 				   if (rows === undefined || rows.length < 1) {
 					   dbFunctions.insert.feide(db, "test", "test", "testAdmin", "test", 4).then(() => {
 						   dbFunctions.insert.feideUser(db, "test", "test").catch((err) => {
-							   console.error(err);
+							   	console.error(err);
+								reject(err);
 						   });
 					   }).catch((err) => {
-						   console.error(err);
+							console.error(err);
+							reject(err);
 					   });
 				   }
 				});

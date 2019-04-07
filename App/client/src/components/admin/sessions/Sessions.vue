@@ -11,8 +11,18 @@
 							<SelectCourse :changeHandler="courseChanged"/>
 						</b-col>
 						<b-col lg="2" class="pl-0">
-							<b-button v-b-modal.newSessionModal>+</b-button>
-							<EditSession :okHandler="addNewSessionHandler" elementId="newSessionModal" elementRef="innerModal"/>
+							<b-button @click="AddNewSession">+</b-button>
+							<EditSession ref="newSessionModal" :okHandler="addNewSessionHandler" elementId="newSessionModal" elementRef="innerModal"/>
+						</b-col>
+					</b-row>
+					<b-row v-if="showError" style="text-align: center;">
+						<b-col cols="12">
+							<b-alert	:show="showError"
+										@dismissed="showError = false"
+										variant="danger"
+										dismissible>
+								<p>{{ getLocale[errorText] }}</p>
+							</b-alert>
 						</b-col>
 					</b-row>
 					<b-row>
@@ -57,13 +67,15 @@ export default {
 			sessionsListLength: 0,
 			selectedSession: 0,
 			searchText: "",
-			session: {}
+			session: {},
+			showError: false,
+			errorText: ""
 		}
 	},
 	created() {
-		let c = this.$store.getters.getSelectedCourse.split(" ");
+		let courseId = this.$store.getters.getSelectedCourse;
 		
-		this.$socket.emit("getSessions", {code: c[0], semester: c[1]});
+		this.$socket.emit("getSessions", courseId);
 	},
 	sockets: {
 		getSessionsResponse(data) {
@@ -79,8 +91,8 @@ export default {
 			}
 		},
 		addNewSessionDone() {
-			let c = this.$store.getters.getSelectedCourse.split(" ");
-			this.$socket.emit("getSessions", {code: c[0], semester: c[1]});
+			let courseId = this.$store.getters.getSelectedCourse;
+			this.$socket.emit("getSessions", courseId);
 		},
 		getSessionResponse(data) {
 			this.session = data;
@@ -100,8 +112,16 @@ export default {
 			this.$socket.emit("addNewSession", newSession);
 		},
 		courseChanged: function(newCourse) {
-			let c = newCourse.split(" ");
-			this.$socket.emit("getSessions", {code: c[0], semester: c[1]});
+			this.$socket.emit("getSessions", newCourse);
+		},
+		AddNewSession: function() {
+			let courseId = this.$store.getters.getSelectedCourse;
+			if (courseId === undefined || courseId === "") {
+				this.errorText = "courseMissing";
+				this.showError = true;
+				return;
+			}
+			this.$refs.newSessionModal.$refs.innerModal.show();
 		}
 	},
 	computed: {
@@ -129,6 +149,11 @@ export default {
 		},
 		getSelectedSessionId() {
 			return this.selectedSession.id;
+		},
+		getLocale() {
+			let locale = this.$store.getters.getLocale("AdminQuestions");
+			if(locale) return locale;
+			else return {};
 		}
 	}
 };

@@ -32,6 +32,18 @@
 			</b-col>
 			<b-col cols="2"></b-col>
 		</b-row>
+		<b-row v-if="showError" style="text-align: center;">
+			<b-col></b-col>
+			<b-col cols="8">
+				<b-alert	:show="showError"
+							@dismissed="showError = false"
+							variant="danger"
+							dismissible>
+					<p>{{ getLocale[errorText] }}</p>
+				</b-alert>
+			</b-col>
+			<b-col></b-col>
+		</b-row>
 		<b-row>
 			<b-col cols="0" lg="2"></b-col>
 			<b-col cols="12" lg="8">
@@ -77,7 +89,9 @@
 				questionSearchText: "",
 				questionList: [],
 				okHandler: "add",
-				question: undefined
+				question: undefined,
+				showError: false,
+				errorText: "",
 			}
 		},
 		components: {
@@ -89,7 +103,7 @@
 		mounted() {
 			this.$socket.emit(
 				"getAllQuestionsWithinCourse", 
-				this.$store.getters.getSelectedCourse.split(" ")[0]
+				this.$store.getters.getSelectedCourse
 			);
 		},
 		computed: {
@@ -125,11 +139,10 @@
 		methods: {
 			requestNewQuestions() {
 				this.$socket.emit("getAllQuestionsWithinCourse",
-					this.$store.getters.getSelectedCourse.split(" ")[0]);
+					this.$store.getters.getSelectedCourse);
 			},
 			courseChanged(newCourse) {
-				let c = newCourse.split(" ");
-				this.$socket.emit("getAllQuestionsWithinCourse", c[0]);
+				this.$socket.emit("getAllQuestionsWithinCourse", newCourse);
 			},
 			showEditQuestionModal(item) {
 				this.okHandler = "edit";
@@ -140,6 +153,12 @@
 				});
 			},
 			showAddQuestionModal() {
+				let courseId = this.$store.getters.getSelectedCourse;
+				if (courseId === undefined || courseId === "") {
+					this.errorText = "courseMissing";
+					this.showError = true;
+					return;
+				}
 				this.okHandler = "add";
 				this.question = undefined;
 				this.$nextTick(function() {
@@ -158,7 +177,7 @@
 				this.$refs.addQuestionToSessionModal.$refs.innerModalAddToSession.show();
 				this.$refs.addQuestionToSessionModal._data.question.id = item.id;
 				this.$refs.addQuestionToSessionModal._data.question.text = item.text;
-			}
+			},
 		}
 	}
 </script>

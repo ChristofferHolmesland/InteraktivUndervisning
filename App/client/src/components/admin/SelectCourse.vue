@@ -3,6 +3,9 @@
 			:options="getCourseOptions"
 			v-model="selectedCourse"
 			@change="selectedCourseChanged($event)">
+		<template slot="first" v-if="getCourseOptions.length === 0">
+        	<option value="" disabled>{{ getLocale.noCourseText }}</option>
+      	</template>
 	</b-form-select>
 </template>
 
@@ -61,6 +64,11 @@ export default {
 		},
 		_watcherSelectedCourse() {
 			return this.$store.getters.getSelectedCourse;
+		},
+		getLocale() {
+			let locale = this.$store.getters.getLocale("SelectCourse");
+			if (locale) return locale;
+			else return {};
 		}
 	}
 };

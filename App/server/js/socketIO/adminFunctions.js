@@ -10,17 +10,26 @@ const question = require("../session.js").Question;
 const validateChecker = require("../ValidateChecker/validateChecker.js").validateChecker;
 const generateSolution = require("../SolutionGenerator/SolutionGenerator.js");
 
-let courseListRequestHandler = function(socket, db, user, sessions) {
-	if (user.feide) feideId = user.feide.idNumber;
+let courseListRequestHandler = function(socket, db, user) {
+	if (!user.feide) return;
+	let feideId = user.feide.idNumber;
+
 	dbFunctions.get.userCourses(db, feideId).then((courses) => {
 		let result = [];
+
 		for (let i = 0; i < courses.length; i++) {
-			let courseString = courses[i].code + " " + courses[i].semester;
 			result.push({
-				"value": courseString,
-				"text": courseString
+				value: courses[i].courseId,
+				text: courses[i].code + " " + courses[i].season + " " + courses[i].year,
+				courseId: courses[i].courseId,
+				code: courses[i].code,
+				year: courses[i].year,
+				season: courses[i].season,
+				semesterId: courses[i].semesterId,
+				courseCodeId: courses[i].courseCodeId
 			});
 		}
+		
 		socket.emit("courseListResponse", result);
 	}).catch((err) => {
 		console.error(err);
@@ -32,11 +41,15 @@ var currentSession = undefined;
 module.exports.admin = function(socket, db, user, sessions) {
 
 	socket.on("courseListRequest", function() {
-		courseListRequestHandler(socket, db, user, sessions);
+		courseListRequestHandler(socket, db, user);
 	});
 
-	socket.on("getSessions", function(course) {
-		dbFunctions.get.allSessionWithinCourse(db, course.code, course.semester).then((sessions) => {
+	socket.on("getSessions", function(courseId) {
+		if (courseId === undefined || courseId === "") {
+			socket.emit("courseMissing");
+			return;
+		}
+		dbFunctions.get.allSessionWithinCourse(db, courseId).then((sessions) => {
 			socket.emit("getSessionsResponse", sessions);
 		}).catch((err) => {
 			console.error(err);
@@ -44,8 +57,8 @@ module.exports.admin = function(socket, db, user, sessions) {
 	});
 
 	socket.on("addNewSession", function(session) {
-		let c = session.course.split(" ");
-		dbFunctions.insert.session(db, session.title, c[1], c[0]).then(function (id) {
+		let courseId = session.course;
+		dbFunctions.insert.session(db, session.title, courseId).then(function (id) {
 			for (let i = 0; i < session.questions.length; i++) {
 				dbFunctions.insert.addQuestionToSession(db, id, session.questions[i].id);
 			}
@@ -53,8 +66,13 @@ module.exports.admin = function(socket, db, user, sessions) {
 		});
 	});
 
-	socket.on("getQuestionsInCourse", function(course) {
-		dbFunctions.get.allQuestionsWithinCourse(db, course.code, course.semester).then((questions) => {
+	socket.on("getQuestionsInCourse", function(courseId) {
+		if (courseId === undefined || courseId === "") {
+			socket.emit("courseMissing");
+			return;
+		}
+
+		dbFunctions.get.allQuestionsWithinCourse(db, courseId).then((questions) => {
 			let result = [];
 			for (let i = 0; i < questions.length; i++) {
 				result.push({
@@ -156,8 +174,9 @@ module.exports.admin = function(socket, db, user, sessions) {
 
 	// Course is an object with course code and course semester
 	// e.g: {code: "DAT200", semester: "18H"}
-	socket.on("sessionOverviewRequest", function(course) {
-		dbFunctions.get.allSessionWithinCourseForSessionOverview(db, course.code, course.semester).then((sessionList) => {
+	socket.on("sessionOverviewRequest", function(courseId) {
+		if (courseId === undefined || courseId === "") return;
+		dbFunctions.get.allSessionWithinCourseForSessionOverview(db, courseId).then((sessionList) => {
 			let response = [];
 			
 			for (let i = 0; i < sessionList.length; i++) {
@@ -367,8 +386,12 @@ module.exports.admin = function(socket, db, user, sessions) {
 		socket.emit("closeSessionResponse");
 	});
 
-	socket.on("getSessionWithinCourse", function(course) {   
-		dbFunctions.get.allSessionWithinCourse(db, course.code, course.semester).then((sessions) => {
+	socket.on("getSessionWithinCourse", function(courseId) {
+		if (courseId === undefined || courseId === "") {
+			socket.emit("courseMissing");
+			return;
+		}
+		dbFunctions.get.allSessionWithinCourse(db, courseId).then((sessions) => {
 			let result = [];
 			for (let i = 0; i < sessions.length; i++) {
 				result.push({
@@ -385,8 +408,12 @@ module.exports.admin = function(socket, db, user, sessions) {
 		dbFunctions.insert.addQuestionToSession(db, data.sessionId, data.questionId);
 	});
 
-	socket.on("getAllQuestionsWithinCourse", function(course) {
-		dbFunctions.get.allQuestionsWithinCourse(db, course).then(questions => {
+	socket.on("getAllQuestionsWithinCourse", function(courseId) {
+		if (courseId === undefined || courseId === "") {
+			socket.emit("courseMissing");
+			return;
+		}
+		dbFunctions.get.allQuestionsWithinCourse(db, courseId).then(questions => {
 			let result = [];
 			for (let i = 0; i < questions.length; i++) {
 				let q = questions[i];
@@ -507,20 +534,77 @@ module.exports.admin = function(socket, db, user, sessions) {
 		});
 	});
 
-	socket.on("createCourse", function(course) {
-		dbFunctions.insert.course(db, course.semester, course.code, course.name).then(() => {
-			dbFunctions.insert.courseAdmin(db, course.semester, course.code, user.feide.idNumber).then(() => {
-				courseListRequestHandler(socket, db, user, sessions);
-			});
+	socket.on("createCourseRequest", async function(newCourse) {
+		// Checks name
+		if (newCourse.name === "" || newCourse.name === undefined) {
+			socket.emit("createCourseError", "nameMissing");
+			return;
+		}
+
+		// Checks course code
+		let courseCodes = await dbFunctions.get.courseCodes(db).catch((err) => {
+			console.error(err);
+			socket.emit("createCourseError", "dbError");
+			return;
 		});
+		let courseCodeIndex = courseCodes.findIndex(courseCode => courseCode.id === newCourse.code);
+		if (courseCodeIndex === -1) {
+			socket.emit("createCourseError", "courseCodeDoesnTExist");
+			return;
+		}
+
+		// Checks semester
+		let semesters = await dbFunctions.get.semesters(db).catch((err) => {
+			console.error(err);
+			socket.emit("createCourseError", "dbError");
+			return;
+		});
+		let semesterIndex = semesters.findIndex(semester => semester.id === newCourse.semester);
+		if (semesterIndex === -1) {
+			socket.emit("createCourseError", "semesterDoesnTExist");
+			return;
+		}
+
+		// Checks if course already exists
+		let courses = await dbFunctions.get.allCoursesWithIds(db).catch((err) => {
+			console.error(err);
+			socket.emit("createCourseError", "dbError");
+			return;
+		});
+		let courseIndex = courses.findIndex(course => (
+			(course.courseCodeId === newCourse.code) &&
+			(course.courseSemesterId === newCourse.semester)
+		));
+		if (courseIndex > -1) {
+			socket.emit("createCourseError", "courseExists");
+			return;
+		}
+
+		// Inserts course and makes user admin
+		await dbFunctions.insert.course(db, newCourse).then(async (courseId) => {
+			await dbFunctions.insert.courseAdmin(db, {
+				feideId: user.feide.idNumber,
+				courseId: courseId
+			}).then(() => {
+				socket.emit("createCourseResponse");
+			}).catch((err) => {
+				console.error(err);
+				socket.emit("createCourseError", "dbError");
+				return;
+			})
+		}).catch((err) => {
+			console.error(err);
+			socket.emit("createCourseError", "dbError");
+			return;
+		})
 	});
 
 	socket.on("getUsersByUserRightsLevelsRequest", function(data) {
-		let course = data.course.split(" ");
+		if (data.level === undefined || data.courseId === undefined) return;
 		for (let i = 0; i < data.levels.length; i++) {
 			let level = data.levels[i];
 
-			dbFunctions.get.feideUsersByUserRightsLevel(db, level, course[0], course[1]).then((users) => {
+			dbFunctions.get.feideUsersByUserRightsLevel(db, {level: level, courseId: data.courseId}).then((users) => {
 				socket.emit("getUsersByUserRightsLevelResponse", {
 					level: level,
 					users: users
@@ -537,18 +621,31 @@ module.exports.admin = function(socket, db, user, sessions) {
 		}
 	*/
 	socket.on("setUserRightsLevel", function(data) {
-		let course = data.course.split(" ");
-		dbFunctions.get.userRightsByFeideId(db, data.feideId, course[0], course[1]).then((user) => {
+		dbFunctions.get.userRightsByFeideId(db, {
+			feideId: data.feideId,
+			courseId: data.courseId
+		}).then((user) => {
 			if (user == undefined) {
-				dbFunctions.insert.userRightsLevelByFeideId(db, data.feideId, course[0], course[1], data.level).then(() => {
+				dbFunctions.insert.userRightsLevelByFeideId(db, {
+					feideId: data.feideId,
+					courseId: data.courseId,
+					level: data.level
+				}).then(() => {
 					socket.emit("setUserRightsLevelDone");
 				});
 			} else if (data.level !== -1) {
-				dbFunctions.update.userRightsLevelByFeideId(db, data.feideId, course[0], course[1], data.level).then(() => {
+				dbFunctions.update.userRightsLevelByFeideId(db, {
+					feideId: data.feideId,
+					courseId: data.courseId,
+					level: data.level
+				}).then(() => {
 					socket.emit("setUserRightsLevelDone");
 				});
 			} else if (data.level == -1) {
-				dbFunctions.del.userRights(db, data.feideId, course[0], course[1]).then(() => {
+				dbFunctions.del.userRights(db, {
+					feideId: data.feideId,
+					courseId: data.courseId
+				}).then(() => {
 					socket.emit("setUserRightsLevelDone");
 				});
 			}
@@ -558,5 +655,116 @@ module.exports.admin = function(socket, db, user, sessions) {
 	socket.on("adminLeaveSession", function(sessionCode) {
 		
 		// TODO add logic for session to be ended when admin leaves session
+	});
+
+	socket.on("semestersRequest", async function() {
+		await dbFunctions.get.semesters(db).then(rows => {
+			socket.emit("semestersResponse", rows);
+		}).catch(err => {
+			if (err) socket.emit("semestersError");
+		});
+	});
+
+	socket.on("seasonsRequest", async function() {
+		await dbFunctions.get.seasons(db).then(rows => {
+			socket.emit("seasonsResponse", rows);
+		}).catch(err => {
+			if (err) socket.emit("seasonsError");
+		});
+	});
+
+	socket.on("yearsRequest", async function() {
+		await dbFunctions.get.years(db).then(rows => {
+			socket.emit("yearsResponse", rows);
+		}).catch(err => {
+			if (err) socket.emit("yearsError");
+		});
+	});
+
+	socket.on("courseCodesRequest", async function() {
+		await dbFunctions.get.courseCodes(db).then(rows => {
+			socket.emit("courseCodesResponse", rows);
+		}).catch(err => {
+			if (err) socket.emit("courseCodesError");
+		})
+	});
+
+	socket.on("addNewCourseCodeRequest", async function(newCourseCode) {
+		let pattern = new RegExp("^[A-Z]{3}[0-9]{3}$");
+		if (newCourseCode === "" || newCourseCode === undefined) {
+			socket.emit("addNewCourseCodeError", "courseCodeMissing");
+			return;
+		}
+		if (!pattern.test(newCourseCode)) {
+			socket.emit("addNewCourseCodeError", "courseCodeWrongPattern");
+			return
+		}
+		
+		await dbFunctions.get.courseCodes(db).then(async rows => {
+			if (rows.findIndex(row => row.code === newCourseCode) === -1) {
+				await dbFunctions.insert.courseCode(db, newCourseCode).then(() => {
+					socket.emit("addNewCourseCodeResponse");
+				}).catch(() => {
+					socket.emit("addNewCourseCodeError", "insertCourseCodeError");
+				});
+			} else {
+				socket.emit("addNewCourseCodeError", "courseCodeExists");
+			}
+		}).catch(err => {
+			if (err) socket.emit("addNewCourseCodeError", "dbError");
+		})
+	});
+
+	socket.on("addNewSemesterRequest", async function(newSemester) {
+		if (
+			!Number(newSemester.season) ||
+			!Number(newSemester.year)
+		) {
+			socket.emit("addNewSemesterError");
+			return;
+		}
+
+		await dbFunctions.get.semesters(db).then(async (semesters) => {
+			let seasons = await dbFunctions.get.seasons(db).catch((err) => {
+				console.error(err);
+				socket.emit("addNewSemesterError", "dbError");
+				return;
+			});
+			if (seasons.findIndex(season => season.id === newSemester.season) === -1) {
+				socket.emit("addNewSemesterError", "seasonDoesTExist");
+				return;
+			}
+
+			let years = await dbFunctions.get.years(db).catch((err) => {
+				console.error(err);
+				socket.emit("addNewSemesterError", "dbError");
+				return;
+			});
+			if (years.findIndex(year => year.id === newSemester.year) === -1) {
+				socket.emit("addNewSemesterError", "yearDoesTExist");
+				return;
+			}
+			
+			if (semesters.findIndex(semester => 
+				(
+					newSemester.season === semester.season &&
+					newSemester.year === semester.year
+				)
+			) > -1) {
+				socket.emit("addNewSemesterError", "semesterExists");
+				return;
+			}
+
+			await dbFunctions.insert.courseSemester(db, newSemester).then(() => {
+				socket.emit("addNewSemesterResponse");
+			}).catch((err) => {
+				console.error(err);
+				socket.emit("addNewSemesterError", "addNewSemesterInsert");
+			});
+		}).catch((err) => {
+			console.error(err);
+			socket.emit("addNewSemesterError", "dbError");
+			return;
+		});
 	});
 }

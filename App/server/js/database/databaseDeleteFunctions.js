@@ -8,11 +8,10 @@ function createPromise(db, statement, funcName) {
 }
 
 const del = {
-	userRights: function(db, feideId, courseCode, courseSemester) {
+	userRights: function(db, data) {
 		let statement = `DELETE FROM UserRight
-						WHERE feideId = ${feideId}
-						AND courseCode = '${courseCode}'
-						AND courseSemester = '${courseSemester}'`;
+						WHERE feideId = ${data.feideId}
+						AND courseId = ${data.courseId}`;
 		return createPromise(db, statement, "userRights");
 	}
 };

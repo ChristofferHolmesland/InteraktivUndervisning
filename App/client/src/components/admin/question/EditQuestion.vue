@@ -1,5 +1,11 @@
 <template>
-	<b-modal :id="elementId" :ref="elementRef" :no-close-on-backdrop="true" :title="getTitle" @ok="callOkHandler" style="text-align: left;" size="lg">
+	<b-modal 	:id="elementId"
+				:ref="elementRef"
+				:no-close-on-backdrop="true"
+				:title="getTitle"
+				@ok="callOkHandler"
+				style="text-align: left;"
+				size="lg">
 		<b-form>
 			<b-alert    :show="validationFailure"
 						variant="danger">
@@ -427,7 +433,8 @@ export default {
 				filesSize += file.size;
 			}
 			if (filesSize < 500000) this.showMediaWarning = false;
-		},assignState() {
+		},
+		assignState() {
 			let n = initializeState();
 			for (let p in n) {
 				if (n.hasOwnProperty(p)) {
@@ -446,51 +453,56 @@ export default {
 			let files = [];
 			Array.prototype.push.apply(files, event.target.files);
 			let storedFiles = this.newQuestion.objects.files;
+			let totalFilesSize = 0;
+			let errorFileSize = 1500000;
+			let warningFileSize = 500000;
+			for(let i = 0; i < storedFiles.length; i++) totalFilesSize += storedFiles[i].size;
+			let fileTypeErr = 0;
 			for (let i = 0; i < files.length; i++) {
+				let file = files[i];
+				let fileObject = {
+					name: file.name,
+					size: file.size,
+					type: file.type
+				}
+				
 				let fileType = file.type.split("/");
 				if (fileType[0] !== "image") {
 					files.splice(i, 1);
 					i--;
 					fileTypeErr++;
 					this.showMediaError = true;
-					this.mediaErrorText =
-						fileTypeErr.toString() +
-						this.getLocale.mediaErrorFileType;
+					this.mediaErrorText = fileTypeErr.toString() + this.getLocale.mediaErrorFileType;
 					continue;
 				}
-
 				totalFilesSize += file.size;
 				if (totalFilesSize > errorFileSize) {
 					event.target.value = "";
 					this.showMediaError = true;
-					if (fileTypeErr > 0)
-						this.mediaErrorText +=
-							"\n\n" + this.getLocale.mediaErrorFileSize;
-					else
-						this.mediaErrorText = this.getLocale.mediaErrorFileSize;
-				} else if (totalFilesSize > warningFileSize) {
+					if (fileTypeErr > 0) this.mediaErrorText += "\n\n" + this.getLocale.mediaErrorFileSize;
+					else this.mediaErrorText = this.getLocale.mediaErrorFileSize;
+				}
+				else if (totalFilesSize > warningFileSize) {
 					this.showMediaWarning = true;
 					this.mediaWarningText = this.getLocale.mediaWarningFileSize;
-				} else {
-					if (fileTypeErr === 0) {
+				}
+				else {
+					if (fileTypeErr === 0) {      
 						this.showMediaError = false;
 					}
 					this.showMediaWarning = false;
 				}
-
 				if (fileTypeErr === 0 && totalFilesSize < errorFileSize) {
 					let callbackFunction = function(e) {
 						fileObject.buffer = btoa(e.target.result);
 						storedFiles.push(fileObject);
-					};
-
+					}
 					let reader = new FileReader();
 					reader.onload = callbackFunction;
 					reader.readAsBinaryString(file);
 				}
-
-				event.target.value = "";
 			}
+			event.target.value = "";
 		},
 		changeShowMedia() {
 			this.showMedia = !this.showMedia;
@@ -502,16 +514,13 @@ export default {
 			this.showBasicInfo = !this.showBasicInfo;
 		},
 		assignTime: function() {
-			this.newQuestion.time = JSON.parse(JSON.stringify(this.time));
 			if (this.newQuestion.time === 0) this.newQuestion.time = -1;
 		},
 		addNewQuestionHandler: function() {
 			this.$socket.emit(
 				"addNewQuestion",
 				Object.assign({}, this.newQuestion, {
-					courseCode: this.$store.getters.getSelectedCourse.split(
-						" "
-					)[0]
+					courseCode: this.$store.getters.getSelectedCourse
 				})
 			);
 		},

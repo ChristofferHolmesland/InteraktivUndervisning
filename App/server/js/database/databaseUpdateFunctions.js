@@ -28,12 +28,11 @@ const update = {
 
 		return createPromise(db, statement, "session");
 	},
-	userRightsLevelByFeideId: function(db, feideId, courseSemester, courseCode, level) {
+	userRightsLevelByFeideId: function(db, data) {
 		let statement = `UPDATE UserRight
-						 SET level = ${level}
-						 WHERE feideId = '${feideId}'
-						 AND courseSemester = '${courseSemester}'
-						 AND courseCode = '${courseCode}'`;
+						 SET level = ${data.level}
+						 WHERE feideId = '${data.feideId}'
+						 AND courseId = ${data.courseId}`;
 		return createPromise(db, statement, "userRightsLevelByFeideId");
 	},
 	feideSessionId: function(db, id, sessionId) {
