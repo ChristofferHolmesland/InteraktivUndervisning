@@ -12,29 +12,51 @@
 		<AddQuestionToSession 	elementRef="innerModalAddToSession"
 								ref="addQuestionToSessionModal"
 								/>
-		<b-row>
-			<b-col cols="2"></b-col>
-			<b-col cols="2" class="text-center">
+		<b-row class="mb-2">
+			<b-col cols="1"></b-col>
+			<b-col cols="3" class="text-center">
 				<SelectCourse :changeHandler="courseChanged"/>
 			</b-col>
-			<b-col cols="5" class="text-center mb-5 px-0">
+			<b-col cols="4" class="text-center">
 				<b-form-input	v-model="questionSearchText" 
 								type="text" 
 								:placeholder="getLocale.searchQuestion">
 				</b-form-input>
 			</b-col>
-			<b-col cols="1" class="text-center mb-5 pl-0">
-				<b-button @click="showAddQuestionModal" variant="primary">
-					<span style="visibility: hidden;">+</span>
-					+
-					<span style="visibility: hidden;">+</span>
+			<b-col cols="1" class="text-center">
+				<b-button @click="showAddQuestionModal" variant="primary" id="addQuestionBtn">
+					<h6>+</h6>
 				</b-button>
 			</b-col>
-			<b-col cols="2"></b-col>
+			<b-col cols="2" class="text-center">
+				<b-button @click="selectChange" variant="primary" id="selectBtn">
+					<h6 v-if="selectPressed">Close</h6>
+					<h6 v-else>Select</h6>
+				</b-button>
+			</b-col>
+			<b-col cols="1"></b-col>
+		</b-row>
+		<b-row v-if="selectPressed" class="mb-3">
+			<b-col></b-col>
+			<b-col style="text-align: center;">
+				<b-button v-b-modal.copyQuestions variant="success">
+					Copy selected
+				</b-button>
+				<b-modal id="copyQuestions" title="Copy questions to other courses">
+					{{ selectedQuestions }}
+				</b-modal>
+			</b-col>
+			<b-col></b-col>
+			<b-col style="text-align: center;">
+				<b-button variant="danger">
+					Delete selected
+				</b-button>
+			</b-col>
+			<b-col></b-col>
 		</b-row>
 		<b-row v-if="showError" style="text-align: center;">
 			<b-col></b-col>
-			<b-col cols="8">
+			<b-col cols="10">
 				<b-alert	:show="showError"
 							@dismissed="showError = false"
 							variant="danger"
@@ -45,33 +67,38 @@
 			<b-col></b-col>
 		</b-row>
 		<b-row>
-			<b-col cols="0" lg="2"></b-col>
-			<b-col cols="12" lg="8">
+			<b-col cols="0" lg="1"></b-col>
+			<b-col cols="12" lg="10">
 				<b-list-group style="min-height: 300px; max-height: 300px; overflow-y:scroll;">
-                    <b-list-group-item class="border-0" :key="item.id" v-for="item in currentQuestions">
-						<b-container>
-							<b-row>
-								<b-col cols="8">
-									{{item.text}}
-								</b-col>
-								<b-col cols="1">
-									<b-button @click="showShowQuestionModal(item)" >V</b-button>
-								</b-col>
-								<b-col cols="1">
-									<b-button @click="showEditQuestionModal(item)" >E</b-button>
-								</b-col>	
-								<b-col cols="2">
-									<b-button @click="showAddQuestionToSessionModal(item)">{{getLocale.addToSession}}</b-button>
-								</b-col>
-							</b-row>
-						</b-container>
-					</b-list-group-item>
+					<b-form-checkbox-group v-model="selectedQuestions">
+						<b-list-group-item class="border-0" :key="item.id" v-for="item in currentQuestions">
+							<b-container>
+								<b-row>
+									<b-col cols="1" v-if="selectPressed">
+										<b-form-checkbox :value="item.id"/>
+									</b-col>
+									<b-col :cols="selectPressed ? 7 : 8">
+										{{item.text}}
+									</b-col>
+									<b-col cols="1">
+										<b-button @click="showShowQuestionModal(item)" >V</b-button>
+									</b-col>
+									<b-col cols="1">
+										<b-button @click="showEditQuestionModal(item)" >E</b-button>
+									</b-col>	
+									<b-col cols="2">
+										<b-button @click="showAddQuestionToSessionModal(item)">{{getLocale.addToSession}}</b-button>
+									</b-col>
+								</b-row>
+							</b-container>
+						</b-list-group-item>
+					</b-form-checkbox-group>
 					<b-list-group-item class="border-0" v-show="showNoQuestions">
 						{{ getLocale.emptyQuestionList }}
 					</b-list-group-item>
                 </b-list-group>
 			</b-col>
-			<b-col cols="0" lg="2"></b-col>
+			<b-col cols="0" lg="1"></b-col>
 		</b-row>
 	</b-container>
 </template>
@@ -92,6 +119,8 @@
 				question: undefined,
 				showError: false,
 				errorText: "",
+				selectPressed: false,
+				selectedQuestions: []
 			}
 		},
 		components: {
@@ -122,29 +151,29 @@
 			showNoQuestions: function() {
 				return this.currentQuestions.length == 0;
 			},
-			getLocale() {
+			getLocale: function() {
 				let locale = this.$store.getters.getLocale("AdminQuestions");
                 if(locale) return locale;
 			    else return {};
 			}
 		},
 		sockets: {
-			sendAllQuestionsWithinCourse(questions) {
+			sendAllQuestionsWithinCourse: function(questions) {
 				this.questionList = questions;
 			},
-			questionChangeComplete() {
+			questionChangeComplete: function() {
 				this.requestNewQuestions();
 			}
 		},
 		methods: {
-			requestNewQuestions() {
+			requestNewQuestions: function() {
 				this.$socket.emit("getAllQuestionsWithinCourse",
 					this.$store.getters.getSelectedCourse);
 			},
-			courseChanged(newCourse) {
+			courseChanged: function(newCourse) {
 				this.$socket.emit("getAllQuestionsWithinCourse", newCourse);
 			},
-			showEditQuestionModal(item) {
+			showEditQuestionModal: function(item) {
 				this.okHandler = "edit";
 				if (item.time === -1) item.time = 0;
 				this.question = item;
@@ -152,7 +181,7 @@
 					this.$refs.editQuestionModal.$refs.innerModalEditAdd.show();
 				});
 			},
-			showAddQuestionModal() {
+			showAddQuestionModal: function() {
 				let courseId = this.$store.getters.getSelectedCourse;
 				if (courseId === undefined || courseId === "") {
 					this.errorText = "courseMissing";
@@ -165,22 +194,32 @@
 					this.$refs.editQuestionModal.$refs.innerModalEditAdd.show();
 				});
 			},
-			showShowQuestionModal(item) {
+			showShowQuestionModal: function(item) {
 				if (item.time === -1) item.time = 0;
 				this.$refs.showQuestionModal._data.question = item;
 				this.$nextTick(function() {
 					this.$refs.showQuestionModal.$refs.innerModalShow.show();
 				});
 			},
-			showAddQuestionToSessionModal(item) {
+			showAddQuestionToSessionModal: function(item) {
 				this.okHandler = "add";
 				this.$refs.addQuestionToSessionModal.$refs.innerModalAddToSession.show();
 				this.$refs.addQuestionToSessionModal._data.question.id = item.id;
 				this.$refs.addQuestionToSessionModal._data.question.text = item.text;
 			},
+			selectChange: function() {
+				this.selectedQuestions = [];
+				this.selectPressed = !this.selectPressed;
+			}
 		}
 	}
 </script>
 
 <style scoped>
+#addQuestionBtn, #selectBtn {
+	width: 70%;
+	text-align: center;
+	height: 100%;
+	line-height: 100%;
+}
 </style>
