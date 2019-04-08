@@ -316,6 +316,17 @@
                 "By pressing move you can now click somewhere in the canvas and the selected list will be moved to that location",
                 "Pressing extract will take the selected elements from a list and extract them to a sublist.",
                 "The order of how you extract a sublist does matter. The mergesort algorithm is set up to check the left side first."
+            ],
+            "Tree": [
+                "This is the guide for using the graphDrawer on tree related questions:",
+                "Usually you would get a list of nodes or an existing binary tree or both, and you'll have to draw the resulting binary tree.",
+                "Whenever you should add or remove the nodes from the tree should be specified in the description, the main focus here is to practise drawing resulting binary trees.",
+                "The GraphDrawer for trees have 5 different command options of which to choose from, namely: Add, Remove, Move, Join and Edit. The chosen command option should be highlighted and by default its set to use the Add command.",
+                "While using the Add command, clicking on the canvas will create a new node with a default value of 0",
+                "While using the Remove command, clicking on any of the nodes or lines visible on the canvas will remove them from the canvas.",
+                "While using the Move command, you can drag nodes around by clicking on a node and while not releasing you can move the node around the canvas. Releasing the node will place the node in its current position.",
+                "While using the Join command, you can create a line between two nodes. You do this by clicking on an existing node and then hover over to another node. Once you release your finger or mouse, a new line should appear between the two nodes.",
+                "While using the Edit command, clicking on any of the nodes will trigger an alert window to appear. In this alert window you can assign a value to the chosen node using the input field. Click on the OK button and the chosen node will be set to the value that was inputted in the alert window."
             ]
         },
         "settings": {
