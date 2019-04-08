@@ -419,16 +419,20 @@ module.exports.admin = function(socket, db, user, sessions) {
 				let q = questions[i];
 				result.push({
 					id: q.id,
-					text: q.text,
-					description: q.description,
-					solutionType: q.type,
-					solution: q.solution,
-					time: q.time,
-					objects: q.object
+					text: q.text
 				});
 			}
 			socket.emit("sendAllQuestionsWithinCourse", result);
 		});
+	});
+
+	socket.on("questionInfoByIdRequest", async function(questionId) {
+		await dbFunctions.get.questionsByQuestionId(db, [{id: questionId}]).then((rows) => {
+			socket.emit("questionInfoByIdResponse", rows[0]);
+		}).catch((err) => {
+			console.error(err);
+			socket.emit("questionInfoByIdError", "dbError");
+		})
 	});
 
 	socket.on("addNewQuestion", async function(question) {
@@ -769,7 +773,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 	});
 
 	socket.on("copyQuestionToCourseRequest", async function(data) {
-		if (data === undefined || data.keys().length === 0) {
+		if (data === undefined || Object.keys(data).length === 0) {
 			socket.emit("copyQuestionToCourseError", "missingData");
 			return;
 		}
@@ -790,7 +794,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 			socket.emit("copyQuestionToCourseError", "dbError");
 		});
 
-		let questions = await dbFunctions.get.questionByQuestionId(db, selectedQuestionsList).catch(() => {
+		let questions = await dbFunctions.get.questionsByQuestionId(db, selectedQuestionsList).catch(() => {
 			socket.emit("copyQuestionToCourseError", "dbError");
 		});
 

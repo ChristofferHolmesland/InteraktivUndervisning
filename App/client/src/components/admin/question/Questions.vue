@@ -119,7 +119,8 @@
 				showError: false,
 				errorText: "",
 				selectPressed: false,
-				selectedQuestions: []
+				selectedQuestions: [],
+				action: "edit"
 			}
 		},
 		components: {
@@ -177,6 +178,29 @@
 			},
 			questionChangeComplete: function() {
 				this.requestNewQuestions();
+			},
+			questionInfoByIdResponse: function(question) {
+				switch (this.action) {
+					case "edit":
+						this.okHandler = "edit";
+						if (question.time === -1) question.time = 0;
+						this.question = question;
+						this.$nextTick(function() {
+							this.$refs.editQuestionModal.$refs.innerModalEditAdd.show();
+						});
+						break;
+					case "show":
+						if (question.time === -1) question.time = 0;
+						this.$refs.showQuestionModal._data.question = question;
+						this.$nextTick(function() {
+							this.$refs.showQuestionModal.$refs.innerModalShow.show();
+						});
+						break;
+				}
+			},
+			questionInfoByIdError: function(error) {
+				this.errorText = error;
+				this.showError = true;
 			}
 		},
 		methods: {
@@ -190,12 +214,8 @@
 				this.selectPressed = false;
 			},
 			showEditQuestionModal: function(item) {
-				this.okHandler = "edit";
-				if (item.time === -1) item.time = 0;
-				this.question = item;
-				this.$nextTick(function() {
-					this.$refs.editQuestionModal.$refs.innerModalEditAdd.show();
-				});
+				this.action = "edit";
+				this.$socket.emit("questionInfoByIdRequest", item.id);
 			},
 			showAddQuestionModal: function() {
 				let courseId = this.$store.getters.getSelectedCourse;
@@ -211,11 +231,8 @@
 				});
 			},
 			showShowQuestionModal: function(item) {
-				if (item.time === -1) item.time = 0;
-				this.$refs.showQuestionModal._data.question = item;
-				this.$nextTick(function() {
-					this.$refs.showQuestionModal.$refs.innerModalShow.show();
-				});
+				this.action = "show";
+				this.$socket.emit("questionInfoByIdRequest", item.id);
 			},
 			showAddQuestionToSessionModal: function(item) {
 				this.okHandler = "add";
