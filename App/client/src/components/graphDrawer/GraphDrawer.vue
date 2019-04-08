@@ -1,6 +1,6 @@
 <template>
     <div>
-        <canvas id="canvas" 
+        <canvas id="canvas"
                 :width="width"
                 :height="height"
                 style="background-color: #fff; margin-left: auto; margin-right: auto; display: block; border: 2px solid black;"
@@ -63,15 +63,18 @@
             this.createDrawer();
         },
         methods: {
+            destroyDrawer: function() {
+                this.graphDrawer = undefined;
+            },
             createDrawer: function() {
-                let c = document.getElementById("canvas");
+                this.canvas = document.getElementById("canvas");
 
                 let nodeShape = "Circle";
                 if (this.controlType == "Sort" || this.controlType == "Python") {
                     nodeShape = "Rectangle"
                 }
 
-                this.graphDrawer = new GraphDrawer(c, {
+                this.graphDrawer = new GraphDrawer(this.canvas, {
                     nodeShape: nodeShape,
                     controlType: this.controlType,
                     operatingMode: this.operatingMode,

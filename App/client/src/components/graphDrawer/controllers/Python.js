@@ -1,5 +1,8 @@
 export default class Python {
 	_config(config) {
+		console.log("Python config");
+		console.log(config);
+
 		if (config && config.steps) {
 			this.steps = config.steps.slice(0, config.steps.length - 1);
 
@@ -10,18 +13,21 @@ export default class Python {
 
 			for (let t in types) {
 				if (!types.hasOwnProperty(t)) continue;
+				t = types[t];
 
 				let fields = [];
 
 				if (!completed.includes(t.name)) {
 					completed.push(t.name);
 
-					let fieldNames = this.getProps(t.objects);
-					for (let i = 0; i < fieldNames.length; i++) {
-						fields.push({
-							name: fieldNames[i],
-							type: t.data[t.objects[fieldNames[i]]].type
-						});
+					for (let i = 0; i < t.code.length; i++) {
+						let code = t.code[i].trim();
+						if (code.startsWith("self.")) {
+							let objectName = code.split(" ")[0].slice(5);
+							fields.push({
+								name: objectName
+							});
+						}
 					}
 				}
 
@@ -100,6 +106,8 @@ export default class Python {
 	}
 
 	mouseDownHandler(e) {
+		if (this.gd.operatingMode == "Presentation") return false;
+
 		let consumed = this.detectUIInput(e);
 		if (consumed) return;
 
@@ -400,19 +408,45 @@ export default class Python {
 		let objectValue = undefined;
 		if (baseType) objectValue = prompt("Enter object value:", "");
 
-		let object = {
-			type: objectType,
+		let node = this.addObject({
+			objectType: objectType,
 			baseType: baseType,
-			value: objectValue,
-			links: baseType ? undefined : []
+			objectValue: objectValue,
+			x: p.x,
+			y: p.y
+		}).node;
+
+		// Move the node center to the mouse click
+		node.x -= node.w / 2;
+		node.y -= node.h / 2;
+
+		this.gd.dirty = true;
+		return true;
+	}
+
+	/*
+		Creates and adds an object, and returns { object, node }.
+
+		o needs to have the followwing properties:
+			objectType (String, Number, Boolean, ....)
+			baseType
+			objectValue (Can be undefined if baseType is false)
+			x
+			y
+	*/
+	addObject(o) {
+		let object = {
+			type: o.objectType,
+			baseType: o.baseType,
+			value: o.objectValue
 		};
 
-		if (!baseType) {
+		if (!o.baseType) {
 			object.fields = [];
 
 			for (let i = 0; i < this.objectTypes.length; i++) {
 				let type = this.objectTypes[i];
-				if (type.name == objectType) {
+				if (type.name == o.objectType) {
 					for (let j = 0; j < type.fields.length; j++) {
 						object.fields.push({
 							name: type.fields[j].name,
@@ -427,23 +461,20 @@ export default class Python {
 		this.objects.push(object);
 
 		let node = this.gd.addNode({
-			x: p.x,
-			y: p.y,
+			x: o.x,
+			y: o.y,
 			w: this.gd.R * 2,
 			h: this.gd.R * 2,
 			v: "",
 			shape: this.gd.nodeShape
 		});
 
-		// Move the node center to the mouse click
-		node.x -= node.w / 2;
-		node.y -= node.h / 2;
-
 		object.id = node.id;
 		this.generateNodeText(object.id);
-
-		this.gd.dirty = true;
-		return true;
+		return {
+			object: object,
+			node: node
+		};
 	}
 
 	detectUIInput(e) {
@@ -522,7 +553,7 @@ export default class Python {
 		let step = this.steps[this.gd.currentStep];
 		if (step._graphdrawer) return this.parseUserStep(step);
 		// Add variables
-		let variables = this.getProps(step.objects);
+		let vars = this.getProps(step.objects);
 		let margin = 25;
 		let left = this.gd.camera.project(margin, margin);
 		let right = this.gd.camera.project(
@@ -530,26 +561,181 @@ export default class Python {
 			margin
 		);
 		let width = right.x - left.x;
-		let variableWidth = width / variables.length;
-		for (let i = 0; i < variables.length; i++) {
+		let variableWidth = width / vars.length;
+
+		let startX = this.gd.drawBuffer.width / 2;
+		let startY = this.gd.drawBuffer.height / 2;
+
+		for (let i = 0; i < vars.length; i++) {
 			this.addVariable({
-				name: variables[i],
-				x: left.x + variableWidth / 2 + i * variableWidth,
-				y: left.y
+				name: vars[i],
+				x: startX + variableWidth / 2 + i * variableWidth,
+				y: startY
 			});
 		}
 
-		// Add objects
-		let uniqueIdToId = {};
-		let objects = [];
-		let findAllObjects = (objectList) => {
-			let objectNames = this.getProps(objectList);
+		const TO_PARENT = 0;
+		const TO_CHILD = 1;
 
-			for (let i = 0; i < objectNames.length; i++) {
-				// Not implemented yet
+		/*
+			Array of ui->id mappings,
+			where the ui is the _uniqueId from the parser,
+			and id is the unique id assigned by the GraphDrawer.
+
+			{
+				ui: Number,
+				id: Number
+			}
+		*/
+		let uniqueToGraphDrawerId = [];
+
+		let generateAndLinkObjects = (parentNode, obj, direction, parsedParentObject) => {
+			let info;
+			let newObjectCreated = true;
+
+			// This checks if the steps are too old to read.
+			// If they are, the code needs to be parsed again
+			// before the GraphDrawer can understand them.
+			if (!obj.hasOwnProperty("_uniqueId")) {
+				console.error(
+					"The python code you are trying to render, " + 
+					"was parsed by an older version which didn't support the GraphDrawer. " +
+					"Please parse the code again using the newest version."
+				);
+				return;
+			}
+			
+			let ui = obj._uniqueId;
+			for (let i = 0; i < uniqueToGraphDrawerId.length; i++) {
+				let mapping = uniqueToGraphDrawerId[i];
+				if (mapping.ui == ui) {
+					newObjectCreated = false;
+					info = {
+						object: this.findObjectById(mapping.id),
+						node: this.gd.getNode(mapping.id)
+					};
+					break;
+				}
+			}
+
+			if (newObjectCreated) {
+				// If the parent object has more than one child,
+				// they should be evenly spaced below the parent.
+				let myX = undefined;
+				if (parsedParentObject !== undefined) {
+					let myUi = obj._uniqueId;
+					let childrenCount = parsedParentObject.data.length
+					let myIndex = -1;
+					for (let i = 0; i < childrenCount; i++) {
+						let c = parsedParentObject.data[i];
+						if (c._uniqueId == myUi) {
+							myIndex = i;
+							break;
+						}
+					}
+
+					let assumedSize = this.gd.R * 2;
+					let padding = this.gd.R;
+					let totalChildWidth = childrenCount * (assumedSize + padding);
+					let startX = parentNode.x + parentNode.w / 2 - (totalChildWidth / 2);
+				
+					myX = startX + myIndex * (assumedSize + padding);
+				}
+
+
+				info = this.addObject({
+					objectType: obj.type,
+					baseType: this.baseType(obj.type),
+					objectValue: obj.data,
+					x: myX == undefined ? parentNode.x : myX,
+					y: parentNode.y + 75 + Math.random() * 50
+				});
+
+				// This is not the right amount to move the node by, because it's width
+				// isn't correctly set before it has been rendered once.
+				// But it is close enough.
+				if (myX == undefined) info.node.x -= info.node.w / 2;
+				
+				uniqueToGraphDrawerId.push({
+					ui: ui,
+					id: info.node.id
+				});
+			}
+
+			let parent = this.findObjectById(parentNode.id);
+
+			if (direction == TO_CHILD) {
+				// If the direction of the link is towards the child, the
+				// parent must be a variable.
+				parent.object.links.push(info.object);
+				this.gd.edges.push({
+					n1: parentNode,
+					n2: info.node
+				});
+			} else if (direction == TO_PARENT) {
+				// If the direction of the link is towards the parent,
+				// the parent must be an object.
+
+				// Find position of obj in data array
+				let dataIndex = -1;
+				let data = parsedParentObject.data;
+				for (let i = 0; i < data.length; i++) {
+					if (data[i].type == obj.type && data[i].data == obj.data) {
+						dataIndex = i;
+						break;
+					}
+				}
+				
+				// Find variable name
+				let variableName = "";
+				let possibleNames = this.getProps(parsedParentObject.objects);
+				for (let i = 0; i < possibleNames.length; i++) {
+					let name = possibleNames[i];
+					if (parsedParentObject.objects[name] == dataIndex) {
+						variableName = name;
+						break;
+					}
+				}
+
+				// Link id of info.node to the parent.fields object
+				for (let i = 0; i < parent.object.fields.length; i++) {
+					let field = parent.object.fields[i];
+					if (field.name == variableName) {
+						field.value = info.node.id;
+						break;
+					}
+				}
+
+				this.gd.edges.push({
+					n1: info.node,
+					n2: parentNode
+				});
+
+				this.generateNodeText(parent.object.id);
+			}
+
+			// If the object is not a basetype, then it is an object
+			// which can contain objects.
+			if (!info.object.baseType && newObjectCreated) {
+				let subObjectNames = this.getProps(obj.objects);
+				for (let i = 0; i < subObjectNames.length; i++) {
+					let subObjectIndex = obj.objects[subObjectNames[i]];
+					let subObject = obj.data[subObjectIndex];
+					generateAndLinkObjects(info.node, subObject, TO_PARENT, obj);
+				}
 			}
 		};
-		findAllObjects(step.data);
+
+		for (let i = 0; i < this.variables.length; i++) {
+			let variable = this.variables[i];
+			let node = this.gd.getNode(variable.id);
+
+			generateAndLinkObjects(
+				node, 
+				step.data[step.objects[variable.name]], 
+				TO_CHILD
+			);
+		}
 
 		this.gd.centerCameraOnGraph();
 	}
@@ -654,8 +840,8 @@ export default class Python {
 				this.generateNodeText(o.id);
 			}
 		}
-	}	
-	
+	}
+
 	getProps(object) {
 		let props = [];
 		for (let prop in object) {

@@ -1,14 +1,14 @@
 <template>
-	<div id="Dijkstra">
-		test tekst
+	<div id="Python">
 		<b-container>
 			<GraphDrawer 
 					@getValueResponse="gotGraphDrawer" 
 					:requestAnswer="requestAnswerFromGraphDrawer" 
-					controlType="Dijkstra"
+					controlType="Python"
 					operatingMode="Interactive"
-					:graph="getGraphFromSteps"
-					:displayEdgeValues="true"
+					:steps="steps"
+					:displayEdgeValues="false"
+					:directedEdges="true"
 					/>
 		</b-container>
 	</div>
@@ -18,7 +18,7 @@
 import GraphDrawer from "../../../graphDrawer/GraphDrawer.vue";
 
 export default {
-	name: "Dijkstra",
+	name: "Python",
 	data() {
 		return {
 			requestAnswerFromGraphDrawer: false
@@ -33,11 +33,6 @@ export default {
 		GraphDrawer
 	},
 	props: ["requestAnswer", "steps"],
-	computed: {
-		getGraphFromSteps: function() {
-			return this.steps[0];
-		}
-	},
 	watch: {
 		requestAnswer: function() {
 			this.requestAnswerFromGraphDrawer = !this.requestAnswerFromGraphDrawer;
