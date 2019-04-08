@@ -1,15 +1,18 @@
 <template>
 	<b-container class="jumbotron vertical-center" style="margin-top: 2rem;">
-		<EditQuestion 	elementId="editQuestionModal"
+		<EditQuestion 	v-if="renderEditQuestion"
+						elementId="editQuestionModal"
 						elementRef="innerModalEditAdd"
 						ref="editQuestionModal"
 						:okHandler="okHandler"
 						:question="question"
 						/>
-		<ShowQuestion 	elementRef="innerModalShow"
+		<ShowQuestion 	v-if="renderShowQuestion"
+						elementRef="innerModalShow"
 						ref="showQuestionModal"
 						/>
-		<AddQuestionToSession 	elementRef="innerModalAddToSession"
+		<AddQuestionToSession 	v-if="renderAddQuestionToSession"
+								elementRef="innerModalAddToSession"
 								ref="addQuestionToSessionModal"
 								/>
 		<b-row class="mb-2">
@@ -119,8 +122,11 @@
 				showError: false,
 				errorText: "",
 				selectPressed: false,
-				selectedQuestions: [],
 				action: "edit"
+				selectedQuestions: []
+				renderEditQuestion: false,
+				renderShowQuestion: false,
+				renderAddQuestionToSession: false
 			}
 		},
 		components: {
@@ -135,6 +141,14 @@
 				"getAllQuestionsWithinCourse", 
 				this.$store.getters.getSelectedCourse
 			);
+
+			this.$root.$on('bv::modal::hide', (bvEvent, modalId) => {
+				let id = bvEvent.target.id;
+
+				if (id.includes("edit")) this.renderEditQuestion = false;
+				else if (id.includes("show")) this.renderShowQuestion = false;
+				else if (id.includes("session")) this.renderAddQuestionToSession = false;
+			})
 		},
 		computed: {
 			currentQuestions: function() {
@@ -190,11 +204,24 @@
 						});
 						break;
 					case "show":
-						if (question.time === -1) question.time = 0;
-						this.$refs.showQuestionModal._data.question = question;
-						this.$nextTick(function() {
-							this.$refs.showQuestionModal.$refs.innerModalShow.show();
-						});
+						if (item.time === -1) item.time = 0;
+				    this.renderShowQuestion = true;
+			
+            this.$nextTick(function() {
+              this.$refs.showQuestionModal._data.question = JSON.parse(JSON.stringify(item));
+              // Set the solution type to 0 to destroy all the GraphDrawer components.
+              this.$refs.showQuestionModal._data.question.solutionType = 0;
+              // Wait for the page to render.
+              this.$nextTick(function() {
+                // Set the correct solution type.
+                this.$refs.showQuestionModal._data.question.solutionType = item.solutionType;
+                // Wait for the page to render.
+                this.$nextTick(function() {
+                  // Finally show modal.
+                  this.$refs.showQuestionModal.$refs.innerModalShow.show();
+                });
+              });
+            });
 						break;
 				}
 			},
@@ -226,6 +253,7 @@
 				}
 				this.okHandler = "add";
 				this.question = undefined;
+				this.renderEditQuestion = true;
 				this.$nextTick(function() {
 					this.$refs.editQuestionModal.$refs.innerModalEditAdd.show();
 				});

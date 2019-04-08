@@ -1,9 +1,18 @@
 const check = function(answer, solution) {
 	solution = solution[solution.length - 1];
 
+	console.log("Answer");
+	console.log(answer);
+	console.log("Soltuion");
+	console.log(solution)
+
 	// Check that they have the same global variables.
-	if (answer.variables.length !== solution.objects.length)
+
+
+	// denen sjekken failer sannsynligvis alltid siden solution.objects er et objekt og ikke array
+	if (answer.variables.length !== solution.objects.length) {
 		return false;
+	}
 
 	let getAnswerObjectById = (id) => {
 		for (let i = 0; i < answer.objects.length; i++) {
@@ -15,6 +24,10 @@ const check = function(answer, solution) {
 	};
 
 	let checkData = (data, answer) => {
+		console.log("Check data (data, answer");
+		console.log(data);
+		console.log(answer);
+
 		// Check that fields match datatype fields.
 		let objectKeys = getProps(data.objects);
 		for (let k = 0; k < objectKeys.length; k++) {
@@ -53,6 +66,7 @@ const check = function(answer, solution) {
 	let objectKeys = getProps(solution.objects);
 	for (let k = 0; k < objectKeys.length; k++) {
 		let v = objectKeys[k];
+		console.log("CHecking property: " + v);
 
 		let answerVariableIndex = answer.variables.indexOf(v);
 		if (answerVariableIndex == -1) return false;

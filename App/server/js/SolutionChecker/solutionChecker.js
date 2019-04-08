@@ -7,8 +7,8 @@ let checkers = {
 	6: require("./binaryTree.js"),
 	7: require("./binaryTree.js"),
 	8: require("./binaryTree.js"),
-	9: require("./text.js"),
-	10: require("./djikstra.js"),
+	9: require("./djikstra.js"),
+	10: require("./python.js"),
 	11: require("./text.js"), // Not implemented yet
 	12:require("./text.js"), // Not implemented yet
 	13: require("./python.js")
