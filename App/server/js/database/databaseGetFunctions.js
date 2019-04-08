@@ -406,7 +406,7 @@ const get = {
 				jsonParser(rows);
 				imageGetter(rows);
 				resolve(rows);
-			})
+			});
 		});
 	}
 };
