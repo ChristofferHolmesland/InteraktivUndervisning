@@ -46,7 +46,12 @@
         "filesize": "Filstørrelse",
         "filetype": "Filtype",
         "deleteBtn": "Slett",
-        "courseMissing": "Ingen fag er valgt. Velg et fag eller gå til Admin taben og lag et nytt fag."
+        "courseMissing": "Ingen fag er valgt. Velg et fag eller gå til Admin taben og lag et nytt fag.",
+        "selectBtn": "Marker",
+        "copySelectedBtn": "Kopier markerte",
+        "deleteSelectedBtn": "Slett markerte",
+        "closeBtn": "Lukk",
+        "noQuestionsSelectedError": "Ingen spørsmål er markert!"
     },
     "AdminSessions": {
         "newSession": "Ny økt",
@@ -225,5 +230,20 @@
     },
     "SelectCourse": {
         "noCourseText": "Ingen fag. Legg til nytt fag"
+    },
+    "CopyQuestions": {
+        "errors": {
+            "dbError": "Det skjedde en feil med databasen. Venligst prøv igjen senere.",
+            "missingData": "Serveren mottok ikke noe data. Venligst prøv på nytt.",
+            "noCoursesSelected": "Ingen fag var valgt. Velg fagene som skal motta en kopi av spørsmålene.",
+            "noQuestionsSelected": "Ingen spørsmål ble mottatt. Venligst marker spørsmålene som skal sendes."
+        },
+        "okBtn": "Kopier spørsmålene",
+        "cancelBtn": "Avbryt",
+        "title": "Kopier spørsmål til andre fag",
+        "removeBtn": "Fjern",
+        "selectedQuestionsTitle": "Markerte spørsmål:",
+        "selectCoursesTitle": "Marker fagene som skal få en kopi av spørsmålene:",
+        "selectedCoursesTitle": "Fagene som har blitt markert og vil få en kopi av de markerte spørsmålene:"
     }
 }

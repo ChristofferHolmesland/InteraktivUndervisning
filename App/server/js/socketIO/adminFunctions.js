@@ -767,4 +767,85 @@ module.exports.admin = function(socket, db, user, sessions) {
 			return;
 		});
 	});
+
+	socket.on("copyQuestionToCourseRequest", async function(data) {
+		if (data === undefined || data.keys().length === 0) {
+			socket.emit("copyQuestionToCourseError", "missingData");
+			return;
+		}
+
+		let selectedCourses = data.selectedCourses;
+		if (selectedCourses === undefined || selectedCourses.length === 0){
+			socket.emit("copyQuestionToCourseError", "noCoursesSelected");
+			return;
+		}
+
+		let selectedQuestionsList = data.selectedQuestionsList;
+		if (selectedQuestionsList === undefined || selectedQuestionsList.length === 0){
+			socket.emit("copyQuestionToCourseError", "noQuestionsSelected");
+			return;
+		}
+
+		let courses = await dbFunctions.get.coursesByCourseId(db, selectedCourses).catch(() => {
+			socket.emit("copyQuestionToCourseError", "dbError");
+		});
+
+		let questions = await dbFunctions.get.questionByQuestionId(db, selectedQuestionsList).catch(() => {
+			socket.emit("copyQuestionToCourseError", "dbError");
+		});
+
+		for (let i = 0; i < courses.length; i++) {
+			let courseId = courses[i].id;
+
+			for (let j = 0; j < questions.length; j++) {
+				let question = JSON.parse(JSON.stringify(questions[j]));
+
+				let objects = JSON.parse(JSON.stringify(question.object));
+				for (let i = 0; i < objects.files.length; i++) {
+					delete objects.files[i].buffer;
+				}
+				
+				await dbFunctions.insert.question(db, question.text, question.description, question.solution, question.time, question.type, courseId, objects).then(async (questionIndex) => {
+					if (question.object.files.length > 0) {
+						let files = [];
+						for (let i = 0; i < question.object.files.length; i++) {
+							files.push(JSON.parse(JSON.stringify(question.object.files[i])));
+						}
+						let filePath = path.join("../../images/questionImages/", questionIndex.toString(), "/");
+						let filePaths = [];
+				
+						try {
+							mkdirp.sync(path.join(__dirname, filePath));
+							for (let i = 0; i < files.length; i++) {
+								let type = files[i].type.split("/")[1];
+								filePaths.push(filePath + (i + 1).toString() + "." + type);
+								question.object.files[i].filePath = filePaths[i];
+								delete question.object.files[i].buffer;
+								
+								await fs.open(path.join(__dirname, filePaths[i]), "w", function(err, fd) {
+									if (err) {
+										console.error("Error writing image: \n\n" + err);
+										return;
+									}
+									fs.writeSync(fd, files[i].buffer, null, "base64");
+								});
+							}
+							
+							await dbFunctions.update.question(db, questionIndex, question.text, question.description, question.object, question.solution, question.type, question.time);		
+						} 
+						catch (err) {
+							console.error(err)
+							console.error("Error making dirs!\n\n" + err);
+							socket.emit("copyQuestionToCourseError", "dbError");
+						}
+					}
+				}).catch((err) => {
+					console.error(err);
+					socket.emit("copyQuestionToCourseError", "dbError");
+				});
+			}
+		}
+
+		socket.emit("copyQuestionToCourseResponse");
+	});
 }

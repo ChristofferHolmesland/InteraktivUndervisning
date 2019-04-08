@@ -46,7 +46,12 @@
         "filesize": "Filesize",
         "filetype": "filetype",
         "deleteBtn": "Delete",
-        "courseMissing": "No course is selected. Please select a course or go to Admin tab and create a new course."
+        "courseMissing": "No course is selected. Please select a course or go to Admin tab and create a new course.",
+        "selectBtn": "Select",
+        "copySelectedBtn": "Copy selected",
+        "deleteSelectedBtn": "Delete selected",
+        "closeBtn": "Close",
+        "noQuestionsSelectedError": "No questions are selected!"
     },
     "AdminSessions": {
         "newSession": "New session",
@@ -225,5 +230,20 @@
     },
     "SelectCourse": {
         "noCourseText": "No course. Add new course"
+    },
+    "CopyQuestions": {
+        "errors": {
+            "dbError": "An database error occured. Please try again later.",
+            "missingData": "No data was sent. Please try again.",
+            "noCoursesSelected": "Zero courses was selected. Please select the course(s) that should recieve a copy of these questions.",
+            "noQuestionsSelected": "Zero questions was recieved. Please mark the questions that should be copied."
+        },
+        "okBtn": "Copy questions",
+        "cancelBtn": "Cancel",
+        "title": "Copy questions to other courses",
+        "removeBtn": "Remove",
+        "selectedQuestionsTitle": "Selected questions:",
+        "selectCoursesTitle": "Select courses that should get a copy of the selected questions:",
+        "selectedCoursesTitle": "Selected courses that should get a copy of the selected questions:"
     }
 }

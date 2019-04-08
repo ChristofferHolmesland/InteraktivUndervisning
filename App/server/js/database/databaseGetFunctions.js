@@ -305,7 +305,6 @@ const get = {
 							FROM UserRight as UR
 							LEFT JOIN Feide as F ON Ur.feideId = F.id
 							WHERE UR.courseId = ${data.courseId} AND UR.level = ${data.level}`;
-			console.log(statement);
 			db.all(statement, (err,rows) => {
 				if (err) reject(customReject(err, "feideUsersByUserRightsLevel"));
 				resolve(rows);
@@ -375,6 +374,38 @@ const get = {
 				if (err) reject(customReject(err, "courseCodes"));
 				resolve(rows);
 			});
+		});
+	},
+	coursesByCourseId(db, courseList) {
+		return new Promise(async (resolve, reject) => {
+			let statement = `SELECT id FROM Course WHERE `
+			for (let i = 0; i < courseList.length; i++) {
+				if (i > 0) statement += `\nOR `
+				let courseId = courseList[i];
+				statement += `id = ${courseId}`;
+			}
+			statement += `;`
+			db.all(statement, (err, rows) => {
+				if (err) reject(customReject(err, "courseCodes"));
+				resolve(rows);
+			})
+		});
+	},
+	questionByQuestionId(db, questionList) {
+		return new Promise(async (resolve, reject) => {
+			let statement = `SELECT text, description, solution, time, questionType AS type, object FROM Question WHERE `
+			for (let i = 0; i < questionList.length; i++) {
+				if (i > 0) statement += `\nOR `
+				let questionId = questionList[i].id;
+				statement += `id = ${questionId}`;
+			}
+			statement += `;`
+			db.all(statement, (err, rows) => {
+				if (err) reject(customReject(err, "questionByQuestionId"));
+				jsonParser(rows);
+				imageGetter(rows);
+				resolve(rows);
+			})
 		});
 	}
 };
