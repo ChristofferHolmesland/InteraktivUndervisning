@@ -58,6 +58,10 @@
                                 <QuicksortSolution  v-if="resultInfo.question.type === 5"
                                                     :solution="resultInfo.solution"
                                                     />
+                                <div v-if="resultInfo.question.type === 6">
+                                    {{getLocale.binaryTreeSolutionText}}
+                                    {{resultInfo.solution.nodes}}
+                                </div>
                                 <TreeSolution       v-if="resultInfo.question.type === 7 || resultInfo.question.type === 8"
                                                     :solution="resultInfo.solution"
                                                     />
@@ -90,7 +94,7 @@
                                                         :answer="resultInfo.answerList[selectedAnswer].answerObject"
                                                         ref="graphdrawerContainer"
                                                         />
-                                    <TreeAnswer         v-if="resultInfo.question.type === 7 || resultInfo.question.type === 8"
+                                    <TreeAnswer         v-if="resultInfo.question.type >= 6 && resultInfo.question.type <= 8"
                                                         :answer="resultInfo.answerList[selectedAnswer].answerObject"
                                                         ref="graphdrawerContainer"
                                                     />
