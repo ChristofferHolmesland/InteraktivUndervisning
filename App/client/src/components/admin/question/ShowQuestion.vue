@@ -69,6 +69,17 @@ export default {
         elementRef: String,
         elementId: String,
     },
+    mounted() {
+        this.$root.$on("bv::modal::hide", (bvevent) => {
+            if (this.$refs.graphdrawer !== undefined)
+                this.$refs.graphdrawer.destroyDrawer();
+        });
+
+        this.$root.$on("bv::modal::show", (bvevent) => {
+            if (this.$refs.graphdrawer !== undefined)
+                this.$refs.graphdrawer.createDrawer();
+        });
+    },
     computed: {
         getLocale() {
             let locale = this.$store.getters.getLocale("AdminQuestions");

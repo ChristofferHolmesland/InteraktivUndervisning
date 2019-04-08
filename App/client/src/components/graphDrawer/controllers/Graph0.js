@@ -723,7 +723,7 @@ export default class Graph0 {
 					v: n.v,
 					w: n.w,
 					h: n.h,
-					shape: this.gd.nodeShape,
+					shape: n.shape == undefined ? this.gd.nodeShape : n.shape,
 					marked: n.marked,
 					fillColor: n.fillColor
 				});

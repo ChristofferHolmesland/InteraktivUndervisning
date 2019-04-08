@@ -258,6 +258,9 @@ export default class GraphDrawer {
 			this.staticBuffer.height
 		);
 
+		this.staticContext.fillStyle = "white";
+		this.staticContext.strokeStyle = "black";
+
 		for (let i = 0; i < this.steppingButtons.length; i++) {
 			let btn = this.steppingButtons[i];
 			this.staticContext.beginPath();

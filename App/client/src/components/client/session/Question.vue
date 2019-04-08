@@ -73,6 +73,11 @@
 								@getTextResponse="getTextValue"
 								:steps="questionInfo.object.steps"
 								/>
+							<Python v-if="getQuestionType === 10"
+								:requestAnswer="requestAnswer"
+								@getTextResponse="getTextValue"
+								:steps="questionInfo.object.steps"
+								/>
 						</b-tab>
 						<b-tab :title="updateTimer" v-if="interval !== undefined" disabled></b-tab>
 					</b-tabs>
@@ -101,6 +106,7 @@ import Mergesort from "./questionTypes/sorting/Mergesort.vue";
 import Quicksort from "./questionTypes/sorting/Quicksort.vue";
 import Tree from "./questionTypes/trees/Tree.vue";
 import Dijkstra from "./questionTypes/Dijkstra.vue";
+import Python from "./questionTypes/Python.vue";
 
 export default {
 	name: "Question",
@@ -203,7 +209,8 @@ export default {
 		Mergesort,
 		Quicksort,
 		Tree,
-		Dijkstra
+		Dijkstra,
+		Python
 	}
 };
 </script>
