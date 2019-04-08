@@ -122,8 +122,8 @@
 				showError: false,
 				errorText: "",
 				selectPressed: false,
-				action: "edit"
-				selectedQuestions: []
+				action: "edit",
+				selectedQuestions: [],
 				renderEditQuestion: false,
 				renderShowQuestion: false,
 				renderAddQuestionToSession: false
