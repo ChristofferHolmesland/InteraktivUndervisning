@@ -9,7 +9,9 @@
 				<b-col>
                     <b-form-select 	id="solutionTypeInput"
                                     :options="questionTypes"
-                                    v-model="questionType">
+                                    v-model="questionType"
+					>
+								    <!--@change="changeSelect"-->
                     </b-form-select>
 				</b-col>
 			</b-row>
@@ -77,19 +79,31 @@
 							</b-row>
 						</b-container>
 					</div>
-					<div v-if="questionType === 'Quicksort'">
-						<GraphDrawer	controlType="Sort" sortType="Quicksort" 
-                    					:steps="quicksortSteps" :requestAnswer="false"
-										v-if="!reload"
-										/>
-					</div>
 					<div v-if="questionType === 'Mergesort'">
-						<GraphDrawer	controlType="Sort" 
-										sortType="Mergesort" 
+						<GraphDrawer	controlType="Sort"
+										sortType="Mergesort"
 										:steps="mergesortSteps"
-										:requestAnswer="false"
+										:requestAnswer="requestGraphDrawerObject"
 										v-if="!reload"
-										/>
+										ref="graphDrawer"
+						/>
+					</div>
+					<div v-if="questionType === 'Quicksort'">
+						<GraphDrawer	controlType="Sort"
+										sortType="Quicksort"
+                    					:steps="quicksortSteps"
+										:requestAnswer="requestGraphDrawerObject"
+										v-if="!reload"
+										ref="graphDrawer"
+						/>
+					</div>
+					<div v-if="questionType === 'Tree'">
+						<GraphDrawer
+								controlType="Graph0"
+								operating-mode="Interactive"
+								ref="graphDrawer"
+								:requestAnswer="requestGraphDrawerObject"
+						/>
 					</div>
 				</b-col>
 			</b-row>
@@ -183,6 +197,7 @@ export default {
 			reload: false,
 			showSettings: true,
 			showGuide: false,
+			requestGraphDrawerObject: false,
 			questionType: "Text",
 			questionTypes: [
 				"Text",
@@ -190,9 +205,7 @@ export default {
 				"Shellsort",
 				"Mergesort",
 				"Quicksort",
-				"Binarytree",
-				"Binary search tree",
-				"AVL tree",
+				"Tree",
 				"Dijkstra",
 				"Python"
 			],
@@ -243,8 +256,20 @@ export default {
 		changeShowGuide: function() {
 			this.showGuide = !this.showGuide;
 		},
+		/*changeSelect: function() { //seems like it needs to be mounted
+			console.log(this.questionType);
+			if (this.questionType === "Mergesort" || this.questionType === "Quicksort" || this.questionType === "Tree") {
+				this.requestGraphDrawerObject = !this.requestGraphDrawerObject;
+				if (this.$refs.graphdrawer !== undefined) {
+					this.$nextTick(function () {
+						this.$refs.graphdrawer.createDrawer();
+					});
+				}
+			}
+		},*/
 		selectChoice: function(index) {
 			this.multipleChoiceChoices[index].selected = !this.multipleChoiceChoices[index].selected;
+
 		},
 		shellsortAddNewLine() {
 			let tempList = [];
