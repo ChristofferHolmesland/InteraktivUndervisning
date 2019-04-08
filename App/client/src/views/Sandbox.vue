@@ -111,10 +111,10 @@
 							<b-row>
 								<b-col>
 									<b-form-group>
-										<label for="shellsortStartKValue">{{ getLocale.settings[questionType].kValueLabel }}</label>
+										<label for="shellsortStartKValue">{{ getSettingObject.kValueLabel }}</label>
 										<b-form-input id="shellsortStartKValue" v-model="shellsortStartKValue" @change="shellsortInitialValuesChange">
 										</b-form-input>
-										<label for="shellsortStartList">{{ getLocale.settings[questionType].listLabel }}</label>
+										<label for="shellsortStartList">{{ getSettingObject.listLabel }}</label>
 										<b-form-input id="shellsortStartList" v-model="shellsortStartString" @change="shellsortInitialValuesChange">
 										</b-form-input>
 									</b-form-group>
@@ -125,7 +125,7 @@
 							<b-row>
 								<b-col>
 									<b-form-group>
-										<label for="quicksortStartList">{{ getLocale.settings[questionType].listLabel }}</label>
+										<label for="quicksortStartList">{{ getSettingObject.listLabel }}</label>
 										<b-form-input id="quicksortStartList" v-model="quicksortString" @change="quicksortInitialValuesChange">
 										</b-form-input>
 									</b-form-group>
@@ -136,7 +136,7 @@
 							<b-row>
 								<b-col>
 									<b-form-group>
-										<label for="mergesortStartList">{{ getLocale.settings[questionType].listLabel }}</label>
+										<label for="mergesortStartList">{{ getSettingObject.listLabel }}</label>
 										<b-form-input id="mergesortStartList" v-model="mergesortString" @change="mergesortInitialValuesChange">
 										</b-form-input>
 									</b-form-group>
@@ -161,7 +161,7 @@
 						<b-container class="jumbotron">
 							<b-row>
 								<b-col>
-									<p v-for="(line, index) in getLocale.guide[questionType]" :key="index">{{ line }}</p>
+									<p v-for="(line, index) in getGuideList" :key="index">{{ line }}</p>
 								</b-col>
 							</b-row>
 						</b-container>
@@ -350,6 +350,20 @@ export default {
 					this.shellsortElementSelected.row === row &&
 					this.shellsortElementSelected.element === element
 				) return true;
+			}
+		},
+		getGuideList: function() {
+			try {
+				return this.getLocale.guide[this.questionType];
+			} catch (err) {
+				return [];
+			}
+		},
+		getSettingObject: function() {
+			try {
+				return this.getLocale.settings[this.questionType];
+			} catch (err) {
+				return {};
 			}
 		}
 	},
