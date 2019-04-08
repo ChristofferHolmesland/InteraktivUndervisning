@@ -15,17 +15,21 @@ describe("Client Tests",function () {
 	});
 	it("Try to join a session and fail, then return to the main page and log out",function () {
 		cy.url().should("include","/client");
-		cy.get('.Client').find("h1").should("contain","This is the client page");
-		cy.get('.text-center > h1').should("have.text","Bli med i økt!");
+		cy.get('#JoinRoom > :nth-child(1) > .col-12 > h1').should("have.text","Bli med i økt!");
 		cy.get('[data-cy=Language]').find("a").should("have.text","Språk").click();
 		cy.get("#en").click();
 		cy.get('[data-cy=Language]').find("a").should("have.text","Language");
-		cy.get('.text-center > h1').should("have.text","Quick join session!");
+		cy.get('#JoinRoom > :nth-child(1) > .col-12 > h1').should("have.text","Quick join session!");
 		cy.get('[data-cy=joinSession]').type("001");
-		cy.get(".btn").click();
-		cy.get('.text-center > h1').should("have.text","Error joining session! Try again");
-		cy.wait(1000);
-		cy.get('.text-center > h1').should("have.text","Quick join session!");
+		cy.get('#JoinRoom > :nth-child(3) > .col-12 > .btn').click();
+		//gaute removed the old function so I don't know if we are going to use it again.
+		//cy.get('#JoinRoom > :nth-child(1) > .col-12 > h1').should("have.text","Error joining session! Try again");
+		//cy.wait(1000);
+		//cy.get('#JoinRoom > :nth-child(1) > .col-12 > h1').should("have.text","Quick join session!");
+		cy.get('#SandBox > .center.margin > .col-12 > h1').should("have.text","Go to sandbox");
+		cy.get("#SandBox").find(".col > :nth-child(1)").should("have.text","Practice with different question types.");
+		cy.get("#SandBox").find(".col > :nth-child(2)").should("have.text","Play with the graphdrawer to get familiar with the controls.");
+		cy.get('#SandBox > :nth-child(3) > .col-12 > .btn').should("have.text","Go");
 		cy.get(".navbar-brand").click();
 		cy.url().should("equal","http://localhost:8082/");
 		cy.get("h1").should("have.text","Homepage");

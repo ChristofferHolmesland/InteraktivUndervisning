@@ -59,7 +59,7 @@ export default {
 	methods: {
 		getLeaveConfirmBody() {
 			let locale = this.$store.getters.getLocale("ClientSessionQuestion")
-				.leaveSessionBody;
+					.leaveSessionBody;
 			if (locale) return locale;
 			else return {};
 		}
