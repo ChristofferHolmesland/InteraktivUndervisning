@@ -130,3 +130,7 @@ App/server/images
 *.pdf
 *.gz
 *.toc
+
+# cypress
+cypress/screenshots
+cypress/videos

@@ -27,7 +27,7 @@
 				</b-form-input>
 			</b-col>
 			<b-col cols="1" class="text-center mb-5 pl-0">
-				<b-button @click="showAddQuestionModal" variant="primary">
+				<b-button @click="showAddQuestionModal" variant="primary" data-cy="addQuestionButton">
 					<span style="visibility: hidden;">+</span>
 					+
 					<span style="visibility: hidden;">+</span>
