@@ -15,54 +15,91 @@
 								elementRef="innerModalAddToSession"
 								ref="addQuestionToSessionModal"
 								/>
-		<b-row>
-			<b-col cols="2"></b-col>
-			<b-col cols="2" class="text-center">
+		<b-row class="mb-2">
+			<b-col cols="1"></b-col>
+			<b-col cols="3" class="text-center">
 				<SelectCourse :changeHandler="courseChanged"/>
 			</b-col>
-			<b-col cols="5" class="text-center mb-5 px-0">
+			<b-col cols="4" class="text-center">
 				<b-form-input	v-model="questionSearchText" 
 								type="text" 
 								:placeholder="getLocale.searchQuestion">
 				</b-form-input>
 			</b-col>
-			<b-col cols="1" class="text-center mb-5 pl-0">
-				<b-button @click="showAddQuestionModal" variant="primary" data-cy="addQuestionButton">
-					<span style="visibility: hidden;">+</span>
-					+
-					<span style="visibility: hidden;">+</span>
+			<b-col cols="1" class="text-center">
+				<b-button @click="showAddQuestionModal" variant="primary" id="addQuestionBtn" data-cy="addQuestionButton">
+					<h6>+</h6>
 				</b-button>
 			</b-col>
-			<b-col cols="2"></b-col>
+			<b-col cols="2" class="text-center">
+				<b-button @click="selectChange" variant="primary" id="selectBtn">
+					<h6 v-if="selectPressed">{{ getLocale.closeBtn }}</h6>
+					<h6 v-else>{{ getLocale.selectBtn }}</h6>
+				</b-button>
+			</b-col>
+			<b-col cols="1"></b-col>
+		</b-row>
+		<b-row v-if="selectPressed" class="mb-3">
+			<b-col></b-col>
+			<b-col style="text-align: center;">
+				<b-button @click="openCopyQuestion" variant="success">
+					{{ getLocale.copySelectedBtn }}
+				</b-button>
+				<CopyQuestions ref="copyQuestionModal" :selectedQuestions="getSelectedQuestions"/>
+			</b-col>
+			<b-col></b-col>
+			<b-col style="text-align: center;">
+				<b-button variant="danger">
+					{{ getLocale.deleteSelectedBtn }}
+				</b-button>
+			</b-col>
+			<b-col></b-col>
+		</b-row>
+		<b-row v-if="showError" style="text-align: center;">
+			<b-col></b-col>
+			<b-col cols="10">
+				<b-alert	:show="showError"
+							@dismissed="showError = false"
+							variant="danger"
+							dismissible>
+					<p>{{ getLocale[errorText] }}</p>
+				</b-alert>
+			</b-col>
+			<b-col></b-col>
 		</b-row>
 		<b-row>
-			<b-col cols="0" lg="2"></b-col>
-			<b-col cols="12" lg="8">
+			<b-col cols="0" lg="1"></b-col>
+			<b-col cols="12" lg="10">
 				<b-list-group style="min-height: 300px; max-height: 300px; overflow-y:scroll;">
-                    <b-list-group-item class="border-0" :key="item.id" v-for="item in currentQuestions">
-						<b-container>
-							<b-row>
-								<b-col cols="8">
-									{{item.text}}
-								</b-col>
-								<b-col cols="1">
-									<b-button @click="showShowQuestionModal(item)" >V</b-button>
-								</b-col>
-								<b-col cols="1">
-									<b-button @click="showEditQuestionModal(item)" >E</b-button>
-								</b-col>	
-								<b-col cols="2">
-									<b-button @click="showAddQuestionToSessionModal(item)">{{getLocale.addToSession}}</b-button>
-								</b-col>
-							</b-row>
-						</b-container>
-					</b-list-group-item>
+					<b-form-checkbox-group v-model="selectedQuestions">
+						<b-list-group-item class="border-0" :key="item.id" v-for="item in currentQuestions">
+							<b-container>
+								<b-row>
+									<b-col cols="1" v-if="selectPressed">
+										<b-form-checkbox :value="item.id"/>
+									</b-col>
+									<b-col :cols="selectPressed ? 7 : 8">
+										{{item.text}}
+									</b-col>
+									<b-col cols="1">
+										<b-button @click="showShowQuestionModal(item)" >V</b-button>
+									</b-col>
+									<b-col cols="1">
+										<b-button @click="showEditQuestionModal(item)" >E</b-button>
+									</b-col>	
+									<b-col cols="2">
+										<b-button @click="showAddQuestionToSessionModal(item)">{{getLocale.addToSession}}</b-button>
+									</b-col>
+								</b-row>
+							</b-container>
+						</b-list-group-item>
+					</b-form-checkbox-group>
 					<b-list-group-item class="border-0" v-show="showNoQuestions">
 						{{ getLocale.emptyQuestionList }}
 					</b-list-group-item>
                 </b-list-group>
 			</b-col>
-			<b-col cols="0" lg="2"></b-col>
+			<b-col cols="0" lg="1"></b-col>
 		</b-row>
 	</b-container>
 </template>
@@ -72,6 +109,7 @@
 	import ShowQuestion from "./ShowQuestion.vue";
 	import AddQuestionToSession from "./AddQuestionToSession.vue";
 	import SelectCourse from "../SelectCourse.vue";
+	import CopyQuestions from "./CopyQuestions.vue";
 
 	export default {
 		name: 'Questions',
@@ -81,6 +119,11 @@
 				questionList: [],
 				okHandler: "add",
 				question: undefined,
+				showError: false,
+				errorText: "",
+				selectPressed: false,
+				action: "edit"
+				selectedQuestions: []
 				renderEditQuestion: false,
 				renderShowQuestion: false,
 				renderAddQuestionToSession: false
@@ -90,12 +133,13 @@
 			EditQuestion,
 			ShowQuestion,
 			AddQuestionToSession,
-			SelectCourse
+			SelectCourse,
+			CopyQuestions
 		},
 		mounted() {
 			this.$socket.emit(
 				"getAllQuestionsWithinCourse", 
-				this.$store.getters.getSelectedCourse.split(" ")[0]
+				this.$store.getters.getSelectedCourse
 			);
 
 			this.$root.$on('bv::modal::hide', (bvEvent, modalId) => {
@@ -122,39 +166,91 @@
 			showNoQuestions: function() {
 				return this.currentQuestions.length == 0;
 			},
-			getLocale() {
+			getLocale: function() {
 				let locale = this.$store.getters.getLocale("AdminQuestions");
                 if(locale) return locale;
 			    else return {};
+			},
+			getSelectedQuestions: function() {
+				let list = [];
+				for (let i = 0; i < this.selectedQuestions.length; i++) {
+					let selectedId = this.selectedQuestions[i];
+					let index = this.questionList.findIndex(question => question.id === selectedId);
+					if (index === -1) continue;
+					let question = this.questionList[index];
+					list.push({
+						id: question.id,
+						text: question.text
+					});
+				}
+				return list;
 			}
 		},
 		sockets: {
-			sendAllQuestionsWithinCourse(questions) {
+			sendAllQuestionsWithinCourse: function(questions) {
 				this.questionList = questions;
 			},
-			questionChangeComplete() {
+			questionChangeComplete: function() {
 				this.requestNewQuestions();
+			},
+			questionInfoByIdResponse: function(question) {
+				switch (this.action) {
+					case "edit":
+						this.okHandler = "edit";
+						if (question.time === -1) question.time = 0;
+						this.question = question;
+						this.$nextTick(function() {
+							this.$refs.editQuestionModal.$refs.innerModalEditAdd.show();
+						});
+						break;
+					case "show":
+						if (item.time === -1) item.time = 0;
+				    this.renderShowQuestion = true;
+			
+            this.$nextTick(function() {
+              this.$refs.showQuestionModal._data.question = JSON.parse(JSON.stringify(item));
+              // Set the solution type to 0 to destroy all the GraphDrawer components.
+              this.$refs.showQuestionModal._data.question.solutionType = 0;
+              // Wait for the page to render.
+              this.$nextTick(function() {
+                // Set the correct solution type.
+                this.$refs.showQuestionModal._data.question.solutionType = item.solutionType;
+                // Wait for the page to render.
+                this.$nextTick(function() {
+                  // Finally show modal.
+                  this.$refs.showQuestionModal.$refs.innerModalShow.show();
+                });
+              });
+            });
+						break;
+				}
+			},
+			questionInfoByIdError: function(error) {
+				this.errorText = error;
+				this.showError = true;
 			}
 		},
 		methods: {
-			requestNewQuestions() {
+			requestNewQuestions: function() {
 				this.$socket.emit("getAllQuestionsWithinCourse",
-					this.$store.getters.getSelectedCourse.split(" ")[0]);
+					this.$store.getters.getSelectedCourse);
 			},
-			courseChanged(newCourse) {
-				let c = newCourse.split(" ");
-				this.$socket.emit("getAllQuestionsWithinCourse", c[0]);
+			courseChanged: function(newCourse) {
+				this.$socket.emit("getAllQuestionsWithinCourse", newCourse);
+				this.selectedQuestions = [];
+				this.selectPressed = false;
 			},
-			showEditQuestionModal(item) {
-				this.okHandler = "edit";
-				if (item.time === -1) item.time = 0;
-				this.question = item;
-				this.renderEditQuestion = true;
-				this.$nextTick(function() {
-					this.$refs.editQuestionModal.$refs.innerModalEditAdd.show();
-				});
+			showEditQuestionModal: function(item) {
+				this.action = "edit";
+				this.$socket.emit("questionInfoByIdRequest", item.id);
 			},
-			showAddQuestionModal() {
+			showAddQuestionModal: function() {
+				let courseId = this.$store.getters.getSelectedCourse;
+				if (courseId === undefined || courseId === "") {
+					this.errorText = "courseMissing";
+					this.showError = true;
+					return;
+				}
 				this.okHandler = "add";
 				this.question = undefined;
 				this.renderEditQuestion = true;
@@ -162,35 +258,37 @@
 					this.$refs.editQuestionModal.$refs.innerModalEditAdd.show();
 				});
 			},
-			showShowQuestionModal(item) {
-				if (item.time === -1) item.time = 0;
-				this.renderShowQuestion = true;
-			
-				this.$nextTick(function() {
-					this.$refs.showQuestionModal._data.question = JSON.parse(JSON.stringify(item));
-					// Set the solution type to 0 to destroy all the GraphDrawer components.
-					this.$refs.showQuestionModal._data.question.solutionType = 0;
-					// Wait for the page to render.
-					this.$nextTick(function() {
-						// Set the correct solution type.
-						this.$refs.showQuestionModal._data.question.solutionType = item.solutionType;
-						// Wait for the page to render.
-						this.$nextTick(function() {
-							// Finally show modal.
-							this.$refs.showQuestionModal.$refs.innerModalShow.show();
-						});
-					});
-				});
+			showShowQuestionModal: function(item) {
+				this.action = "show";
+				this.$socket.emit("questionInfoByIdRequest", item.id);
 			},
-			showAddQuestionToSessionModal(item) {
+			showAddQuestionToSessionModal: function(item) {
 				this.okHandler = "add";
 				this.$refs.addQuestionToSessionModal.$refs.innerModalAddToSession.show();
 				this.$refs.addQuestionToSessionModal._data.question.id = item.id;
 				this.$refs.addQuestionToSessionModal._data.question.text = item.text;
+			},
+			selectChange: function() {
+				this.selectedQuestions = [];
+				this.selectPressed = !this.selectPressed;
+			},
+			openCopyQuestion: function() {
+				if (this.selectedQuestions.length > 0) {
+					this.$refs.copyQuestionModal.$refs.copyQuestionInnerModal.show();
+				} else {
+					this.errorText = "noQuestionsSelectedError";
+					this.showError = true;
+				}
 			}
 		}
 	}
 </script>
 
 <style scoped>
+#addQuestionBtn, #selectBtn {
+	width: 70%;
+	text-align: center;
+	height: 100%;
+	line-height: 100%;
+}
 </style>

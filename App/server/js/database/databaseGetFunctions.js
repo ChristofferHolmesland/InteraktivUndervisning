@@ -6,6 +6,7 @@ const customReject = function(err, func){
 }
 
 const jsonParser = function (rows) {
+	if (rows === undefined) return;
 	for (let i = 0; i < rows.length; i++) {
 		let row = rows[i];
 		if (row.solution) row.solution = JSON.parse(row.solution);
@@ -14,6 +15,7 @@ const jsonParser = function (rows) {
 };
 
 const imageGetter = async function (rows) {
+	if (rows === undefined) return;
 	for (let i = 0; i < rows.length; i++) {
 		let row = rows[i];
 		let files = row.object.files;
@@ -71,12 +73,11 @@ const get = {
 			});
 		})
 	},
-	userRightsByFeideId: function(db, feideId, courseCode, courseSemester) {
+	userRightsByFeideId: function(db, data) {
 		return new Promise((resolve, reject) => {
 			let statement = `SELECT level FROM UserRight 
-							WHERE feideId = '${feideId}'
-							AND courseCode = '${courseCode}'
-							AND courseSemester = '${courseSemester}'`;
+							WHERE feideId = ${data.feideId}
+							AND courseId = ${data.courseId}`;
 			db.get(statement, (err, row) => {
 				if (err) {
 					reject(customReject(err, "userRightsByFeideId"));
@@ -96,7 +97,7 @@ const get = {
 	},
 	sessionHasUserByUserId: function(db, userId) {
 		return new Promise((resolve, reject) => {
-			let statement = `SELECT * FROM User_has_Session WHERE userId = '${userId}'`;
+			let statement = `SELECT * FROM UserHasSession WHERE userId = '${userId}'`;
 			db.get(statement, (err, row) => {
 				if (err) reject(customReject(err, "sessionHasUserByUserId"));
 				resolve(row);
@@ -108,15 +109,16 @@ const get = {
 			let userId = await this.userId(db, userInfo).catch((err) => {
 				reject(customReject(err), "sessionsToUser");
 			});
-			let statement = `SELECT S.name, S.id, C.code
+			let statement = `SELECT S.name, S.id, C.id
 							FROM Session AS S
-							INNER JOIN User_has_Session AS US ON US.sessionId = S.id
-							INNER JOIN Course AS C ON S.courseCode = C.code AND S.courseSemester = C.semester 
+							INNER JOIN UserHasSession AS US ON US.sessionId = S.id
+							INNER JOIN Course AS C ON S.courseId = C.id 
 							WHERE US.userId = (
 								SELECT id 
 								FROM User
 								WHERE id = '${userId.id}'
-							LIMIT 1)`;
+							LIMIT 1);`;
+			console.log(statement);
 			db.all(statement, (err,rows) => {
 				if (err) reject(customReject(err, "sessionsToUser"));
 				resolve(rows);
@@ -127,7 +129,7 @@ const get = {
 		return new Promise((resolve, reject) => {
 			let statement = `SELECT Q.id, Q.text, Q.description, Q.object, Q.solution, T.type, Q.time, SQ.id AS sqId
 							 FROM Question AS Q
-							 INNER JOIN Session_has_Question AS SQ ON SQ.questionId = Q.id
+							 INNER JOIN SessionHasQuestion AS SQ ON SQ.questionId = Q.id
 							 INNER JOIN Type AS T ON T.type = Q.questionType
 							 WHERE SQ.sessionId = ${sessionId};`;
 			db.all(statement, (err,rows) => {
@@ -148,28 +150,28 @@ const get = {
 			});
 		});
 	},
-	allSessionWithinCourse: function(db, courseCode, courseSemester) {
+	allSessionWithinCourse: function(db, courseId) {
 		return new Promise((resolve, reject) => {
-			let statement = `SELECT Q.id, C.name AS courseName, Q.name AS name, C.code, Q.courseSemester
-							FROM Session AS Q
-							INNER JOIN Course AS C ON Q.courseCode = C.code 
-							WHERE C.code = '${courseCode}' AND Q.courseSemester = '${courseSemester}' 
-							GROUP BY Q.id;`;
+			let statement = `SELECT S.id, S.name
+							FROM Session AS S
+							INNER JOIN Course AS C ON S.courseId = C.id 
+							WHERE C.id = ${courseId}
+							GROUP BY S.id;`;
 			db.all(statement, (err,rows) => {
 				if (err) reject(customReject(err, "allSessionWithinCourse"));
 				resolve(rows);
 			});
 		});
 	},
-	allSessionWithinCourseForSessionOverview: function(db, courseCode, courseSemester) {
+	allSessionWithinCourseForSessionOverview: function(db, courseId) {
 		return new Promise((resolve, reject) => {
-			let statement = `SELECT Q.id, Q.name
-							 FROM Session AS Q
-							 INNER JOIN Course AS C ON Q.courseCode = C.code 
-							 WHERE C.code = '${courseCode}' AND C.semester = '${courseSemester}' 
-							 GROUP BY Q.id;`;
+			let statement = `SELECT S.id, S.name
+							 FROM Session AS S
+							 INNER JOIN Course AS C ON S.courseId = C.id 
+							 WHERE C.id = ${courseId} 
+							 GROUP BY S.id;`;
 			db.all(statement, (err,rows) => {
-				if (err) reject(customReject(err, "allSessionWithinCourse"));
+				if (err) reject(customReject(err, "allSessionWithinCourseForSessionOverview"));
 				resolve(rows);
 			});
 		});
@@ -203,12 +205,12 @@ const get = {
 			});
 		});
 	},
-	allQuestionsWithinCourse: function(db, course) {
+	allQuestionsWithinCourse: function(db, courseId) {
 		return new Promise((resolve, reject) => {
-			let statement = `SELECT Q.id, Q.text, Q.description, Q.object, Q.solution, T.type, Q.courseCode, Q.time
+			let statement = `SELECT Q.id, Q.text, Q.description, Q.object, Q.solution, T.type, Q.courseId, Q.time
 							 FROM Question AS Q
 							 INNER JOIN Type AS T ON Q.questionType = T.type
-							 WHERE Q.courseCode = "${course}";`;
+							 WHERE Q.courseId = "${courseId}";`;
 			db.all(statement, (err,rows) => {
 				if (err) reject(customReject(err, "allQuestionsWithinCourse"));
 				jsonParser(rows);
@@ -228,7 +230,24 @@ const get = {
 	},
 	allCourses: function(db) {
 		return new Promise((resolve, reject) => {
-			let statement = `SELECT * FROM Course`;
+			let statement = `SELECT C.id, C.name, CC.code, S.season, Y.year
+							FROM Course AS C
+							INNER JOIN CourseSemester as CS on CS.id = C.semesterId
+							INNER JOIN CourseCode as CC on CC.id = C.codeId
+							INNER JOIN Season as S on S.id = CS.seasonId
+							INNER JOIN Year as Y on Y.id = CS.yearId`;
+			db.all(statement, (err,rows) => {
+				if (err) reject(customReject(err, "allCourses"));
+				resolve(rows);
+			});
+		});
+	},
+	allCoursesWithIds: function(db) {
+		return new Promise((resolve, reject) => {
+			let statement = `SELECT C.id AS courseId, C.name, CC.id AS courseCodeId, CS.id AS courseSemesterId
+							FROM Course AS C
+							INNER JOIN CourseSemester as CS on CS.id = C.semesterId
+							INNER JOIN CourseCode as CC on CC.id = C.codeId`;
 			db.all(statement, (err,rows) => {
 				if (err) reject(customReject(err, "allCourses"));
 				resolve(rows);
@@ -237,9 +256,14 @@ const get = {
 	},
 	userCourses: function(db, feideId) {
 		return new Promise(async (resolve, reject) => {
-			let statement = `SELECT courseSemester AS semester, courseCode AS code
-							FROM UserRight
-							WHERE feideId = '${feideId}'`;
+			let statement = `SELECT C.id AS courseId, C.name, CC.code, CC.id AS courseCodeId, CS.id AS semesterId, S.season, Y.year
+							FROM Course AS C
+							INNER JOIN CourseSemester AS CS ON CS.id = C.semesterId
+							INNER JOIN CourseCode AS CC ON CC.id = C.codeId
+							INNER JOIN Season AS S ON S.id = CS.seasonId
+							INNER JOIN Year AS Y ON Y.id = CS.yearId
+							INNER JOIN UserRight AS UR ON UR.courseId = C.id
+							WHERE UR.feideId = '${feideId}'`;
 			db.all(statement, (err,rows) => {
 				if (err) reject(customReject(err, "userCourses"));
 				resolve(rows);
@@ -262,25 +286,26 @@ const get = {
 	},
 	adminSubjects: function(db, feideNumber) {
 		return new Promise(async (resolve, reject) => {
-			let statement = `SELECT C.code AS subjectName, UR.level AS userRights
-							FROM Course as C
-							INNER JOIN UserRight as UR on UR.courseCode = C.code
-							INNER JOIN Feide as F on UR.feideId = F.id
-							WHERE F.id = '${feideNumber}'`;
+			let statement = `SELECT UR.level, CC.code, S.season, Y.year
+							FROM Course AS C
+							INNER JOIN UserRight AS UR ON UR.courseId = C.id
+							INNER JOIN CourseCode AS CC ON CC.id = C.codeId
+							INNER JOIN CourseSemester AS CS ON C.semesterId = CS.id
+							INNER JOIN Season AS S ON S.id = CS.seasonId
+							INNER JOIN Year AS Y ON Y.id = CS.yearId
+							WHERE UR.feideId = '${feideNumber}'`;
 			db.all(statement, (err, rows) => {
 				if(err) reject(customReject(err, "adminSubjects"));
 				resolve(rows);
 			});
 		})
 	},
-	feideUsersByUserRightsLevel: function(db, level, courseCode, courseSemester) {
+	feideUsersByUserRightsLevel: function(db, data) {
 		return new Promise(async (resolve, reject) => {
 			let statement = `SELECT UR.feideId, F.name
 							FROM UserRight as UR
 							LEFT JOIN Feide as F ON Ur.feideId = F.id
-							WHERE UR.courseSemester = '${courseSemester}' 
-							AND UR.courseCode = '${courseCode}'
-							AND UR.level = ${level}`;
+							WHERE UR.courseId = ${data.courseId} AND UR.level = ${data.level}`;
 			db.all(statement, (err,rows) => {
 				if (err) reject(customReject(err, "feideUsersByUserRightsLevel"));
 				resolve(rows);
@@ -302,13 +327,87 @@ const get = {
 	feideUsersInSession(db, sessionId) {
 		return new Promise(async (resolve, reject) => {
 			let statement = `SELECT *
-							FROM User_has_Session
+							FROM UserHasSession
 							WHERE userId != 1 AND sessionID = ${sessionId}`;
 			db.all(statement, (err, rows) => {
 				if (err) reject(customReject(err, "feideUsersInSession"));
 				resolve(rows);
 			});
-		})
+		});
+	},
+	seasons(db) {
+		return new Promise(async (resolve, reject) => {
+			let statement = `SELECT *
+							FROM Season`;
+			db.all(statement, (err, rows) => {
+				if (err) reject(customReject(err, "seasons"));
+				resolve(rows);
+			});
+		});
+	},
+	years(db) {
+		return new Promise(async (resolve, reject) => {
+			let statement = `SELECT *
+							FROM Year`;
+			db.all(statement, (err, rows) => {
+				if (err) reject(customReject(err, "years"));
+				resolve(rows);
+			});
+		});
+	},
+	semesters(db) {
+		return new Promise(async (resolve, reject) => {
+			let statement = `SELECT CS.id, S.season, Y.year
+							FROM CourseSemester AS CS
+							INNER JOIN Season AS S ON CS.seasonId = S.id
+							INNER JOIN Year AS Y ON CS.yearId = Y.id`;
+			db.all(statement, (err, rows) => {
+				if (err) reject(customReject(err, "semesters"));
+				resolve(rows);
+			});
+		});
+	},
+	courseCodes(db) {
+		return new Promise(async (resolve, reject) => {
+			let statement = `SELECT *
+							FROM CourseCode`;
+			db.all(statement, (err, rows) => {
+				if (err) reject(customReject(err, "courseCodes"));
+				resolve(rows);
+			});
+		});
+	},
+	coursesByCourseId(db, courseList) {
+		return new Promise(async (resolve, reject) => {
+			let statement = `SELECT id FROM Course WHERE `
+			for (let i = 0; i < courseList.length; i++) {
+				if (i > 0) statement += `\nOR `
+				let courseId = courseList[i];
+				statement += `id = ${courseId}`;
+			}
+			statement += `;`
+			db.all(statement, (err, rows) => {
+				if (err) reject(customReject(err, "courseCodes"));
+				resolve(rows);
+			})
+		});
+	},
+	questionsByQuestionId(db, questionList) {
+		return new Promise(async (resolve, reject) => {
+			let statement = `SELECT text, description, solution, time, questionType AS type, object FROM Question WHERE `
+			for (let i = 0; i < questionList.length; i++) {
+				if (i > 0) statement += `\nOR `
+				let questionId = questionList[i].id;
+				statement += `id = ${questionId}`;
+			}
+			statement += `;`
+			db.all(statement, (err, rows) => {
+				if (err) reject(customReject(err, "questionByQuestionId"));
+				jsonParser(rows);
+				imageGetter(rows);
+				resolve(rows);
+			})
+		});
 	}
 };
 

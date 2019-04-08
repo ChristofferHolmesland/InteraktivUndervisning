@@ -69,7 +69,13 @@
         "filename": "Filnavn",
         "filesize": "Filstørrelse",
         "filetype": "Filtype",
-        "deleteBtn": "Slett"
+        "deleteBtn": "Slett",
+        "courseMissing": "Ingen fag er valgt. Velg et fag eller gå til Admin taben og lag et nytt fag.",
+        "selectBtn": "Marker",
+        "copySelectedBtn": "Kopier markerte",
+        "deleteSelectedBtn": "Slett markerte",
+        "closeBtn": "Lukk",
+        "noQuestionsSelectedError": "Ingen spørsmål er markert!"
     },
     "AdminSessions": {
         "newSession": "Ny økt",
@@ -88,11 +94,7 @@
         "addNewQuestionBtnText": "Legg til nytt spørsmål",
         "newQuestion": "Nytt spørsmål",
         "viewLastSession": "Vis forrige økt",
-        "openLastSession": "Åpne",
-        "addCourseTitle": "Nytt fag",
-        "addCourseCourseCode": "Fag kode:",
-        "addCourseCourseSemester": "Fag semester:",
-        "addCourseCourseName": "Fag navn:"
+        "openLastSession": "Åpne"
     },
     "DisplayQuestion": {
         "question": "Spørsmål",
@@ -168,7 +170,9 @@
         "deleteBtnTitle": "Slett brukerdata",
         "userRightsTitle": "Bruker rettigheter",
         "studentAssistant": "Student Assistent",
-        "admin": "Administrator"
+        "admin": "Administrator",
+        "spring": "Vår",
+        "autumn": "Høst"
     },
     "UserStats": {
         "title": "Bruker statistikk",
@@ -220,5 +224,112 @@
     },
     "clientSessionTextInput": {
         "placeholder": "Skriv inn svaret ditt her!"
+    },
+    "AddNewCourse": {
+        "title": "Nytt fag",
+        "code": "Fag kode:",
+        "semester": "Fag semester:",
+        "name": "Fag navn:",
+        "spring": "Vår",
+        "autumn": "Høst",
+        "addNewCourseCode": "Legg til ny fag kode:",
+        "addNewSemester": "Legg til nytt semester:",
+        "AddNewSemesterSeason": "Velg sesong:",
+        "AddNewSemesterYear": "Velg et år:",
+        "add": "Legg til",
+        "errorMessage": {
+            "courseCodeMissing": "Inndata feltet for fag koden er tomt.",
+            "courseCodeWrongPattern": "Inndata feltet for fag koden har feil format.\nKoden skal ha 3 store bokstaver etterfulgt med 3 tall.",
+            "courseCodeExists": "Fag koden som bler skrevet inn finnes allerede.",
+            "insertCourseCodeError": "En feil skjedde når fag koden skulle lages.\nVenligst prøv på nytt senere.",
+            "dbError": "En feil skjedde med databasen.\nVenligst prøv på nytt senere.",
+            "semesterExists": "Dette semesteret finnes allerede.",
+            "seasonDoesTExist": "Den valgte sesongen eksisterer ikke.",
+            "semesterDoesnTExist": "Semesteret finnes ikke.",
+            "yearDoesTExist": "Det valgte året eksisterer ikke.",
+            "addNewSemesterInsert": "En feil skjedde når semesteret skulle lages.\nVenligs prøv igjen senere.",
+            "courseCodeDoesnTExist": "Fag koden eksisterer ikke.",
+            "nameMissing": "Faget mangler et navn.",
+            "courseExists": "Faget finnes allerede."
+        }
+    },
+    "SelectCourse": {
+        "noCourseText": "Ingen fag. Legg til nytt fag"
+    },
+    "CopyQuestions": {
+        "errors": {
+            "dbError": "Det skjedde en feil med databasen. Venligst prøv igjen senere.",
+            "missingData": "Serveren mottok ikke noe data. Venligst prøv på nytt.",
+            "noCoursesSelected": "Ingen fag var valgt. Velg fagene som skal motta en kopi av spørsmålene.",
+            "noQuestionsSelected": "Ingen spørsmål ble mottatt. Venligst marker spørsmålene som skal sendes."
+        },
+        "okBtn": "Kopier spørsmålene",
+        "cancelBtn": "Avbryt",
+        "title": "Kopier spørsmål til andre fag",
+        "removeBtn": "Fjern",
+        "selectedQuestionsTitle": "Markerte spørsmål:",
+        "selectCoursesTitle": "Marker fagene som skal få en kopi av spørsmålene:",
+        "selectedCoursesTitle": "Fagene som har blitt markert og vil få en kopi av de markerte spørsmålene:"
+    },
+    "Sandbox": {
+        "guide": {
+            "Text": [
+                "This is the guide for a text question:",
+                "When doing a text question you will be shown a text input field, like the one shown here.",
+                "All you have to do is write the correct answer into this field and click the \"Answer\" button",
+                "When checking the against the solution it will not be case sensitive, but all letters or words need to be present."
+            ],
+            "Multiple choice": [
+                "This is the guide for a multiple choice question:",
+                "When doing a multiple choice question you will be shown a box for each choice available.",
+                "You will be able to select more then one answer. Click on the boxes that you would like to send as the correct answer.",
+                "A marker in the uper left corner will show which box you have selected for the answer.",
+                "When you would like to submit you answer, just click the \"Answer\" button.",
+                "When the answer is checked against the solution only answers with the exact number of boxes selected and the same boxes selected will get a correct answer."
+            ],
+            "Shellsort": [
+                "This is the guide for a shellsort question:",
+                "When doing a shellsort question you will be show an array of a unsorted list and a k value.",
+                "You job is to show each round of sorting. When adding a new row, you will have to add the k value for that round of sort and the sorted list for that k value.",
+                "When adding a new row, it will copy the row from above and exclude the k value which you need to input.",
+                "To sort a row you will have to click on an element, it will now be marked. If you click on another element on the same round, these two elements will swap places.",
+                "The solution checker will check that each round of sorting have the correct k value and correct \"sorted list\" for that round."
+            ],
+            "Quicksort": [
+                "This is the guide for a quicksort question:",
+                "When doing a quicksort question you will be shown the drawer where the initial unsorted list will be shown.",
+                "Clicking on a single element or clicking and dragging over multiple elements will select and display possible actions.",
+                "The main task is to show how the quicksort algorithm works its way through an unsorted list.",
+                "The way the pivot point should be selected is the meadian element of the first, last and middle element.",
+                "When a pivot point has been selected it will be marked so it's easy to spot.",
+                "By pressing the delete button the selected elements will be deleted, and edit value will promt you to change the value for that element.",
+                "By pressing move you can now click somewhere in the canvas and the selected list will be moved to that location",
+                "Pressing extract will take the selected elements from a list and extract them to a sublist.",
+                "The order of how you extract a sublist does matter. The quicksort algorithm is set up to check the left side first."
+            ],
+            "Mergesort": [
+                "This is the guide for a mergesort question:",
+                "When doing a mergesort question you will be shown the drawer where the initial unsorted list will be shown.",
+                "Clicking on a single element or clicking and dragging over multiple elements will select and display possible actions.",
+                "The main task is to show how the mergesort algorithm works its way through an unsorted list.",
+                "By pressing the delete button the selected elements will be deleted, and edit value will promt you to change the value for that element.",
+                "By pressing move you can now click somewhere in the canvas and the selected list will be moved to that location",
+                "Pressing extract will take the selected elements from a list and extract them to a sublist.",
+                "The order of how you extract a sublist does matter. The mergesort algorithm is set up to check the left side first."
+            ]
+        },
+        "settings": {
+            "Shellsort": {
+                "kValueLabel": "Initial k value:",
+                "listLabel": "Initial list:"
+            },
+            "Quicksort": {
+                "listLabel": "Initial list:"
+            },
+            "Mergesort": {
+                "listLabel": "Initial list:"
+            }
+        },
+        "textInputPlaceholder": "Test out the input field here"
     }
 }

@@ -1,4 +1,82 @@
 <template>
+<<<<<<< HEAD
+	<b-modal 	:id="elementId"
+				:ref="elementRef"
+				:no-close-on-backdrop="true"
+				:title="getTitle"
+				@ok="callOkHandler"
+				style="text-align: left;"
+				size="lg">
+		<b-form>
+			<b-alert    :show="validationFailure"
+						variant="danger">
+				<p v-for="(error, index) in validationErrors" :key="index">
+					{{getLocale[error]}}
+				</p>
+			</b-alert>
+			<b-container   class="px-0"
+							@click="changeShowBasicInfo"
+							style="cursor: pointer;">
+				<b-row>
+					<b-col cols="10" style="text-align: left;">
+						<label  for="mediaSelector"
+								style="cursor: pointer;">
+							{{getLocale.basicInfo}}
+						</label>
+					</b-col>
+					<b-col cols="2" style="text-align: right;">
+						<p v-if="showBasicInfo">^</p>
+						<p v-else>V</p>
+					</b-col>
+				</b-row>
+			</b-container>
+			<div v-show="showBasicInfo">
+				<b-form-group 	id="questionTitle"
+								:label="getLocale.newQuestionTitle"
+								label-for="questionTitleInput">
+					<b-form-input 	id="questionTitleInput"
+									type="text"
+									v-model="newQuestion.text">
+					</b-form-input>
+				</b-form-group>
+				<b-form-group 	id="questionText"
+								:label="getLocale.newQuestionText"
+								label-for="questionTextInput">
+					<b-form-input 	id="questionTextInput"
+									type="text"
+									v-model="newQuestion.description">
+					</b-form-input>
+				</b-form-group>
+				<b-form-group id="questionTime">
+					<b-col>
+						<b-row>
+							<b-col>
+								<label>{{ getLocale.newQuestionTime }}</label>
+							</b-col>
+							<b-col>
+								<b-form-input   id="questionTimeInput"
+												type="time"
+												v-model="timeInput"
+												min="00:00"
+												max="10:00">
+								</b-form-input>
+							</b-col>
+						</b-row>
+						<b-row>
+							<b-col>
+								<b-form-input   id="questionTimeInputSlider"
+												type="range"
+												v-model="newQuestion.time"
+												min="0"
+												max="600"
+												step="15">
+								</b-form-input>
+							</b-col>
+						</b-row>
+					</b-col>
+				</b-form-group>
+			</div>
+=======
     <b-modal :id="elementId" :ref="elementRef" :no-close-on-backdrop="true" :title="getTitle" @ok="callOkHandler" style="text-align: left;" size="lg">
         <b-form>
             <b-alert    :show="validationFailure"
@@ -69,6 +147,7 @@
                     </b-col>
                 </b-form-group>
             </div>
+>>>>>>> dev
 
 			<hr>
 
@@ -192,7 +271,6 @@
                                     :options="getSolutionTypes"
                                     v-model="newQuestion.solutionType">
                     </b-form-select>
-                    {{getSolutionType}}
                 </div>
             </b-form-group>
             <div v-show="showSolution">
@@ -436,7 +514,8 @@ export default {
 				filesSize += file.size;
 			}
 			if (filesSize < 500000) this.showMediaWarning = false;
-		},assignState() {
+		},
+		assignState() {
 			let n = initializeState();
 			for (let p in n) {
 				if (n.hasOwnProperty(p)) {
@@ -455,51 +534,56 @@ export default {
 			let files = [];
 			Array.prototype.push.apply(files, event.target.files);
 			let storedFiles = this.newQuestion.objects.files;
+			let totalFilesSize = 0;
+			let errorFileSize = 1500000;
+			let warningFileSize = 500000;
+			for(let i = 0; i < storedFiles.length; i++) totalFilesSize += storedFiles[i].size;
+			let fileTypeErr = 0;
 			for (let i = 0; i < files.length; i++) {
+				let file = files[i];
+				let fileObject = {
+					name: file.name,
+					size: file.size,
+					type: file.type
+				}
+				
 				let fileType = file.type.split("/");
 				if (fileType[0] !== "image") {
 					files.splice(i, 1);
 					i--;
 					fileTypeErr++;
 					this.showMediaError = true;
-					this.mediaErrorText =
-						fileTypeErr.toString() +
-						this.getLocale.mediaErrorFileType;
+					this.mediaErrorText = fileTypeErr.toString() + this.getLocale.mediaErrorFileType;
 					continue;
 				}
-
 				totalFilesSize += file.size;
 				if (totalFilesSize > errorFileSize) {
 					event.target.value = "";
 					this.showMediaError = true;
-					if (fileTypeErr > 0)
-						this.mediaErrorText +=
-							"\n\n" + this.getLocale.mediaErrorFileSize;
-					else
-						this.mediaErrorText = this.getLocale.mediaErrorFileSize;
-				} else if (totalFilesSize > warningFileSize) {
+					if (fileTypeErr > 0) this.mediaErrorText += "\n\n" + this.getLocale.mediaErrorFileSize;
+					else this.mediaErrorText = this.getLocale.mediaErrorFileSize;
+				}
+				else if (totalFilesSize > warningFileSize) {
 					this.showMediaWarning = true;
 					this.mediaWarningText = this.getLocale.mediaWarningFileSize;
-				} else {
-					if (fileTypeErr === 0) {
+				}
+				else {
+					if (fileTypeErr === 0) {      
 						this.showMediaError = false;
 					}
 					this.showMediaWarning = false;
 				}
-
 				if (fileTypeErr === 0 && totalFilesSize < errorFileSize) {
 					let callbackFunction = function(e) {
 						fileObject.buffer = btoa(e.target.result);
 						storedFiles.push(fileObject);
-					};
-
+					}
 					let reader = new FileReader();
 					reader.onload = callbackFunction;
 					reader.readAsBinaryString(file);
 				}
-
-				event.target.value = "";
 			}
+			event.target.value = "";
 		},
 		changeShowMedia() {
 			this.showMedia = !this.showMedia;
@@ -511,16 +595,13 @@ export default {
 			this.showBasicInfo = !this.showBasicInfo;
 		},
 		assignTime: function() {
-			this.newQuestion.time = JSON.parse(JSON.stringify(this.time));
 			if (this.newQuestion.time === 0) this.newQuestion.time = -1;
 		},
 		addNewQuestionHandler: function() {
 			this.$socket.emit(
 				"addNewQuestion",
 				Object.assign({}, this.newQuestion, {
-					courseCode: this.$store.getters.getSelectedCourse.split(
-						" "
-					)[0]
+					courseCode: this.$store.getters.getSelectedCourse
 				})
 			);
 		},

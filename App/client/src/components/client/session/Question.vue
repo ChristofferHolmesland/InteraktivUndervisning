@@ -85,7 +85,7 @@
 			</b-row>
 			<b-row>
 				<b-col cols="12" lg="4" class="mt-3">
-					<b-btn variant="danger" @click=" ">{{ getLocale.exitSessionBtnText }}</b-btn>
+					<b-btn variant="danger">{{ getLocale.exitSessionBtnText }}</b-btn> <!-- TODO add click event to leave seasion mid question -->
 				</b-col>
 				<b-col cols="12" lg="4" class="mt-3">
 					<b-btn variant="warning" @click="questionNotAnswered">{{ getLocale.answerDontKnowBtnText }}</b-btn>

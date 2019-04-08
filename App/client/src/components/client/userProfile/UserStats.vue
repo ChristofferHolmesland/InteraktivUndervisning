@@ -71,10 +71,11 @@ export default {
 			this.totalIncorrectAnswers = data.totalIncorrectAnswers;
 			this.totalDidntKnowAnswers = data.totalDidntKnowAnswers;
 			this.sessionList = data.sessionList;
+			console.log(data);
 
 			for (let i = 0; i < this.sessionList.length; i++) {
-				if (this.courseList.indexOf(this.sessionList[i].code) === -1) {
-					this.courseList.push(this.sessionList[i].code);
+				if (this.courseList.indexOf(this.sessionList[i].id) === -1) {
+					this.courseList.push(this.sessionList[i].id);
 				}
 			}
 
@@ -101,7 +102,7 @@ export default {
 		courseSelected() {
 			let list = [];
 			for (let i = 0; i < this.sessionList.length; i++) {
-				if (this.sessionList[i].code === this.courseSelected) {
+				if (this.sessionList[i].id === this.courseSelected) {
 					list.push(this.sessionList[i]);
 				}
 			}

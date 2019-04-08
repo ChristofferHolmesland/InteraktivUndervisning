@@ -1,13 +1,13 @@
 <template>
-	<b-container class="session">
+	<b-container class="session px-0">
 		<b-row>
-			<b-col cols="10">
+			<b-col cols="8">
 				<b-form-select 	id="courseSelect"
 								:options="getSessions"
 								v-model="selectedSession">
 				</b-form-select>
 			</b-col>
-			<b-col cols="2" class="pl-0">
+			<b-col cols="4" class="pl-0">
 				<b-button @click="initializeSession(selectedSession)">
 					Start
 				</b-button>
@@ -27,11 +27,8 @@ export default {
 		};
 	},
 	created() {
-		let c = this.$store.getters.getSelectedCourse.split(" ");
-		this.$socket.emit("sessionOverviewRequest", {
-			code: c[0],
-			semester: c[1]
-		});
+		let courseId = this.$store.getters.getSelectedCourse;
+		this.$socket.emit("sessionOverviewRequest", courseId);
 	},
 	sockets: {
 		initializeSessionResponse(sessionId) {
@@ -55,11 +52,7 @@ export default {
 			this.$socket.emit("initializeSession", sessionId);
 		},
 		courseChanged(newCourse) {
-			let c = newCourse.split(" ");
-			this.$socket.emit("sessionOverviewRequest", {
-				code: c[0],
-				semester: c[1]
-			});
+			this.$socket.emit("sessionOverviewRequest", newCourse);
 		}
 	},
 	computed: {

@@ -69,7 +69,13 @@
         "filename": "Filename",
         "filesize": "Filesize",
         "filetype": "filetype",
-        "deleteBtn": "Delete"
+        "deleteBtn": "Delete",
+        "courseMissing": "No course is selected. Please select a course or go to Admin tab and create a new course.",
+        "selectBtn": "Select",
+        "copySelectedBtn": "Copy selected",
+        "deleteSelectedBtn": "Delete selected",
+        "closeBtn": "Close",
+        "noQuestionsSelectedError": "No questions are selected!"
     },
     "AdminSessions": {
         "newSession": "New session",
@@ -88,11 +94,7 @@
         "addNewQuestionBtnText": "Add new question",
         "newQuestion": "New question",
         "viewLastSession": "View last session",
-        "openLastSession": "Open",
-        "addCourseTitle": "New course",
-        "addCourseCourseCode": "Course code:",
-        "addCourseCourseSemester": "Course semester:",
-        "addCourseCourseName": "Course name:"
+        "openLastSession": "Open"
     },
     "DisplayQuestion": {
         "question": "Question",
@@ -168,7 +170,9 @@
         "deleteBtnTitle": "Delete my data",
         "userRightsTitle": "User rights",
         "studentAssistant": "Student assistant",
-        "admin": "Administrator"
+        "admin": "Administrator",
+        "spring": "Spring",
+        "autumn": "Autumn"
     },
     "UserStats": {
         "title": "User stats",
@@ -220,5 +224,112 @@
     },
     "clientSessionTextInput": {
         "placeholder": "Input your answer here!"
+    },
+    "AddNewCourse": {
+        "title": "New course",
+        "code": "Course code:",
+        "semester": "Course semester:",
+        "name": "Course name:",
+        "spring": "Spring",
+        "autumn": "Autumn",
+        "addNewCourseCode": "Add new Course code:",
+        "addNewSemester": "Add new Semester:",
+        "AddNewSemesterSeason": "Choose season:",
+        "AddNewSemesterYear": "Choose a year:",
+        "add": "Add",
+        "errorMessage": {
+            "courseCodeMissing": "Input field for course code is empty.",
+            "courseCodeWrongPattern": "Input field for course code is following the wrong pattern.\nThe code should be 3 capital letters followed by 3 numbers.",
+            "courseCodeExists": "The entered course code already exists.",
+            "insertCourseCodeError": "An error occured when creating the course code.\nPlease try again later.",
+            "dbError": "An error occured with the database.\nPlease try again later.",
+            "semesterExists": "This semester already exists.",
+            "seasonDoesTExist": "The selected season does not exist.",
+            "semesterDoesnTExist": "The semester doesn't exist.",
+            "yearDoesTExist": "The selected year does not exist.",
+            "addNewSemesterInsert": "An error occured when creating the semester.\nPlease try again later.",
+            "courseCodeDoesnTExist": "The course code does not exist.",
+            "nameMissing": "Course is missing a name.",
+            "courseExists": "Course already exists."
+        }
+    },
+    "SelectCourse": {
+        "noCourseText": "No course. Add new course"
+    },
+    "CopyQuestions": {
+        "errors": {
+            "dbError": "An database error occured. Please try again later.",
+            "missingData": "No data was sent. Please try again.",
+            "noCoursesSelected": "Zero courses was selected. Please select the course(s) that should recieve a copy of these questions.",
+            "noQuestionsSelected": "Zero questions was recieved. Please mark the questions that should be copied."
+        },
+        "okBtn": "Copy questions",
+        "cancelBtn": "Cancel",
+        "title": "Copy questions to other courses",
+        "removeBtn": "Remove",
+        "selectedQuestionsTitle": "Selected questions:",
+        "selectCoursesTitle": "Select courses that should get a copy of the selected questions:",
+        "selectedCoursesTitle": "Selected courses that should get a copy of the selected questions:"
+    },
+    "Sandbox": {
+        "guide": {
+            "Text": [
+                "This is the guide for a text question:",
+                "When doing a text question you will be shown a text input field, like the one shown here.",
+                "All you have to do is write the correct answer into this field and click the \"Answer\" button",
+                "When checking the against the solution it will not be case sensitive, but all letters or words need to be present."
+            ],
+            "Multiple choice": [
+                "This is the guide for a multiple choice question:",
+                "When doing a multiple choice question you will be shown a box for each choice available.",
+                "You will be able to select more then one answer. Click on the boxes that you would like to send as the correct answer.",
+                "A marker in the uper left corner will show which box you have selected for the answer.",
+                "When you would like to submit you answer, just click the \"Answer\" button.",
+                "When the answer is checked against the solution only answers with the exact number of boxes selected and the same boxes selected will get a correct answer."
+            ],
+            "Shellsort": [
+                "This is the guide for a shellsort question:",
+                "When doing a shellsort question you will be show an array of a unsorted list and a k value.",
+                "You job is to show each round of sorting. When adding a new row, you will have to add the k value for that round of sort and the sorted list for that k value.",
+                "When adding a new row, it will copy the row from above and exclude the k value which you need to input.",
+                "To sort a row you will have to click on an element, it will now be marked. If you click on another element on the same round, these two elements will swap places.",
+                "The solution checker will check that each round of sorting have the correct k value and correct \"sorted list\" for that round."
+            ],
+            "Quicksort": [
+                "This is the guide for a quicksort question:",
+                "When doing a quicksort question you will be shown the drawer where the initial unsorted list will be shown.",
+                "Clicking on a single element or clicking and dragging over multiple elements will select and display possible actions.",
+                "The main task is to show how the quicksort algorithm works its way through an unsorted list.",
+                "The way the pivot point should be selected is the meadian element of the first, last and middle element.",
+                "When a pivot point has been selected it will be marked so it's easy to spot.",
+                "By pressing the delete button the selected elements will be deleted, and edit value will promt you to change the value for that element.",
+                "By pressing move you can now click somewhere in the canvas and the selected list will be moved to that location",
+                "Pressing extract will take the selected elements from a list and extract them to a sublist.",
+                "The order of how you extract a sublist does matter. The quicksort algorithm is set up to check the left side first."
+            ],
+            "Mergesort": [
+                "This is the guide for a mergesort question:",
+                "When doing a mergesort question you will be shown the drawer where the initial unsorted list will be shown.",
+                "Clicking on a single element or clicking and dragging over multiple elements will select and display possible actions.",
+                "The main task is to show how the mergesort algorithm works its way through an unsorted list.",
+                "By pressing the delete button the selected elements will be deleted, and edit value will promt you to change the value for that element.",
+                "By pressing move you can now click somewhere in the canvas and the selected list will be moved to that location",
+                "Pressing extract will take the selected elements from a list and extract them to a sublist.",
+                "The order of how you extract a sublist does matter. The mergesort algorithm is set up to check the left side first."
+            ]
+        },
+        "settings": {
+            "Shellsort": {
+                "kValueLabel": "Initial k value:",
+                "listLabel": "Initial list:"
+            },
+            "Quicksort": {
+                "listLabel": "Initial list:"
+            },
+            "Mergesort": {
+                "listLabel": "Initial list:"
+            }
+        },
+        "textInputPlaceholder": "Test out the input field here"
     }
 }

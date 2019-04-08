@@ -13,7 +13,7 @@ let connections = [
 	"http://localhost:8082",
 	"http://localhost:8081",
 	"http://localhost:8083",
-	"https://interaktivundervisning.ux.no"
+	"https://interaktivundervisning.ux.uis.no"
 ];
 let connection = "";
 switch (process.env.NODE_ENV) {
@@ -30,7 +30,7 @@ switch (process.env.NODE_ENV) {
 		connection = connections[3];
 		break;
 }
-console.log(connection);
+
 Vue.use(BootstrapVue);
 Vue.use(
 	new VueSocketIO({
