@@ -9,13 +9,33 @@ import "bootstrap-vue/dist/bootstrap-vue.css";
 import VueSocketIO from "vue-socket.io";
 
 // TODO make a solution based on env file
-let connection = ["http://192.168.137.1:8081", "http://localhost:8081", "https://interaktivundervisning.ux.uis.no"]
+let connections = [
+	"http://localhost:8082",
+	"http://localhost:8081",
+	"http://localhost:8083",
+	"https://interaktivundervisning.ux.uis.no"
+];
+let connection = "";
+switch (process.env.NODE_ENV) {
+	case "test":
+		connection = connections[0];
+		break;
+	case "dev":
+		connection = connections[1];
+		break;
+	case "production":
+		connection = connections[2];
+		break;
+	case "unix-production":
+		connection = connections[3];
+		break;
+}
 
 Vue.use(BootstrapVue);
 Vue.use(
 	new VueSocketIO({
 		debug: process.env.NODE_ENV === "production" ? false : true,
-		connection: connection[1],
+		connection: connection,
 		vuex: {
 			store
 		}

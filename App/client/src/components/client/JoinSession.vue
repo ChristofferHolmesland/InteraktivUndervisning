@@ -7,7 +7,13 @@
 		</b-row>
 		<b-row class="center margin rowMiddle">
 			<b-col cols="12">
-				<b-form-input v-model="sessionCode" type="text" :placeholder="getLocale.inputPlaceholder" maxlength="4"/>&nbsp;
+				<b-form-input 
+					v-model="sessionCode" 
+					type="text" 
+					:placeholder="getLocale.inputPlaceholder" 
+					maxlength="4" 
+					data-cy="joinSession"
+				/>&nbsp;
 			</b-col>
 		</b-row>
 		<b-row class="center">

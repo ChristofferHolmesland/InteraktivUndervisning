@@ -1,5 +1,5 @@
 <template>
-    <b-modal :id="elementId" :ref="elementRef" :title="question.text" style="text-align: left;">
+    <b-modal :id="elementId" :ref="elementRef" :title="question.text" style="text-align: left;" data-cy="showModal">
         <p>{{question.description}}</p>
         <p>{{getLocale.time}} {{getTime}}</p>
         <b-container v-if="question.solutionType === 2">
@@ -30,7 +30,7 @@
                         operatingMode = "Presentation"
                         :steps="question.solution"
                         :displayEdgeValues = "false"
-        />
+                        />
         <GraphDrawer    v-if="question.solutionType === 9"
                         ref="graphdrawer"
                         controlType="Dijkstra"
@@ -44,7 +44,6 @@
                         operatingMode="Presentation"
                         :steps="question.solution"
                         />
-
     </b-modal>
 </template>
 

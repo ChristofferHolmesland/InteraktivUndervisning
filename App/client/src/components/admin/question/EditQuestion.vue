@@ -1,4 +1,5 @@
 <template>
+<<<<<<< HEAD
 	<b-modal 	:id="elementId"
 				:ref="elementRef"
 				:no-close-on-backdrop="true"
@@ -75,6 +76,78 @@
 					</b-col>
 				</b-form-group>
 			</div>
+=======
+    <b-modal :id="elementId" :ref="elementRef" :no-close-on-backdrop="true" :title="getTitle" @ok="callOkHandler" style="text-align: left;" size="lg">
+        <b-form>
+            <b-alert    :show="validationFailure"
+                        variant="danger">
+                <p v-for="(error, index) in validationErrors" :key="index">
+                    {{getLocale[error]}}
+                </p>
+            </b-alert>
+            <b-container   class="px-0"
+                            @click="changeShowBasicInfo"
+                            style="cursor: pointer;">
+                <b-row>
+                    <b-col cols="10" style="text-align: left;" data-cy="basicInformation">
+                        <label  for="mediaSelector"
+                                style="cursor: pointer;">
+                            {{getLocale.basicInfo}}
+                        </label>
+                    </b-col>
+                    <b-col cols="2" style="text-align: right;">
+                        <p v-if="showBasicInfo">^</p>
+                        <p v-else>V</p>
+                    </b-col>
+                </b-row>
+            </b-container>
+            <div v-show="showBasicInfo">
+                <b-form-group 	id="questionTitle"
+                                :label="getLocale.newQuestionTitle"
+                                label-for="questionTitleInput">
+                    <b-form-input 	id="questionTitleInput"
+                                    type="text"
+                                    v-model="newQuestion.text">
+                    </b-form-input>
+                </b-form-group>
+                <b-form-group 	id="questionText"
+                                :label="getLocale.newQuestionText"
+                                label-for="questionTextInput">
+                    <b-form-input 	id="questionTextInput"
+                                    type="text"
+                                    v-model="newQuestion.description">
+                    </b-form-input>
+                </b-form-group>
+                <b-form-group id="questionTime">
+                    <b-col>
+                        <b-row>
+                            <b-col>
+                                <label>{{ getLocale.newQuestionTime }}</label>
+                            </b-col>
+                            <b-col>
+                                <b-form-input   id="questionTimeInput"
+                                                type="time"
+                                                v-model="timeInput"
+                                                min="00:00"
+                                                max="10:00">
+                                </b-form-input>
+                            </b-col>
+                        </b-row>
+                        <b-row>
+                            <b-col>
+                                <b-form-input   id="questionTimeInputSlider"
+                                                type="range"
+                                                v-model="time"
+                                                min="0"
+                                                max="600"
+                                                step="15">
+                                </b-form-input>
+                            </b-col>
+                        </b-row>
+                    </b-col>
+                </b-form-group>
+            </div>
+>>>>>>> dev
 
 			<hr>
 
@@ -181,7 +254,7 @@
                                 @click="changeShowSolution"
                                 style="cursor: pointer;">
                     <b-row>
-                        <b-col cols="10" style="text-align: left;">
+                        <b-col cols="10" style="text-align: left;" data-cy="solutionType">
                             <label  for="solutionTypeInput"
                                     style="cursor: pointer;">
                                 {{getLocale.newQuestionSolutionType}}

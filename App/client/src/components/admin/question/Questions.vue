@@ -27,7 +27,7 @@
 				</b-form-input>
 			</b-col>
 			<b-col cols="1" class="text-center">
-				<b-button @click="showAddQuestionModal" variant="primary" id="addQuestionBtn">
+				<b-button @click="showAddQuestionModal" variant="primary" id="addQuestionBtn" data-cy="addQuestionButton">
 					<h6>+</h6>
 				</b-button>
 			</b-col>

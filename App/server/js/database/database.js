@@ -2,11 +2,14 @@ const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
 const dbFunctions = require("./databaseFunctions").dbFunctions;
 const databasePath = path.resolve(__dirname, `../../database/${process.env.NODE_ENV}.db`);
-
 const fs = require("fs");
 
 module.exports.getDB = function setupDatabase() {
 	return new Promise(async function(resolve, reject) {
+		if (process.env.NODE_ENV === "test") {
+			deleteDatabase();
+		}
+		
 		//set up connection with the database
 		let db = new sqlite3.Database(databasePath, (err) => { if (err) reject(err) });
 		//Creating database tables
@@ -205,7 +208,7 @@ module.exports.getDB = function setupDatabase() {
 				reject(err);
 			});
 
-			if (process.env.NODE_ENV !== "production") {
+			if (process.env.NODE_ENV === "test") {
 				await dbFunctions.get.userById(db,"test").then(async (rows) => {
 				   if (rows === undefined || rows.length < 1) {
 					   dbFunctions.insert.feide(db, "test", "test", "testAdmin", "test", 4).then(() => {
@@ -226,7 +229,8 @@ module.exports.getDB = function setupDatabase() {
 	});
 };
 
-module.exports.deleteDB = function deleteDatabase(){
+let deleteDatabase = function () {
 	if (fs.existsSync(databasePath)) fs.unlinkSync(databasePath);
-}
+};
+module.exports.deleteDB = deleteDatabase;
 
