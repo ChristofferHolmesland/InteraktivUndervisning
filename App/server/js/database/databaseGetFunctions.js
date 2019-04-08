@@ -391,7 +391,7 @@ const get = {
 			})
 		});
 	},
-	questionByQuestionId(db, questionList) {
+	questionsByQuestionId(db, questionList) {
 		return new Promise(async (resolve, reject) => {
 			let statement = `SELECT text, description, solution, time, questionType AS type, object FROM Question WHERE `
 			for (let i = 0; i < questionList.length; i++) {
