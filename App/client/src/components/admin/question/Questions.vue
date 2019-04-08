@@ -199,22 +199,32 @@
 						this.okHandler = "edit";
 						if (question.time === -1) question.time = 0;
 						this.question = question;
+
+						// Database, server and client object properties
+						// doesn't have the same name because we are stupid.
+						this.question.objects = this.question.object;
+						this.question.solutionType = this.question.type;
+
+						console.log("Hei");
+						console.log(this.question.solution);
+
+						this.renderEditQuestion = true;
 						this.$nextTick(function() {
 							this.$refs.editQuestionModal.$refs.innerModalEditAdd.show();
 						});
-						break;
+						break; 
 					case "show":
-						if (item.time === -1) item.time = 0;
+						if (question.time === -1) question.time = 0;
 				    this.renderShowQuestion = true;
 			
             this.$nextTick(function() {
-              this.$refs.showQuestionModal._data.question = JSON.parse(JSON.stringify(item));
+              this.$refs.showQuestionModal._data.question = JSON.parse(JSON.stringify(question));
               // Set the solution type to 0 to destroy all the GraphDrawer components.
               this.$refs.showQuestionModal._data.question.solutionType = 0;
               // Wait for the page to render.
               this.$nextTick(function() {
                 // Set the correct solution type.
-                this.$refs.showQuestionModal._data.question.solutionType = item.solutionType;
+                this.$refs.showQuestionModal._data.question.solutionType = question.solutionType;
                 // Wait for the page to render.
                 this.$nextTick(function() {
                   // Finally show modal.
