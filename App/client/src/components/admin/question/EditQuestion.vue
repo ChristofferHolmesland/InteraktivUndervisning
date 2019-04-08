@@ -11,7 +11,7 @@
                             @click="changeShowBasicInfo"
                             style="cursor: pointer;">
                 <b-row>
-                    <b-col cols="10" style="text-align: left;">
+                    <b-col cols="10" style="text-align: left;" data-cy="basicInformation">
                         <label  for="mediaSelector"
                                 style="cursor: pointer;">
                             {{getLocale.basicInfo}}
@@ -175,7 +175,7 @@
                                 @click="changeShowSolution"
                                 style="cursor: pointer;">
                     <b-row>
-                        <b-col cols="10" style="text-align: left;">
+                        <b-col cols="10" style="text-align: left;" data-cy="solutionType">
                             <label  for="solutionTypeInput"
                                     style="cursor: pointer;">
                                 {{getLocale.newQuestionSolutionType}}

@@ -40,18 +40,17 @@ describe("Test admin content",function () {
 			let titleEdited = "Title Edited Text Test";
 			let infoEdited = "Info Edited Text Test";
 			let solutionEdited = "Solution Edited Text Test";
-			cy.pause();
-			cy.get('.pl-0 > [data-v-0ae92b14=""][type="button"]').click();
+
+			cy.get("[data-cy=addQuestionButton]").click();
 
 			//check modal information is correct and create a new question by typing information to the input fields and click on the ok button.
-			//cy.get("#newQuestionModal___BV_modal_header_ > .modal-title").should("have.text","Nytt spørsmål");
 			cy.get("#editQuestionModal___BV_modal_header_ > .modal-title").should("have.text","Nytt spørsmål");
-			cy.get('form > :nth-child(1) > .row > .col-10').should("contain","Grunnleggende Informasjon");	//is open by default, therefore no clicks are necessary
+			cy.get('[data-cy=basicInformation] > label').should("contain","Grunnleggende Informasjon");	//is open by default, therefore no clicks are necessary
 
 			cy.get("#questionTitleInput").type(title);
 			cy.get("#questionTextInput").type(info);
 			cy.get("#questionTimeInput").type("01:30");
-			cy.get('#solutionType > [role="group"] > .px-0 > .row > .col-10 > label')
+			cy.get('[data-cy=solutionType] > label')
 				.should("contain","Løsnings type")
 				.click();
 			cy.get("#solutionTypeInput").select("Text");
@@ -59,25 +58,25 @@ describe("Test admin content",function () {
 			cy.get('#editQuestionModal___BV_modal_footer_ > .btn-primary').click();
 
 			//show current question information
-			cy.get('.list-group > :nth-child(1)').should("be.visible");
-			cy.get(':nth-child(1) > .container > .row > .col-8').should("contain",title);
-			cy.get('.list-group > :nth-child(1)')
+			cy.get(".list-group > :nth-child(1)").should("be.visible");
+			cy.get(":nth-child(1) > .container > .row > .col-8").should("contain",title);
+			cy.get(".list-group > :nth-child(1)")
 				.find(".container")
 				.contains("V")
 				.click();
-			cy.get('#__BVID__29___BV_modal_header_ > .modal-title').should("have.text",title);
-			cy.get('#__BVID__29___BV_modal_body_ > :nth-child(1)').should("have.text",info);
-			cy.get('#__BVID__29___BV_modal_body_ > :nth-child(2)').should("have.text","Tid: 01:30");
-			cy.get('#__BVID__29___BV_modal_body_ > :nth-child(4)').should("have.text",solution);
+			cy.get("[data-cy=showModal]").find(".modal-title").should("have.text",title);
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1)").should("have.text",info);
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(2)").should("have.text","Tid: 01:30");
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(4)").should("have.text",solution);
 			cy.wait(1000);
-			cy.get('#__BVID__29___BV_modal_footer_ > .btn-primary').click();
+			cy.get("[data-cy=showModal]").find(".modal-footer > .btn-primary").click();
 
 			//check editfunction works, and then use it to edit the previously made question.
 			cy.get('.list-group > :nth-child(1)')
 				.find(".container")
 				.contains("E")
 				.click();
-			cy.get('#solutionType > [role="group"] > .px-0 > .row > .col-10 > label').click();
+			cy.get('[data-cy=solutionType] > label').click();
 			cy.get('#questionTitleInput')
 				.should("have.value",title)
 				.clear()
@@ -100,12 +99,12 @@ describe("Test admin content",function () {
 				.find(".container")
 				.contains("V")
 				.click();
-			cy.get('#__BVID__29___BV_modal_header_ > .modal-title').should("have.text",titleEdited);
-			cy.get('#__BVID__29___BV_modal_body_ > :nth-child(1)').should("have.text",infoEdited);
-			cy.get('#__BVID__29___BV_modal_body_ > :nth-child(4)').should("have.text",solutionEdited);
-			cy.get('#__BVID__29___BV_modal_body_ > :nth-child(2)').should("have.text","Tid: 00:00");
+			cy.get("[data-cy=showModal]").find(".modal-title").should("have.text",titleEdited);
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1)").should("have.text",infoEdited);
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(2)").should("have.text","Tid: 00:00");
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(4)").should("have.text",solutionEdited);
 			cy.wait(1000);
-			cy.get('#__BVID__29___BV_modal_footer_ > .btn-primary').click();
+			cy.get("[data-cy=showModal]").find(".modal-footer > .btn-primary").click();
 		});
 
 		it("Create and Edit Multichoice question",function () {
@@ -120,15 +119,15 @@ describe("Test admin content",function () {
 			let solutionEdited = "The true chosen element";
 			let titleEdited = "Title Edited Multichoice Test";
 			let infoEdited = "Info Edited Multichoice Test";
-			cy.get('.pl-0 > [data-v-0ae92b14=""][type="button"]').click();
+			cy.get("[data-cy=addQuestionButton]").click();
 
 			//create multi choice question
 			cy.get("#editQuestionModal___BV_modal_header_ > .modal-title").should("have.text","Nytt spørsmål");
-			cy.get('form > :nth-child(1) > .row > .col-10 > label').should("contain","Grunnleggende Informasjon");
+			cy.get('[data-cy=basicInformation] > label').should("contain","Grunnleggende Informasjon");
 			cy.get("#questionTitleInput").type(title);
 			cy.get("#questionTextInput").type(info);
 			cy.get("#questionTimeInput").type("02:00");
-			cy.get('#editQuestionModal___BV_modal_body_ > form > #solutionType > [role="group"] > .px-0 > .row > .col-10 > label')
+			cy.get('[data-cy=solutionType] > label')
 				.should("contain","Løsnings type")
 				.click();
 			cy.get("#solutionTypeInput").select("Multiple choice");
@@ -139,6 +138,7 @@ describe("Test admin content",function () {
 				.click()
 				.click()
 				.click();
+			cy.pause();
 			cy.get('#__BVID__43 > :nth-child(1) > .col-2 > .btn')
 				.should("have.text","Slett")
 				.click();
