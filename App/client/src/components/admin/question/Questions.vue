@@ -30,8 +30,8 @@
 			</b-col>
 			<b-col cols="2" class="text-center">
 				<b-button @click="selectChange" variant="primary" id="selectBtn">
-					<h6 v-if="selectPressed">Close</h6>
-					<h6 v-else>Select</h6>
+					<h6 v-if="selectPressed">{{ getLocale.closeBtn }}</h6>
+					<h6 v-else>{{ getLocale.selectBtn }}</h6>
 				</b-button>
 			</b-col>
 			<b-col cols="1"></b-col>
@@ -39,17 +39,15 @@
 		<b-row v-if="selectPressed" class="mb-3">
 			<b-col></b-col>
 			<b-col style="text-align: center;">
-				<b-button v-b-modal.copyQuestions variant="success">
-					Copy selected
+				<b-button @click="openCopyQuestion" variant="success">
+					{{ getLocale.copySelectedBtn }}
 				</b-button>
-				<b-modal id="copyQuestions" title="Copy questions to other courses">
-					{{ selectedQuestions }}
-				</b-modal>
+				<CopyQuestions ref="copyQuestionModal" :selectedQuestions="getSelectedQuestions"/>
 			</b-col>
 			<b-col></b-col>
 			<b-col style="text-align: center;">
 				<b-button variant="danger">
-					Delete selected
+					{{ getLocale.deleteSelectedBtn }}
 				</b-button>
 			</b-col>
 			<b-col></b-col>
@@ -108,6 +106,7 @@
 	import ShowQuestion from "./ShowQuestion.vue";
 	import AddQuestionToSession from "./AddQuestionToSession.vue";
 	import SelectCourse from "../SelectCourse.vue";
+	import CopyQuestions from "./CopyQuestions.vue";
 
 	export default {
 		name: 'Questions',
@@ -127,7 +126,8 @@
 			EditQuestion,
 			ShowQuestion,
 			AddQuestionToSession,
-			SelectCourse
+			SelectCourse,
+			CopyQuestions
 		},
 		mounted() {
 			this.$socket.emit(
@@ -155,6 +155,20 @@
 				let locale = this.$store.getters.getLocale("AdminQuestions");
                 if(locale) return locale;
 			    else return {};
+			},
+			getSelectedQuestions: function() {
+				let list = [];
+				for (let i = 0; i < this.selectedQuestions.length; i++) {
+					let selectedId = this.selectedQuestions[i];
+					let index = this.questionList.findIndex(question => question.id === selectedId);
+					if (index === -1) continue;
+					let question = this.questionList[index];
+					list.push({
+						id: question.id,
+						text: question.text
+					});
+				}
+				return list;
 			}
 		},
 		sockets: {
@@ -172,6 +186,8 @@
 			},
 			courseChanged: function(newCourse) {
 				this.$socket.emit("getAllQuestionsWithinCourse", newCourse);
+				this.selectedQuestions = [];
+				this.selectPressed = false;
 			},
 			showEditQuestionModal: function(item) {
 				this.okHandler = "edit";
@@ -210,6 +226,14 @@
 			selectChange: function() {
 				this.selectedQuestions = [];
 				this.selectPressed = !this.selectPressed;
+			},
+			openCopyQuestion: function() {
+				if (this.selectedQuestions.length > 0) {
+					this.$refs.copyQuestionModal.$refs.copyQuestionInnerModal.show();
+				} else {
+					this.errorText = "noQuestionsSelectedError";
+					this.showError = true;
+				}
 			}
 		}
 	}
