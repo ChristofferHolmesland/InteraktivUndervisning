@@ -316,6 +316,17 @@
                 "By pressing move you can now click somewhere in the canvas and the selected list will be moved to that location",
                 "Pressing extract will take the selected elements from a list and extract them to a sublist.",
                 "The order of how you extract a sublist does matter. The mergesort algorithm is set up to check the left side first."
+            ],
+            "Tree": [
+                "Dette er en guide for tre relaterte spørsmål som bruker graphdrawer:",
+                "Normalt will et tre spørsmål bestå av en liste med noder og en add/remove action i oppgave beskrivelsen, i tilegg kan du få et eksisterende tre som skal brukes som base. Din jobb er å tegne hvordan treet skal se ut etter operasjonene har blitt gjort.",
+                "Her er det fokus på å la dere teste ut graftegneren, og la dere øve på å tegne forskjellige binaer tre.",
+                "Graf tegneren bruker 5 forskjellige kommandoer, disse kommandoene er: Add, Remove, Move, Join og Edit. Den valgte kommandoen vil fremhevet, som standard vil graftegneren bruke add kommandoen.",
+                "Når Add kommandoen er valgt, kan du lage nye noder ved å trykke innenfor tegneren. Etter å ha trykket vil en node med standard verdi 0 bli laget.",
+                "Når Remove kommandoen er valgt, kan du trykke på en node eller en linje for å fjerne den fra tegningen.",
+                "Når Move kommandoen er valgt, kan du flytte rundt på en node og ved å trykke på noden og holde inne noden mens du flytte rundt på tegningen. Ved slippe noden vil noden bli plassert der du slapp den.",
+                "Når Join kommandoen er valgt, kan du lage linjer mellom noder ved å trykke på en node og holde inne til du kommer til en annen node og tilslutt slippe taket for å lage linjen.",
+                "Når Edit kommandoen er valgt, vil en alert boks dukke opp ved å trykke på en av nodene. Hvis du fyller inn en verdi i input boksen og trykker på ok-knappen så vil den valgte noden få verdien du skrev inn."
             ]
         },
         "settings": {
