@@ -114,3 +114,9 @@ export default {
 	}
 };
 </script>
+
+<style scoped>
+#navbar {
+	margin-bottom: 3rem;
+}
+</style>

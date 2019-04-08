@@ -1,6 +1,6 @@
 let checkers = {
-    "basicInfo": require("./basicInfo.js"),
-    "mediaInfo": require("./mediaInfo.js"),
+	"basicInfo": require("./basicInfo.js"),
+	"mediaInfo": require("./mediaInfo.js"),
 
     1: require("./text.js"),
     2: require("./multipleChoice.js"),
@@ -17,8 +17,8 @@ let checkers = {
 
 
 /*  validateChecker
-    Gets an object from the editQuestion module from an admin,
-    and validates the input that the user has entered.
+	Gets an object from the editQuestion module from an admin,
+	and validates the input that the user has entered.
 
     The function will return an object containing the following information:
     result: {
@@ -27,11 +27,11 @@ let checkers = {
     }
 */
 const validateChecker = {
-    checkQuestion: function(questionInformation) {
-        let result = {
-            passed: true,
-            errors: []
-        };
+	checkQuestion: function(questionInformation) {
+		let result = {
+			passed: true,
+			errors: []
+		};
 
         // Checks and validates the basic information
         let basicInfo = {
@@ -61,8 +61,8 @@ const validateChecker = {
             }
         }
 
-        // Checks and validates solution type and inputs for the solution type
-        let questionType = questionInformation.solutionType;
+		// Checks and validates solution type and inputs for the solution type
+		let questionType = questionInformation.solutionType;
 
         if (checkers[questionType] !== undefined) {
             let solutionInfo = {};
@@ -111,8 +111,8 @@ const validateChecker = {
             result.errors.push("questionTypeError")
         }
 
-        return result;
-    }
+		return result;
+	}
 };
 
 module.exports.validateChecker = validateChecker;

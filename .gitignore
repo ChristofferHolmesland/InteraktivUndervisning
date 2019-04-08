@@ -118,6 +118,9 @@ Rapport/*.log
 # vue
 App/server/public
 
+# Images
+App/server/images
+
 # database
 *.db
 

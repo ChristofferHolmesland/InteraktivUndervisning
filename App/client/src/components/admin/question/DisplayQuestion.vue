@@ -58,10 +58,17 @@
                                 <QuicksortSolution  v-if="resultInfo.question.type === 5"
                                                     :solution="resultInfo.solution"
                                                     />
+                                <div v-if="resultInfo.question.type === 6">
+                                    {{getLocale.binaryTreeSolutionText}}
+                                    {{resultInfo.solution.nodes}}
+                                </div>
                                 <TreeSolution       v-if="resultInfo.question.type === 7 || resultInfo.question.type === 8"
                                                     :solution="resultInfo.solution"
                                                     />
                                 <DijkstraSolution v-if="resultInfo.question.type === 9"
+                                                    :solution="resultInfo.solution"
+                                                    />
+                                <PythonSolution v-if="resultInfo.question.type === 10"
                                                     :solution="resultInfo.solution"
                                                     />
                             </div>
@@ -87,11 +94,15 @@
                                                         :answer="resultInfo.answerList[selectedAnswer].answerObject"
                                                         ref="graphdrawerContainer"
                                                         />
-                                    <TreeAnswer         v-if="resultInfo.question.type === 7 || resultInfo.question.type === 8"
+                                    <TreeAnswer         v-if="resultInfo.question.type >= 6 && resultInfo.question.type <= 8"
                                                         :answer="resultInfo.answerList[selectedAnswer].answerObject"
                                                         ref="graphdrawerContainer"
                                                     />
                                     <DijkstraAnswer     v-if="resultInfo.question.type === 9"
+                                                        :answer="resultInfo.answerList[selectedAnswer].answerObject"
+                                                        ref="graphdrawerContainer"
+                                                        />  
+                                    <PythonAnswer       v-if="resultInfo.question.type === 10"
                                                         :answer="resultInfo.answerList[selectedAnswer].answerObject"
                                                         ref="graphdrawerContainer"
                                                         />  
@@ -129,6 +140,9 @@ import TreeSolution from "./questionResultScreenSolution/Tree.vue";
 
 import DijkstraAnswer from "./questionResultScreenAnswer/Dijkstra.vue";
 import DijkstraSolution from "./questionResultScreenSolution/Dijkstra.vue";
+
+import PythonAnswer from "./questionResultScreenAnswer/Python.vue";
+import PythonSolution from "./questionResultScreenSolution/Python.vue";
 
 
 export default {
@@ -190,7 +204,9 @@ export default {
         QuicksortAnswer,
         QuicksortSolution,
         DijkstraAnswer,
-        DijkstraSolution
+        DijkstraSolution,
+        PythonAnswer,
+        PythonSolution
     }
 }
 </script>

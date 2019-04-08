@@ -5,9 +5,9 @@ const quicksort = require("./quicksort");
 const shellsort = require("./shellsort");
 
 module.exports = {
-        countingsort: countingsort,
-        insertionsort: insertionsort,
-        mergesort: mergesort,
-        quicksort: quicksort,
-        shellsort: shellsort
+	countingsort: countingsort,
+	insertionsort: insertionsort,
+	mergesort: mergesort,
+	quicksort: quicksort,
+	shellsort: shellsort
 }

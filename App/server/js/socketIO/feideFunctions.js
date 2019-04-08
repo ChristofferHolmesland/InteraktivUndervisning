@@ -211,18 +211,18 @@ module.exports.feide = function(socket, db, user){
 }
 
 async function sendUserInfo(db, socket, user) {
-    let response = {
-        "username": user.userName, 
-        "loggedIn": true,
-        "userRights": user.userRights,
-        "feideId": user.feide.idNumber
-    }
+	let response = {
+		"username": user.userName, 
+		"loggedIn": true,
+		"userRights": user.userRights,
+		"feideId": user.feide.idNumber
+	}
 
-    await dbFunctions.get.adminSubjects(db, user.feide.idNumber).then((adminSubjects) => {
-        response.adminSubjects = adminSubjects
-    }).catch((err) => {
-        console.error(err);
-    });
+	await dbFunctions.get.adminSubjects(db, user.feide.idNumber).then((adminSubjects) => {
+		response.adminSubjects = adminSubjects
+	}).catch((err) => {
+		console.error(err);
+	});
 
-    socket.emit("clientLoginInfoResponse", response);
+	socket.emit("clientLoginInfoResponse", response);
 }

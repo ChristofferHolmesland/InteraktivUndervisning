@@ -3,7 +3,7 @@ const graphs = require("./graphs/graphs");
 const python = require("./python")
 
 module.exports = {
-    sorting: sorting,
-    graphs: graphs,
-    python: python
+	sorting: sorting,
+	graphs: graphs,
+	python: python
 };

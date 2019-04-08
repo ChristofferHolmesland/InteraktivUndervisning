@@ -124,7 +124,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 	});
 
 	socket.on("initializeSession", function(sessionId){
-		if(currentSession != undefined) socket.emit("initializeSessionErrorResponse", "You are already running a session with the code: " + currentSession.session.id);
+		if (currentSession != undefined) socket.emit("initializeSessionErrorResponse", "You are already running a session with the code: " + currentSession.session.id);
 		dbFunctions.get.sessionById(db, sessionId).then(async (sessionInformation) => {
 			let sessionCode = generalFunctions.calculateSessionCode(sessions);
 			socket.join(sessionCode);
@@ -137,11 +137,13 @@ module.exports.admin = function(socket, db, user, sessions) {
 				questionList.push(new question(tempQuestion.id, tempQuestion.text, tempQuestion.description, tempQuestion.object, tempQuestion.solution, tempQuestion.type, tempQuestion.time, tempQuestion.sqId));
 			}
 
-			currentSession = {session: new session(sessionInformation.id, sessionInformation.name,
-											sessionInformation.status, [], sessionInformation.courseSemester,
-											sessionInformation.courseName, questionList, sessionCode),
-								adminSocket: socket,
-								adminId: user.feide.idNumber}
+			currentSession = {
+				session: new session(sessionInformation.id, sessionInformation.name,
+					sessionInformation.status, [], sessionInformation.courseSemester,
+					sessionInformation.courseName, questionList, sessionCode),
+				adminSocket: socket,
+				adminId: user.feide.idNumber
+			}
 			
 			sessions.set(sessionCode, currentSession);
 			
@@ -420,7 +422,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 			for (let i = 0; i < question.objects.files.length; i++) {
 				files.push(JSON.parse(JSON.stringify(question.objects.files[i])));
 			}
-			let filePath = path.join("../../public/img/questionImages/", questionIndex.toString(), "/");
+			let filePath = path.join("../../images/questionImages/", questionIndex.toString(), "/");
 			let filePaths = [];
 	
 			try {
@@ -431,9 +433,9 @@ module.exports.admin = function(socket, db, user, sessions) {
 					question.objects.files[i].filePath = filePaths[i];
 					delete question.objects.files[i].buffer;
 					
-					await fs.open(path.join(__dirname, filePaths[i]), "a", 0755, function(error, fd) {
+					await fs.open(path.join(__dirname, filePaths[i]), "w", function(error, fd) {
 						if (error) {
-							console.error("error writing image: \n\n" + err);
+							console.error("Error writing image: \n\n" + err);
 							return;
 						}
 						fs.writeSync(fd, files[i].buffer, null, "base64");
@@ -457,7 +459,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 
 		question = generateSolution(question);
 
-		let filePath = path.join("../../public/img/questionImages/", question.id.toString(), "/");
+		let filePath = path.join("../../images/questionImages/", question.id.toString(), "/");
 		await del(path.join(__dirname, filePath, "**"));
 
 		if (question.objects.files.length > 0) {
@@ -475,7 +477,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 					question.objects.files[i].filePath = filePaths[i];
 					delete question.objects.files[i].buffer;
 					
-					await fs.open(path.join(__dirname, filePaths[i]), "a", 0755, function(error, fd) {
+					await fs.open(path.join(__dirname, filePaths[i]), "a", function(error, fd) {
 						if (error) {
 							console.error("error writing image: \n\n" + err);
 							return;
