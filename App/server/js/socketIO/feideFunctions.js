@@ -96,8 +96,7 @@ module.exports.feide = function(socket, db, user){
 
 		await dbFunctions.get.sessionById(db, sessionId).then((session) => {
 			sessionInformation.name = session.name;
-			sessionInformation.courseCode = session.courseCode;
-			sessionInformation.courseSemester = session.courseSemester;
+			sessionInformation.courseId = session.courseId;
 		});
 
 		await dbFunctions.get.allQuestionInSession(db, sessionId).then(async (questions) => {
@@ -153,7 +152,7 @@ module.exports.feide = function(socket, db, user){
 
 							delete answer.userId;
 
-							answer.answerObject = JSON.parse(answer.object);
+							answer.answerObject = answer.object;
 							delete answer.object;
 
 							answerList.push(answer);
@@ -191,7 +190,7 @@ module.exports.feide = function(socket, db, user){
 				delete question.sqId;
 				delete question.time;
 
-				question.solution = JSON.parse(question.solution);
+				question.solution = question.solution;
 
 				questionList.push(question);
 			}

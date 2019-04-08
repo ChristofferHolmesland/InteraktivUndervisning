@@ -109,7 +109,7 @@ const get = {
 			let userId = await this.userId(db, userInfo).catch((err) => {
 				reject(customReject(err), "sessionsToUser");
 			});
-			let statement = `SELECT S.name, S.id, C.code
+			let statement = `SELECT S.name, S.id, C.id
 							FROM Session AS S
 							INNER JOIN UserHasSession AS US ON US.sessionId = S.id
 							INNER JOIN Course AS C ON S.courseId = C.id 
@@ -117,7 +117,8 @@ const get = {
 								SELECT id 
 								FROM User
 								WHERE id = '${userId.id}'
-							LIMIT 1)`;
+							LIMIT 1);`;
+			console.log(statement);
 			db.all(statement, (err,rows) => {
 				if (err) reject(customReject(err, "sessionsToUser"));
 				resolve(rows);
