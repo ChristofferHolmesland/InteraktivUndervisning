@@ -68,6 +68,9 @@
                                 <DijkstraSolution v-if="resultInfo.question.type === 9"
                                                     :solution="resultInfo.solution"
                                                     />
+                                <PythonSolution v-if="resultInfo.question.type === 10"
+                                                    :solution="resultInfo.solution"
+                                                    />
                             </div>
 						</b-tab>
 						<b-tab :title="getLocale.answer" v-if="resultInfo.answerList.length > 0">
@@ -96,6 +99,10 @@
                                                         ref="graphdrawerContainer"
                                                     />
                                     <DijkstraAnswer     v-if="resultInfo.question.type === 9"
+                                                        :answer="resultInfo.answerList[selectedAnswer].answerObject"
+                                                        ref="graphdrawerContainer"
+                                                        />  
+                                    <PythonAnswer       v-if="resultInfo.question.type === 10"
                                                         :answer="resultInfo.answerList[selectedAnswer].answerObject"
                                                         ref="graphdrawerContainer"
                                                         />  
@@ -133,6 +140,9 @@ import TreeSolution from "./questionResultScreenSolution/Tree.vue";
 
 import DijkstraAnswer from "./questionResultScreenAnswer/Dijkstra.vue";
 import DijkstraSolution from "./questionResultScreenSolution/Dijkstra.vue";
+
+import PythonAnswer from "./questionResultScreenAnswer/Python.vue";
+import PythonSolution from "./questionResultScreenSolution/Python.vue";
 
 
 export default {
@@ -194,7 +204,9 @@ export default {
         QuicksortAnswer,
         QuicksortSolution,
         DijkstraAnswer,
-        DijkstraSolution
+        DijkstraSolution,
+        PythonAnswer,
+        PythonSolution
     }
 }
 </script>

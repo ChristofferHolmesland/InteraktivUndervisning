@@ -248,16 +248,16 @@ const get = {
 	},
 	userId: function(db, userInfo) {
 		switch (userInfo.type) {
-			case "feide":
-				return this.userIdByFeideId(db, userInfo.id);
-			default:
-				return new Promise((resolve, rejcet) => {
-					if(userInfo === undefined)
-						reject(new customReject(new Error(`userInfo is undefined`), "userId"))
-					if(userInfo.type === undefined) 
-						reject(new customReject(new Error(`userInfo.Type is undefined`), "userId"))
-					reject(new customReject(new Error(`userInfo.Type does not exist: ${userInfo.type}`), "userId"))
-				})
+		case "feide":
+			return this.userIdByFeideId(db, userInfo.id);
+		default:
+			return new Promise((resolve, rejcet) => {
+				if(userInfo === undefined)
+					reject(new customReject(new Error(`userInfo is undefined`), "userId"))
+				if(userInfo.type === undefined) 
+					reject(new customReject(new Error(`userInfo.Type is undefined`), "userId"))
+				reject(new customReject(new Error(`userInfo.Type does not exist: ${userInfo.type}`), "userId"))
+			})
 		}
 	},
 	adminSubjects: function(db, feideNumber) {

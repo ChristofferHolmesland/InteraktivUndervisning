@@ -1,51 +1,51 @@
 module.exports = function(code) {
-    let steps = parse(code);
-    let currentStep = 0;
-    
-    return {
-        isSorted: function() {
-            return currentStep == steps.length - 1;
-        },
-        get: function() {
-            return steps[currentStep];
-        },
-        step: function() {
-            if (currentStep < steps.length - 1)
-                currentStep++;
-            return steps[currentStep];
-        },
-        back: function() {
-            if (currentStep > 0)
-                currentStep++;
-            return steps[currentStep];
-        },
-        finish: function() {
-            currentStep = steps.length - 1;
-            return steps[currentStep];
-        },
-        reset: function() {
-            currentStep = 0;
-            return steps[currentStep];
-        },
-        getSteps: function() {
-            return steps;
-        }
-    }
+	let steps = parse(code);
+	let currentStep = 0;
+	
+	return {
+		isSorted: function() {
+			return currentStep == steps.length - 1;
+		},
+		get: function() {
+			return steps[currentStep];
+		},
+		step: function() {
+			if (currentStep < steps.length - 1)
+				currentStep++;
+			return steps[currentStep];
+		},
+		back: function() {
+			if (currentStep > 0)
+				currentStep++;
+			return steps[currentStep];
+		},
+		finish: function() {
+			currentStep = steps.length - 1;
+			return steps[currentStep];
+		},
+		reset: function() {
+			currentStep = 0;
+			return steps[currentStep];
+		},
+		getSteps: function() {
+			return steps;
+		}
+	}
 }
 
 let uniqueId = 0;
 function assignScope(object) {
-    // This is used to keep track of unique scopes
-    object._uniqueId = uniqueId;
-    uniqueId += 1;
-    // Address -> Value
-    object.data = [];
-    // Name -> Address
-    object.objects = {};
-    // Name -> Scope
-    object.functions = {};
-    // Name -> Scope
-    object.classes = {};
+	// This is used to keep track of unique scopes
+	object._uniqueId = uniqueId;
+	uniqueId += 1;
+	// Address -> Value
+	object.data = [];
+	// Name -> Address
+	object.objects = {};
+	// Name -> Scope
+	object.functions = {};
+	// Name -> Scope
+	object.classes = {};
 }
 
 function parse(code) {
@@ -296,25 +296,29 @@ function parse(code) {
             if (print) console.log("base type");
             return { 
                 data: Number(expression), 
-                type: "Number" 
+                type: "Number",
+                _uniqueId: uniqueId++
             };
         } else if (expression.startsWith("\"") && expression.endsWith("\"")) {
             if (print) console.log("base type");
             return {
                 data: expression.substring(1, expression.length - 1),
-                type: "String"
+                type: "String",
+                _uniqueId: uniqueId++
             };
         } else if (expression == "True") {
             if (print) console.log("base type");
             return {
                 data: true,
-                type: "Boolean"
+                type: "Boolean",
+                _uniqueId: uniqueId++
             };
         } else if (expression == "False") {
             if (print) console.log("base type");
             return {
                 data: false,
-                type: "Boolean"
+                type: "Boolean",
+                _uniqueId: uniqueId++
             };
         }
 

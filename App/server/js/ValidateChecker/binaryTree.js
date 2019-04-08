@@ -4,7 +4,7 @@ const check = function (solutionInfo) {
         errors: []
     };
 
-    let treeElements = solutionInfo.treeElements;
+	let treeElements = solutionInfo.treeElements;
 
     if (treeElements === undefined || treeElements === "") {
         result.passed = false;
@@ -31,7 +31,7 @@ const check = function (solutionInfo) {
         }
     }
 
-    return result;
+	return result;
 };
 
 module.exports.check = check;

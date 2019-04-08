@@ -1,172 +1,172 @@
 <template>
-    <b-modal :id="elementId" :ref="elementRef" :no-close-on-backdrop="true" :title="getTitle" @ok="callOkHandler" style="text-align: left;" size="lg">
-        <b-form>
-            <b-alert    :show="validationFailure"
-                        variant="danger">
-                <p v-for="(error, index) in validationErrors" :key="index">
-                    {{getLocale[error]}}
-                </p>
-            </b-alert>
-            <b-container   class="px-0"
-                            @click="changeShowBasicInfo"
-                            style="cursor: pointer;">
-                <b-row>
-                    <b-col cols="10" style="text-align: left;">
-                        <label  for="mediaSelector"
-                                style="cursor: pointer;">
-                            {{getLocale.basicInfo}}
-                        </label>
-                    </b-col>
-                    <b-col cols="2" style="text-align: right;">
-                        <p v-if="showBasicInfo">^</p>
-                        <p v-else>V</p>
-                    </b-col>
-                </b-row>
-            </b-container>
-            <div v-show="showBasicInfo">
-                <b-form-group 	id="questionTitle"
-                                :label="getLocale.newQuestionTitle"
-                                label-for="questionTitleInput">
-                    <b-form-input 	id="questionTitleInput"
-                                    type="text"
-                                    v-model="newQuestion.text">
-                    </b-form-input>
-                </b-form-group>
-                <b-form-group 	id="questionText"
-                                :label="getLocale.newQuestionText"
-                                label-for="questionTextInput">
-                    <b-form-input 	id="questionTextInput"
-                                    type="text"
-                                    v-model="newQuestion.description">
-                    </b-form-input>
-                </b-form-group>
-                <b-form-group id="questionTime">
-                    <b-col>
-                        <b-row>
-                            <b-col>
-                                <label>{{ getLocale.newQuestionTime }}</label>
-                            </b-col>
-                            <b-col>
-                                <b-form-input   id="questionTimeInput"
-                                                type="time"
-                                                v-model="timeInput"
-                                                min="00:00"
-                                                max="10:00">
-                                </b-form-input>
-                            </b-col>
-                        </b-row>
-                        <b-row>
-                            <b-col>
-                                <b-form-input   id="questionTimeInputSlider"
-                                                type="range"
-                                                v-model="time"
-                                                min="0"
-                                                max="600"
-                                                step="15">
-                                </b-form-input>
-                            </b-col>
-                        </b-row>
-                    </b-col>
-                </b-form-group>
-            </div>
+	<b-modal :id="elementId" :ref="elementRef" :no-close-on-backdrop="true" :title="getTitle" @ok="callOkHandler" style="text-align: left;" size="lg">
+		<b-form>
+			<b-alert    :show="validationFailure"
+						variant="danger">
+				<p v-for="(error, index) in validationErrors" :key="index">
+					{{getLocale[error]}}
+				</p>
+			</b-alert>
+			<b-container   class="px-0"
+							@click="changeShowBasicInfo"
+							style="cursor: pointer;">
+				<b-row>
+					<b-col cols="10" style="text-align: left;">
+						<label  for="mediaSelector"
+								style="cursor: pointer;">
+							{{getLocale.basicInfo}}
+						</label>
+					</b-col>
+					<b-col cols="2" style="text-align: right;">
+						<p v-if="showBasicInfo">^</p>
+						<p v-else>V</p>
+					</b-col>
+				</b-row>
+			</b-container>
+			<div v-show="showBasicInfo">
+				<b-form-group 	id="questionTitle"
+								:label="getLocale.newQuestionTitle"
+								label-for="questionTitleInput">
+					<b-form-input 	id="questionTitleInput"
+									type="text"
+									v-model="newQuestion.text">
+					</b-form-input>
+				</b-form-group>
+				<b-form-group 	id="questionText"
+								:label="getLocale.newQuestionText"
+								label-for="questionTextInput">
+					<b-form-input 	id="questionTextInput"
+									type="text"
+									v-model="newQuestion.description">
+					</b-form-input>
+				</b-form-group>
+				<b-form-group id="questionTime">
+					<b-col>
+						<b-row>
+							<b-col>
+								<label>{{ getLocale.newQuestionTime }}</label>
+							</b-col>
+							<b-col>
+								<b-form-input   id="questionTimeInput"
+												type="time"
+												v-model="timeInput"
+												min="00:00"
+												max="10:00">
+								</b-form-input>
+							</b-col>
+						</b-row>
+						<b-row>
+							<b-col>
+								<b-form-input   id="questionTimeInputSlider"
+												type="range"
+												v-model="newQuestion.time"
+												min="0"
+												max="600"
+												step="15">
+								</b-form-input>
+							</b-col>
+						</b-row>
+					</b-col>
+				</b-form-group>
+			</div>
 
-            <hr>
+			<hr>
 
-            <b-form-group   id="Media">
-                <b-container   class="px-0"
-                                @click="changeShowMedia"
-                                style="cursor: pointer;">
-                    <b-row>
-                        <b-col cols="10" style="text-align: left;">
-                            <label  for="mediaSelector"
-                                    style="cursor: pointer;">
-                                Media
-                            </label>
-                        </b-col>
-                        <b-col cols="2" style="text-align: right;">
-                            <p v-if="showMedia">^</p>
-                            <p v-else>V</p>
-                        </b-col>
-                    </b-row>
-                </b-container>
-                <b-container v-show="showMedia" class="px-0">
-                    <b-row>
-                        <b-col>
-                            <b-form-select  :options="mediaTypes"
-                                            v-model="selectedMediaType">
-                            </b-form-select>
-                        </b-col>
-                    </b-row>
-                    <b-row style="text-align: center;" class="mt-4">
-                        <b-col>
-                            <div v-if="selectedMediaType === 0">
-                                <b-alert :show="showMediaWarning" variant="warning">{{mediaWarningText}}</b-alert>
-                                <b-alert :show="showMediaError" variant="danger">{{mediaErrorText}}</b-alert>
-                                <input  type="file" @change="newFile" accept="image/*" 
-                                        multiple name="imageInput" class="imageInput"
-                                        id="imageInput"
-                                        />
-                                <label for="imageInput">{{getLocale.imageInputLabel}}</label>
-                            </div>
-                            <div v-if="selectedMediaType === 1">
-                                <!-- TODO add graph objects -->
-                            </div>
-                            <div v-if="selectedMediaType === 2">
-                                <!-- TODO add table objects -->
-                            </div>
-                        </b-col>
-                    </b-row>
-                    <b-row v-if="newQuestion.objects.files.length > 0">
-                        <b-col>
-                            <label>Files:</label>
-                            <b-container>
-                                <b-row v-for="(image, index) in newQuestion.objects.files" :key="index" class="mt-2">
-                                    <b-col>
-                                        <b-row>
-                                            <b-col>
-                                                {{getLocale.filename}}: {{image.name}}
-                                            </b-col>
-                                        </b-row>
-                                        <b-row>
-                                            <b-col>
-                                                {{getLocale.filesize}}: {{Math.round(((image.size / 1000000) + 0.00001) * 100) / 100}} MB
-                                            </b-col>
-                                        </b-row>
-                                        <b-row>
-                                            <b-col>
-                                                {{getLocale.filetype}}: {{image.type}}
-                                            </b-col>
-                                        </b-row>
-                                    </b-col>
-                                    <b-col>
-                                        <b-button @click="deleteImage(index)" variant="danger"
-                                                    style="width: 100px; height: 50px; text-align:center;">
-                                            {{getLocale.deleteBtn}}
-                                        </b-button>
-                                    </b-col>
-                                    <b-col>
-                                        <img :src="getImageSrc(index)" width="200" height="200" style="border: 3px solid black;"/>
-                                    </b-col>
-                                </b-row>
-                            </b-container>
-                        </b-col>
-                    </b-row>
-                    <b-row>
-                        <b-col>
-                            <div>
+			<b-form-group   id="Media">
+				<b-container   class="px-0"
+								@click="changeShowMedia"
+								style="cursor: pointer;">
+					<b-row>
+						<b-col cols="10" style="text-align: left;">
+							<label  for="mediaSelector"
+									style="cursor: pointer;">
+								Media
+							</label>
+						</b-col>
+						<b-col cols="2" style="text-align: right;">
+							<p v-if="showMedia">^</p>
+							<p v-else>V</p>
+						</b-col>
+					</b-row>
+				</b-container>
+				<b-container v-show="showMedia" class="px-0">
+					<b-row>
+						<b-col>
+							<b-form-select  :options="mediaTypes"
+											v-model="selectedMediaType">
+							</b-form-select>
+						</b-col>
+					</b-row>
+					<b-row style="text-align: center;" class="mt-4">
+						<b-col>
+							<div v-if="selectedMediaType === 0">
+								<b-alert :show="showMediaWarning" variant="warning">{{mediaWarningText}}</b-alert>
+								<b-alert :show="showMediaError" variant="danger">{{mediaErrorText}}</b-alert>
+								<input  type="file" @change="newFile" accept="image/*" 
+										multiple name="imageInput" class="imageInput"
+										id="imageInput"
+										/>
+								<label for="imageInput">{{getLocale.imageInputLabel}}</label>
+							</div>
+							<div v-if="selectedMediaType === 1">
+								<!-- TODO add graph objects -->
+							</div>
+							<div v-if="selectedMediaType === 2">
+								<!-- TODO add table objects -->
+							</div>
+						</b-col>
+					</b-row>
+					<b-row v-if="newQuestion.objects.files.length > 0">
+						<b-col>
+							<label>Files:</label>
+							<b-container>
+								<b-row v-for="(image, index) in newQuestion.objects.files" :key="index" class="mt-2">
+									<b-col>
+										<b-row>
+											<b-col>
+												{{getLocale.filename}}: {{image.name}}
+											</b-col>
+										</b-row>
+										<b-row>
+											<b-col>
+												{{getLocale.filesize}}: {{Math.round(((image.size / 1000000) + 0.00001) * 100) / 100}} MB
+											</b-col>
+										</b-row>
+										<b-row>
+											<b-col>
+												{{getLocale.filetype}}: {{image.type}}
+											</b-col>
+										</b-row>
+									</b-col>
+									<b-col>
+										<b-button @click="deleteImage(index)" variant="danger"
+													style="width: 100px; height: 50px; text-align:center;">
+											{{getLocale.deleteBtn}}
+										</b-button>
+									</b-col>
+									<b-col>
+										<img :src="getImageSrc(index)" width="200" height="200" style="border: 3px solid black;"/>
+									</b-col>
+								</b-row>
+							</b-container>
+						</b-col>
+					</b-row>
+					<b-row>
+						<b-col>
+							<div>
 
-                            </div>
-                        </b-col>
-                    </b-row>
-                    <b-row>
-                        <b-col>
-                            <div>
+							</div>
+						</b-col>
+					</b-row>
+					<b-row>
+						<b-col>
+							<div>
 
-                            </div>
-                        </b-col>
-                    </b-row>
-                </b-container>
-            </b-form-group>
+							</div>
+						</b-col>
+					</b-row>
+				</b-container>
+			</b-form-group>
 
             <hr>
             
@@ -285,6 +285,7 @@
                                  v-model="newQuestion.objects.treeElements">
                 </b-form-input>
                 <GraphDrawer
+                    ref="graphdrawer"
                     @getValueResponse="gotTreeDrawerObject"
                     :requestAnswer="requestGraphDrawerObject"
                     controlType="Graph0"
@@ -298,7 +299,8 @@
                     id="dijkstraSolution"
                     label="Draw the graph, and mark start (green) and end (red) nodes"
                     v-if="newQuestion.solutionType === 9">
-                <GraphDrawer 
+                <GraphDrawer
+                    ref="graphdrawer"
                     @getValueResponse="gotGraphDrawerObject" 
                     :requestAnswer="requestGraphDrawerObject" 
                     controlType="Graph0"
@@ -328,410 +330,404 @@
 </template>
 
 <script>
-    import GraphDrawer from "../../graphDrawer/GraphDrawer.vue";
+import GraphDrawer from "../../graphDrawer/GraphDrawer.vue";
 
-    function initializeState() {
-        return {
-            newQuestion: {
-                id: -1,
-                text: "",
-                description: "", 
-                solutionType: "",
-                solution: "",
-                time: 0,
-                objects: {
-                    code: "",
-                    multipleChoices: [],
-                    startingArray: "",
-                    startTree: undefined,
-                    treeElements: "",
-                    solutionTreeType: "Add",
-                    kValue: "",
-                    graph: undefined,
-                    files: [],
-                    graphs: [],
-                    tables: [],
-                    _graphdrawerGraph: undefined
-                }
-            },
-            solutionTypes: [],
-            requestGraphDrawerObject: false,
-            mediaTypes: [],
-            selectedMediaType: undefined,
+function initializeState() {
+	return {
+		newQuestion: {
+			id: -1,
+			text: "",
+			description: "",
+			solutionType: "",
+			solution: "",
+			time: 0,
+			objects: {
+				code: "",
+				multipleChoices: [],
+				startingArray: "",
+				startTree: undefined,
+				treeElements: "",
+				solutionTreeType: "Add",
+				kValue: "",
+				graph: undefined,
+				files: [],
+				graphs: [],
+				tables: [],
+				_graphdrawerGraph: undefined
+			}
+		},
+		solutionTypes: [],
+		requestGraphDrawerObject: false,
+		mediaTypes: [],
+		selectedMediaType: undefined,
 
+		showBasicInfo: true,
+		showMedia: false,
+		showSolution: false,
 
-            showBasicInfo: true,
-            showMedia: false,
-            showSolution: false,
+		mediaWarningText: "",
+		showMediaWarning: false,
+		mediaErrorText: "",
+		showMediaError: false,
+		validationFailure: false,
+		validationErrors: [],
+	};
+}
 
-            mediaWarningText: "",
-            showMediaWarning: false,
-            mediaErrorText: "",
-            showMediaError: false,
-            validationFailure: false,
-            validationErrors: [],
-            time: 0,
-            testImage: ""
-        }
-    }
+export default {
+	data() {
+		return initializeState();
+	},
+	components: {
+		GraphDrawer
+	},
+	props: {
+		elementRef: String,
+		elementId: String,
+		okHandler: String,
+		question: Object,
+		doneHandler: Function
+	},
+	mounted() {
+		this.$root.$on("bv::modal::show", (bvevent) => {
+			let target = bvevent.target;
+			this.assignState();
+			this.$socket.emit("getQuestionTypes");
+			this.mediaTypes = this.getLocale.mediaTypes;
+			this.selectedMediaType = this.mediaTypes[0].value;
+			if (this.question !== undefined) this.newQuestion = this.question;
 
-	export default {
-        data() {
-            return initializeState();
-        },
-        components: {
-            GraphDrawer
-        },
-        props: {
-            elementRef: String,
-            elementId: String,
-            okHandler: String,
-            question: Object,
-            doneHandler: Function
+			if (this.$refs.graphdrawer !== undefined) {
+				this.$nextTick(function() {
+					this.$refs.graphdrawer.createDrawer();
+				});
+			}
+		});
+	},
+	methods: {
+		keyDownInTextarea(e) {
+			// Only accept the Tab key
+			if (e.key !== "Tab" && e.which !== "9") return;
 
-        },
-        mounted() {
-            this.$root.$on("bv::modal::show", (bvevent) => {
-                let target = bvevent.target;
-                this.assignState();
-                this.$socket.emit("getQuestionTypes");
-                this.mediaTypes = this.getLocale.mediaTypes;
-                this.selectedMediaType = this.mediaTypes[0].value;
-                if (this.question !== undefined) this.newQuestion = this.question;
-            });
-        },
-        methods: {
-            keyDownInTextarea(e) {
-                // Only accept the Tab key
-                if (e.key !== "Tab" && e.which !== "9") return;
+			// Prevent shifting focus from the element
+			e.preventDefault();
+			
+			let codeInput = this.$refs.codeInput.$refs.input;
 
-                // Prevent shifting focus from the element
-                e.preventDefault();
+			// Add 4 spaces
+			let tabSize = 4;
+			let tabPosition = codeInput.selectionStart;
+			let textWithSpaces = codeInput.value.substring(0, tabPosition);
+			for (let i = 0; i < tabSize; i++) textWithSpaces += " ";
+			textWithSpaces += codeInput.value.substring(tabPosition);
 
-                let codeInput = this.$refs.codeInput.$refs.input;
+			codeInput.value = textWithSpaces;
+			// Move cursor to the right position
+			codeInput.selectionStart = tabPosition + tabSize;
+			codeInput.selectionEnd = tabPosition + tabSize;
+		},
+		deleteImage(index) {
+			let files = this.newQuestion.objects.files;
+			files.splice(index, 1);
 
-                // Add 4 spaces
-                let tabSize = 4;
-                let tabPosition = codeInput.selectionStart;
-                let textWithSpaces = codeInput.value.substring(0, tabPosition);
-                for (let i = 0; i < tabSize; i++) textWithSpaces += " ";
-                textWithSpaces += codeInput.value.substring(tabPosition);
+			let filesSize = 0;
+			for (let i = 0; i < files.length; i++) {
+				let file = files[i];
+				filesSize += file.size;
+			}
+			if (filesSize < 500000) this.showMediaWarning = false;
+		},assignState() {
+			let n = initializeState();
+			for (let p in n) {
+				if (n.hasOwnProperty(p)) {
+					if (p === "newQuestion") {
+						if (this.okHandler === "add") {
+							this.$data[p] = n[p];
+						}
+					} else {
+						this.$data[p] = n[p];
+					}
+				}
+			}
+			this.$nextTick();
+		},
+		newFile(event) {
+			let files = [];
+			Array.prototype.push.apply(files, event.target.files);
+			let storedFiles = this.newQuestion.objects.files;
+			for (let i = 0; i < files.length; i++) {
+				let fileType = file.type.split("/");
+				if (fileType[0] !== "image") {
+					files.splice(i, 1);
+					i--;
+					fileTypeErr++;
+					this.showMediaError = true;
+					this.mediaErrorText =
+						fileTypeErr.toString() +
+						this.getLocale.mediaErrorFileType;
+					continue;
+				}
 
-                codeInput.value = textWithSpaces;
-                // Move cursor to the right position
-                codeInput.selectionStart = tabPosition + tabSize;
-                codeInput.selectionEnd = tabPosition + tabSize;
-            },
-            deleteImage(index) {
-                let files = this.newQuestion.objects.files;
-                files.splice(index, 1);
+				totalFilesSize += file.size;
+				if (totalFilesSize > errorFileSize) {
+					event.target.value = "";
+					this.showMediaError = true;
+					if (fileTypeErr > 0)
+						this.mediaErrorText +=
+							"\n\n" + this.getLocale.mediaErrorFileSize;
+					else
+						this.mediaErrorText = this.getLocale.mediaErrorFileSize;
+				} else if (totalFilesSize > warningFileSize) {
+					this.showMediaWarning = true;
+					this.mediaWarningText = this.getLocale.mediaWarningFileSize;
+				} else {
+					if (fileTypeErr === 0) {
+						this.showMediaError = false;
+					}
+					this.showMediaWarning = false;
+				}
 
-                let filesSize = 0;
-                for (let i = 0; i < files.length; i++) {
-                    let file = files[i];
-                    filesSize += file.size;
-                }
-                if (filesSize < 500000) this.showMediaWarning = false;
-            },
-            assignState() {
-                let n = initializeState();
-                for (let p in n) {
-                    if (n.hasOwnProperty(p)) {
-                        if (p === "newQuestion") {
-                            if (this.okHandler === "add") {
-                                
-                                this.$data[p] = n[p];
-                            }
-                        }
-                        else {
-                            this.$data[p] = n[p];
-                        }
-                    }
-                }
-                this.$nextTick();
-            },
-            newFile(event) {
-                let files = [];
-                Array.prototype.push.apply(files, event.target.files);
-                let storedFiles = this.newQuestion.objects.files;
+				if (fileTypeErr === 0 && totalFilesSize < errorFileSize) {
+					let callbackFunction = function(e) {
+						fileObject.buffer = btoa(e.target.result);
+						storedFiles.push(fileObject);
+					};
 
-                let totalFilesSize = 0;
-                let errorFileSize = 1500000;
-                let warningFileSize = 500000;
-                for(let i = 0; i < storedFiles.length; i++) totalFilesSize += storedFiles[i].size;
-                let fileTypeErr = 0;
+					let reader = new FileReader();
+					reader.onload = callbackFunction;
+					reader.readAsBinaryString(file);
+				}
 
-                for (let i = 0; i < files.length; i++) {
-                    let file = files[i];
-                    let fileObject = {
-                        name: file.name,
-                        size: file.size,
-                        type: file.type
-                    }
-                    
-                    let fileType = file.type.split("/");
-                    if (fileType[0] !== "image") {
-                        files.splice(i, 1);
-                        i--;
-                        fileTypeErr++;
-                        this.showMediaError = true;
-                        this.mediaErrorText = fileTypeErr.toString() + this.getLocale.mediaErrorFileType;
-                        continue;
-                    }
+				event.target.value = "";
+			}
+		},
+		changeShowMedia() {
+			this.showMedia = !this.showMedia;
+		},
+		changeShowSolution() {
+			this.showSolution = !this.showSolution;
+		},
+		changeShowBasicInfo() {
+			this.showBasicInfo = !this.showBasicInfo;
+		},
+		assignTime: function() {
+			this.newQuestion.time = JSON.parse(JSON.stringify(this.time));
+			if (this.newQuestion.time === 0) this.newQuestion.time = -1;
+		},
+		addNewQuestionHandler: function() {
+			this.$socket.emit(
+				"addNewQuestion",
+				Object.assign({}, this.newQuestion, {
+					courseCode: this.$store.getters.getSelectedCourse.split(
+						" "
+					)[0]
+				})
+			);
+		},
+		editQuestionHandler: function() {
+			this.$socket.emit("updateQuestion", this.newQuestion);
+		},
+		returnToOkHandler: function() {
+			this.assignTime();
+			if (this.newQuestion.solutionType === 10) {
+				this.newQuestion.solution = this.newQuestion.objects.code;
+			}
 
-                    totalFilesSize += file.size;
-                    if (totalFilesSize > errorFileSize) {
-                        event.target.value = "";
-                        this.showMediaError = true;
-                        if (fileTypeErr > 0) this.mediaErrorText += "\n\n" + this.getLocale.mediaErrorFileSize;
-                        else this.mediaErrorText = this.getLocale.mediaErrorFileSize;
-                    }
-                    else if (totalFilesSize > warningFileSize) {
-                        this.showMediaWarning = true;
-                        this.mediaWarningText = this.getLocale.mediaWarningFileSize;
-                    }
-                    else {
-                        if (fileTypeErr === 0) {      
-                            this.showMediaError = false;
-                        }
-                        this.showMediaWarning = false;
-                    }
+			if (this.okHandler == "add") this.addNewQuestionHandler();
+			else if (this.okHandler == "edit") this.editQuestionHandler();
+		},
+		gotTreeDrawerObject(result) {
+			this.newQuestion.objects.startTree = result.tree;
+			this.newQuestion.objects._graphdrawerGraph = [
+				Object.assign(
+					{
+						type: "Complete"
+					},
+					result.graph
+				)
+			];
+			this.returnToOkHandler();
+		},
+		gotGraphDrawerObject(result) {
+			this.newQuestion.objects.graph = result;
+			this.newQuestion.objects._graphdrawerGraph = [
+				Object.assign(
+					{
+						type: "Complete"
+					},
+					result
+				)
+			];
+			this.returnToOkHandler();
+		},
+		callOkHandler: function(e) {
+			//if the component is using the Graph Drawer, Graph drawer is used on Binary Tree 7 up to BFS 13
+			//Need a admin socket function for validating the question information given.
+			e.preventDefault();
+			if (
+				this.newQuestion.solutionType > 6 &&
+				this.newQuestion.solutionType < 10
+			) {
+				this.requestGraphDrawerObject = !this.requestGraphDrawerObject;
+			} else {
+				this.returnToOkHandler();
+			}
+		},
+		addNewMultipleChoice() {
+			this.newQuestion.objects.multipleChoices.push("");
+		},
+		deleteMultiChoice(index) {
+			let solutionIndex = this.newQuestion.solution.indexOf(
+				index.toString()
+			);
+			if (solutionIndex > -1)
+				this.newQuestion.solution.splice(solutionIndex, 1);
+			for (
+				let i = index + 1;
+				i < this.newQuestion.objects.multipleChoices.length;
+				i++
+			) {
+				let j = this.newQuestion.solution.indexOf(i.toString());
+				if (j > -1) {
+					this.newQuestion.solution[j] = (
+						Number(this.newQuestion.solution[j]) - 1
+					).toString();
+				}
+			}
 
-                    if (fileTypeErr === 0 && totalFilesSize < errorFileSize) {
-                        let callbackFunction = function(e) {
-                            fileObject.buffer = btoa(e.target.result);
-                            storedFiles.push(fileObject);
-                        }
+			this.newQuestion.objects.multipleChoices.splice(index, 1);
+		}
+	},
+	computed: {
+		getTitle() {
+			return this.getLocale[this.okHandler + "Title"];
+		},
+		getSolutionType() {
+			return this.newQuestion.solutionType;
+		},
+		checkRef() {
+			if (this.$refs["codeInput"] !== undefined) {
+				this.$refs["codeInput"].onkeydown = this.keyDownInTextarea;
+				return true;
+			}
 
-                        let reader = new FileReader();
-                        reader.onload = callbackFunction;
-                        reader.readAsBinaryString(file);
-                    }
-                }
+			return false;
+		},
+		getImageSrc() {
+			return (index) => {
+				let file = this.newQuestion.objects.files[index];
+				return "data:" + file.type + ";base64," + file.buffer;
+			};
+		},
+		getLocale() {
+			let locale = this.$store.getters.getLocale("AdminQuestions");
+			if (locale) return locale;
+			else return {};
+		},
+		getSolutionTypes: function() {
+			return this.solutionTypes;
+		},
+		getQuestionObjects: function() {
+			return this.newQuestion.objects;
+		},
+		getObjectTypes: function() {
+			return [
+				{
+					value: undefined,
+					text: "Add object"
+				},
+				{
+					value: "graph",
+					text: "Graph"
+				},
+				{
+					value: "table",
+					text: "Table"
+				},
+				{
+					value: "image",
+					text: "Image"
+				},
+				{
+					value: "tree",
+					text: "Tree"
+				}
+			];
+		},
+		timeInput: {
+			get: function() {
+				let min = Math.floor(this.newQuestion.time / 60).toString();
+				let sec = Math.floor(this.newQuestion.time % 60).toString();
 
-                event.target.value = "";
-            },
-            changeShowMedia() {
-                this.showMedia = !this.showMedia;
-            },
-            changeShowSolution() {
-                this.showSolution = !this.showSolution;
-            },
-            changeShowBasicInfo() {
-                this.showBasicInfo = !this.showBasicInfo;
-            },
-            assignTime: function() {
-                this.newQuestion.time = JSON.parse(JSON.stringify(this.time));
-                if (this.newQuestion.time  === 0) this.newQuestion.time = -1;
-            },
-            addNewQuestionHandler: function() {
-                this.$socket.emit(
-                    "addNewQuestion", 
-                    Object.assign(
-                        {},
-                        this.newQuestion,
-                        {
-                            courseCode: this.$store.getters.getSelectedCourse.split(" ")[0]
-                        }
-                    ),
-                );
+				return `${min.padStart(2, "0")}:${sec.padStart(2, "0")}`;
 			},
-			editQuestionHandler: function() {
-                this.$socket.emit(
-                    "updateQuestion",
-                    this.newQuestion
-                );
-			},
-            returnToOkHandler: function() {
-                this.assignTime();
-                if (this.newQuestion.solutionType === 10) {
-                    this.newQuestion.solution = this.newQuestion.objects.code;
-                }
-                
-                if (this.okHandler == "add") this.addNewQuestionHandler();
-                else if (this.okHandler == "edit") this.editQuestionHandler();
-            },
-            gotTreeDrawerObject(result) {
-                this.newQuestion.objects.startTree = result.tree;
-                this.newQuestion.objects._graphdrawerGraph = [Object.assign(
-                    { type: "Complete" },
-                    result.graph
-                )];
-                this.returnToOkHandler();
-            },
-            gotGraphDrawerObject(result) {
-                this.newQuestion.objects.graph = result;
-                this.newQuestion.objects._graphdrawerGraph = [Object.assign(
-                    { type: "Complete" },
-                    result
-                )];
-                this.returnToOkHandler();
-            },
-            callOkHandler: function(e) {
-            	//if the component is using the Graph Drawer, Graph drawer is used on Binary Tree 7 up to BFS 13
-                //Need a admin socket function for validating the question information given.
-                e.preventDefault();
-                if (this.newQuestion.solutionType > 6 && this.newQuestion.solutionType < 10) {
-                        this.requestGraphDrawerObject = !this.requestGraphDrawerObject;
-                } else {
-                    this.returnToOkHandler();
-                }
-            },
-            objectsInputChanged(newObject) {
-                if (newObject == undefined) return;
-                let i = this.newQuestion.objects.length;
-                // TODO Make it possible to add graph object to question
-                return
-            },
-            addNewMultipleChoice() {
-                this.newQuestion.objects.multipleChoices.push("");
-            },
-            deleteMultiChoice(index) {
-                let solutionIndex = this.newQuestion.solution.indexOf(index.toString());
-                if (solutionIndex > -1) this.newQuestion.solution.splice(solutionIndex, 1);
-                for (let i = index + 1; i < this.newQuestion.objects.multipleChoices.length; i++) {
-                    let j = this.newQuestion.solution.indexOf(i.toString())
-                    if (j > -1) {
-                        this.newQuestion.solution[j] = (Number(this.newQuestion.solution[j]) - 1).toString();
-                    }
-                }
+			set: function(newTime) {
+				let time = newTime.split(":");
 
-                this.newQuestion.objects.multipleChoices.splice(index, 1);
-            }
-        },
-        computed: {
-            getTitle() {
-                return this.getLocale[this.okHandler + "Title"];
-            },
-            getSolutionType() {
-                return this.newQuestion.solutionType;
-            },
-            checkRef() {
-                if (this.$refs["codeInput"] !== undefined) {
-                    this.$refs["codeInput"].onkeydown = this.keyDownInTextarea;
-                    return true;
-                }
+				let h = Number(time[0]);
+				let s = Number(time[1]);
 
-                return false;
-            },
-            getImageSrc() {
-                return (index) => {
-                    let file = this.newQuestion.objects.files[index];
-                    return "data:" + file.type + ";base64," + file.buffer;
-                }
-            },
-            getLocale() {
-				let locale = this.$store.getters.getLocale("AdminQuestions");
-                if(locale) return locale;
-			    else return {};
-            },
-            getSolutionTypes: function() {
-                return this.solutionTypes;
-            },
-            getQuestionObjects: function() {
-                return this.newQuestion.objects;
-            },
-            getObjectTypes: function() {
-                return [
-                    {
-                        value: undefined,
-                        text: "Add object"
-                    },
-                    {
-                        value: "graph",
-                        text: "Graph"
-                    },
-                    {
-                        value: "table",
-                        text: "Table"
-                    },
-                    {
-                        value: "image",
-                        text: "Image"
-                    },
-                    {
-                    	value: "tree",
-                        text: "Tree"
-                    }
-                ]
-            },
-            timeInput: {
-                get: function() {
-                    let min = Math.floor(this.time / 60).toString();
-                    let sec = Math.floor(this.time % 60).toString();
+				if (h > 10) {
+					h = 10;
+					s = 0;
+				} else if (h < 0) {
+					h = 0;
+					s = 0;
+				}
 
-                    return `${min.padStart(2, "0")}:${sec.padStart(2, "0")}`;
-                },
-                set: function(newTime) {
-                    let time = newTime.split(":");
-
-                    let h = Number(time[0]);
-                    let s = Number(time[1]);
-
-                    if (h > 10) {
-                        h = 10;
-                        s = 0;
-                    } else if (h < 0) {
-                        h = 0;
-                        s = 0;
-                    }
-
-                    this.time = h * 60 + s;
-                }
-            }
-        },
-        sockets: {
-            sendQuestionTypes: function(types) {
-                this.solutionTypes = types;
-                if (this.newQuestion.solutionType === "")
-                    this.newQuestion.solutionType = this.solutionTypes[0].value;
-            },
-            confirmQuestionRequirements: function (result) {
-            	if (result.passed) {
-                    this.$refs[this.elementRef].hide();
-                    if(this.doneHandler !== undefined) this.doneHandler();
-                }else {
-            	    this.validationFailure = true;
-                    this.validationErrors = result.errors;
-                }
-
-            }
-	    },
-        watch: {
-            "newQuestion.solutionType": function(newType, oldType) {
-                if (newType === 1) this.newQuestion.solution = "";
-                else if (newType === 2) this.newQuestion.solution = [];
-            }
-        },
-    }
+				this.time = h * 60 + s;
+			}
+		}
+	},
+	sockets: {
+		sendQuestionTypes: function(types) {
+			this.solutionTypes = types;
+			if (this.newQuestion.solutionType === "")
+				this.newQuestion.solutionType = this.solutionTypes[0].value;
+		},
+		confirmQuestionRequirements: function(result) {
+			if (result.passed) {
+				this.$refs[this.elementRef].hide();
+				if (this.doneHandler !== undefined) this.doneHandler();
+			} else {
+				this.validationFailure = true;
+				this.validationErrors = result.errors;
+			}
+		}
+	},
+	watch: {
+		"newQuestion.solutionType": function(newType) {
+			if (newType === 1) this.newQuestion.solution = "";
+		}
+	}
+};
 </script>
 
 <style scoped>
 .imageInput {
-    width: 0.1px;
-    height: 0.1px;
-    opacity: 0;
-    overflow: hidden;
-    position: absolute;
-    z-index: -1;
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
 }
 .imageInput + label {
-    cursor: pointer;
-    font-size: 1.25em;
-    font-weight: 700;
-    color: white;
-    background-color: #007bff;
-    display: inline-block;
-    height: 50px;
-    width: 400px;
-    border: 3px solid #007bff;
-    border-radius: 10px;
-    text-align: center;
-    line-height: 50px;
-    
+	cursor: pointer;
+	font-size: 1.25em;
+	font-weight: 700;
+	color: white;
+	background-color: #007bff;
+	display: inline-block;
+	height: 50px;
+	width: 400px;
+	border: 3px solid #007bff;
+	border-radius: 10px;
+	text-align: center;
+	line-height: 50px;
 }
 .imageInput:focus + label,
 .imageInput:hover + label {
-    width: 450px;
+	width: 450px;
 }
 </style>
