@@ -205,9 +205,6 @@
 						this.question.objects = this.question.object;
 						this.question.solutionType = this.question.type;
 
-						console.log("Hei");
-						console.log(this.question.solution);
-
 						this.renderEditQuestion = true;
 						this.$nextTick(function() {
 							this.$refs.editQuestionModal.$refs.innerModalEditAdd.show();
@@ -215,11 +212,14 @@
 						break; 
 					case "show":
 						if (question.time === -1) question.time = 0;
-				    this.renderShowQuestion = true;
-			
+						this.renderShowQuestion = true;
+						
+						question.solutionType = question.type;
+						question.objects = question.object;
+
             this.$nextTick(function() {
               this.$refs.showQuestionModal._data.question = JSON.parse(JSON.stringify(question));
-              // Set the solution type to 0 to destroy all the GraphDrawer components.
+							// Set the solution type to 0 to destroy all the GraphDrawer components.
               this.$refs.showQuestionModal._data.question.solutionType = 0;
               // Wait for the page to render.
               this.$nextTick(function() {
@@ -227,7 +227,7 @@
                 this.$refs.showQuestionModal._data.question.solutionType = question.solutionType;
                 // Wait for the page to render.
                 this.$nextTick(function() {
-                  // Finally show modal.
+									// Finally show modal.
                   this.$refs.showQuestionModal.$refs.innerModalShow.show();
                 });
               });

@@ -1,8 +1,5 @@
 export default class Python {
 	_config(config) {
-		console.log("Python config");
-		console.log(config);
-
 		if (config && config.steps) {
 			this.steps = config.steps.slice(0, config.steps.length - 1);
 
