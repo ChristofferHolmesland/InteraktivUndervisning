@@ -604,7 +604,12 @@ module.exports.admin = function(socket, db, user, sessions) {
 	});
 
 	socket.on("getUsersByUserRightsLevelsRequest", function(data) {
-		if (data.level === undefined || data.courseId === undefined) return;
+		if (
+			data.levels === undefined ||
+			data.courseId === undefined ||
+			data.courseId === ""	
+		) return;
+
 		for (let i = 0; i < data.levels.length; i++) {
 			let level = data.levels[i];
 
@@ -613,6 +618,8 @@ module.exports.admin = function(socket, db, user, sessions) {
 					level: level,
 					users: users
 				});
+			}).catch((err) => {
+				console.error(err);
 			});
 		}
 	});
