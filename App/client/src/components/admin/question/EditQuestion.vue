@@ -465,6 +465,11 @@ export default {
 					}
 				}
 			}
+
+			// Transfer question time to time slider
+			if (this.okHandler === "edit") {
+				this.time = this.question.time;
+			}
 		},
 		newFile(event) {
 			let files = [];
@@ -531,7 +536,8 @@ export default {
 			this.showBasicInfo = !this.showBasicInfo;
 		},
 		assignTime: function() {
-			if (this.newQuestion.time === 0) this.newQuestion.time = -1;
+			if (this.time === 0) this.newQuestion.time = -1;
+			else this.newQuestion.time = this.time;
 		},
 		addNewQuestionHandler: function() {
 			this.$socket.emit(
@@ -542,6 +548,8 @@ export default {
 			);
 		},
 		editQuestionHandler: function() {
+			console.log("Sending new question");
+			console.log(this.newQuestion.time);
 			this.$socket.emit("updateQuestion", this.newQuestion);
 		},
 		returnToOkHandler: function() {
@@ -673,8 +681,8 @@ export default {
 		},
 		timeInput: {
 			get: function() {
-				let min = Math.floor(this.newQuestion.time / 60).toString();
-				let sec = Math.floor(this.newQuestion.time % 60).toString();
+				let min = Math.floor(this.time / 60).toString();
+				let sec = Math.floor(this.time % 60).toString();
 
 				return `${min.padStart(2, "0")}:${sec.padStart(2, "0")}`;
 			},
