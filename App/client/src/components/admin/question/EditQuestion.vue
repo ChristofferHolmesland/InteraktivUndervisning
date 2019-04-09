@@ -548,6 +548,8 @@ export default {
 			);
 		},
 		editQuestionHandler: function() {
+			console.log("Sending new question");
+			console.log(this.newQuestion.time);
 			this.$socket.emit("updateQuestion", this.newQuestion);
 		},
 		returnToOkHandler: function() {

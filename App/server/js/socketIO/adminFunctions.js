@@ -484,6 +484,10 @@ module.exports.admin = function(socket, db, user, sessions) {
 	});
 
 	socket.on("updateQuestion", async function(question) {
+
+		console.log("Got question");
+		console.log(question);
+
 		let valid = validateChecker.checkQuestion(question);
 		socket.emit("confirmQuestionRequirements", valid);
 		if (!valid.passed) return;
