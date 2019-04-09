@@ -142,7 +142,7 @@
 				this.$store.getters.getSelectedCourse
 			);
 
-			this.$root.$on('bv::modal::hide', (bvEvent, modalId) => {
+			this.$root.$on('bv::modal::hidden', (bvEvent, modalId) => {
 				let id = bvEvent.target.id;
 
 				if (id.includes("edit")) this.renderEditQuestion = false;
