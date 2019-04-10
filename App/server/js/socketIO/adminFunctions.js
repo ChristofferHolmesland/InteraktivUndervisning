@@ -643,11 +643,12 @@ module.exports.admin = function(socket, db, user, sessions) {
 		}
 	*/
 	socket.on("setUserRightsLevel", function(data) {
+		if (data.feideId == user.feide.idNumber && data.level === -1) return;
 		dbFunctions.get.userRightsByFeideId(db, {
 			feideId: data.feideId,
 			courseId: data.courseId
-		}).then((user) => {
-			if (user == undefined) {
+		}).then((dbUser) => {
+			if (dbUser == undefined) {
 				dbFunctions.insert.userRightsLevelByFeideId(db, {
 					feideId: data.feideId,
 					courseId: data.courseId,
@@ -664,6 +665,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 					socket.emit("setUserRightsLevelDone");
 				});
 			} else if (data.level == -1) {
+				if (data.feideId == user.feide.idNumber) return;
 				dbFunctions.del.userRights(db, {
 					feideId: data.feideId,
 					courseId: data.courseId
