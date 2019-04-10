@@ -16,22 +16,63 @@ describe("Test admin content",function () {
 	it("Create a course",function () {
 		cy.get("[data-cy=adminOptions] > :nth-child(2) > .nav-link").click();
 		cy.url().should("include","/admin");
-		cy.get(":nth-child(2) > .pl-0 > :nth-child(1)")
-			.should("have.text","Legg til")
+		cy.get('[data-cy=addCourseButton]')
+			.should("contain","Legg til")
 			.click();
 		cy.get(".modal-title").should("have.text","Nytt fag");
-		cy.get("#courseCodeInput").type("TEST100");
-		cy.get("#courseSemesterInput").type("H18");
-		cy.get("#courseNameInput").type("Test");
-		cy.get(".btn-primary").click();
-		cy.get(".col-9 > #courseSelect").select("TEST100 H18").should("have.value","TEST100 H18");
+		cy.get("#courseName > div > h4").should("have.text","Fag navn:");
+		cy.get("#courseCode > div > h4").should("have.text","Fag kode:");
+		cy.get("#courseSemester > div > h4").should("have.text","Fag semester:");
+		cy.get('[data-cy=addCourseCodeField] > h6')
+			.should("have.text","Legg til ny fag kode:")
+			.click();
+		cy.get('[data-cy=addSemesterField] > h6')
+			.should("have.text","Legg til nytt semester:")
+			.click();
+		cy.get("#courseSemester > div > :nth-child(3) > .row:nth-child(2) > .container > .row > .col > h6 ").should("have.text","Velg sesong:");
+		cy.get("#courseSemester > div > :nth-child(3) > .row:nth-child(3) > .container > .row > .col > h6 ").should("have.text","Velg et år:");
+		cy.get("#courseNameInput")
+			.should("visible")
+			.type("Test Fag");
+		cy.get("#courseSeasonSelect")
+			.should("have.value","1")
+			.select("2")
+			.should("have.value","2");
+		cy.get("#courseYearSelect")
+			.should("have.value","1")
+			.select("2")
+			.should("have.value","2");
+		cy.get('#addCourseCodeInput')
+			.type("TEST100")
+			.should("have.value","TEST100");
+		//cy.get("#courseSemesterInput").type("H18");
+		//cy.get("#courseNameInput").type("Test");
+		cy.get(".col-3 > .btn")
+			.should("have.text","Legg til")
+			.click();
+		cy.get(".alert > p").should("have.text", "Inndata feltet for fag koden har feil format.\nKoden skal ha 3 store bokstaver etterfulgt med 3 tall.");
+		cy.get('#addCourseCodeInput')
+			.clear()
+			.type("TET100")
+			.should("have.value","TET100");
+		cy.get(".col-3 > .btn").click();
+		cy.get('.col-12 > .btn')
+			.should("have.text","Legg til")
+			.click();
+		cy.get("#courseSemesterSelect").should("contain","2020 Høst");
+		cy.get('.btn-primary')
+			.should("have.text","OK")
+			.click();
+		cy.get(':nth-child(1) > :nth-child(2) > :nth-child(1) > :nth-child(1) > :nth-child(1) > #courseSelect').should("contain", "TET100 Høst 2020");
+		cy.get(':nth-child(2) > ul > li').should("contain","test -  testAdmin");
 		cy.get(":nth-child(3) > .nav-link").click();
+		cy.get('#courseSelect').should("contain","TET100 Høst 2020");
 	});
 	describe("Create questions",function () {
 		beforeEach(function () {
 			cy.get("[data-cy=adminOptions] > :nth-child(3) > .nav-link").click();
 			cy.url().should("include","/questions");
-			cy.get("#courseSelect").select("TEST100 H18");
+			cy.get("#courseSelect").select("1");
 		});
 		it("Create and Edit Text question",function () {
 			let title = "Title Text Test";
@@ -93,9 +134,9 @@ describe("Test admin content",function () {
 			cy.get('#editQuestionModal___BV_modal_footer_ > .btn-primary').click();
 
 			//check that the question has been edited
-			cy.get('.list-group > :nth-child(1)').should("be.visible");
-			cy.get(':nth-child(1) > .container > .row > .col-8').should("contain",titleEdited);
-			cy.get('.list-group > :nth-child(1)')
+			cy.get(".list-group > :nth-child(1)").should("be.visible");
+			cy.get(".list-group > div > .list-group-item > .container > .row > .col-8").should("contain",titleEdited);
+			cy.get(".list-group > :nth-child(1)")
 				.find(".container")
 				.contains("V")
 				.click();

@@ -11,7 +11,7 @@
 	</b-alert>
 	<b-form-group 	id="courseName">
 		<h4>{{ getLocale.name }}</h4>
-		<b-form-input 	id="courseCodeInput"
+		<b-form-input 	id="courseNameInput"
 						type="text"
 						v-model="newCourse.name">
 		</b-form-input>
@@ -19,12 +19,14 @@
 	<b-form-group 	id="courseCode">
 		<h4>{{ getLocale.code }}</h4>
 		<b-form-select  :options="getCourseCodes"
-						v-model="newCourse.code">
+						v-model="newCourse.code"
+						id="courseCodeSelect">
+
 		</b-form-select>
 		&nbsp;
 		<b-container class="px-0">
 			<b-row @click="changeShowAddNewCourseCode" style="cursor: pointer;">
-				<b-col cols="8">
+				<b-col cols="8" data-cy="addCourseCodeField">
 					<h6>{{ getLocale.addNewCourseCode }}</h6>
 				</b-col>
 				<b-col cols="4" style="text-align: right;">
@@ -48,12 +50,14 @@
 	<b-form-group 	id="courseSemester">
 		<h4>{{ getLocale.semester }}</h4>
 		<b-form-select  :options="getSemesters"
-						v-model="newCourse.semester">
+						v-model="newCourse.semester"
+						id="courseSemesterSelect">
+
 		</b-form-select>
 		&nbsp;
 		<b-container class="px-0">
 			<b-row @click="changeShowAddNewSemester" style="cursor: pointer;">
-				<b-col cols="8">
+				<b-col cols="8" data-cy="addSemesterField">
 					<h6>{{ getLocale.addNewSemester }}</h6>
 				</b-col>
 				<b-col cols="4" style="text-align: right;">
@@ -71,7 +75,8 @@
 				</b-container>
 				<b-col cols="12">                   
 					<b-form-select  :options="getSeasons"
-									v-model="selectedSeason">
+									v-model="selectedSeason"
+									id="courseSeasonSelect">
 					</b-form-select>
 				</b-col>
 			</b-row>
@@ -85,7 +90,8 @@
 				</b-container>
 				<b-col cols="12">                   
 					<b-form-select  :options="getYears"
-									v-model="selectedYear">
+									v-model="selectedYear"
+									id="courseYearSelect">
 					</b-form-select>
 				</b-col>
 			</b-row>
