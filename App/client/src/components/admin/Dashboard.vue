@@ -11,7 +11,7 @@
 									<SelectCourse/>
 								</b-col>
 								<b-col cols="4">
-									<b-button @click="showAddNewCourseModal">{{ getLocale.newCourseBtnText }}</b-button>
+									<b-button @click="showAddNewCourseModal" data-cy="addCourseButton">{{ getLocale.newCourseBtnText }} </b-button>
 									<AddNewCourse ref="AddNewCourseModal" elementRef="InnerAddNewCourseModal"/>
 								</b-col>
 							</b-row>
