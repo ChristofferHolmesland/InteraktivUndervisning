@@ -193,7 +193,8 @@
                     <b-form-select 	id="solutionTypeInput"
                                     :options="getSolutionTypes"
                                     v-model="newQuestion.solutionType"
-									@change="callNextTick">
+									@change="solutionTypeChanged"
+									>
                     </b-form-select>
 					{{ newQuestion.solutionType }}
                 </div>
@@ -410,9 +411,14 @@ export default {
 		});
 	},
 	methods: {
-		callNextTick() {
-			this.$nextTick();
-			console.log("Hei på deg");
+		solutionTypeChanged() {
+			// Because Vue doesn't detect that the value has changed.
+			// We first wait for the next tick, to be sure that the solutionType
+			// value has changed.
+			this.$nextTick(function() {
+				// And then we redraw the page with the new solutionType value.
+				this.$forceUpdate();
+			});
 		},
 		keyDownInTextarea(e) {
 			// Only accept the Tab key
@@ -453,17 +459,12 @@ export default {
 					if (p === "newQuestion") {
 						if (this.okHandler === "add") {
 							this.$data[p] = n[p];
-							console.log("Hei fra add.");
 						}
 					} else {
 						this.$data[p] = n[p];
 					}
 				}
 			}
-			this.$nextTick(function() {
-				console.log("Hei igjen");
-				console.log(this.newQuestion.solution);
-			});
 		},
 		newFile(event) {
 			let files = [];
@@ -641,8 +642,6 @@ export default {
 			else return {};
 		},
 		getSolutionTypes: function() {
-			console.log("Dette er alternativene");
-			console.log(this.solutionTypes);
 			return this.solutionTypes;
 		},
 		getQuestionObjects: function() {
@@ -715,17 +714,12 @@ export default {
 	},
 	watch: {
 		"newQuestion.solutionType": function(newType, oldType) {
-			console.log("Jeg ser deg nå");
 			if (oldType === "") return;
 
 			if (newType === 1 || newType === 10)
 				this.newQuestion.solution = "";
 			else
 				this.newQuestion.solution = [];
-
-			console.log("Jeg ser deg");
-			console.log(this.newQuestion.solutionType);
-			console.log(newType);
 		}
 	}
 };

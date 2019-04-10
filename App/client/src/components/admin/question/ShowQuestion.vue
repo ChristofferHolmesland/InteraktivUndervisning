@@ -74,9 +74,12 @@ export default {
                 this.$refs.graphdrawer.destroyDrawer();
         });
 
-        this.$root.$on("bv::modal::show", (bvevent) => {
-            if (this.$refs.graphdrawer !== undefined)
-                this.$refs.graphdrawer.createDrawer();
+        this.$root.$on("bv::modal::show", () => {
+            if (this.$refs.graphdrawer !== undefined) {
+                this.$nextTick(function() {
+                    this.$refs.graphdrawer.createDrawer();
+                });
+            }
         });
     },
     computed: {
@@ -94,16 +97,6 @@ export default {
     },
     components: {
         GraphDrawer
-    },
-    mounted() {
-        this.$root.$on("bv::modal::show", () => {
-                if (this.$refs.graphdrawer !== undefined) {
-                    this.$nextTick(function() {
-                        this.$refs.graphdrawer.createDrawer();
-                    });
-                }
-            });
-
     },
     watch: {
         "question.solutionType": function() {
