@@ -491,7 +491,12 @@ module.exports.admin = function(socket, db, user, sessions) {
 		question = generateSolution(question);
 
 		let filePath = path.join("../../images/questionImages/", question.id.toString(), "/");
-		await del(path.join(__dirname, filePath, "**"));
+		let completeFilePath = path.join(__dirname, filePath, "**");
+		try {
+			del.sync(completeFilePath);
+		} catch (error) {
+			console.error(error);
+		}
 
 		if (question.objects.files.length > 0) {
 			let files = [];
@@ -510,7 +515,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 					
 					await fs.open(path.join(__dirname, filePaths[i]), "a", function(error, fd) {
 						if (error) {
-							console.error("error writing image: \n\n" + err);
+							console.error("error writing image: \n\n" + error);
 							return;
 						}
 						fs.writeSync(fd, files[i].buffer, null, "base64");
@@ -519,6 +524,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 			} 
 			catch (error) {
 				console.error("Error making dirs!\n\n" + error);
+				return;
 			}
 		}
 
@@ -665,7 +671,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 
 	socket.on("adminLeaveSession", function(sessionCode) {
 		
-		// TODO add logic for session to be ended when admin leaves session
+		// TODO add logic for session to be ended when admin leaves session before it is finished
 	});
 
 	socket.on("semestersRequest", async function() {
