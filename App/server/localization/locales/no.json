@@ -271,6 +271,17 @@
         "selectCoursesTitle": "Marker fagene som skal få en kopi av spørsmålene:",
         "selectedCoursesTitle": "Fagene som har blitt markert og vil få en kopi av de markerte spørsmålene:"
     },
+    "DeleteQuestions": {
+        "errors": {
+            "dbError": "Det skjedde en feil med databasen. Venligst prøv igjen senere.",
+            "dataError": "Dataen ble ikke sent i rett format! Venligst prøv igjen."
+        },
+        "okBtn": "Slett spørsmål",
+        "cancelBtn": "Avbryt",
+        "title": "Slett spørsmål fra fag",
+        "selectedQuestionsTitle": "Valgte spørsmål:",
+        "removeBtn": "Fjern"
+    },
     "Sandbox": {
         "guide": {
             "Text": [

@@ -1,7 +1,7 @@
 <template>
-<b-modal    id="copyQuestions"
+<b-modal    id="deleteQuestions"
             :title="getLocale.title"
-            ref="copyQuestionInnerModal"
+            ref="deleteQuestionInnerModal"
             style="text-align: left;"
             @ok="okHandler"
             :ok-title="getLocale.okBtn"
@@ -40,39 +40,6 @@
             </b-row>
         </b-container>
     </b-form-group>
-    <b-form-group>
-        <b-container>
-            <b-row>
-                <b-col><h6>{{ getLocale.selectCoursesTitle }}</h6></b-col>
-            </b-row>
-            <b-row>
-                <b-col>
-                    <b-form-select 	id="questionsSelect"
-                                :options="getCourseList"
-                                v-model="selectedCourses"
-                                multiple 
-                                :select-size="5" >
-                    </b-form-select>
-                </b-col>
-            </b-row>
-        </b-container>
-    </b-form-group>
-    <b-form-group>
-        <b-container>
-            <b-row>
-                <b-col><h6>{{ getLocale.selectedCoursesTitle }}</h6></b-col>
-            </b-row>
-            <b-row>
-                <b-col>
-                    <b-form-group style="overflow-y: scroll; max-height: 200px;">
-                        <b-list-group-item class="border-0" :key="item.value" v-for="item in getSelectedCourses">
-                            {{ item.text }}
-                        </b-list-group-item>
-                    </b-form-group>
-                </b-col>
-            </b-row>
-        </b-container>
-    </b-form-group>
 </b-modal>
 </template>
 
@@ -83,9 +50,6 @@ export default {
     data() {
         return {
             selectedQuestionsList: [],
-            selectedCourses: [],
-            courseList: [],
-            currentCourseId: "",
             showError: false,
             errorText: ""
         }
@@ -93,7 +57,6 @@ export default {
     mounted() {
 		this.$root.$on("bv::modal::show", (bvevent) => {
 			this.selectedQuestionsList = JSON.parse(JSON.stringify(this.selectedQuestions));
-            this.selectedCourses = [];
 		});
     },
     computed: {
@@ -106,19 +69,8 @@ export default {
             this.courseList = courseList;
             return this.courseList;
         },
-        getSelectedCourses: function() {
-            let list = [];
-            
-            for (let i = 0; i < this.selectedCourses.length; i++) {
-                let selectedCourse = this.selectedCourses[i];
-                
-                list.push(this.courseList[this.courseList.findIndex(course => course.value === selectedCourse)]);
-            }
-
-            return list;
-        },
         getLocale: function() {
-            let locale = this.$store.getters.getLocale("CopyQuestions");
+            let locale = this.$store.getters.getLocale("DeleteQuestions");
             if(locale) return locale;
             else return {};
         }
@@ -129,17 +81,14 @@ export default {
         },
         okHandler: function(e) {
             e.preventDefault();
-            this.$socket.emit("copyQuestionToCourseRequest", {
-                selectedCourses: this.selectedCourses,
-                selectedQuestionsList: this.selectedQuestionsList
-            })
+            this.$socket.emit("deleteQuestions", this.selectedQuestionsList)
         }
     },
     sockets: {
-        copyQuestionToCourseResponse: function() {
+        deleteQuestionToCourseResponse: function() {
             this.$refs.copyQuestionInnerModal.hide();
         },
-        copyQuestionToCourseError: function(error) {
+        deleteQuestionToCourseError: function(error) {
             this.errorText = error;
             this.showError = true;
         }

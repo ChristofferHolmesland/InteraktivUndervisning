@@ -49,14 +49,14 @@ const insert = {
 		return this._questionWithObject(db, questionText,questionDescription,questionObject,questionSolution, time, type, courseId);
 	},
 	_questionNoObject: function(db, questionText, questionDescription, questionSolution, time, type, courseId) {
-		let statement = `INSERT INTO Question(text,description,solution,time,questionType,courseId)
-						VALUES('${questionText}','${questionDescription}','${JSON.stringify(questionSolution)}',${time},${type},'${courseId}')`;
+		let statement = `INSERT INTO Question(text, description, solution, time, questionType, courseId, status)
+						VALUES('${questionText}','${questionDescription}','${JSON.stringify(questionSolution)}',${time},${type},'${courseId}', 0)`;
 		return createPromise(db, statement, "questionNoObject");
 	},
 	_questionWithObject: function(db, questionText, questionDescription, questionObject, questionSolution, time, type, courseId) {
 		if(typeof(questionObject) === "object")	questionObject = JSON.stringify(questionObject);
-		let statement = `INSERT INTO Question(text, description, object, solution, time, questionType, courseId)
-						VALUES('${questionText}', '${questionDescription}', '${questionObject}', '${JSON.stringify(questionSolution)}', ${time}, ${type}, ${courseId})`;
+		let statement = `INSERT INTO Question(text, description, object, solution, time, questionType, courseId, status)
+						VALUES('${questionText}', '${questionDescription}', '${questionObject}', '${JSON.stringify(questionSolution)}', ${time}, ${type}, ${courseId}, 0)`;
 		return createPromise(db, statement, "questionWithObject");
 	},
 	storeAnswer: function(db, answer, result, sqId, userId) {

@@ -406,6 +406,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 
 	socket.on("addQuestionToSession", function(data) {
 		dbFunctions.insert.addQuestionToSession(db, data.sessionId, data.questionId);
+		dbFunctions.update.questionStatusToActive(db, data.questionId);
 	});
 
 	socket.on("getAllQuestionsWithinCourse", function(courseId) {
@@ -866,5 +867,24 @@ module.exports.admin = function(socket, db, user, sessions) {
 		}
 
 		socket.emit("copyQuestionToCourseResponse");
+	});
+
+	socket.on("deleteQuestionsRequest", async function(questionList) {
+		if (
+			questionList === undefined ||
+			Array.isArray(questionList) ||
+			questionList.length === 0
+		) {
+			socket.emit("deleteQuestionToCourseError", "dataError")
+			return; 
+		}
+
+		let questions = await dbFunctions.get.questionsByQuestionId(db, questionList);
+		for(let i = 0; i < questions.length; i++) {
+			let question = questions[i];
+			if (question.status === 0) {
+				dbFunctions.delete.questionById(db, question.id).catch(err => console.error(err));
+			}
+		}
 	});
 }
