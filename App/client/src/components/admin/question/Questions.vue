@@ -148,7 +148,7 @@
 				if (id.includes("edit")) this.renderEditQuestion = false;
 				else if (id.includes("show")) this.renderShowQuestion = false;
 				else if (id.includes("session")) this.renderAddQuestionToSession = false;
-			})
+			});
 		},
 		computed: {
 			currentQuestions: function() {
