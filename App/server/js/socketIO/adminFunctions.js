@@ -886,6 +886,14 @@ module.exports.admin = function(socket, db, user, sessions) {
 			let question = questions[i];
 			if (question.status === 0) {
 				await dbFunctions.del.questionById(db, question.id).catch(err => console.error(err));
+				
+				let filePath = path.join("../../images/questionImages/", question.id.toString(), "/");
+				let completeFilePath = path.join(__dirname, filePath, "**");
+				try {
+					del.sync(completeFilePath);
+				} catch (error) {
+					console.error(error);
+				}
 			}
 		}
 		socket.emit("deleteQuestionToCourseResponse");
