@@ -12,8 +12,9 @@
                         <b-col lg="12">
                             <b-list-group style="overflow-y: scroll; max-height: 750px;">
                                 <b-list-group-item v-for="(question, index) in getQuestionList" :key="index"
-                                @click="changeQuestion(index)"
-                                style="cursor: pointer;">
+                                                    @click="changeQuestion(index)"
+                                                    style="cursor: pointer;"
+                                                    :class="selectedQuestion == index ? 'selected' : ''">
                                     {{question.text}}
                                 </b-list-group-item>
                                 <b-list-group-item class="border-0" v-show="showNoQuestions">
@@ -129,7 +130,8 @@
                                         <b-card style="cursor: pointer; min-width: 100px; min-height: 100px;"
                                                 @click="changeAnswer($event)"
                                                 :id="index"
-                                                no-body>
+                                                no-body
+                                                :class="selectedAnswer == index ? 'selected' : ''">
                                             <p :id="index">{{getLocale.answer}} {{index}}</p>
                                             <p :id="index" v-if="checkResult(index) === 1">{{getLocale.correctCard}}</p>
                                             <p :id="index" v-if="checkResult(index) === 0">{{getLocale.incorrectCard}}</p>    
@@ -165,7 +167,7 @@ export default {
             this.$emit("showUserStats");
         },
         changeQuestion(index) {
-            selectedQuestion = index;
+            this.selectedQuestion = index;
         },
         changeShowSessionStat() {
             this.showSessionStat = !this.showSessionStat;
@@ -222,3 +224,9 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.selected {
+	background-color: grey;
+}
+</style>
