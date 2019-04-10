@@ -40,6 +40,12 @@ const update = {
 						SET sessionId = '${sessionId}'
 						WHERE id = '${id}'`;
 		return createPromise(db, statement, "feideSessionId");
+	},
+	questionStatusToActive: function(db, questionId) {
+		let statement = `UPDATE Question(status)
+						SET status = 1
+						WHERE id = ${questionId}`;
+		return createPromise(db, statement, "questionStatusToActive")
 	}
 };
 

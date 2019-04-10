@@ -49,9 +49,10 @@
 			</b-col>
 			<b-col></b-col>
 			<b-col style="text-align: center;">
-				<b-button variant="danger">
+				<b-button @click="openDeleteQuestion" variant="danger">
 					{{ getLocale.deleteSelectedBtn }}
 				</b-button>
+				<DeleteQuestions ref="deleteQuestionModal" :selectedQuestions="getSelectedQuestions"/>
 			</b-col>
 			<b-col></b-col>
 		</b-row>
@@ -110,6 +111,7 @@
 	import AddQuestionToSession from "./AddQuestionToSession.vue";
 	import SelectCourse from "../SelectCourse.vue";
 	import CopyQuestions from "./CopyQuestions.vue";
+	import DeleteQuestions from "./DeleteQuestions.vue";
 
 	export default {
 		name: 'Questions',
@@ -134,7 +136,8 @@
 			ShowQuestion,
 			AddQuestionToSession,
 			SelectCourse,
-			CopyQuestions
+			CopyQuestions,
+			DeleteQuestions
 		},
 		mounted() {
 			this.$socket.emit(
@@ -285,6 +288,14 @@
 			openCopyQuestion: function() {
 				if (this.selectedQuestions.length > 0) {
 					this.$refs.copyQuestionModal.$refs.copyQuestionInnerModal.show();
+				} else {
+					this.errorText = "noQuestionsSelectedError";
+					this.showError = true;
+				}
+			},
+			openDeleteQuestion: function() {
+				if (this.selectedQuestions.length > 0) {
+					this.$refs.deleteQuestionModal.$refs.deleteQuestionInnerModal.show();
 				} else {
 					this.errorText = "noQuestionsSelectedError";
 					this.showError = true;
