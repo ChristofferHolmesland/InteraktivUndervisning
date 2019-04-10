@@ -81,7 +81,6 @@ module.exports.admin = function(socket, db, user, sessions) {
 					text: questions[i].text 
 				});
 			}
-			console.log(result);
 			socket.emit("sendQuestionsInCourse", result);
 		});
 	});
@@ -416,7 +415,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 			socket.emit("courseMissing");
 			return;
 		}
-		console.log(courseId)
+		
 		dbFunctions.get.allQuestionsWithinCourse(db, courseId).then(questions => {
 			let result = [];
 			for (let i = 0; i < questions.length; i++) {
@@ -426,7 +425,6 @@ module.exports.admin = function(socket, db, user, sessions) {
 					text: q.text
 				});
 			}
-			console.log(result);
 			socket.emit("sendAllQuestionsWithinCourse", result);
 		});
 	});
