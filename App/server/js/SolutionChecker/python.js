@@ -1,16 +1,9 @@
 const check = function(answer, solution) {
 	solution = solution[solution.length - 1];
 
-	console.log("Answer");
-	console.log(answer);
-	console.log("Soltuion");
-	console.log(solution)
-
 	// Check that they have the same global variables.
-
-
-	// denen sjekken failer sannsynligvis alltid siden solution.objects er et objekt og ikke array
-	if (answer.variables.length !== solution.objects.length) {
+	if (answer.variables.length !== getProps(solution.objects).length) {
+		console.log("Not the same amount of variables");
 		return false;
 	}
 
@@ -24,8 +17,9 @@ const check = function(answer, solution) {
 	};
 
 	let checkData = (data, answer) => {
-		console.log("Check data (data, answer");
+		console.log("Check data (data, answer)");
 		console.log(data);
+		console.log("ANSWER");
 		console.log(answer);
 
 		// Check that fields match datatype fields.
@@ -40,24 +34,40 @@ const check = function(answer, solution) {
 					break;
 				}
 			}
-			if (index == -1) return false;
+			if (index == -1) {
+				console.log("Field not found");
+				console.log(v);
+				console.log(answer.fields);
+				return false;
+			}
 
 			// Convert node id to object
 			let id = answer.fields[index].value;
 			let answerObject = getAnswerObjectById(id);
-			if (answerObject == undefined) return false;
+			if (answerObject == undefined) {
+				console.log("Anser object is undefined, id: " + id);
+				return false;
+			}
 
 			let solutionObject = data.data[data.objects[v]];
 			
 			// Check that the objects have the same type
-			if (answerObject.type !== solutionObject.type) return false;
+			if (answerObject.type != solutionObject.type) {
+				console.log("Type mismatch");
+				console.log(answerObject.type + "  " + solutionObject.type);
+				return false;
+			}
 
 			if (answerObject.baseType) {
-				if (answerObject.value !== solutionObject.data) return false;
+				if (answerObject.value != solutionObject.data) {
+					console.log("Value mismatch");
+					console.log(answerObject.value + "  " + solutionObject.data);
+					return false;
+				}
 				continue;
 			}
 
-			if (!checkData(data, answerObject)) return false;
+			if (!checkData(solutionObject, answerObject)) return false;
 		}
 
 		return true;
@@ -66,26 +76,54 @@ const check = function(answer, solution) {
 	let objectKeys = getProps(solution.objects);
 	for (let k = 0; k < objectKeys.length; k++) {
 		let v = objectKeys[k];
-		console.log("CHecking property: " + v);
+		console.log("Checking property: " + v);
 
-		let answerVariableIndex = answer.variables.indexOf(v);
-		if (answerVariableIndex == -1) return false;
+		let answerVariableIndex = -1;
+		for (let i = 0; i < answer.variables.length; i++) {
+			if (answer.variables[i].name == v) {
+				answerVariableIndex = i;
+				break;
+			}
+		}
+
+		if (answerVariableIndex == -1) {
+			console.log("AnswerVariableIndex is -1");
+			console.log(v);
+			console.log(answer.variables);
+			return false;
+		}
 		let answerVariable = answer.variables[answerVariableIndex];
+
+		// Check that the variable is pointing to exactly one object.
+		if (answerVariable.links.length !== 1) {
+			console.log("Linking to more than one object");
+			return false;
+		}
 
 		// Check that the variables point to objects of the same type and
 		// with the same values.
 		let data = solution.data[solution.objects[v]];
-		if (answerVariable.type !== data.type) return false;
+		let answerData = answerVariable.links[0];
+		if (answerData.type !== data.type) {
+			console.log("Variable type mismatch");
+			console.log(answerData);
+			console.log(answerData.type + "   " + data.type);
+			return false;
+		}
 		
 		// If the object is of basetype, the values should match.
-		if (answerVariable.baseType) {
-			if (answerVariable.value !== data.data) return false;
+		if (answerData.baseType) {
+			if (answerData.value != data.data) {
+				console.log("Variable value mismatch");
+				console.log(answerData.value + "   " + data.data);
+				return false;
+			}
 			continue;
 		}
 
 		// Follow reference data types to check if all of the references
 		// matches.
-		if (!checkData(data, answerVariable)) return false;
+		if (!checkData(data, answerData)) return false;
 	}
 
 	return true;
