@@ -31,7 +31,8 @@
 								<b-list-group-item v-for="session in getSessionsList" :key="session.id"
 								@click="changeSelected($event)"
 								:id="session.id"
-								style="cursor: pointer;">
+								style="cursor: pointer;"
+								:class="selectedSession == session.id ? 'selected' : ''">
 									{{session.name}}
 								</b-list-group-item>
 								<b-list-group-item class="border-0" v-show="showNoSessions">
@@ -158,3 +159,9 @@ export default {
 	}
 };
 </script>
+
+<style scoped>
+.selected {
+	background-color: grey;
+}
+</style>
