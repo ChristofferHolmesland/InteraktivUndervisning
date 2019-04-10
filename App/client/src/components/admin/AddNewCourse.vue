@@ -54,7 +54,7 @@
 		<b-container class="px-0">
 			<b-row @click="changeShowAddNewSemester" style="cursor: pointer;">
 				<b-col cols="8">
-					<h6>{{ getLocale.addNewCourseCode }}</h6>
+					<h6>{{ getLocale.addNewSemester }}</h6>
 				</b-col>
 				<b-col cols="4" style="text-align: right;">
 					<p v-if="showAddNewCourseCode">^</p>
