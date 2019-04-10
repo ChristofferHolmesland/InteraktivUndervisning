@@ -664,6 +664,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 					socket.emit("setUserRightsLevelDone");
 				});
 			} else if (data.level == -1) {
+				if (data.feideId == user.feide.idNumber) return;
 				dbFunctions.del.userRights(db, {
 					feideId: data.feideId,
 					courseId: data.courseId
