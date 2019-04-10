@@ -464,12 +464,13 @@ module.exports.admin = function(socket, db, user, sessions) {
 					question.objects.files[i].filePath = filePaths[i];
 					delete question.objects.files[i].buffer;
 					
-					await fs.open(path.join(__dirname, filePaths[i]), "w", function(error, fd) {
+					await fs.open(path.join(__dirname, filePaths[i]), "a", function(error, fd) {
 						if (error) {
 							console.error("Error writing image: \n\n" + err);
 							return;
 						}
 						fs.writeSync(fd, files[i].buffer, null, "base64");
+						fs.closeSync(fd);
 					});
 				}
 				
@@ -519,6 +520,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 							return;
 						}
 						fs.writeSync(fd, files[i].buffer, null, "base64");
+						fs.closeSync(fd);
 					});
 				}
 			} 
