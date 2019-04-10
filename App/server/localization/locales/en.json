@@ -280,7 +280,10 @@
         "cancelBtn": "Cancel",
         "title": "Delete questions from course",
         "selectedQuestionsTitle": "Selected questions:",
-        "removeBtn": "Remove"
+        "removeBtn": "Remove",
+        "info": [
+            "When you delete the selected questions, only questions that aren't linked to a session will be deleted."
+        ]
     },
     "Sandbox": {
         "guide": {

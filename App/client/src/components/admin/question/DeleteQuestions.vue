@@ -13,6 +13,13 @@
             {{getLocale.errors[errorText]}}
         </p>
     </b-alert>
+    <div>
+        <ul v-for="(line, index) in getLocale.info" :key="index">
+            <li>
+                <p>{{ line }}</p>
+            </li>
+        </ul>
+    </div>
     <b-form-group>
         <b-container>
             <b-row>
@@ -20,7 +27,7 @@
             </b-row>
             <b-row>
                 <b-col>
-                    <b-list-group style="min-height: 200px; max-height: 200px; overflow-y:scroll; border: 1px black solid;">
+                    <b-list-group style="max-height: 200px; overflow-y:scroll; border: 1px black solid;">
                         <b-list-group-item class="border-0 px-0" v-for="(question, index) in selectedQuestionsList" :key="question.id">
                             <b-container>
                                 <b-row>
@@ -51,24 +58,17 @@ export default {
         return {
             selectedQuestionsList: [],
             showError: false,
-            errorText: ""
+            errorText: "",
+            currentCourseId: 0
         }
     },
     mounted() {
 		this.$root.$on("bv::modal::show", (bvevent) => {
-			this.selectedQuestionsList = JSON.parse(JSON.stringify(this.selectedQuestions));
+            this.selectedQuestionsList = JSON.parse(JSON.stringify(this.selectedQuestions));
+            this.currentCourseId = this.$store.getters.getSelectedCourse;
 		});
     },
     computed: {
-        getCourseList: function() {
-            let courseList = JSON.parse(JSON.stringify(this.$store.getters.getCourseOptions));
-            let currentCourseId = this.$store.getters.getSelectedCourse;
-            courseList.splice((courseList.findIndex(course => course.value === currentCourseId)), 1);
-
-            this.currentCourseId = currentCourseId;
-            this.courseList = courseList;
-            return this.courseList;
-        },
         getLocale: function() {
             let locale = this.$store.getters.getLocale("DeleteQuestions");
             if(locale) return locale;
@@ -81,12 +81,13 @@ export default {
         },
         okHandler: function(e) {
             e.preventDefault();
-            this.$socket.emit("deleteQuestions", this.selectedQuestionsList)
+            this.$socket.emit("deleteQuestionsRequest", this.selectedQuestionsList)
         }
     },
     sockets: {
         deleteQuestionToCourseResponse: function() {
-            this.$refs.copyQuestionInnerModal.hide();
+            this.$socket.emit("getAllQuestionsWithinCourse", this.currentCourseId)
+            this.$refs.deleteQuestionInnerModal.hide();
         },
         deleteQuestionToCourseError: function(error) {
             this.errorText = error;

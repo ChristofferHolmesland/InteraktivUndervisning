@@ -196,7 +196,6 @@
 									@change="solutionTypeChanged"
 									>
                     </b-form-select>
-					{{ newQuestion.solutionType }}
                 </div>
             </b-form-group>
             <div v-show="showSolution">
@@ -679,8 +678,8 @@ export default {
 		},
 		timeInput: {
 			get: function() {
-				let min = Math.floor(this.time / 60).toString();
-				let sec = Math.floor(this.time % 60).toString();
+				let min = Math.floor(Number(this.time) / 60).toString();
+				let sec = Math.floor(Number(this.time) % 60).toString();
 
 				return `${min.padStart(2, "0")}:${sec.padStart(2, "0")}`;
 			},

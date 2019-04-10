@@ -42,7 +42,7 @@ const update = {
 		return createPromise(db, statement, "feideSessionId");
 	},
 	questionStatusToActive: function(db, questionId) {
-		let statement = `UPDATE Question(status)
+		let statement = `UPDATE Question
 						SET status = 1
 						WHERE id = ${questionId}`;
 		return createPromise(db, statement, "questionStatusToActive")
