@@ -18,6 +18,28 @@ const del = {
 		let statement = `DELETE FROM Question
 						WHERE id = ${questionId}`;
 		return createPromise(db, statement, "questionById");
+	},
+	userHasSession: function(db, feideId) {
+		let statement = `DELETE
+						FROM UserHasSession AS UHS
+						INNER JOIN User AS U ON U.id = UHS.userId
+						WHERE U.feideId = ${feideId}`;
+		return createPromise(db, statement, "userHasSession");
+	},
+	userRightsFromFeideId: function(db, feideId) {
+		let statement = `DELETE FROM UserRight
+						WHERE feideId = ${feideId}`;
+		return createPromise(db, statement, "userRightsFromFeideId");
+	},
+	feide: function(db, feideId) {
+		let statement = `DELETE FROM Feide
+						WHERE id = ${feideId}`;
+		return createPromise(db, statement, "feide");
+	},
+	userByFeideId: function(db, feideId) {
+		let statement = `DELETE FROM User
+						WHERE feideId = ${feideId}`;
+		return createPromise(db, statement, "userByFeideId");
 	}
 };
 

@@ -163,7 +163,10 @@
         ],
         "title": "Slett all bruker data!",
         "okTitle": "Slett!",
-        "cancelTitle": "Avbryt"
+        "cancelTitle": "Avbryt",
+        "error": {
+            "dbError": "En feil skjedde med databasen! Venligst prøv igjen senere eller kontakt system administratoren."
+        }
     },
     "UserInfo": {
         "title": "Bruker informasjon",

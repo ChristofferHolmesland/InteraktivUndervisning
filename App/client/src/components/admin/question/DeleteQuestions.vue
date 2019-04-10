@@ -8,7 +8,8 @@
             :cancel-title="getLocale.cancelBtn">
     <b-alert    :show="showError"
                 variant="danger"
-                dismissible>
+                dismissible
+                @dismissed="showError = false">
         <p>
             {{getLocale.errors[errorText]}}
         </p>

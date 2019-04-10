@@ -207,6 +207,43 @@ module.exports.feide = function(socket, db, user){
 
 		socket.emit("getSessionInformationResponse", sessionInformation);
 	});
+
+	socket.on("deleteUserData", async function() {
+		let err = await dbFunctions.update.answerUserToAnonymous(db, user.feide.idNumber).catch(err => {
+			console.error(err);
+			socket.emit("deleteUserDataError", "dbError");
+			return;
+		});
+
+		err = await dbFunctions.del.userHasSession(db, user.feide.idNumber).catch(err => {
+			console.error(err);
+			socket.emit("deleteUserDataError", "dbError");
+			return;
+		});
+
+		err = await dbFunctions.del.userRightsFromFeideId(db, user.feide.idNumber).catch(err => {
+			console.error(err);
+			socket.emit("deleteUserDataError", "dbError");
+			return;
+		});
+
+		err = await dbFunctions.del.feide(db, user.feide.idNumber).catch(err => {
+			console.error(err);
+			socket.emit("deleteUserDataError", "dbError");
+			return;
+		});
+
+		err = await dbFunctions.del.userByFeideId(db, user.feide.idNumber).catch(err => {
+			console.error(err);
+			socket.emit("deleteUserDataError", "dbError");
+			return;
+		});
+
+		console.log(err);
+		return;
+
+		socket.emit("deleteUserDataResponse");
+	});
 }
 
 async function sendUserInfo(db, socket, user) {
