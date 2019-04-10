@@ -118,7 +118,6 @@ const get = {
 								FROM User
 								WHERE id = '${userId.id}'
 							LIMIT 1);`;
-			console.log(statement);
 			db.all(statement, (err,rows) => {
 				if (err) reject(customReject(err, "sessionsToUser"));
 				resolve(rows);
@@ -394,7 +393,7 @@ const get = {
 	},
 	questionsByQuestionId(db, questionList) {
 		return new Promise(async (resolve, reject) => {
-			let statement = `SELECT id, text, description, solution, time, questionType AS type, object FROM Question WHERE `
+			let statement = `SELECT id, text, description, solution, time, questionType AS type, object, status FROM Question WHERE `
 			for (let i = 0; i < questionList.length; i++) {
 				if (i > 0) statement += `\nOR `
 				let questionId = questionList[i].id;

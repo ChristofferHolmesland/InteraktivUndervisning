@@ -13,6 +13,11 @@ const del = {
 						WHERE feideId = ${data.feideId}
 						AND courseId = ${data.courseId}`;
 		return createPromise(db, statement, "userRights");
+	},
+	questionById: function(db, questionId) {
+		let statement = `DELETE FROM Question
+						WHERE id = ${questionId}`;
+		return createPromise(db, statement, "questionById");
 	}
 };
 

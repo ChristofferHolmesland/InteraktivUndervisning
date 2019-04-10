@@ -258,7 +258,7 @@
     },
     "CopyQuestions": {
         "errors": {
-            "dbError": "An database error occured. Please try again later.",
+            "dbError": "A database error occured. Please try again later.",
             "missingData": "No data was sent. Please try again.",
             "noCoursesSelected": "Zero courses was selected. Please select the course(s) that should recieve a copy of these questions.",
             "noQuestionsSelected": "Zero questions was recieved. Please mark the questions that should be copied."
@@ -270,6 +270,20 @@
         "selectedQuestionsTitle": "Selected questions:",
         "selectCoursesTitle": "Select courses that should get a copy of the selected questions:",
         "selectedCoursesTitle": "Selected courses that should get a copy of the selected questions:"
+    },
+    "DeleteQuestions": {
+        "errors": {
+            "dbError": "A database error occured. Please try again later.",
+            "dataError": "The data was not sent in the correct format! Please try again."
+        },
+        "okBtn": "Delete questions",
+        "cancelBtn": "Cancel",
+        "title": "Delete questions from course",
+        "selectedQuestionsTitle": "Selected questions:",
+        "removeBtn": "Remove",
+        "info": [
+            "When you delete the selected questions, only questions that aren't linked to a session will be deleted."
+        ]
     },
     "Sandbox": {
         "guide": {

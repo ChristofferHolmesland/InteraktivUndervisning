@@ -123,6 +123,7 @@ module.exports.getDB = function setupDatabase() {
 					solution BLOB NOT NULL,
 					questionType INTEGER NOT NULL,
 					courseId TEXT NOT NULL,
+					status INTEGER,
 					FOREIGN KEY (questionType) REFERENCES Type(id) ON DELETE CASCADE ON UPDATE CASCADE
 					FOREIGN KEY (courseId) REFERENCES Course(id) ON UPDATE CASCADE
 				);`, (err) => { if (err) reject(err) }

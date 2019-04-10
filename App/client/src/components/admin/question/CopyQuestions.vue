@@ -98,7 +98,6 @@ export default {
     },
     computed: {
         getCourseList: function() {
-            console.log("test");
             let courseList = JSON.parse(JSON.stringify(this.$store.getters.getCourseOptions));
             let currentCourseId = this.$store.getters.getSelectedCourse;
             courseList.splice((courseList.findIndex(course => course.value === currentCourseId)), 1);
@@ -108,7 +107,6 @@ export default {
             return this.courseList;
         },
         getSelectedCourses: function() {
-            console.log("test");
             let list = [];
             
             for (let i = 0; i < this.selectedCourses.length; i++) {
