@@ -6,7 +6,7 @@ describe("Client Tests",function () {
 		cy.get("#anonymousButton").click();
 		cy.get("#loginButton").click();
 	});
-	/*it("Login as an anonymous user",function () {
+	it("Login as an anonymous user",function () {
 		cy.url().should("include","/client");
 		cy.get('[data-cy=loginButton]').click();
 		cy.get('[data-cy=loginButton] > a > span').should("contain","Anonymous"); //does not work
@@ -40,7 +40,7 @@ describe("Client Tests",function () {
 		cy.get('[data-cy=Language]').find("a").should("have.text","Language").click();
 		cy.get("#no").should("be.visible").click();
 		cy.get('[data-cy=Language]').find("a").should("have.text","Språk");
-	});*/
+	});
 	it("Test Sandbox",function () {
 		cy.url().should("include","/client");
 		cy.get('[data-cy=Language]').find("a").should("have.text","Språk").click();
