@@ -200,7 +200,7 @@ export default {
 			this.newAssistantFeideId = "";
 		},
 		removeAdmin: function(btn) {
-			let user = this.$store.getters.getUser();
+			let user = this.$store.getters.getUser({feideId: true});
 			if (btn.target.id == user.feideId) return;
 			this.$socket.emit("setUserRightsLevel", {
 				feideId: btn.target.id,

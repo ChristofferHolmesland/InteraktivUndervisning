@@ -78,7 +78,7 @@ const insert = {
 	},
 	userRightsLevelByFeideId: function(db, data) {
 		let statement = `INSERT INTO UserRight(feideId, courseId, level) 
-						 VALUES ('${data.feideId}', ${courseId}, ${level})`;
+						 VALUES ('${data.feideId}', ${data.courseId}, ${data.level})`;
 		return createPromise(db, statement, "userRightsLevelByFeideId");
 	},
 	questionType: function(db, typeText) {
