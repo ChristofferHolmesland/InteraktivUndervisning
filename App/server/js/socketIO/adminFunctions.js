@@ -58,12 +58,13 @@ module.exports.admin = function(socket, db, user, sessions) {
 
 	socket.on("addNewSession", function(session) {
 		let courseId = session.course;
-		dbFunctions.insert.session(db, session.title, courseId).then(function (id) {
+		dbFunctions.insert.session(db, session.title, courseId).then(async function (id) {
 			for (let i = 0; i < session.questions.length; i++) {
-				dbFunctions.insert.addQuestionToSession(db, id, session.questions[i].id);
+				await dbFunctions.insert.addQuestionToSession(db, id, session.questions[i].id).catch(err => console.error(err));
+				await dbFunctions.update.questionStatusToActive(db, session.questions[i].id).catch(err => console.error(err));
 			}
 			socket.emit("addNewSessionDone");
-		});
+		}).catch(err => console.error(err));
 	});
 
 	socket.on("getQuestionsInCourse", function(courseId) {
@@ -80,6 +81,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 					text: questions[i].text 
 				});
 			}
+			console.log(result);
 			socket.emit("sendQuestionsInCourse", result);
 		});
 	});
@@ -410,10 +412,11 @@ module.exports.admin = function(socket, db, user, sessions) {
 	});
 
 	socket.on("getAllQuestionsWithinCourse", function(courseId) {
-		if (courseId === undefined || courseId === "") {
+		if (courseId === undefined || courseId === "" || courseId === null) {
 			socket.emit("courseMissing");
 			return;
 		}
+		console.log(courseId)
 		dbFunctions.get.allQuestionsWithinCourse(db, courseId).then(questions => {
 			let result = [];
 			for (let i = 0; i < questions.length; i++) {
@@ -423,6 +426,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 					text: q.text
 				});
 			}
+			console.log(result);
 			socket.emit("sendAllQuestionsWithinCourse", result);
 		});
 	});
@@ -872,7 +876,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 	socket.on("deleteQuestionsRequest", async function(questionList) {
 		if (
 			questionList === undefined ||
-			Array.isArray(questionList) ||
+			!Array.isArray(questionList) ||
 			questionList.length === 0
 		) {
 			socket.emit("deleteQuestionToCourseError", "dataError")
@@ -883,8 +887,9 @@ module.exports.admin = function(socket, db, user, sessions) {
 		for(let i = 0; i < questions.length; i++) {
 			let question = questions[i];
 			if (question.status === 0) {
-				dbFunctions.delete.questionById(db, question.id).catch(err => console.error(err));
+				await dbFunctions.del.questionById(db, question.id).catch(err => console.error(err));
 			}
 		}
+		socket.emit("deleteQuestionToCourseResponse");
 	});
 }
