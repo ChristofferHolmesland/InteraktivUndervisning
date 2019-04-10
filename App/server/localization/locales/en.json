@@ -173,7 +173,10 @@
         ],
         "title": "Delete all user data!",
         "okTitle": "Delete!",
-        "cancelTitle": "Cancel"
+        "cancelTitle": "Cancel",
+        "error": {
+            "dbError": "An error occured with the database. Please try again later or contact the system admin."
+        }
     },
     "UserInfo": {
         "title": "User info",
