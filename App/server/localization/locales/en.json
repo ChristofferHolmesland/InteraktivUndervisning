@@ -320,7 +320,7 @@
             "Tree": [
                 "This is the guide for using the graphDrawer on tree related questions:",
                 "Usually you would get a list of nodes or an existing binary tree or both, and you'll have to draw the resulting binary tree.",
-                "Whenever you should add or remove the nodes from the tree should be specified in the description, the main focus here is to practise drawing resulting binary trees.",
+                "Whenever you should add or remove the nodes from the tree should be specified in the description of the question, the main focus here is to practice drawing resulting binary trees.",
                 "The GraphDrawer for trees have 5 different command options of which to choose from, namely: Add, Remove, Move, Join and Edit. The chosen command option should be highlighted and by default its set to use the Add command.",
                 "While using the Add command, clicking on the canvas will create a new node with a default value of 0",
                 "While using the Remove command, clicking on any of the nodes or lines visible on the canvas will remove them from the canvas.",

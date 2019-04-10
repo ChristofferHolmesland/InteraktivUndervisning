@@ -102,15 +102,17 @@
 						<GraphDrawer
 								controlType="Graph0"
 								operating-mode="Interactive"
-								ref="graphdrawer"
 								:requestAnswer="requestGraphDrawerObject"
+								ref="graphdrawer"
+								v-if="!reload"
+
 						/>
 					</div>
 				</b-col>
 			</b-row>
 		</b-col>
 		<b-col cols="12" lg="4">
-			<b-row v-if="getShowSettings">
+			<b-row v-if="getShowSettings" id="SandBoxSettings">
 				<b-col>
 					<b-row @click="changeShowSettings" class="cursor">
 						<b-col>
@@ -163,7 +165,7 @@
 			</b-row>
 			<b-row>
 				<b-col>
-					<b-row @click="changeShowGuide" class="cursor">
+					<b-row @click="changeShowGuide" class="cursor" id="SandBoxGuide">
 						<b-col>
 							<h3>Guide</h3>
 						</b-col>
@@ -172,7 +174,7 @@
 							<p v-else>V</p>
 						</b-col>
 					</b-row>
-					<div v-show="showGuide">
+					<div v-show="showGuide" id="GuideInfo">
 						<b-container class="jumbotron">
 							<b-row>
 								<b-col>
@@ -345,6 +347,7 @@ export default {
 			switch (this.questionType) {
 				case "Text":
 				case "Multiple choice":
+				case "Tree":
 					this.showGuide = true;
 					return false;
 					break;
@@ -399,6 +402,10 @@ export default {
 				if (this.$refs.graphdrawer !== undefined) {
 					this.$refs.graphdrawer.createDrawer();
 				}
+				this.reload = true;
+				this.$nextTick(function () {
+					this.reload = false;
+				});
 			});
 		}
 	},
