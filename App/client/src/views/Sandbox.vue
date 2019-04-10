@@ -368,9 +368,6 @@ export default {
 		},
 		shellsortCheckIfSelected: function() {
 			return (row, element) => {
-				console.log(this.shellsortElementSelected);
-				console.log(row)
-				console.log(element)
 				if (this.shellsortElementSelected === undefined) return false;
 				if (
 					this.shellsortElementSelected.row === row &&

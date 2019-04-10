@@ -118,7 +118,6 @@ const get = {
 								FROM User
 								WHERE id = '${userId.id}'
 							LIMIT 1);`;
-			console.log(statement);
 			db.all(statement, (err,rows) => {
 				if (err) reject(customReject(err, "sessionsToUser"));
 				resolve(rows);

@@ -1193,11 +1193,8 @@ export default class Sort {
 		// Delete node
 		let bSize = hoveredNode.w / this.bsf;
 		let bX = hoveredNode.x + hoveredNode.w / 2 - bSize / 2;
-		let dP = this.gd.camera.unproject(
-			bX,
-			hoveredNode.y
-		);
-		
+		let dP = this.gd.camera.unproject(bX, hoveredNode.y);
+
 		this.hoverButtons.push({
 			position: {
 				x: dP.x,

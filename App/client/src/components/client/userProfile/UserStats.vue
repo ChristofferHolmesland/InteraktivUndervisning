@@ -71,7 +71,6 @@ export default {
 			this.totalIncorrectAnswers = data.totalIncorrectAnswers;
 			this.totalDidntKnowAnswers = data.totalDidntKnowAnswers;
 			this.sessionList = data.sessionList;
-			console.log(data);
 
 			for (let i = 0; i < this.sessionList.length; i++) {
 				if (this.courseList.indexOf(this.sessionList[i].id) === -1) {
