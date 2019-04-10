@@ -3,7 +3,13 @@ const check = function(answer, solution) {
 
 	// Check that they have the same global variables.
 	if (answer.variables.length !== getProps(solution.objects).length) {
-		console.log("Not the same amount of variables");
+		return false;
+	}
+
+	// Check that the answer and solution contains the same amount of objects.
+	let solutionObjects = 0;
+	let answerObjects = 0;
+	if (solutionObjects !== answerObjects) {
 		return false;
 	}
 
@@ -17,11 +23,6 @@ const check = function(answer, solution) {
 	};
 
 	let checkData = (data, answer) => {
-		console.log("Check data (data, answer)");
-		console.log(data);
-		console.log("ANSWER");
-		console.log(answer);
-
 		// Check that fields match datatype fields.
 		let objectKeys = getProps(data.objects);
 		for (let k = 0; k < objectKeys.length; k++) {
@@ -35,9 +36,6 @@ const check = function(answer, solution) {
 				}
 			}
 			if (index == -1) {
-				console.log("Field not found");
-				console.log(v);
-				console.log(answer.fields);
 				return false;
 			}
 
@@ -45,7 +43,6 @@ const check = function(answer, solution) {
 			let id = answer.fields[index].value;
 			let answerObject = getAnswerObjectById(id);
 			if (answerObject == undefined) {
-				console.log("Anser object is undefined, id: " + id);
 				return false;
 			}
 
@@ -53,15 +50,11 @@ const check = function(answer, solution) {
 			
 			// Check that the objects have the same type
 			if (answerObject.type != solutionObject.type) {
-				console.log("Type mismatch");
-				console.log(answerObject.type + "  " + solutionObject.type);
 				return false;
 			}
 
 			if (answerObject.baseType) {
 				if (answerObject.value != solutionObject.data) {
-					console.log("Value mismatch");
-					console.log(answerObject.value + "  " + solutionObject.data);
 					return false;
 				}
 				continue;
@@ -76,7 +69,6 @@ const check = function(answer, solution) {
 	let objectKeys = getProps(solution.objects);
 	for (let k = 0; k < objectKeys.length; k++) {
 		let v = objectKeys[k];
-		console.log("Checking property: " + v);
 
 		let answerVariableIndex = -1;
 		for (let i = 0; i < answer.variables.length; i++) {
@@ -87,16 +79,12 @@ const check = function(answer, solution) {
 		}
 
 		if (answerVariableIndex == -1) {
-			console.log("AnswerVariableIndex is -1");
-			console.log(v);
-			console.log(answer.variables);
 			return false;
 		}
 		let answerVariable = answer.variables[answerVariableIndex];
 
 		// Check that the variable is pointing to exactly one object.
 		if (answerVariable.links.length !== 1) {
-			console.log("Linking to more than one object");
 			return false;
 		}
 
@@ -105,17 +93,12 @@ const check = function(answer, solution) {
 		let data = solution.data[solution.objects[v]];
 		let answerData = answerVariable.links[0];
 		if (answerData.type !== data.type) {
-			console.log("Variable type mismatch");
-			console.log(answerData);
-			console.log(answerData.type + "   " + data.type);
 			return false;
 		}
 		
 		// If the object is of basetype, the values should match.
 		if (answerData.baseType) {
 			if (answerData.value != data.data) {
-				console.log("Variable value mismatch");
-				console.log(answerData.value + "   " + data.data);
 				return false;
 			}
 			continue;
