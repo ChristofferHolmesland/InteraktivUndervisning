@@ -595,8 +595,6 @@ export default class Python {
 			let info;
 			let newObjectCreated = true;
 
-			console.log(obj);
-
 			// This checks if the steps are too old to read.
 			// If they are, the code needs to be parsed again
 			// before the GraphDrawer can understand them.
@@ -685,6 +683,7 @@ export default class Python {
 				let data = parsedParentObject.data;
 				for (let i = 0; i < data.length; i++) {
 					if (
+						data[i]._uniqueId === obj._uniqueId &&
 						data[i].type === obj.type &&
 						data[i].data === obj.data
 					) {
@@ -729,7 +728,12 @@ export default class Python {
 				for (let i = 0; i < subObjectNames.length; i++) {
 					let subObjectIndex = obj.objects[subObjectNames[i]];
 					let subObject = obj.data[subObjectIndex];
-					generateAndLinkObjects(info.node, subObject, TO_PARENT, obj);
+					generateAndLinkObjects(
+						info.node,
+						subObject,
+						TO_PARENT,
+						obj
+					);
 				}
 			}
 		};
@@ -739,8 +743,8 @@ export default class Python {
 			let node = this.gd.getNode(variable.id);
 
 			generateAndLinkObjects(
-				node, 
-				step.data[step.objects[variable.name]], 
+				node,
+				step.data[step.objects[variable.name]],
 				TO_CHILD
 			);
 		}
