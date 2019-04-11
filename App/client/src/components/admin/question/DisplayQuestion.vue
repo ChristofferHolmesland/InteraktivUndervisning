@@ -54,9 +54,11 @@
                                                     />
                                 <MergesortSolution  v-if="resultInfo.question.type === 4"
                                                     :solution="resultInfo.solution"
+                                                    ref="graphdrawerContainer"
                                                     />
                                 <QuicksortSolution  v-if="resultInfo.question.type === 5"
                                                     :solution="resultInfo.solution"
+                                                    ref="graphdrawerContainer"
                                                     />
                                 <div v-if="resultInfo.question.type === 6">
                                     {{getLocale.binaryTreeSolutionText}}
@@ -64,12 +66,15 @@
                                 </div>
                                 <TreeSolution       v-if="resultInfo.question.type === 7 || resultInfo.question.type === 8"
                                                     :solution="resultInfo.solution"
+                                                    ref="graphdrawerContainer"
                                                     />
                                 <DijkstraSolution v-if="resultInfo.question.type === 9"
                                                     :solution="resultInfo.solution"
+                                                    ref="graphdrawerContainer"
                                                     />
                                 <PythonSolution v-if="resultInfo.question.type === 10"
                                                     :solution="resultInfo.solution"
+                                                    ref="graphdrawerContainer"
                                                     />
                             </div>
 						</b-tab>
