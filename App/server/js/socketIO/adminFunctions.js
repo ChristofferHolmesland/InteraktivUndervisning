@@ -643,11 +643,12 @@ module.exports.admin = function(socket, db, user, sessions) {
 		}
 	*/
 	socket.on("setUserRightsLevel", function(data) {
+		if (data.feideId == user.feide.idNumber && data.level === -1) return;
 		dbFunctions.get.userRightsByFeideId(db, {
 			feideId: data.feideId,
 			courseId: data.courseId
-		}).then((user) => {
-			if (user == undefined) {
+		}).then((dbUser) => {
+			if (dbUser == undefined) {
 				dbFunctions.insert.userRightsLevelByFeideId(db, {
 					feideId: data.feideId,
 					courseId: data.courseId,
@@ -664,6 +665,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 					socket.emit("setUserRightsLevelDone");
 				});
 			} else if (data.level == -1) {
+				if (data.feideId == user.feide.idNumber) return;
 				dbFunctions.del.userRights(db, {
 					feideId: data.feideId,
 					courseId: data.courseId
@@ -886,6 +888,14 @@ module.exports.admin = function(socket, db, user, sessions) {
 			let question = questions[i];
 			if (question.status === 0) {
 				await dbFunctions.del.questionById(db, question.id).catch(err => console.error(err));
+				
+				let filePath = path.join("../../images/questionImages/", question.id.toString(), "/");
+				let completeFilePath = path.join(__dirname, filePath, "**");
+				try {
+					del.sync(completeFilePath);
+				} catch (error) {
+					console.error(error);
+				}
 			}
 		}
 		socket.emit("deleteQuestionToCourseResponse");
