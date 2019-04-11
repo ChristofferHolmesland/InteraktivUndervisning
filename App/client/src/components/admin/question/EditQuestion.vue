@@ -278,7 +278,7 @@
                     id="BinarySearchTrees"
                     label="Draw the tree, or give an array to build the solution tree"
                     v-if="newQuestion.solutionType === 7 || newQuestion.solutionType === 8"
-                    >
+                    > 	
                 <label for="Add">Add</label><input type="radio" id="Add" v-model="newQuestion.objects.solutionTreeType" value="Add" /><br/>
                 <label for="Remove">Remove</label><input type="radio" id="Remove" v-model="newQuestion.objects.solutionTreeType" value="Remove"/>
                 <label v-if="newQuestion.objects.solutionTreeType === 'Add'" for="solutionListElements">Input elements to be added to the tree. The elements are seperated by ,</label>
@@ -411,12 +411,41 @@ export default {
 	},
 	methods: {
 		solutionTypeChanged() {
+			// If the old type used a graphdrawer, it should be destroyed.
+			if (this.$refs.graphdrawer !== undefined) {
+				this.$refs.graphdrawer.destroyDrawer();
+			}
+
 			// Because Vue doesn't detect that the value has changed.
 			// We first wait for the next tick, to be sure that the solutionType
 			// value has changed.
 			this.$nextTick(function() {
-				// And then we redraw the page with the new solutionType value.
+				let newSolutionType = this.newQuestion.solutionType;
+				this.newQuestion.solutionType = -1;
+
+				this.newQuestion.objects._graphdrawerGraph = undefined;
+				if (newSolutionType === 1 || newSolutionType === 10)
+					this.newQuestion.solution = "";
+				else
+					this.newQuestion.solution = [];
+
+				// Render the modal with solutionType = -1 to clear any
+				// components which are still on the page.
 				this.$forceUpdate();
+
+				// Wait for Vue to detect the changes
+				this.$nextTick(function() {
+					this.newQuestion.solutionType = newSolutionType;
+					
+					// Wait for the new page to render with the new values, and
+					// create the GraphDrawer if it is needed.
+					this.$nextTick(function() {
+						this.$forceUpdate();
+						if (this.$refs.graphdrawer !== undefined) {
+							this.$refs.graphdrawer.createDrawer();
+						}
+					});
+				});
 			});
 		},
 		keyDownInTextarea(e) {
