@@ -856,6 +856,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 										return;
 									}
 									fs.writeSync(fd, files[i].buffer, null, "base64");
+									fs.closeSync(fd);
 								});
 							}
 							
@@ -898,7 +899,6 @@ module.exports.admin = function(socket, db, user, sessions) {
 				try {
 					del.sync(completeFilePath);
 				} catch (error) {
-					console.error(error);
 				}
 			}
 		}
