@@ -42,37 +42,37 @@
 						</b-tab>
 						<b-tab :title="getLocale.solution">
                             <div v-if="tabIndex === 1">
-                                <TextSolution v-if="resultInfo.question.type === 1"
+                                <TextSolution v-if="resultInfo.question.type === 1 && !reload"
                                                 :solution="resultInfo.solution"
                                                 />
-                                <MultipleChoiceSolution v-if="resultInfo.question.type === 2"
+                                <MultipleChoiceSolution v-if="resultInfo.question.type === 2 && !reload"
                                                         :solutions="resultInfo.solution"
                                                         :choices="resultInfo.question.object.multipleChoices"
                                                         />
-                                <ShellsortSolution  v-if="resultInfo.question.type === 3"
+                                <ShellsortSolution  v-if="resultInfo.question.type === 3 && !reload"
                                                     :solution="resultInfo.solution"
                                                     />
-                                <MergesortSolution  v-if="resultInfo.question.type === 4"
-                                                    :solution="resultInfo.solution"
-                                                    ref="graphdrawerContainer"
-                                                    />
-                                <QuicksortSolution  v-if="resultInfo.question.type === 5"
+                                <MergesortSolution  v-if="resultInfo.question.type === 4 && !reload"
                                                     :solution="resultInfo.solution"
                                                     ref="graphdrawerContainer"
                                                     />
-                                <div v-if="resultInfo.question.type === 6">
+                                <QuicksortSolution  v-if="resultInfo.question.type === 5 && !reload"
+                                                    :solution="resultInfo.solution"
+                                                    ref="graphdrawerContainer"
+                                                    />
+                                <div v-if="resultInfo.question.type === 6 && !reload">
                                     {{getLocale.binaryTreeSolutionText}}
                                     {{resultInfo.solution.nodes}}
                                 </div>
-                                <TreeSolution       v-if="resultInfo.question.type === 7 || resultInfo.question.type === 8"
+                                <TreeSolution       v-if="(resultInfo.question.type === 7 || resultInfo.question.type === 8) && !reload"
                                                     :solution="resultInfo.solution"
                                                     ref="graphdrawerContainer"
                                                     />
-                                <DijkstraSolution v-if="resultInfo.question.type === 9"
+                                <DijkstraSolution v-if="resultInfo.question.type === 9 && !reload"
                                                     :solution="resultInfo.solution"
                                                     ref="graphdrawerContainer"
                                                     />
-                                <PythonSolution v-if="resultInfo.question.type === 10"
+                                <PythonSolution v-if="resultInfo.question.type === 10 && !reload"
                                                     :solution="resultInfo.solution"
                                                     ref="graphdrawerContainer"
                                                     />
@@ -81,33 +81,33 @@
 						<b-tab :title="getLocale.answer" v-if="resultInfo.answerList.length > 0">
                             <div v-if="tabIndex === 2">
                                 <div v-if="getResult > -1">
-                                    <TextAnswer v-if="resultInfo.question.type === 1"
+                                    <TextAnswer v-if="resultInfo.question.type === 1 && !reload"
                                                 :answer="resultInfo.answerList[selectedAnswer].answerObject"
                                                 />
-                                    <MultipleChoiceAnswer   v-if="resultInfo.question.type === 2" 
+                                    <MultipleChoiceAnswer   v-if="resultInfo.question.type === 2 && !reload" 
                                                             :answers="resultInfo.answerList[selectedAnswer].answerObject"
                                                             :choices="resultInfo.question.object.multipleChoices"
                                                             />
-                                    <ShellsortAnswer    v-if="resultInfo.question.type === 3"
+                                    <ShellsortAnswer    v-if="resultInfo.question.type === 3 && !reload"
                                                         :answer="resultInfo.answerList[selectedAnswer].answerObject"
                                                         />
-                                    <MergesortAnswer    v-if="resultInfo.question.type === 4"
+                                    <MergesortAnswer    v-if="resultInfo.question.type === 4 && !reload"
                                                         :answer="resultInfo.solution"
                                                         ref="graphdrawerContainer"
                                                         />
-                                    <QuicksortAnswer    v-if="resultInfo.question.type === 5"
+                                    <QuicksortAnswer    v-if="resultInfo.question.type === 5 && !reload"
                                                         :answer="resultInfo.answerList[selectedAnswer].answerObject"
                                                         ref="graphdrawerContainer"
                                                         />
-                                    <TreeAnswer         v-if="resultInfo.question.type >= 6 && resultInfo.question.type <= 8"
+                                    <TreeAnswer         v-if="(resultInfo.question.type >= 6 && resultInfo.question.type <= 8) && !reload"
                                                         :answer="resultInfo.answerList[selectedAnswer].answerObject"
                                                         ref="graphdrawerContainer"
                                                     />
-                                    <DijkstraAnswer     v-if="resultInfo.question.type === 9"
+                                    <DijkstraAnswer     v-if="resultInfo.question.type === 9 && !reload"
                                                         :answer="resultInfo.answerList[selectedAnswer].answerObject"
                                                         ref="graphdrawerContainer"
                                                         />  
-                                    <PythonAnswer       v-if="resultInfo.question.type === 10"
+                                    <PythonAnswer       v-if="resultInfo.question.type === 10 && !reload"
                                                         :answer="resultInfo.answerList[selectedAnswer].answerObject"
                                                         ref="graphdrawerContainer"
                                                         />  
@@ -160,7 +160,8 @@ export default {
         return {
             tabIndex: Number,
             didntAnswerString: "You answered: I don't know!",
-            selectedImageIndex: 0
+            selectedImageIndex: 0,
+            reload: false
         }
     },
     computed: {
@@ -193,6 +194,14 @@ export default {
                 ) {
                     this.selectedImageIndex += step;
                 }
+        },
+        reload: function() {
+            this.$nextTick(() => {
+                this.reload = true;
+                this.$nextTick(() => {
+                    this.reload = false;
+                });
+            });
         }
     },
     components: {
@@ -212,7 +221,15 @@ export default {
         DijkstraSolution,
         PythonAnswer,
         PythonSolution
-    }
+    },
+    watch: {
+        selectedAnswer: function() {
+            this.reload();
+        },
+        resultInfo: function() {
+            this.reload();
+        }
+    },
 }
 </script>
 
