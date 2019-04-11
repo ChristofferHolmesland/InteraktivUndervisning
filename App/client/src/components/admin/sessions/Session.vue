@@ -175,6 +175,6 @@ export default {
 
 <style scoped>
 .selected {
-	background-color: grey;
+	background-color: darkgray;
 }
 </style>

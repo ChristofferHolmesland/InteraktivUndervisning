@@ -13,6 +13,7 @@
         "solutionText": "Løsning: ",
         "selectSessionText": "Velg økt: ",
         "time": "Tid:",
+        "description": "Beskrivelse:",
         "mediaTypes": [
             {"text":"Bilder", "value": 0},
             {"text":"Grafer", "value": 0},
@@ -77,6 +78,19 @@
         "deleteSelectedBtn": "Slett markerte",
         "closeBtn": "Lukk",
         "noQuestionsSelectedError": "Ingen spørsmål er markert!",
+        "showQuestionType": "Spørsmål type:",
+        "questionType": {
+            "Text": "Tekst", 
+            "Multiple choice": "Flervalg", 
+            "Shellsort": "Shell sortering", 
+            "MergeSort": "Flette sortering", 
+            "QuickSort": "Quick sortering",
+            "BinaryTree": "Binærtre",
+            "BinarySearchTree": "Binært søketre",
+            "AVLTree": "AVLTree",
+            "Dijkstra": "Dijkstra",
+            "Python": "Python"
+        },
         "NoCode": "Du må skrive kode for å lage et Python spørsmål."
     },
     "AdminSessions": {

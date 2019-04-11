@@ -13,6 +13,7 @@
         "solutionText": "Solution: ",
         "selectSessionText": "Select session: ",
         "time": "Time:",
+        "description": "Description:",
         "mediaTypes": [
             {"text":"Images", "value": 0},
             {"text":"Graphs", "value": 0},
@@ -77,6 +78,19 @@
         "deleteSelectedBtn": "Delete selected",
         "closeBtn": "Close",
         "noQuestionsSelectedError": "No questions are selected!",
+        "showQuestionType": "Question type:",
+        "questionType": {
+            "Text": "Text", 
+            "Multiple choice": "Multiple choice", 
+            "Shellsort": "Shellsort", 
+            "MergeSort": "MergeSort", 
+            "QuickSort": "QuickSort",
+            "BinaryTree": "BinaryTree",
+            "BinarySearchTree": "BinarySearchTree",
+            "AVLTree": "AVLTree",
+            "Dijkstra": "Dijkstra",
+            "Python": "Python"
+        },
         "NoCode": "You need to write Python code to create the question."
     },
     "AdminDashboard": {
