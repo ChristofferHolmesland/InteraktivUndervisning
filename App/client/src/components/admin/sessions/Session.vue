@@ -152,7 +152,20 @@ export default {
 			this.selectedQuestion = 0;
 			this.selectedAnswer = 0;
 			this.incorrectAnswers = [];
-		}
+		},
+		selectedQuestion: function() {
+			let display = this.$refs.displayQuestion;
+			if (display !== undefined) {
+				this.$nextTick(function() {
+					let container = display.$refs.graphdrawerContainer;
+					if (container !== undefined) {
+						this.$nextTick(function() {
+							container.$refs.graphdrawer.createDrawer();
+						});
+					}
+				});
+			}
+		},
 	},
 	components: {
 		DisplayQuestion
