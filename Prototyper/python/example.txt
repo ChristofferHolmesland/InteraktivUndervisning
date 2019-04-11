@@ -13,3 +13,22 @@ n = Navn("F", "T")
 p = Person(n, a)
 
 a = 23
+
+==========================
+
+class Punkt:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+class Linje:
+    def __init__(self, p1, p2):
+        self.p1 = p1
+        self.p2 = p2
+
+p1 = Punkt(0, 0)
+p2 = Punkt(1, 1)
+l1 = Linje(p1, p2)
+
+p1.x = 5
+l1.p2.x = 5
