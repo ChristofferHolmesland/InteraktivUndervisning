@@ -148,7 +148,10 @@
 			this.$root.$on('bv::modal::hidden', (bvEvent, modalId) => {
 				let id = bvEvent.target.id;
 
-				if (id.includes("edit")) this.renderEditQuestion = false;
+				if (id.includes("edit")) {
+					this.renderEditQuestion = false;
+					this.requestNewQuestions();
+				}
 				else if (id.includes("show")) this.renderShowQuestion = false;
 				else if (id.includes("session")) this.renderAddQuestionToSession = false;
 			});
