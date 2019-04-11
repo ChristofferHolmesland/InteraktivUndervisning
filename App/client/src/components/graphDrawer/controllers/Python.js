@@ -1,6 +1,6 @@
 export default class Python {
 	_config(config) {
-		if (config && config.steps) {
+		if (config && config.steps && config.steps.length > 0) {
 			this.steps = config.steps.slice(0, config.steps.length - 1);
 
 			// Read last step to find the data types defined by the script

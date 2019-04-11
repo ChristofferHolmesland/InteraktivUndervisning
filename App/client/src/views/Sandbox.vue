@@ -120,7 +120,16 @@
 						/>
 					</div>
 					<div v-if="questionType === 'Python'">
-
+						<GraphDrawer
+							controlType="Python"
+							operatingMode="Interactive"
+							:requestAnswer="requestGraphDrawerObject"
+							ref="graphdrawer"
+							v-if="!reload"
+							:displayEdgeValues="false"
+							:directedEdges="true"
+							:steps="pythonSteps"
+						/>
 					</div>
 				</b-col>
 			</b-row>
@@ -174,6 +183,20 @@
 								</b-col>
 							</b-row>
 						</b-container>
+						<b-container class="jumbotron" v-if="questionType === 'Python'">
+							<b-row>
+								<b-col>
+										<b-button variant="primary" @click="parsePythonCode">Parse</b-button>
+										<b-form-textarea 	
+											id="pythonCodeInput"
+											placeholder="Write Python code here..."
+											ref="codeInput"
+											v-model="pythonCode"
+											@keydown.native.tab="keyDownInTextarea">
+                    					</b-form-textarea>
+								</b-col>
+							</b-row>
+						</b-container>
 					</div>
 				</b-col>
 			</b-row>
@@ -205,7 +228,9 @@
 </template>
 
 <script>
-import GraphDrawer from "../components/graphDrawer/GraphDrawer.vue"
+import GraphDrawer from "../components/graphDrawer/GraphDrawer.vue";
+import DijkstraQuestionObject from "../assets/sandbox/dijkstraQuestion.js";
+import PythonQuestionObject from "../assets/sandbox/pythonQuestion.js";
 
 export default {
 	name: "Sandbox",
@@ -261,10 +286,50 @@ export default {
             	type: "Initial"
         	}],
 			quicksortString: "4,80,54,23,1,5,7,3,245,43",
-			dijkstraQuestion: dijkstraObject
+			dijkstraQuestion: DijkstraQuestionObject,
+			pythonCode: PythonQuestionObject,
+			pythonSteps: []
 		};
 	},
+	sockets: {
+		"parsePythonCodeResponse": function(parsed) {
+			this.pythonSteps = parsed.objects.steps;
+			this.$nextTick(() => {
+				this.reload = true;
+				this.$nextTick(() => {
+					this.reload = false;
+					
+				});
+			});
+		}
+	},
 	methods: {
+		parsePythonCode() {
+			let code = this.$refs.codeInput.$refs.input.value;
+			console.log("Sending emit");
+			this.$socket.emit("parsePythonCodeRequest", { code: code });
+		},
+		keyDownInTextarea(e) {
+			// Only accept the Tab key
+			if (e.key !== "Tab" && e.which !== "9") return;
+
+			// Prevent shifting focus from the element
+			e.preventDefault();
+			
+			let codeInput = this.$refs.codeInput.$refs.input;
+
+			// Add 4 spaces
+			let tabSize = 4;
+			let tabPosition = codeInput.selectionStart;
+			let textWithSpaces = codeInput.value.substring(0, tabPosition);
+			for (let i = 0; i < tabSize; i++) textWithSpaces += " ";
+			textWithSpaces += codeInput.value.substring(tabPosition);
+
+			codeInput.value = textWithSpaces;
+			// Move cursor to the right position
+			codeInput.selectionStart = tabPosition + tabSize;
+			codeInput.selectionEnd = tabPosition + tabSize;
+		},
 		returnToClientDashboard: function() {
 			this.$router.push("/client");
 		},
@@ -427,1004 +492,6 @@ export default {
 	}
 };
 
-const dijkstraObject = {
-    "type": "Initial",
-    "graph": {
-        "nodes": [{
-            "id": 0,
-            "x": 1305,
-            "y": 1286,
-            "w": 25,
-            "h": 25,
-            "shape": "Circle",
-            "fillColor": "LightGreen",
-            "v": "A",
-            "marked": "Start",
-            "visited": true
-        }, {
-            "id": 1,
-            "x": 1666,
-            "y": 1292,
-            "w": 25,
-            "h": 25,
-            "shape": "Circle",
-            "v": "B",
-            "visited": true,
-            "distance": 10,
-            "previous": {
-                "id": 0,
-                "x": 1305,
-                "y": 1286,
-                "w": 25,
-                "h": 25,
-                "shape": "Circle",
-                "fillColor": "LightGreen",
-                "v": "A",
-                "marked": "Start",
-                "visited": true
-            }
-        }, {
-            "id": 2,
-            "x": 1299,
-            "y": 1640,
-            "w": 25,
-            "h": 25,
-            "shape": "Circle",
-            "v": "C",
-            "visited": true,
-            "distance": 5,
-            "previous": {
-                "id": 0,
-                "x": 1305,
-                "y": 1286,
-                "w": 25,
-                "h": 25,
-                "shape": "Circle",
-                "fillColor": "LightGreen",
-                "v": "A",
-                "marked": "Start",
-                "visited": true
-            }
-        }, {
-            "id": 3,
-            "x": 1674,
-            "y": 1652,
-            "w": 25,
-            "h": 25,
-            "shape": "Circle",
-            "fillColor": "LightCoral",
-            "v": "D",
-            "marked": "End",
-            "visited": false,
-            "distance": 25,
-            "previous": {
-                "id": 4,
-                "x": 1492,
-                "y": 1478,
-                "w": 25,
-                "h": 25,
-                "shape": "Circle",
-                "v": "E",
-                "visited": true,
-                "distance": 22,
-                "previous": {
-                    "id": 6,
-                    "x": 1674,
-                    "y": 1432,
-                    "w": 25,
-                    "h": 25,
-                    "shape": "Circle",
-                    "v": "G",
-                    "visited": true,
-                    "distance": 15,
-                    "previous": {
-                        "id": 1,
-                        "x": 1666,
-                        "y": 1292,
-                        "w": 25,
-                        "h": 25,
-                        "shape": "Circle",
-                        "v": "B",
-                        "visited": true,
-                        "distance": 10,
-                        "previous": {
-                            "id": 0,
-                            "x": 1305,
-                            "y": 1286,
-                            "w": 25,
-                            "h": 25,
-                            "shape": "Circle",
-                            "fillColor": "LightGreen",
-                            "v": "A",
-                            "marked": "Start",
-                            "visited": true
-                        }
-                    }
-                }
-            }
-        }, {
-            "id": 4,
-            "x": 1492,
-            "y": 1478,
-            "w": 25,
-            "h": 25,
-            "shape": "Circle",
-            "v": "E",
-            "visited": true,
-            "distance": 22,
-            "previous": {
-                "id": 6,
-                "x": 1674,
-                "y": 1432,
-                "w": 25,
-                "h": 25,
-                "shape": "Circle",
-                "v": "G",
-                "visited": true,
-                "distance": 15,
-                "previous": {
-                    "id": 1,
-                    "x": 1666,
-                    "y": 1292,
-                    "w": 25,
-                    "h": 25,
-                    "shape": "Circle",
-                    "v": "B",
-                    "visited": true,
-                    "distance": 10,
-                    "previous": {
-                        "id": 0,
-                        "x": 1305,
-                        "y": 1286,
-                        "w": 25,
-                        "h": 25,
-                        "shape": "Circle",
-                        "fillColor": "LightGreen",
-                        "v": "A",
-                        "marked": "Start",
-                        "visited": true
-                    }
-                }
-            }
-        }, {
-            "id": 5,
-            "x": 1411.5,
-            "y": 1383.5,
-            "w": 25,
-            "h": 25,
-            "shape": "Circle",
-            "v": "F",
-            "visited": true,
-            "distance": 2,
-            "previous": {
-                "id": 0,
-                "x": 1305,
-                "y": 1286,
-                "w": 25,
-                "h": 25,
-                "shape": "Circle",
-                "fillColor": "LightGreen",
-                "v": "A",
-                "marked": "Start",
-                "visited": true
-            }
-        }, {
-            "id": 6,
-            "x": 1674,
-            "y": 1432,
-            "w": 25,
-            "h": 25,
-            "shape": "Circle",
-            "v": "G",
-            "visited": true,
-            "distance": 15,
-            "previous": {
-                "id": 1,
-                "x": 1666,
-                "y": 1292,
-                "w": 25,
-                "h": 25,
-                "shape": "Circle",
-                "v": "B",
-                "visited": true,
-                "distance": 10,
-                "previous": {
-                    "id": 0,
-                    "x": 1305,
-                    "y": 1286,
-                    "w": 25,
-                    "h": 25,
-                    "shape": "Circle",
-                    "fillColor": "LightGreen",
-                    "v": "A",
-                    "marked": "Start",
-                    "visited": true
-                }
-            }
-        }, {
-            "id": 7,
-            "x": 1477,
-            "y": 1639,
-            "w": 25,
-            "h": 25,
-            "shape": "Circle",
-            "v": "H",
-            "visited": true,
-            "distance": 3,
-            "previous": {
-                "id": 0,
-                "x": 1305,
-                "y": 1286,
-                "w": 25,
-                "h": 25,
-                "shape": "Circle",
-                "fillColor": "LightGreen",
-                "v": "A",
-                "marked": "Start",
-                "visited": true
-            }
-        }],
-        "edges": [{
-            "n1": {
-                "id": 0,
-                "x": 1305,
-                "y": 1286,
-                "w": 25,
-                "h": 25,
-                "shape": "Circle",
-                "fillColor": "LightGreen",
-                "v": "A",
-                "marked": "Start",
-                "visited": true,
-                "culled": false
-            },
-            "n2": {
-                "id": 5,
-                "x": 1411.5,
-                "y": 1383.5,
-                "w": 25,
-                "h": 25,
-                "shape": "Circle",
-                "v": "F",
-                "visited": true,
-                "distance": 2,
-                "previous": {
-                    "id": 0,
-                    "x": 1305,
-                    "y": 1286,
-                    "w": 25,
-                    "h": 25,
-                    "shape": "Circle",
-                    "fillColor": "LightGreen",
-                    "v": "A",
-                    "marked": "Start",
-                    "visited": true
-                },
-                "culled": false
-            },
-            "v": 2,
-            "directed": false,
-            "strokeColor": "LightGray"
-        }, {
-            "n1": {
-                "id": 0,
-                "x": 1305,
-                "y": 1286,
-                "w": 25,
-                "h": 25,
-                "shape": "Circle",
-                "fillColor": "LightGreen",
-                "v": "A",
-                "marked": "Start",
-                "visited": true,
-                "culled": false
-            },
-            "n2": {
-                "id": 1,
-                "x": 1666,
-                "y": 1292,
-                "w": 25,
-                "h": 25,
-                "shape": "Circle",
-                "v": "B",
-                "visited": true,
-                "distance": 10,
-                "previous": {
-                    "id": 0,
-                    "x": 1305,
-                    "y": 1286,
-                    "w": 25,
-                    "h": 25,
-                    "shape": "Circle",
-                    "fillColor": "LightGreen",
-                    "v": "A",
-                    "marked": "Start",
-                    "visited": true
-                },
-                "culled": false
-            },
-            "v": 10,
-            "directed": false,
-            "strokeColor": "LightGray"
-        }, {
-            "n1": {
-                "id": 0,
-                "x": 1305,
-                "y": 1286,
-                "w": 25,
-                "h": 25,
-                "shape": "Circle",
-                "fillColor": "LightGreen",
-                "v": "A",
-                "marked": "Start",
-                "visited": true,
-                "culled": false
-            },
-            "n2": {
-                "id": 2,
-                "x": 1299,
-                "y": 1640,
-                "w": 25,
-                "h": 25,
-                "shape": "Circle",
-                "v": "C",
-                "visited": true,
-                "distance": 5,
-                "previous": {
-                    "id": 0,
-                    "x": 1305,
-                    "y": 1286,
-                    "w": 25,
-                    "h": 25,
-                    "shape": "Circle",
-                    "fillColor": "LightGreen",
-                    "v": "A",
-                    "marked": "Start",
-                    "visited": true
-                },
-                "culled": false
-            },
-            "v": 5,
-            "directed": false,
-            "strokeColor": "LightGray"
-        }, {
-            "n1": {
-                "id": 0,
-                "x": 1305,
-                "y": 1286,
-                "w": 25,
-                "h": 25,
-                "shape": "Circle",
-                "fillColor": "LightGreen",
-                "v": "A",
-                "marked": "Start",
-                "visited": true,
-                "culled": false
-            },
-            "n2": {
-                "id": 6,
-                "x": 1674,
-                "y": 1432,
-                "w": 25,
-                "h": 25,
-                "shape": "Circle",
-                "v": "G",
-                "visited": true,
-                "distance": 15,
-                "previous": {
-                    "id": 1,
-                    "x": 1666,
-                    "y": 1292,
-                    "w": 25,
-                    "h": 25,
-                    "shape": "Circle",
-                    "v": "B",
-                    "visited": true,
-                    "distance": 10,
-                    "previous": {
-                        "id": 0,
-                        "x": 1305,
-                        "y": 1286,
-                        "w": 25,
-                        "h": 25,
-                        "shape": "Circle",
-                        "fillColor": "LightGreen",
-                        "v": "A",
-                        "marked": "Start",
-                        "visited": true
-                    }
-                },
-                "culled": false
-            },
-            "v": 19,
-            "directed": false,
-            "strokeColor": "LightGray"
-        }, {
-            "n1": {
-                "id": 0,
-                "x": 1305,
-                "y": 1286,
-                "w": 25,
-                "h": 25,
-                "shape": "Circle",
-                "fillColor": "LightGreen",
-                "v": "A",
-                "marked": "Start",
-                "visited": true,
-                "culled": false
-            },
-            "n2": {
-                "id": 7,
-                "x": 1477,
-                "y": 1639,
-                "w": 25,
-                "h": 25,
-                "shape": "Circle",
-                "v": "H",
-                "visited": true,
-                "distance": 3,
-                "previous": {
-                    "id": 0,
-                    "x": 1305,
-                    "y": 1286,
-                    "w": 25,
-                    "h": 25,
-                    "shape": "Circle",
-                    "fillColor": "LightGreen",
-                    "v": "A",
-                    "marked": "Start",
-                    "visited": true
-                },
-                "culled": false
-            },
-            "v": 3,
-            "directed": false,
-            "strokeColor": "LightGray"
-        }, {
-            "n1": {
-                "id": 5,
-                "x": 1411.5,
-                "y": 1383.5,
-                "w": 25,
-                "h": 25,
-                "shape": "Circle",
-                "v": "F",
-                "visited": true,
-                "distance": 2,
-                "previous": {
-                    "id": 0,
-                    "x": 1305,
-                    "y": 1286,
-                    "w": 25,
-                    "h": 25,
-                    "shape": "Circle",
-                    "fillColor": "LightGreen",
-                    "v": "A",
-                    "marked": "Start",
-                    "visited": true
-                },
-                "culled": false
-            },
-            "n2": {
-                "id": 4,
-                "x": 1492,
-                "y": 1478,
-                "w": 25,
-                "h": 25,
-                "shape": "Circle",
-                "v": "E",
-                "visited": true,
-                "distance": 22,
-                "previous": {
-                    "id": 6,
-                    "x": 1674,
-                    "y": 1432,
-                    "w": 25,
-                    "h": 25,
-                    "shape": "Circle",
-                    "v": "G",
-                    "visited": true,
-                    "distance": 15,
-                    "previous": {
-                        "id": 1,
-                        "x": 1666,
-                        "y": 1292,
-                        "w": 25,
-                        "h": 25,
-                        "shape": "Circle",
-                        "v": "B",
-                        "visited": true,
-                        "distance": 10,
-                        "previous": {
-                            "id": 0,
-                            "x": 1305,
-                            "y": 1286,
-                            "w": 25,
-                            "h": 25,
-                            "shape": "Circle",
-                            "fillColor": "LightGreen",
-                            "v": "A",
-                            "marked": "Start",
-                            "visited": true
-                        }
-                    }
-                },
-                "culled": false
-            },
-            "v": 35,
-            "directed": false,
-            "strokeColor": "LightGray"
-        }, {
-            "n1": {
-                "id": 4,
-                "x": 1492,
-                "y": 1478,
-                "w": 25,
-                "h": 25,
-                "shape": "Circle",
-                "v": "E",
-                "visited": true,
-                "distance": 22,
-                "previous": {
-                    "id": 6,
-                    "x": 1674,
-                    "y": 1432,
-                    "w": 25,
-                    "h": 25,
-                    "shape": "Circle",
-                    "v": "G",
-                    "visited": true,
-                    "distance": 15,
-                    "previous": {
-                        "id": 1,
-                        "x": 1666,
-                        "y": 1292,
-                        "w": 25,
-                        "h": 25,
-                        "shape": "Circle",
-                        "v": "B",
-                        "visited": true,
-                        "distance": 10,
-                        "previous": {
-                            "id": 0,
-                            "x": 1305,
-                            "y": 1286,
-                            "w": 25,
-                            "h": 25,
-                            "shape": "Circle",
-                            "fillColor": "LightGreen",
-                            "v": "A",
-                            "marked": "Start",
-                            "visited": true
-                        }
-                    }
-                },
-                "culled": false
-            },
-            "n2": {
-                "id": 3,
-                "x": 1674,
-                "y": 1652,
-                "w": 25,
-                "h": 25,
-                "shape": "Circle",
-                "fillColor": "LightCoral",
-                "v": "D",
-                "marked": "End",
-                "visited": false,
-                "distance": 25,
-                "previous": {
-                    "id": 4,
-                    "x": 1492,
-                    "y": 1478,
-                    "w": 25,
-                    "h": 25,
-                    "shape": "Circle",
-                    "v": "E",
-                    "visited": true,
-                    "distance": 22,
-                    "previous": {
-                        "id": 6,
-                        "x": 1674,
-                        "y": 1432,
-                        "w": 25,
-                        "h": 25,
-                        "shape": "Circle",
-                        "v": "G",
-                        "visited": true,
-                        "distance": 15,
-                        "previous": {
-                            "id": 1,
-                            "x": 1666,
-                            "y": 1292,
-                            "w": 25,
-                            "h": 25,
-                            "shape": "Circle",
-                            "v": "B",
-                            "visited": true,
-                            "distance": 10,
-                            "previous": {
-                                "id": 0,
-                                "x": 1305,
-                                "y": 1286,
-                                "w": 25,
-                                "h": 25,
-                                "shape": "Circle",
-                                "fillColor": "LightGreen",
-                                "v": "A",
-                                "marked": "Start",
-                                "visited": true
-                            }
-                        }
-                    }
-                },
-                "culled": false
-            },
-            "v": 3,
-            "directed": false,
-            "strokeColor": "LightGray"
-        }, {
-            "n1": {
-                "id": 6,
-                "x": 1674,
-                "y": 1432,
-                "w": 25,
-                "h": 25,
-                "shape": "Circle",
-                "v": "G",
-                "visited": true,
-                "distance": 15,
-                "previous": {
-                    "id": 1,
-                    "x": 1666,
-                    "y": 1292,
-                    "w": 25,
-                    "h": 25,
-                    "shape": "Circle",
-                    "v": "B",
-                    "visited": true,
-                    "distance": 10,
-                    "previous": {
-                        "id": 0,
-                        "x": 1305,
-                        "y": 1286,
-                        "w": 25,
-                        "h": 25,
-                        "shape": "Circle",
-                        "fillColor": "LightGreen",
-                        "v": "A",
-                        "marked": "Start",
-                        "visited": true
-                    }
-                },
-                "culled": false
-            },
-            "n2": {
-                "id": 4,
-                "x": 1492,
-                "y": 1478,
-                "w": 25,
-                "h": 25,
-                "shape": "Circle",
-                "v": "E",
-                "visited": true,
-                "distance": 22,
-                "previous": {
-                    "id": 6,
-                    "x": 1674,
-                    "y": 1432,
-                    "w": 25,
-                    "h": 25,
-                    "shape": "Circle",
-                    "v": "G",
-                    "visited": true,
-                    "distance": 15,
-                    "previous": {
-                        "id": 1,
-                        "x": 1666,
-                        "y": 1292,
-                        "w": 25,
-                        "h": 25,
-                        "shape": "Circle",
-                        "v": "B",
-                        "visited": true,
-                        "distance": 10,
-                        "previous": {
-                            "id": 0,
-                            "x": 1305,
-                            "y": 1286,
-                            "w": 25,
-                            "h": 25,
-                            "shape": "Circle",
-                            "fillColor": "LightGreen",
-                            "v": "A",
-                            "marked": "Start",
-                            "visited": true
-                        }
-                    }
-                },
-                "culled": false
-            },
-            "v": 7,
-            "directed": false,
-            "strokeColor": "LightGray"
-        }, {
-            "n1": {
-                "id": 7,
-                "x": 1477,
-                "y": 1639,
-                "w": 25,
-                "h": 25,
-                "shape": "Circle",
-                "v": "H",
-                "visited": true,
-                "distance": 3,
-                "previous": {
-                    "id": 0,
-                    "x": 1305,
-                    "y": 1286,
-                    "w": 25,
-                    "h": 25,
-                    "shape": "Circle",
-                    "fillColor": "LightGreen",
-                    "v": "A",
-                    "marked": "Start",
-                    "visited": true
-                },
-                "culled": false
-            },
-            "n2": {
-                "id": 3,
-                "x": 1674,
-                "y": 1652,
-                "w": 25,
-                "h": 25,
-                "shape": "Circle",
-                "fillColor": "LightCoral",
-                "v": "D",
-                "marked": "End",
-                "visited": false,
-                "distance": 25,
-                "previous": {
-                    "id": 4,
-                    "x": 1492,
-                    "y": 1478,
-                    "w": 25,
-                    "h": 25,
-                    "shape": "Circle",
-                    "v": "E",
-                    "visited": true,
-                    "distance": 22,
-                    "previous": {
-                        "id": 6,
-                        "x": 1674,
-                        "y": 1432,
-                        "w": 25,
-                        "h": 25,
-                        "shape": "Circle",
-                        "v": "G",
-                        "visited": true,
-                        "distance": 15,
-                        "previous": {
-                            "id": 1,
-                            "x": 1666,
-                            "y": 1292,
-                            "w": 25,
-                            "h": 25,
-                            "shape": "Circle",
-                            "v": "B",
-                            "visited": true,
-                            "distance": 10,
-                            "previous": {
-                                "id": 0,
-                                "x": 1305,
-                                "y": 1286,
-                                "w": 25,
-                                "h": 25,
-                                "shape": "Circle",
-                                "fillColor": "LightGreen",
-                                "v": "A",
-                                "marked": "Start",
-                                "visited": true
-                            }
-                        }
-                    }
-                },
-                "culled": false
-            },
-            "v": 35,
-            "directed": false,
-            "strokeColor": "LightGray"
-        }, {
-            "n1": {
-                "id": 2,
-                "x": 1299,
-                "y": 1640,
-                "w": 25,
-                "h": 25,
-                "shape": "Circle",
-                "v": "C",
-                "visited": true,
-                "distance": 5,
-                "previous": {
-                    "id": 0,
-                    "x": 1305,
-                    "y": 1286,
-                    "w": 25,
-                    "h": 25,
-                    "shape": "Circle",
-                    "fillColor": "LightGreen",
-                    "v": "A",
-                    "marked": "Start",
-                    "visited": true
-                },
-                "culled": false
-            },
-            "n2": {
-                "id": 7,
-                "x": 1477,
-                "y": 1639,
-                "w": 25,
-                "h": 25,
-                "shape": "Circle",
-                "v": "H",
-                "visited": true,
-                "distance": 3,
-                "previous": {
-                    "id": 0,
-                    "x": 1305,
-                    "y": 1286,
-                    "w": 25,
-                    "h": 25,
-                    "shape": "Circle",
-                    "fillColor": "LightGreen",
-                    "v": "A",
-                    "marked": "Start",
-                    "visited": true
-                },
-                "culled": false
-            },
-            "v": 5,
-            "directed": false,
-            "strokeColor": "LightGray"
-        }, {
-            "n1": {
-                "id": 1,
-                "x": 1666,
-                "y": 1292,
-                "w": 25,
-                "h": 25,
-                "shape": "Circle",
-                "v": "B",
-                "visited": true,
-                "distance": 10,
-                "previous": {
-                    "id": 0,
-                    "x": 1305,
-                    "y": 1286,
-                    "w": 25,
-                    "h": 25,
-                    "shape": "Circle",
-                    "fillColor": "LightGreen",
-                    "v": "A",
-                    "marked": "Start",
-                    "visited": true
-                },
-                "culled": false
-            },
-            "n2": {
-                "id": 6,
-                "x": 1674,
-                "y": 1432,
-                "w": 25,
-                "h": 25,
-                "shape": "Circle",
-                "v": "G",
-                "visited": true,
-                "distance": 15,
-                "previous": {
-                    "id": 1,
-                    "x": 1666,
-                    "y": 1292,
-                    "w": 25,
-                    "h": 25,
-                    "shape": "Circle",
-                    "v": "B",
-                    "visited": true,
-                    "distance": 10,
-                    "previous": {
-                        "id": 0,
-                        "x": 1305,
-                        "y": 1286,
-                        "w": 25,
-                        "h": 25,
-                        "shape": "Circle",
-                        "fillColor": "LightGreen",
-                        "v": "A",
-                        "marked": "Start",
-                        "visited": true
-                    }
-                },
-                "culled": false
-            },
-            "v": 5,
-            "directed": false,
-            "strokeColor": "LightGray"
-        }],
-        "directed": true
-    },
-    "from": {
-        "id": 0,
-        "x": 1305,
-        "y": 1286,
-        "w": 25,
-        "h": 25,
-        "shape": "Circle",
-        "fillColor": "LightGreen",
-        "v": "A",
-        "marked": "Start",
-        "visited": true
-    },
-    "to": {
-        "id": 3,
-        "x": 1674,
-        "y": 1652,
-        "w": 25,
-        "h": 25,
-        "shape": "Circle",
-        "fillColor": "LightCoral",
-        "v": "D",
-        "marked": "End",
-        "visited": false,
-        "distance": 25,
-        "previous": {
-            "id": 4,
-            "x": 1492,
-            "y": 1478,
-            "w": 25,
-            "h": 25,
-            "shape": "Circle",
-            "v": "E",
-            "visited": true,
-            "distance": 22,
-            "previous": {
-                "id": 6,
-                "x": 1674,
-                "y": 1432,
-                "w": 25,
-                "h": 25,
-                "shape": "Circle",
-                "v": "G",
-                "visited": true,
-                "distance": 15,
-                "previous": {
-                    "id": 1,
-                    "x": 1666,
-                    "y": 1292,
-                    "w": 25,
-                    "h": 25,
-                    "shape": "Circle",
-                    "v": "B",
-                    "visited": true,
-                    "distance": 10,
-                    "previous": {
-                        "id": 0,
-                        "x": 1305,
-                        "y": 1286,
-                        "w": 25,
-                        "h": 25,
-                        "shape": "Circle",
-                        "fillColor": "LightGreen",
-                        "v": "A",
-                        "marked": "Start",
-                        "visited": true
-                    }
-                }
-            }
-        }
-    }
-};
-
 </script>
 
 <style scoped>
@@ -1450,6 +517,7 @@ const dijkstraObject = {
 	text-align: center;
 }
 .shellsortCol {
+	width: 130px;
 	text-align: center;
 }
 .shellsortColKValue {
