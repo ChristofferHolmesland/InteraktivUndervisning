@@ -586,7 +586,12 @@ export default class Python {
 		*/
 		let uniqueToGraphDrawerId = [];
 
-		let generateAndLinkObjects = (parentNode, obj, direction, parsedParentObject) => {
+		let generateAndLinkObjects = (
+			parentNode,
+			obj,
+			direction,
+			parsedParentObject
+		) => {
 			let info;
 			let newObjectCreated = true;
 
@@ -595,13 +600,13 @@ export default class Python {
 			// before the GraphDrawer can understand them.
 			if (!obj.hasOwnProperty("_uniqueId")) {
 				console.error(
-					"The python code you are trying to render, " + 
+					"The python code you are trying to render, " +
 					"was parsed by an older version which didn't support the GraphDrawer. " +
 					"Please parse the code again using the newest version."
 				);
 				return;
 			}
-			
+
 			let ui = obj._uniqueId;
 			for (let i = 0; i < uniqueToGraphDrawerId.length; i++) {
 				let mapping = uniqueToGraphDrawerId[i];
@@ -621,7 +626,7 @@ export default class Python {
 				let myX = undefined;
 				if (parsedParentObject !== undefined) {
 					let myUi = obj._uniqueId;
-					let childrenCount = parsedParentObject.data.length
+					let childrenCount = parsedParentObject.data.length;
 					let myIndex = -1;
 					for (let i = 0; i < childrenCount; i++) {
 						let c = parsedParentObject.data[i];
@@ -633,12 +638,13 @@ export default class Python {
 
 					let assumedSize = this.gd.R * 2;
 					let padding = this.gd.R;
-					let totalChildWidth = childrenCount * (assumedSize + padding);
-					let startX = parentNode.x + parentNode.w / 2 - (totalChildWidth / 2);
-				
+					let totalChildWidth =
+						childrenCount * (assumedSize + padding);
+					let startX =
+						parentNode.x + parentNode.w / 2 - totalChildWidth / 2;
+
 					myX = startX + myIndex * (assumedSize + padding);
 				}
-
 
 				info = this.addObject({
 					objectType: obj.type,
@@ -652,7 +658,7 @@ export default class Python {
 				// isn't correctly set before it has been rendered once.
 				// But it is close enough.
 				if (myX == undefined) info.node.x -= info.node.w / 2;
-				
+
 				uniqueToGraphDrawerId.push({
 					ui: ui,
 					id: info.node.id
@@ -672,20 +678,24 @@ export default class Python {
 			} else if (direction == TO_PARENT) {
 				// If the direction of the link is towards the parent,
 				// the parent must be an object.
-
 				// Find position of obj in data array
 				let dataIndex = -1;
 				let data = parsedParentObject.data;
 				for (let i = 0; i < data.length; i++) {
-					if (data[i].type == obj.type && data[i].data == obj.data) {
+					if (
+						data[i]._uniqueId === obj._uniqueId &&
+						data[i].type === obj.type &&
+						data[i].data === obj.data
+					) {
 						dataIndex = i;
 						break;
 					}
 				}
-				
+
 				// Find variable name
 				let variableName = "";
 				let possibleNames = this.getProps(parsedParentObject.objects);
+
 				for (let i = 0; i < possibleNames.length; i++) {
 					let name = possibleNames[i];
 					if (parsedParentObject.objects[name] == dataIndex) {
@@ -718,7 +728,12 @@ export default class Python {
 				for (let i = 0; i < subObjectNames.length; i++) {
 					let subObjectIndex = obj.objects[subObjectNames[i]];
 					let subObject = obj.data[subObjectIndex];
-					generateAndLinkObjects(info.node, subObject, TO_PARENT, obj);
+					generateAndLinkObjects(
+						info.node,
+						subObject,
+						TO_PARENT,
+						obj
+					);
 				}
 			}
 		};
@@ -728,8 +743,8 @@ export default class Python {
 			let node = this.gd.getNode(variable.id);
 
 			generateAndLinkObjects(
-				node, 
-				step.data[step.objects[variable.name]], 
+				node,
+				step.data[step.objects[variable.name]],
 				TO_CHILD
 			);
 		}
