@@ -343,6 +343,11 @@
                 "Når Move kommandoen er valgt, kan du flytte rundt på en node og ved å trykke på noden og holde inne noden mens du flytte rundt på tegningen. Ved slippe noden vil noden bli plassert der du slapp den.",
                 "Når Join kommandoen er valgt, kan du lage linjer mellom noder ved å trykke på en node og holde inne til du kommer til en annen node og tilslutt slippe taket for å lage linjen.",
                 "Når Edit kommandoen er valgt, vil en alert boks dukke opp ved å trykke på en av nodene. Hvis du fyller inn en verdi i input boksen og trykker på ok-knappen så vil den valgte noden få verdien du skrev inn."
+            ],
+            "Dijkstra": [
+                "Dette er en guide for hvordan du kan løse oppgaver om Dijkstra algoritmen:",
+                "Du skal vise hvordan algoritmen finner stien mellom start (grønn) noden og slutt (rød) noden.",
+                "Dette gjør du ved å trykke ned en museknapp over en node, hold nede knappen mens du beveger pekeren over en annen node, for å så slippe knappen. Da viser du at du mener at på dette tidspunktet så vil algoritmen sjekke kanten mellom disse to nodene."
             ]
         },
         "settings": {

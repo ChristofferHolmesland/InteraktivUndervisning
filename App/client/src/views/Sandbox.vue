@@ -398,7 +398,7 @@ export default {
 			try {
 				return this.getLocale.guide[this.questionType];
 			} catch (err) {
-				return [];
+				return []; 
 			}
 		},
 		getSettingObject: function() {
