@@ -21,9 +21,13 @@ const del = {
 	},
 	userHasSession: function(db, feideId) {
 		let statement = `DELETE
-						FROM UserHasSession AS UHS
-						INNER JOIN User AS U ON U.id = UHS.userId
-						WHERE U.feideId = ${feideId}`;
+						FROM UserHasSession
+						WHERE userID in (
+							SELECT UHS.userId
+							FROM UserHasSession AS UHS
+							INNER JOIN User AS U ON U.id = UHS.userId
+							WHERE U.feideId = ${feideId}
+						);`;
 		return createPromise(db, statement, "userHasSession");
 	},
 	userRightsFromFeideId: function(db, feideId) {
