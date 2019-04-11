@@ -178,7 +178,12 @@ export default {
 			// TODO: Write the function
 		},
 		addNewAdmin: function() {
-			if (this.newAdminFeideId == "") return;
+			let length = this.newAdminFeideId.length;
+			if 
+			(
+				(length !== 6 && length !== 7 ) ||
+				!Number.isInteger(Number(this.newAdminFeideId))
+			) return;
 
 			this.$socket.emit("setUserRightsLevel", {
 				feideId: this.newAdminFeideId,
@@ -189,6 +194,12 @@ export default {
 			this.newAdminFeideId = "";
 		},
 		addNewAssistant: function() {
+			let length = this.newAssistantFeideId.length;
+			if 
+			(
+				(length !== 6 && length !== 7 ) ||
+				!Number.isInteger(Number(this.newAssistantFeideId))
+			) return;
 			if (this.newAssistantFeideId == "") return;
 
 			this.$socket.emit("setUserRightsLevel", {
