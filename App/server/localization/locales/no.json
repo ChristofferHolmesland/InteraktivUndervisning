@@ -76,7 +76,8 @@
         "copySelectedBtn": "Kopier markerte",
         "deleteSelectedBtn": "Slett markerte",
         "closeBtn": "Lukk",
-        "noQuestionsSelectedError": "Ingen spørsmål er markert!"
+        "noQuestionsSelectedError": "Ingen spørsmål er markert!",
+        "NoCode": "Du må skrive kode for å lage et Python spørsmål."
     },
     "AdminSessions": {
         "newSession": "Ny økt",

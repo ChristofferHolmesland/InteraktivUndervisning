@@ -76,14 +76,8 @@
         "copySelectedBtn": "Copy selected",
         "deleteSelectedBtn": "Delete selected",
         "closeBtn": "Close",
-        "noQuestionsSelectedError": "No questions are selected!"
-    },
-    "AdminSessions": {
-        "newSession": "New session",
-        "newSessionTitle": "Title",
-        "selectCourse": "Select course",
-        "selectQuestions": "Add question",
-        "selectedQuestions": "Questions in session"
+        "noQuestionsSelectedError": "No questions are selected!",
+        "NoCode": "You need to write Python code to create the question."
     },
     "AdminDashboard": {
         "courseAdministrator": "Course administrators",
