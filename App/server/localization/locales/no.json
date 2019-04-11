@@ -381,5 +381,28 @@
             }
         },
         "textInputPlaceholder": "Test out the input field here"
+    },
+    "AdminQuestionResultScreen": {
+        "leaveSessionBodyAdmin": "Du prøver nå å avslutte økten før den er ferdig. Alle svarene til studentene er lagret frem til nå. Ønsker du fremdeles å avslutte økten?",
+        "endSessionBtn": "Avslutt økten",
+        "nextBtn": "Neste spørsmål",
+        "userStatHeadline": "Bruker statistikk",
+        "users": "Brukere:",
+        "correctAnswers": "Riktige svar:",
+        "didntKnow": "Vet ikke:",
+        "wrong": "Feil svar:"
+    },
+    "AdminWaitingRoom": {
+        "code": "Kode:",
+        "usersConnected": "Antall brukere som er koblet til:",
+        "waitingtext": "Venter på at brukere skal koble seg til",
+        "start": "Start"
+    },
+    "AdminSessionOver": {
+        "header": "Økten er nå over!",
+        "goBackBtn": "Gå tilbake til skrivebordet"
+    },
+    "AdminSessionOverview": {
+        "startBtn": "Start"
     }
 }

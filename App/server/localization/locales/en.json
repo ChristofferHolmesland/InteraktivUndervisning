@@ -374,5 +374,28 @@
             }
         },
         "textInputPlaceholder": "Test out the input field here"
+    },
+    "AdminQuestionResultScreen": {
+        "leaveSessionBodyAdmin": "You are now trying to end the seasion early. All the students answers have been saved up until now. Do you still want to end the season?",
+        "endSessionBtn": "End session",
+        "nextBtn": "Next question",
+        "userStatHeadline": "User stats",
+        "users": "Users:",
+        "correctAnswers": "Correct answers:",
+        "didntKnow": "Didn't know:",
+        "wrong": "Wrong answers:"
+    },
+    "AdminWaitingRoom": {
+        "code": "Code:",
+        "usersConnected": "Number of users connected:",
+        "waitingtext": "Waiting for users to connect",
+        "start": "Start"
+    },
+    "AdminSessionOver": {
+        "header": "Session is now over!",
+        "goBackBtn": "Go back to admin dashboard"
+    },
+    "AdminSessionOverview": {
+        "startBtn": "Start"
     }
 }

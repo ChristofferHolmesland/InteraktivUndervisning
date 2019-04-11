@@ -173,8 +173,6 @@ module.exports.admin = function(socket, db, user, sessions) {
 		});
 	});
 
-	// Course is an object with course code and course semester
-	// e.g: {code: "DAT200", semester: "18H"}
 	socket.on("sessionOverviewRequest", function(courseId) {
 		if (courseId === undefined || courseId === "") return;
 		dbFunctions.get.allSessionWithinCourseForSessionOverview(db, courseId).then((sessionList) => {
@@ -679,6 +677,14 @@ module.exports.admin = function(socket, db, user, sessions) {
 	socket.on("adminLeaveSession", function(sessionCode) {
 		
 		// TODO add logic for session to be ended when admin leaves session before it is finished
+	});
+
+	socket.on("adminEndSession", function() {
+		let session = currentSession.session;
+		socket.to(session.sessionCode).emit("answerResponse", "sessionFinished");
+		socket.emit("adminEndSessionResponse");
+
+		sessions.delete(session.sessionCode);
 	});
 
 	socket.on("semestersRequest", async function() {
