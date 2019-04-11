@@ -39,7 +39,8 @@
 									style="cursor: pointer; min-width: 100px; min-height: 100px;"
 									v-on:click="changeAnswer($event)"
 									:id="index"
-									no-body>
+									no-body
+									:class="selectedAnswer == index ? 'selected' : ''">
 								Incorrect answer {{index}}
 							</b-card>
 						</li>
@@ -83,3 +84,9 @@ export default {
 	}
 };
 </script>
+
+<style scoped>
+.selected {
+	background-color: grey;
+}
+</style>

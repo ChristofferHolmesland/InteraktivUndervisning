@@ -1,5 +1,5 @@
 <template>
-<b-container class="jumbotron card">
+<b-container id="SandBox" class="jumbotron card">
 	<b-row class="center margin">
 		<b-col cols="12">
 			<h1>Go to sandbox</h1>

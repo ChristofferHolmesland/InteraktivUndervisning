@@ -58,12 +58,13 @@ module.exports.admin = function(socket, db, user, sessions) {
 
 	socket.on("addNewSession", function(session) {
 		let courseId = session.course;
-		dbFunctions.insert.session(db, session.title, courseId).then(function (id) {
+		dbFunctions.insert.session(db, session.title, courseId).then(async function (id) {
 			for (let i = 0; i < session.questions.length; i++) {
-				dbFunctions.insert.addQuestionToSession(db, id, session.questions[i].id);
+				await dbFunctions.insert.addQuestionToSession(db, id, session.questions[i].id).catch(err => console.error(err));
+				await dbFunctions.update.questionStatusToActive(db, session.questions[i].id).catch(err => console.error(err));
 			}
 			socket.emit("addNewSessionDone");
-		});
+		}).catch(err => console.error(err));
 	});
 
 	socket.on("getQuestionsInCourse", function(courseId) {
@@ -406,13 +407,15 @@ module.exports.admin = function(socket, db, user, sessions) {
 
 	socket.on("addQuestionToSession", function(data) {
 		dbFunctions.insert.addQuestionToSession(db, data.sessionId, data.questionId);
+		dbFunctions.update.questionStatusToActive(db, data.questionId);
 	});
 
 	socket.on("getAllQuestionsWithinCourse", function(courseId) {
-		if (courseId === undefined || courseId === "") {
+		if (courseId === undefined || courseId === "" || courseId === null) {
 			socket.emit("courseMissing");
 			return;
 		}
+		
 		dbFunctions.get.allQuestionsWithinCourse(db, courseId).then(questions => {
 			let result = [];
 			for (let i = 0; i < questions.length; i++) {
@@ -464,12 +467,13 @@ module.exports.admin = function(socket, db, user, sessions) {
 					question.objects.files[i].filePath = filePaths[i];
 					delete question.objects.files[i].buffer;
 					
-					await fs.open(path.join(__dirname, filePaths[i]), "w", function(error, fd) {
+					await fs.open(path.join(__dirname, filePaths[i]), "a", function(error, fd) {
 						if (error) {
 							console.error("Error writing image: \n\n" + err);
 							return;
 						}
 						fs.writeSync(fd, files[i].buffer, null, "base64");
+						fs.closeSync(fd);
 					});
 				}
 				
@@ -519,6 +523,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 							return;
 						}
 						fs.writeSync(fd, files[i].buffer, null, "base64");
+						fs.closeSync(fd);
 					});
 				}
 			} 
@@ -638,11 +643,12 @@ module.exports.admin = function(socket, db, user, sessions) {
 		}
 	*/
 	socket.on("setUserRightsLevel", function(data) {
+		if (data.feideId == user.feide.idNumber && data.level === -1) return;
 		dbFunctions.get.userRightsByFeideId(db, {
 			feideId: data.feideId,
 			courseId: data.courseId
-		}).then((user) => {
-			if (user == undefined) {
+		}).then((dbUser) => {
+			if (dbUser == undefined) {
 				dbFunctions.insert.userRightsLevelByFeideId(db, {
 					feideId: data.feideId,
 					courseId: data.courseId,
@@ -659,6 +665,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 					socket.emit("setUserRightsLevelDone");
 				});
 			} else if (data.level == -1) {
+				if (data.feideId == user.feide.idNumber) return;
 				dbFunctions.del.userRights(db, {
 					feideId: data.feideId,
 					courseId: data.courseId
@@ -864,5 +871,33 @@ module.exports.admin = function(socket, db, user, sessions) {
 		}
 
 		socket.emit("copyQuestionToCourseResponse");
+	});
+
+	socket.on("deleteQuestionsRequest", async function(questionList) {
+		if (
+			questionList === undefined ||
+			!Array.isArray(questionList) ||
+			questionList.length === 0
+		) {
+			socket.emit("deleteQuestionToCourseError", "dataError")
+			return; 
+		}
+
+		let questions = await dbFunctions.get.questionsByQuestionId(db, questionList);
+		for(let i = 0; i < questions.length; i++) {
+			let question = questions[i];
+			if (question.status === 0) {
+				await dbFunctions.del.questionById(db, question.id).catch(err => console.error(err));
+				
+				let filePath = path.join("../../images/questionImages/", question.id.toString(), "/");
+				let completeFilePath = path.join(__dirname, filePath, "**");
+				try {
+					del.sync(completeFilePath);
+				} catch (error) {
+					console.error(error);
+				}
+			}
+		}
+		socket.emit("deleteQuestionToCourseResponse");
 	});
 }

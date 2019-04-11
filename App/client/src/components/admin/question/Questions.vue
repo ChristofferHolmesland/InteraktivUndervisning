@@ -49,9 +49,10 @@
 			</b-col>
 			<b-col></b-col>
 			<b-col style="text-align: center;">
-				<b-button variant="danger">
+				<b-button @click="openDeleteQuestion" variant="danger">
 					{{ getLocale.deleteSelectedBtn }}
 				</b-button>
+				<DeleteQuestions ref="deleteQuestionModal" :selectedQuestions="getSelectedQuestions"/>
 			</b-col>
 			<b-col></b-col>
 		</b-row>
@@ -97,7 +98,7 @@
 					<b-list-group-item class="border-0" v-show="showNoQuestions">
 						{{ getLocale.emptyQuestionList }}
 					</b-list-group-item>
-                </b-list-group>
+								</b-list-group>
 			</b-col>
 			<b-col cols="0" lg="1"></b-col>
 		</b-row>
@@ -110,6 +111,7 @@
 	import AddQuestionToSession from "./AddQuestionToSession.vue";
 	import SelectCourse from "../SelectCourse.vue";
 	import CopyQuestions from "./CopyQuestions.vue";
+	import DeleteQuestions from "./DeleteQuestions.vue";
 
 	export default {
 		name: 'Questions',
@@ -134,7 +136,8 @@
 			ShowQuestion,
 			AddQuestionToSession,
 			SelectCourse,
-			CopyQuestions
+			CopyQuestions,
+			DeleteQuestions
 		},
 		mounted() {
 			this.$socket.emit(
@@ -168,8 +171,8 @@
 			},
 			getLocale: function() {
 				let locale = this.$store.getters.getLocale("AdminQuestions");
-                if(locale) return locale;
-			    else return {};
+								if(locale) return locale;
+					else return {};
 			},
 			getSelectedQuestions: function() {
 				let list = [];
@@ -217,21 +220,21 @@
 						question.solutionType = question.type;
 						question.objects = question.object;
 
-            this.$nextTick(function() {
-              this.$refs.showQuestionModal._data.question = JSON.parse(JSON.stringify(question));
+						this.$nextTick(function() {
+							this.$refs.showQuestionModal._data.question = JSON.parse(JSON.stringify(question));
 							// Set the solution type to 0 to destroy all the GraphDrawer components.
-              this.$refs.showQuestionModal._data.question.solutionType = 0;
-              // Wait for the page to render.
-              this.$nextTick(function() {
-                // Set the correct solution type.
-                this.$refs.showQuestionModal._data.question.solutionType = question.solutionType;
-                // Wait for the page to render.
-                this.$nextTick(function() {
+							this.$refs.showQuestionModal._data.question.solutionType = 0;
+							// Wait for the page to render.
+							this.$nextTick(function() {
+								// Set the correct solution type.
+								this.$refs.showQuestionModal._data.question.solutionType = question.solutionType;
+								// Wait for the page to render.
+								this.$nextTick(function() {
 									// Finally show modal.
-                  this.$refs.showQuestionModal.$refs.innerModalShow.show();
-                });
-              });
-            });
+									this.$refs.showQuestionModal.$refs.innerModalShow.show();
+								});
+							});
+						});
 						break;
 				}
 			},
@@ -273,10 +276,12 @@
 				this.$socket.emit("questionInfoByIdRequest", item.id);
 			},
 			showAddQuestionToSessionModal: function(item) {
-				this.okHandler = "add";
-				this.$refs.addQuestionToSessionModal.$refs.innerModalAddToSession.show();
-				this.$refs.addQuestionToSessionModal._data.question.id = item.id;
-				this.$refs.addQuestionToSessionModal._data.question.text = item.text;
+				this.renderAddQuestionToSession = true;
+				this.$nextTick(function() {
+					this.$refs.addQuestionToSessionModal.$refs.innerModalAddToSession.show();
+					this.$refs.addQuestionToSessionModal._data.question.id = item.id;
+					this.$refs.addQuestionToSessionModal._data.question.text = item.text;
+				});
 			},
 			selectChange: function() {
 				this.selectedQuestions = [];
@@ -285,6 +290,14 @@
 			openCopyQuestion: function() {
 				if (this.selectedQuestions.length > 0) {
 					this.$refs.copyQuestionModal.$refs.copyQuestionInnerModal.show();
+				} else {
+					this.errorText = "noQuestionsSelectedError";
+					this.showError = true;
+				}
+			},
+			openDeleteQuestion: function() {
+				if (this.selectedQuestions.length > 0) {
+					this.$refs.deleteQuestionModal.$refs.deleteQuestionInnerModal.show();
 				} else {
 					this.errorText = "noQuestionsSelectedError";
 					this.showError = true;
