@@ -201,9 +201,9 @@
             <div v-show="showSolution">
                 <b-form-group 	id="textSolution"
                                 :label="getLocale.newQuestionSolution"
-                                label-for="solutionInput"
+                                label-for="solutionInputText"
                                 v-if="newQuestion.solutionType === 1">
-                    <b-form-input 	id="solutionInput"
+                    <b-form-input 	id="solutionInputText"
                                     type="text"
                                     v-model="newQuestion.solution">
                     </b-form-input>

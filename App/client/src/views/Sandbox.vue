@@ -101,11 +101,34 @@
 					<div v-if="questionType === 'Tree'">
 						<GraphDrawer
 								controlType="Graph0"
-								operating-mode="Interactive"
+								operatingMode="Interactive"
 								:requestAnswer="requestGraphDrawerObject"
 								ref="graphdrawer"
 								v-if="!reload"
-
+						/>
+					</div>
+					<div v-if="questionType === 'Dijkstra'">
+						<GraphDrawer
+							controlType="Dijkstra"
+							operatingMode="Interactive"
+							:requestAnswer="requestGraphDrawerObject"
+							ref="graphdrawer"
+							v-if="!reload"
+							:graph="dijkstraQuestion"
+							:displayEdgeValues="true"
+							:directedEdges="true"
+						/>
+					</div>
+					<div v-if="questionType === 'Python'">
+						<GraphDrawer
+							controlType="Python"
+							operatingMode="Interactive"
+							:requestAnswer="requestGraphDrawerObject"
+							ref="graphdrawer"
+							v-if="!reload"
+							:displayEdgeValues="false"
+							:directedEdges="true"
+							:steps="pythonSteps"
 						/>
 					</div>
 				</b-col>
@@ -160,6 +183,20 @@
 								</b-col>
 							</b-row>
 						</b-container>
+						<b-container class="jumbotron" v-if="questionType === 'Python'">
+							<b-row>
+								<b-col>
+										<b-button variant="primary" @click="parsePythonCode">Parse</b-button>
+										<b-form-textarea 	
+											id="pythonCodeInput"
+											placeholder="Write Python code here..."
+											ref="codeInput"
+											v-model="pythonCode"
+											@keydown.native.tab="keyDownInTextarea">
+                    					</b-form-textarea>
+								</b-col>
+							</b-row>
+						</b-container>
 					</div>
 				</b-col>
 			</b-row>
@@ -191,7 +228,9 @@
 </template>
 
 <script>
-import GraphDrawer from "../components/graphDrawer/GraphDrawer.vue"
+import GraphDrawer from "../components/graphDrawer/GraphDrawer.vue";
+import DijkstraQuestionObject from "../assets/sandbox/dijkstraQuestion.js";
+import PythonQuestionObject from "../assets/sandbox/pythonQuestion.js";
 
 export default {
 	name: "Sandbox",
@@ -247,9 +286,50 @@ export default {
             	type: "Initial"
         	}],
 			quicksortString: "4,80,54,23,1,5,7,3,245,43",
+			dijkstraQuestion: DijkstraQuestionObject,
+			pythonCode: PythonQuestionObject,
+			pythonSteps: []
 		};
 	},
+	sockets: {
+		"parsePythonCodeResponse": function(parsed) {
+			this.pythonSteps = parsed.objects.steps;
+			this.$nextTick(() => {
+				this.reload = true;
+				this.$nextTick(() => {
+					this.reload = false;
+					
+				});
+			});
+		}
+	},
 	methods: {
+		parsePythonCode() {
+			let code = this.$refs.codeInput.$refs.input.value;
+			console.log("Sending emit");
+			this.$socket.emit("parsePythonCodeRequest", { code: code });
+		},
+		keyDownInTextarea(e) {
+			// Only accept the Tab key
+			if (e.key !== "Tab" && e.which !== "9") return;
+
+			// Prevent shifting focus from the element
+			e.preventDefault();
+			
+			let codeInput = this.$refs.codeInput.$refs.input;
+
+			// Add 4 spaces
+			let tabSize = 4;
+			let tabPosition = codeInput.selectionStart;
+			let textWithSpaces = codeInput.value.substring(0, tabPosition);
+			for (let i = 0; i < tabSize; i++) textWithSpaces += " ";
+			textWithSpaces += codeInput.value.substring(tabPosition);
+
+			codeInput.value = textWithSpaces;
+			// Move cursor to the right position
+			codeInput.selectionStart = tabPosition + tabSize;
+			codeInput.selectionEnd = tabPosition + tabSize;
+		},
 		returnToClientDashboard: function() {
 			this.$router.push("/client");
 		},
@@ -348,6 +428,7 @@ export default {
 				case "Text":
 				case "Multiple choice":
 				case "Tree":
+				case "Dijkstra":
 					this.showGuide = true;
 					return false;
 					break;
@@ -382,7 +463,7 @@ export default {
 			try {
 				return this.getLocale.guide[this.questionType];
 			} catch (err) {
-				return [];
+				return []; 
 			}
 		},
 		getSettingObject: function() {
@@ -410,6 +491,7 @@ export default {
 		GraphDrawer
 	}
 };
+
 </script>
 
 <style scoped>
@@ -435,6 +517,7 @@ export default {
 	text-align: center;
 }
 .shellsortCol {
+	width: 130px;
 	text-align: center;
 }
 .shellsortColKValue {

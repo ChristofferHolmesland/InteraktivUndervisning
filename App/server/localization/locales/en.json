@@ -90,14 +90,8 @@
             "AVLTree": "AVLTree",
             "Dijkstra": "Dijkstra",
             "Python": "Python"
-        }
-    },
-    "AdminSessions": {
-        "newSession": "New session",
-        "newSessionTitle": "Title",
-        "selectCourse": "Select course",
-        "selectQuestions": "Add question",
-        "selectedQuestions": "Questions in session"
+        },
+        "NoCode": "You need to write Python code to create the question."
     },
     "AdminDashboard": {
         "courseAdministrator": "Course administrators",
@@ -356,6 +350,11 @@
                 "While using the Move command, you can drag nodes around by clicking on a node and while not releasing you can move the node around the canvas. Releasing the node will place the node in its current position.",
                 "While using the Join command, you can create a line between two nodes. You do this by clicking on an existing node and then hover over to another node. Once you release your finger or mouse, a new line should appear between the two nodes.",
                 "While using the Edit command, clicking on any of the nodes will trigger an alert window to appear. In this alert window you can assign a value to the chosen node using the input field. Click on the OK button and the chosen node will be set to the value that was inputted in the alert window."
+            ],
+            "Dijkstra": [
+                "This is the guide for using the GraphDrawer on questions about the Dijkstra algorithm:",
+                "You need to show how the algorithm finds the path from the start (green) node to the end (red) node.",
+                "You do this by clicking on a node, keep the mouse button pressed down, move the cursor over the other node and release the button. This signals that you think at this point in time, the algorithm is looking at the edge between these nodes."
             ]
         },
         "settings": {

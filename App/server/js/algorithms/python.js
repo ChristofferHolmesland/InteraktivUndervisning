@@ -1,5 +1,12 @@
 module.exports = function(code) {
-	let steps = parse(code);
+	let steps = [];
+	try {
+		steps = parse(code);
+	} catch (todo) {
+		/* Todo */
+		//console.error(todo);
+	}
+
 	let currentStep = 0;
 	
 	return {
