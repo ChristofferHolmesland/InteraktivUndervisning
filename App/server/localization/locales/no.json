@@ -308,64 +308,68 @@
     "Sandbox": {
         "guide": {
             "Text": [
-                "This is the guide for a text question:",
-                "When doing a text question you will be shown a text input field, like the one shown here.",
-                "All you have to do is write the correct answer into this field and click the \"Answer\" button",
-                "When checking the against the solution it will not be case sensitive, but all letters or words need to be present."
+                "Dette er en guide for et tekst spørsmål:",
+                "Når du skal gjøre et tekst spørsmål så vil du bli gitt et inntastingsfelt slik som vist her.",
+                "Det du trenger å gjøre er bare å skrive inn det riktige svaret i inntastingsfeltet og trykke på \"Svar\" knappen.",
+                "Forskjeller mellom store og små bokstaver vil bli ignorert når svaret sjekkes mot fasiten, men alle bokstavene og ordene må stemme rett med fasiten."
             ],
             "Multiple choice": [
-                "This is the guide for a multiple choice question:",
-                "When doing a multiple choice question you will be shown a box for each choice available.",
-                "You will be able to select more then one answer. Click on the boxes that you would like to send as the correct answer.",
-                "A marker in the uper left corner will show which box you have selected for the answer.",
-                "When you would like to submit you answer, just click the \"Answer\" button.",
-                "When the answer is checked against the solution only answers with the exact number of boxes selected and the same boxes selected will get a correct answer."
+                "Dette er en guide for et flervalgs spørsmål:",
+                "Når du skal gjøre et flervalgs spørsmål som vil du bli gitt en boks for vært av de mulige svar alternativene.",
+                "Du har muligheten til å velge mer enn et svar. Du trenger bare å trykke på de boksene som du mener inneholder det riktige svaret.",
+                "Etter at du har klikket på av alternativene du mener stemmer, så vil boksen til alternativet få en markør på toppen av venstre hjørne.",
+                "Når du er klar til å sende svaret ditt, så trykker du på \"Svar\" knappen.",
+                "Bare angitte svar som har klart å velge alle de riktige alternativene i oppgaven vil bli regnet som riktige."
             ],
             "Shellsort": [
-                "This is the guide for a shellsort question:",
-                "When doing a shellsort question you will be show an array of a unsorted list and a k value.",
-                "You job is to show each round of sorting. When adding a new row, you will have to add the k value for that round of sort and the sorted list for that k value.",
-                "When adding a new row, it will copy the row from above and exclude the k value which you need to input.",
-                "To sort a row you will have to click on an element, it will now be marked. If you click on another element on the same round, these two elements will swap places.",
-                "The solution checker will check that each round of sorting have the correct k value and correct \"sorted list\" for that round."
-            ],
-            "Quicksort": [
-                "This is the guide for a quicksort question:",
-                "When doing a quicksort question you will be shown the drawer where the initial unsorted list will be shown.",
-                "Clicking on a single element or clicking and dragging over multiple elements will select and display possible actions.",
-                "The main task is to show how the quicksort algorithm works its way through an unsorted list.",
-                "The way the pivot point should be selected is the meadian element of the first, last and middle element.",
-                "When a pivot point has been selected it will be marked so it's easy to spot.",
-                "By pressing the delete button the selected elements will be deleted, and edit value will promt you to change the value for that element.",
-                "By pressing move you can now click somewhere in the canvas and the selected list will be moved to that location",
-                "Pressing extract will take the selected elements from a list and extract them to a sublist.",
-                "The order of how you extract a sublist does matter. The quicksort algorithm is set up to check the left side first."
+                "Dette er en guide for type Shellsort spørsmål:",
+                "Når du får en shellsort spørsmål så vil du bli gitt en usortert liste og en k verdi.",
+                "Din jobb er å vise resultat av den usorterte listen etter hver k sorteringen. Når du legger til en ny rad, så må de legge til k-verdien som skal brukes i tillegg til resultatet av den k-sorterte listen.",
+                "Når du legger til en ny rad, så vil den nye raden som dukker opp være en direkte kopi av den forrige raden, med unntakk av k-verdien som du selv må legge til.",
+                "For å sortere radene så må du klikke på 2 forskjellige elementer i samme rad, disse elementene vil da bytte plass. Når du har klikket på et element så vil det elementet bli uthevet.",
+                "Svaret du gir vil bli sjekt for at hver runde av sorteringen har fått riktig k verdi og korrekt sortert liste."
             ],
             "Mergesort": [
-                "This is the guide for a mergesort question:",
-                "When doing a mergesort question you will be shown the drawer where the initial unsorted list will be shown.",
-                "Clicking on a single element or clicking and dragging over multiple elements will select and display possible actions.",
-                "The main task is to show how the mergesort algorithm works its way through an unsorted list.",
-                "By pressing the delete button the selected elements will be deleted, and edit value will promt you to change the value for that element.",
-                "By pressing move you can now click somewhere in the canvas and the selected list will be moved to that location",
-                "Pressing extract will take the selected elements from a list and extract them to a sublist.",
-                "The order of how you extract a sublist does matter. The mergesort algorithm is set up to check the left side first."
+                "Dette er en guide for type  flettesortering spørsmål:",
+                "Når spørsmålet er et flettesortering spørsmålt så vil du starte med en usorterte liste som skal sorteres i den gitte graf tegneren.",
+                "Ved å trykke på en eller flere elementer i listen, så vil det dukke opp de forskjellige kommandoene som du kan bruke. Du velger flere elementer ved å trykke ned og deretter hovre over de elementene som ønsker å ta med.",
+                "I disse oppgavene skal du vise hvordan flettesortering algoritmen sorterer den gitte usorterte listen.",
+                "Ved å trykke på \"slette\" knappen så vil det valgte elementet bli slettet",
+                "Ved å trykke på \"endre\" knappen kan du endre verdier på elementet ved å trykke på de. Etter å trykt på et element, så vil det komme en prompt som lar deg skrive inn verdien som du ønsker å gi det valgte elementet.",
+                "Ved å trykke på \"flytt\" knappen kan du flytte rundt på elementer ved å først velge de, og deretter trykke på et annen sted i lerretet.",
+                "Ved å trykke på \"ekstrakt\" knappen så vil de valgte elementene i listen bli dratt ut av listen og lagt i en ny underliste.",
+                "Hvilken rekkefølge du velger å ekstrakte ut elementene har noe å si. Mergesort algorithmen er satt opp til å alltid sjekke venstre side først."
+            ],
+            "Quicksort": [
+                "Dette er en guide for quicksort type spørsmål:",
+                "Når spørsmålet er et quicksort spørsmålt så vil du starte med en usorterte liste som skal sorteres i den gitte graf tegneren.",
+                "Ved å trykke på en eller flere elementer i listen, så vil det dukke opp de forskjellige kommandoene som du kan bruke. Du velger flere elementer ved å trykke ned og deretter hovre over de elementene som ønsker å ta med.",
+                "I disse oppgavene skal du vise hvordan quicksort algoritmen sorterer den gitte usorterte listen.",
+                "Pivoten skal velges utifra medianen elementet av det første, mellomste og det siste elementet",
+                "Ved å trykke på \"Slett\" knappen så vil det valgte elementet bli slettet",
+                "Ved å trykke på \"Endre\" knappen kan du endre verdier på elementet ved å trykke på de. Etter å trykt på et element, så vil det komme en prompt som lar deg skrive inn verdien du ønsker å gi det valgte elementet.",
+                "Ved å trykke på \"Flytt\" knappen kan du flytte rundt på elementer ved å først velge de, og deretter trykke på et annen sted i lerretet.",
+                "Ved å trykke på \"Ekstrakt\" knappen så vil de valgte elementene i listen bli dratt ut av listen og lagt i en ny underliste.",
+                "Hvilken rekkefølge du velger å ekstrakte ut elementene har noe å si. Mergesort algorithmen er satt opp til å alltid sjekke venstre side først."
             ],
             "Tree": [
                 "Dette er en guide for tre relaterte spørsmål som bruker graphdrawer:",
                 "Normalt will et tre spørsmål bestå av en liste med noder og en add/remove action i oppgave beskrivelsen, i tilegg kan du få et eksisterende tre som skal brukes som base. Din jobb er å tegne hvordan treet skal se ut etter operasjonene har blitt gjort.",
                 "Her er det fokus på å la dere teste ut graftegneren, og la dere øve på å tegne forskjellige binaer tre.",
-                "Graf tegneren bruker 5 forskjellige kommandoer, disse kommandoene er: Add, Remove, Move, Join og Edit. Den valgte kommandoen vil fremhevet, som standard vil graftegneren bruke add kommandoen.",
-                "Når Add kommandoen er valgt, kan du lage nye noder ved å trykke innenfor tegneren. Etter å ha trykket vil en node med standard verdi 0 bli laget.",
-                "Når Remove kommandoen er valgt, kan du trykke på en node eller en linje for å fjerne den fra tegningen.",
-                "Når Move kommandoen er valgt, kan du flytte rundt på en node og ved å trykke på noden og holde inne noden mens du flytte rundt på tegningen. Ved slippe noden vil noden bli plassert der du slapp den.",
-                "Når Join kommandoen er valgt, kan du lage linjer mellom noder ved å trykke på en node og holde inne til du kommer til en annen node og tilslutt slippe taket for å lage linjen.",
-                "Når Edit kommandoen er valgt, vil en alert boks dukke opp ved å trykke på en av nodene. Hvis du fyller inn en verdi i input boksen og trykker på ok-knappen så vil den valgte noden få verdien du skrev inn."
+                "Graf tegneren bruker 5 forskjellige kommandoer, disse kommandoene er: Legg til, Slett, Flytt, Slå sammen og Endre. Den valgte kommandoen vil bli fremhevet, som standard vil graftegneren bruke add kommandoen.",
+                "Når \"Legg til\" kommandoen er valgt, kan du lage nye noder ved å trykke innenfor tegneren. Etter å ha trykket vil en node med standard verdi 0 bli laget.",
+                "Når \"Slett\" kommandoen er valgt, kan du trykke på en node eller en linje for å fjerne den fra tegningen.",
+                "Når \"Flytt\" kommandoen er valgt, kan du flytte rundt på en node og ved å trykke på noden og holde inne noden mens du flytte rundt på tegningen. Ved slippe noden vil noden bli plassert der du slapp den.",
+                "Når \"Slå sammen\" kommandoen er valgt, kan du lage linjer mellom noder ved å trykke på en node og holde inne til du kommer til en annen node og tilslutt slippe taket for å lage linjen.",
+                "Når \"Endre\" kommandoen er valgt, vil en alert boks dukke opp ved å trykke på en av nodene. Hvis du fyller inn en verdi i inntastningsfeltet og trykker på ok-knappen så vil den valgte noden få verdien du skrev inn."
             ],
             "Dijkstra": [
                 "Dette er en guide for hvordan du kan løse oppgaver om Dijkstra algoritmen:",
                 "Du skal vise hvordan algoritmen finner stien mellom start (grønn) noden og slutt (rød) noden.",
                 "Dette gjør du ved å trykke ned en museknapp over en node, hold nede knappen mens du beveger pekeren over en annen node, for å så slippe knappen. Da viser du at du mener at på dette tidspunktet så vil algoritmen sjekke kanten mellom disse to nodene."
+            ],
+            "Python": [
+
             ]
         },
         "settings": {
