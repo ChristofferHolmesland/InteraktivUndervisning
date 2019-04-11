@@ -50,8 +50,12 @@ const update = {
 	answerUserToAnonymous: function(db, feideId) {
 		let statement = `UPDATE Answer
 						SET userId = 1
-						INNER JOIN User AS U ON U.id = A.userId
-						WHERE U.feideId = ${feideId}`;
+						WHERE userId IN (
+							SELECT A.userId
+							From Answer AS A
+							INNER JOIN User AS U ON U.id = A.userId
+							WHERE U.feideId = ${feideId}
+						);`;
 		return createPromise(db, statement, "answerUserToAnonymous")
 	}
 };

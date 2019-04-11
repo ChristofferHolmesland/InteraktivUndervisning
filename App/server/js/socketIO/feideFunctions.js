@@ -25,6 +25,14 @@ module.exports.feide = function(socket, db, user){
 		).then(async function(sessions) {
 			result = {};
 			if (sessions !== undefined){
+
+				for (let i = 0; i < sessions.length; i++) {
+					let courseInfo = await dbFunctions.get.courseInfoById(db, sessions[i].id).catch(err => {
+						console.error(err)
+					});
+					sessions[i].course = courseInfo.code + " " + courseInfo.season + " " + courseInfo.year;
+				}
+
 				result.sessionList = sessions;
 				result.totalSessions = sessions.length;
 			} else {
@@ -214,33 +222,50 @@ module.exports.feide = function(socket, db, user){
 			socket.emit("deleteUserDataError", "dbError");
 			return;
 		});
+		if (err){
+			console.error(err)
+			return;
+		}
 
 		err = await dbFunctions.del.userHasSession(db, user.feide.idNumber).catch(err => {
 			console.error(err);
 			socket.emit("deleteUserDataError", "dbError");
 			return;
 		});
+		if (err){
+			console.error(err)
+			return;
+		}
 
 		err = await dbFunctions.del.userRightsFromFeideId(db, user.feide.idNumber).catch(err => {
 			console.error(err);
 			socket.emit("deleteUserDataError", "dbError");
 			return;
 		});
+		if (err){
+			console.error(err)
+			return;
+		}
 
 		err = await dbFunctions.del.feide(db, user.feide.idNumber).catch(err => {
 			console.error(err);
 			socket.emit("deleteUserDataError", "dbError");
 			return;
 		});
+		if (err){
+			console.error(err)
+			return;
+		}
 
 		err = await dbFunctions.del.userByFeideId(db, user.feide.idNumber).catch(err => {
 			console.error(err);
 			socket.emit("deleteUserDataError", "dbError");
 			return;
 		});
-
-		console.log(err);
-		return;
+		if (err){
+			console.error(err)
+			return;
+		}
 
 		socket.emit("deleteUserDataResponse");
 	});
