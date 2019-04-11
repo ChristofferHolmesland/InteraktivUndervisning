@@ -91,7 +91,8 @@
             "Dijkstra": "Dijkstra",
             "Python": "Python"
         },
-        "NoCode": "You need to write Python code to create the question."
+        "NoCode": "You need to write Python code to create the question.",
+        "binaryTreeSolutionText": "The answer would be correct if the drawn tree fulfilled the requirements of a binary tree and consisted of the following nodes:"
     },
     "AdminDashboard": {
         "courseAdministrator": "Course administrators",

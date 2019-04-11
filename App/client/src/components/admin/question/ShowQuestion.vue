@@ -10,7 +10,7 @@
                 :ok-title="getLocale.closeBtn"
                 >
         <b-container class="px-0">
-            <b-row @click="changeShowBasicInfo">
+            <b-row @click="changeShowBasicInfo" class="cursor">
                 <b-col cols="11">
                     <h4>{{ getLocale.basicInfo }}</h4>
                 </b-col>
@@ -28,7 +28,7 @@
             </b-row>
         </b-container>
         <b-container v-if="haveMedia" class="px-0">
-            <b-row @click="changeShowMedia">
+            <b-row @click="changeShowMedia" class="cursor">
                 <b-col cols="11">
                     <h4>Media:</h4>
                 </b-col>
@@ -67,7 +67,7 @@
             </b-row>
         </b-container>
         <b-container class="px-0">
-            <b-row @click="changeShowSolution">
+            <b-row @click="changeShowSolution" class="cursor">
                 <b-col cols="11">
                     <h4>{{ getLocale.solutionText }}</h4>
                 </b-col>
@@ -79,10 +79,23 @@
                 <b-col>
                     <h6>{{ getLocale.showQuestionType }} {{ getLocale.questionType[questionTypes[question.solutionType - 1].text] }}</h6>
                     <p v-if="question.solutionType === 1">{{question.solution}}</p>
-                    <b-container v-if="question.solutionType === 2">
-                        <p v-for="(choice, index) in question.objects.multipleChoices" :key="index">
-                            Choice {{ index }}: {{ choice }}
-                        </p>
+                    <b-container v-if="question.solutionType === 2" class="px-0">
+                        <b-row>
+                            <b-col>
+                                <h6>Choice:</h6> 
+                            </b-col>
+                            <b-col>
+                                <h6>Correct:</h6>
+                            </b-col>
+                        </b-row>
+                        <b-row v-for="(choice, index) in question.objects.multipleChoices" :key="index">
+                            <b-col>
+                                <p>{{ choice }}</p>
+                            </b-col>
+                            <b-col>
+                                <p>{{ question.solution.findIndex(sol => sol == index) > -1 ? 'yes' : 'no' }}</p>
+                            </b-col>
+                        </b-row>
                     </b-container>
                     <ShellsortSolution  v-if="question.solutionType === 3"
                                         :solution="question.solution"
@@ -101,6 +114,10 @@
                                     :steps="question.solution"
                                     operatingMode="Presentation"
                                     />
+                    <div v-if="question.solutionType === 6">
+                        {{getLocale.binaryTreeSolutionText}}
+                        {{question.solution.nodes}}
+                    </div>
                     <GraphDrawer    v-if="question.solutionType === 7 || question.solutionType === 8"
                                     ref="graphdrawer"
                                     controlType="Graph0"
@@ -187,8 +204,10 @@ export default {
             return `${min.padStart(2, "0")}:${sec.padStart(2, "0")}`;
         },
         haveMedia: function() {
+            if (this.question.objects.files === undefined) return false
             if (this.question.objects.files.length > 0) return true;
             // TODO add checks for graphs and table
+            return false;
         },
 		getImageSrc: function() {
 			return (index) => {
@@ -226,4 +245,7 @@ export default {
 </script>
 
 <style scoped>
+.cursor {
+    cursor: pointer;    
+}
 </style>

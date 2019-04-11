@@ -91,7 +91,8 @@
             "Dijkstra": "Dijkstra",
             "Python": "Python"
         },
-        "NoCode": "Du må skrive kode for å lage et Python spørsmål."
+        "NoCode": "Du må skrive kode for å lage et Python spørsmål.",
+        "binaryTreeSolutionText": "Det ville blitt regnet som riktig svar hvis treet som ble gitt følger alle reglene til et Binear Tree og treet besto av følgende noder:"
     },
     "AdminSessions": {
         "newSession": "Ny økt",
