@@ -1,0 +1,15 @@
+class Navn:
+    def __init__(self, fornavn, etternavn):
+        self.fornavn = fornavn
+        self.etternavn = etternavn
+
+class Person:
+    def __init__(self, navn, alder):
+        self.navn = navn
+        self.alder = alder
+
+a = 22
+n = Navn("F", "T")
+p = Person(n, a)
+
+a = 23
