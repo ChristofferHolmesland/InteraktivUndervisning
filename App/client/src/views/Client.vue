@@ -7,6 +7,9 @@
 		<b-col cols="12" lg="4">
 			<ShowSandbox/>
 		</b-col>
+		<b-col cols="12" lg="4">
+			<ViewLastSession/>
+		</b-col>
 	</b-row>
 </b-container>
 </template>
@@ -14,12 +17,14 @@
 <script>
 import JoinSession from "../components/client/JoinSession.vue";
 import ShowSandbox from "../components/client/ShowSandbox.vue";
+import ViewLastSession from "../components/client/ViewLastSession.vue";
 
 export default {
 	name: "client",
 	components: {
 		JoinSession,
-		ShowSandbox
+		ShowSandbox,
+		ViewLastSession
 	},
 	created() {
 		this.$socket.emit("verifyUserLevel", 1);
