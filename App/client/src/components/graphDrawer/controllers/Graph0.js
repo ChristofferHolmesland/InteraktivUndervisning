@@ -544,8 +544,10 @@ export default class Graph0 {
 
 			// If there are more than one tree, there should be
 			// buttons to navigate between them.
-			if (step.treeInfo.length > 1)
+			if (step.treeInfo.length > 1) {
 				this.addTreeSteppingButtons(step.treeInfo.length);
+				this.gd.stillDirty = true;
+			}
 			else this.steppingButtons = [];
 
 			let p = this.gd.camera.project(this.gd.canvas.width / 2, 0);
