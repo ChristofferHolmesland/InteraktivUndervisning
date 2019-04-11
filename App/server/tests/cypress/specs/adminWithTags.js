@@ -85,15 +85,15 @@ describe("Test admin content",function () {
 			//check modal information is correct and create a new question by typing information to the input fields and click on the ok button.
 			cy.get("#editQuestionModal___BV_modal_header_ > .modal-title").should("have.text", "Nytt spørsmål");
 			cy.get('[data-cy=basicInformation] > label').should("contain", "Grunnleggende Informasjon");	//is open by default, therefore no clicks are necessary
-
-			cy.get("#questionTitleInput").type(title);
-			cy.get("#questionTextInput").type(info);
-			cy.get("#questionTimeInput").type("01:30");
 			cy.get('[data-cy=solutionType] > label')
 				.should("contain", "Løsnings type")
 				.click();
+			cy.get("#questionTitleInput").type(title);
+			cy.get("#questionTextInput").type(info);
+			cy.get("#questionTimeInput").type("01:30");
 			cy.get("#solutionTypeInput").select("Text");
-			cy.get("#solutionInput").type(solution);
+			cy.wait(100);
+			cy.get("#solutionInputText").type(solution);
 			cy.get('#editQuestionModal___BV_modal_footer_ > .btn-primary').click();
 
 			//show current question information
@@ -125,7 +125,7 @@ describe("Test admin content",function () {
 				.clear()
 				.type(infoEdited);
 			cy.get("#questionTimeInput").type("00:00");
-			cy.get('#solutionInput')
+			cy.get('#solutionInputText')
 				.should("have.value", solution)
 				.clear()
 				.type(solutionEdited);
@@ -356,7 +356,7 @@ describe("Test admin content",function () {
 			cy.get('[data-cy=solutionType] > label')
 				.should("contain", "Løsnings type")
 				.click();
-			cy.get("#solutionTypeInput").select("MergeSort");
+			cy.get("#solutionTypeInput").select("QuickSort");
 			cy.get('#sortingSolution__BV_label_').should("have.text", "Starting array (elements seperated by ,)");
 			cy.get('#sortingSolution > div > #solutionInput').type(arrayValues);
 			cy.get("#editQuestionModal___BV_modal_footer_ > .btn-primary").click();
@@ -396,9 +396,9 @@ describe("Test admin content",function () {
 			cy.get('[data-cy=solutionType] > label')
 				.should("contain", "Løsnings type")
 				.click();
-			cy.get("#solutionTypeInput").select("MergeSort");
-			cy.get('#sortingSolution__BV_label_').should("have.text", "Starting array (elements seperated by ,)");
-			cy.get('#sortingSolution > div > #solutionInput').type(treeElements);
+			cy.get("#solutionTypeInput").select("BinaryTree");
+			cy.get('#BinaryTree__BV_label_').should("have.text","List the nodes that are going to be used in the binary tree. Elements are divided by , and [] are not required)");
+			cy.get('#nodeElements').type(treeElements);
 			cy.get("#editQuestionModal___BV_modal_footer_ > .btn-primary").click();
 
 			//show BinaryTree
@@ -415,6 +415,289 @@ describe("Test admin content",function () {
 			cy.wait(1000);
 			cy.get("[data-cy=showModal]").find(".modal-footer > .btn-primary").click();
 			//TODO finish edit and show BinaryTree
+		});
+		it("Create and Edit Binary Search Tree question",function () {
+			let title = "Title BinarySearchTree Test";
+			let info = "Info BinarySearchTree Test";
+			let titleEdited = "Title Edited BinarySearchTree Test";
+			let infoEdited = "Info Edited BinarySearchTree Test";
+			let time = "05:00";
+			let treeElements = "35,86,23,73,54";
+			cy.get("[data-cy=addQuestionButton]").click();
+
+			//create Binary Search Tree
+			cy.get("#editQuestionModal___BV_modal_header_ > .modal-title").should("have.text", "Nytt spørsmål");
+			cy.get('[data-cy=basicInformation] > label').should("contain", "Grunnleggende Informasjon");
+			cy.get("#questionTitleInput").type(title);
+			cy.get("#questionTextInput").type(info);
+			cy.get("#questionTimeInput").type(time);
+			cy.get('[data-cy=solutionType] > label')
+				.should("contain", "Løsnings type")
+				.click();
+			cy.get("#solutionTypeInput").select("BinarySearchTree");
+			cy.get('#BinarySearchTrees__BV_label_').should("have.text","Draw the tree, or give an array to build the solution tree");
+			cy.get("#Add").click();
+			cy.get("label[for=\"solutionListElements\"]").should("have.text","Input elements to be added to the tree. The elements are seperated by ,");
+			cy.get("#Remove").click();
+			cy.get("label[for=\"solutionListElements\"]").should("have.text","Input elements to be removed from the tree. The elements are seperated by ,");
+			cy.get("#Add").click();
+			cy.get('#solutionListElements').type(treeElements);
+			cy.get("#canvas").should("visible");
+			cy.get("#canvas")
+				.should("visible")
+				.trigger("mousedown", {offsetX: 100, offsetY: 100})
+				.trigger("mousedown", {offsetX: 200, offsetY: 200})
+				.trigger("mousedown", {offsetX: 400, offsetY: 300})
+				.trigger("mousedown", {offsetX: 400, offsetY: 580})		//join button
+				.trigger("mousedown", {offsetX: 100, offsetY: 100})
+				.trigger("mouseup", {offsetX: 200, offsetY: 200})	//join the two nodes created
+				.trigger("mousedown", {offsetX: 300, offsetY: 580})	//move button
+				.trigger("mousedown", {offsetX: 400, offsetY: 300})
+				.trigger("mousemove", {offsetX: 450,offsetY: 350})	//move cursor
+				.trigger("mouseup", {offsetX: 450, offsetY: 350})	//release cursor to finish moving the node
+				.trigger("mousedown", {offsetX: 500, offsetY: 580})	//edit button
+				.trigger("mousedown", {offsetX: 200, offsetY: 580})	//remove button
+				.trigger("mousedown", {offsetX: 400, offsetY: 300})
+				.trigger("mousedown", {offsetX:100, offsetY: 100})
+				.trigger("mousedown", {offsetX:200, offsetY: 200})
+				.trigger("mousedown", {offsetX:450, offsetY:350});
+			cy.get("#editQuestionModal___BV_modal_footer_ > .btn-primary").click();
+
+			//show Binary Search Tree
+			cy.get('.list-group').scrollTo("bottom");
+			cy.get(".list-group > :nth-child(1) > div:nth-child(7)").should("be.visible");
+			cy.get(":nth-child(7) > .container > .row > .col-8").should("contain", title);
+			cy.get(".list-group > :nth-child(1) > div:nth-child(7)")
+				.find(".container")
+				.contains("V")
+				.click();
+			cy.get("[data-cy=showModal]").find(".modal-title").should("have.text", title);
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1)").should("have.text", info);
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(2)").should("have.text", "Tid: " + time);
+			cy.get("#canvas").should("visible");
+			cy.wait(1000);
+			cy.get("[data-cy=showModal]").find(".modal-footer > .btn-primary").click();
+			//TODO edit and show BinarySearchTree
+		});
+		it("Create and Edit AVL Tree question",function () {
+			let title = "Title AVLTree Test";
+			let info = "Info AVLTree Test";
+			let titleEdited = "Title Edited AVLTree Test";
+			let infoEdited = "Info Edited AVLTree Test";
+			let time = "05:30";
+			let treeElements = "4,56,71,12,93";
+			cy.get("[data-cy=addQuestionButton]").click();
+
+			//create AVL Tree
+			cy.get("#editQuestionModal___BV_modal_header_ > .modal-title").should("have.text", "Nytt spørsmål");
+			cy.get('[data-cy=basicInformation] > label').should("contain", "Grunnleggende Informasjon");
+			cy.get("#questionTitleInput").type(title);
+			cy.get("#questionTextInput").type(info);
+			cy.get("#questionTimeInput").type(time);
+			cy.get('[data-cy=solutionType] > label')
+				.should("contain", "Løsnings type")
+				.click();
+			cy.get("#solutionTypeInput").select("AVLTree");
+			cy.get('#BinarySearchTrees__BV_label_').should("have.text","Draw the tree, or give an array to build the solution tree");
+			cy.get("#Add").click();
+			cy.get("label[for=\"solutionListElements\"]").should("have.text","Input elements to be added to the tree. The elements are seperated by ,");
+			cy.get("#Remove").click();
+			cy.get("label[for=\"solutionListElements\"]").should("have.text","Input elements to be removed from the tree. The elements are seperated by ,");
+			cy.get("#Add").click();
+			cy.get('#solutionListElements').type(treeElements);
+			cy.get("#canvas")
+				.should("visible")
+				.trigger("mousedown", {offsetX: 100, offsetY: 100})
+				.trigger("mousedown", {offsetX: 200, offsetY: 200})
+				.trigger("mousedown", {offsetX: 400, offsetY: 300})
+				.trigger("mousedown", {offsetX: 400, offsetY: 580})		//join button
+				.trigger("mousedown", {offsetX: 100, offsetY: 100})
+				.trigger("mouseup", {offsetX: 200, offsetY: 200})	//join the two nodes created
+				.trigger("mousedown", {offsetX: 300, offsetY: 580})	//move button
+				.trigger("mousedown", {offsetX: 400, offsetY: 300})
+				.trigger("mousemove", {offsetX: 450,offsetY: 350})	//move cursor
+				.trigger("mouseup", {offsetX: 450, offsetY: 350})	//release cursor to finish moving the node
+				.trigger("mousedown", {offsetX: 500, offsetY: 580})	//edit button
+				.trigger("mousedown", {offsetX: 200, offsetY: 580})	//remove button
+				.trigger("mousedown", {offsetX: 400, offsetY: 300})
+				.trigger("mousedown", {offsetX:100, offsetY: 100})
+				.trigger("mousedown", {offsetX:200, offsetY: 200})
+				.trigger("mousedown", {offsetX:450, offsetY:350});
+			cy.get("#editQuestionModal___BV_modal_footer_ > .btn-primary").click();
+
+			//show AVL Tree
+			cy.get('.list-group').scrollTo("bottom");
+			cy.get(".list-group > :nth-child(1) > div:nth-child(8)").should("be.visible");
+			cy.get(":nth-child(8) > .container > .row > .col-8").should("contain", title);
+			cy.get('.list-group > :nth-child(1) > div:nth-child(8) > .container > .row > div:nth-child(2) > button')
+				.should("have.text", "V")
+				.click();
+			cy.get("[data-cy=showModal]").find(".modal-title").should("have.text", title);
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1)").should("have.text", info);
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(2)").should("have.text", "Tid: " + time);
+			cy.get("#canvas").should("visible");
+			cy.wait(1000);
+			cy.get("[data-cy=showModal]").find(".modal-footer > .btn-primary").click();
+			//TODO edit and show AVLTree
+		});
+		it("Create and Edit Dijkstra question",function () {
+			let title = "Title Dijkstra Test";
+			let info = "Info Dijkstra Test";
+			let titleEdited = "Title Edited Dijkstra Test";
+			let infoEdited = "Info Edited Dijkstra Test";
+			let time = "06:00";
+			cy.get("[data-cy=addQuestionButton]").click();
+
+			//create Dijkstra
+			cy.get("#editQuestionModal___BV_modal_header_ > .modal-title").should("have.text", "Nytt spørsmål");
+			cy.get('[data-cy=basicInformation] > label').should("contain", "Grunnleggende Informasjon");
+			cy.get("#questionTitleInput").type(title);
+			cy.get("#questionTextInput").type(info);
+			cy.get("#questionTimeInput").type(time);
+			cy.get('[data-cy=solutionType] > label')
+				.should("contain", "Løsnings type")
+				.click();
+			cy.get("#solutionTypeInput").select("Dijkstra");
+			cy.get("#canvas")
+				.trigger("mousedown", { offsetX: 50, offsetY: 580})	//add button
+				.trigger("mousedown", { offsetX: 200, offsetY: 200})
+				.trigger("mousedown", { offsetX: 300, offsetY: 200})
+				.trigger("mousedown", { offsetX: 200, offsetY: 300})
+				.trigger("mousedown", { offsetX: 300, offsetY: 300})
+				.trigger("mousedown", { offsetX: 500, offsetY: 500})
+				.trigger("mousedown", { offsetX: 300, offsetY: 580})//join button
+				.trigger("mousedown", { offsetX: 200, offsetY:200})
+				.trigger("mouseup", { offsetX: 300, offsetY:200})
+				.trigger("mousedown", { offsetX: 300, offsetY:200})
+				.trigger("mouseup", { offsetX:300, offsetY:300})
+				.trigger("mousedown", { offsetX:300, offsetY:300})
+				.trigger("mouseup", { offsetX:200, offsetY:300})
+				.trigger("mousedown", { offsetX:580, offsetY:580})
+				.trigger("mousedown", { offsetX:200, offsetY:200})
+				.trigger("mousedown", { offsetX:200, offsetY:300})
+				.trigger("mousedown", { offsetX:180, offsetY:580})
+				.trigger("mousedown", { offsetX:500, offsetY:500});
+			cy.get("#editQuestionModal___BV_modal_footer_ > .btn-primary").click();
+			//show Dijkstra
+			cy.get('.list-group').scrollTo("bottom");
+			cy.get(".list-group > :nth-child(1) > div:nth-child(9)").should("be.visible");
+			cy.get(":nth-child(9) > .container > .row > .col-8").should("contain", title);
+			cy.get(".list-group > :nth-child(1) > div:nth-child(9)")
+				.find(".container")
+				.contains("V")
+				.click();
+			/*cy.get('.list-group > :nth-child(1) > div:nth-child(9) > .container > .row > div:nth-child(2) > button')
+				.should("have.text", "V")
+				.click();*/
+			cy.get("[data-cy=showModal]").find(".modal-title").should("have.text", title);
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1)").should("have.text", info);
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(2)").should("have.text", "Tid: " + time);
+			cy.get("#canvas").should("visible");
+			cy.wait(1000);
+			cy.get("[data-cy=showModal]").find(".modal-footer > .btn-primary").click();
+
+			//TODO edit and show Dijkstra
+		});
+		it("Create and Edit Python question",function () {
+			let title = "Title Python Test";
+			let info = "Info Python Test";
+			let titleEdited = "Title Edited Python Test";
+			let infoEdited = "Info Edited Python Test";
+			let time = "06:30";
+			let python = "class Navn:\n" +
+				"\n" +
+				"    def __init__(self, fornavn, etternavn):\n" +
+				"\n" +
+				"        self.fornavn = fornavn\n" +
+				"\n" +
+				"        self.etternavn = etternavn\n" +
+				"\n" +
+				"\n" +
+				"\n" +
+				"class Person:\n" +
+				"\n" +
+				"    def __init__(self, navn, alder):\n" +
+				"\n" +
+				"        self.navn = navn\n" +
+				"\n" +
+				"        self.alder = alder\n" +
+				"\n" +
+				"\n" +
+				"\n" +
+				"a = 22\n" +
+				"\n" +
+				"n = Navn(\"F\", \"T\")\n" +
+				"\n" +
+				"p = Person(n, a)\n" +
+				"\n" +
+				"\n" +
+				"\n" +
+				"a = 23";
+			let pythonEdited = "class Punkt:\n" +
+				"\n" +
+				"    def __init__(self, x, y):\n" +
+				"\n" +
+				"        self.x = x\n" +
+				"\n" +
+				"        self.y = y\n" +
+				"\n" +
+				"\n" +
+				"\n" +
+				"class Linje:\n" +
+				"\n" +
+				"    def __init__(self, p1, p2):\n" +
+				"\n" +
+				"        self.p1 = p1\n" +
+				"\n" +
+				"        self.p2 = p2\n" +
+				"\n" +
+				"\n" +
+				"\n" +
+				"p1 = Punkt(0, 0)\n" +
+				"\n" +
+				"p2 = Punkt(1, 1)\n" +
+				"\n" +
+				"l1 = Linje(p1, p2)\n" +
+				"\n" +
+				"\n" +
+				"\n" +
+				"p1.x = 5\n" +
+				"\n" +
+				"l1.p2.x = 5";
+			cy.get("[data-cy=addQuestionButton]").click();
+
+			//create Python
+			cy.get("#editQuestionModal___BV_modal_header_ > .modal-title").should("have.text", "Nytt spørsmål");
+			cy.get('[data-cy=basicInformation] > label').should("contain", "Grunnleggende Informasjon");
+			cy.get("#questionTitleInput").type(title);
+			cy.get("#questionTextInput").type(info);
+			cy.get("#questionTimeInput").type(time);
+			cy.get('[data-cy=solutionType] > label')
+				.should("contain", "Løsnings type")
+				.click();
+			cy.get("#solutionTypeInput").select("Python");
+			cy.get('#pythonCodeInput').type(python);
+			cy.get("#editQuestionModal___BV_modal_footer_ > .btn-primary").click();
+
+			//show Python
+			cy.get('.list-group').scrollTo("bottom");
+			cy.get(".list-group > :nth-child(1) > div:nth-child(10)").should("be.visible");
+			cy.get(":nth-child(10) > .container > .row > .col-8").should("contain", title);
+			cy.get(".list-group > :nth-child(1) > div:nth-child(10)")
+				.find(".container")
+				.contains("V")
+				.click();
+			/*cy.get('.list-group > :nth-child(1) > div:nth-child(9) > .container > .row > div:nth-child(2) > button')
+				.should("have.text", "V")
+				.click();*/
+			cy.get("[data-cy=showModal]").find(".modal-title").should("have.text", title);
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1)").should("have.text", info);
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(2)").should("have.text", "Tid: " + time);
+			cy.get("#canvas").should("visible");
+			cy.wait(1000);
+			cy.get("[data-cy=showModal]").find(".modal-footer > .btn-primary").click();
+
+			//TODO edit and show Python
 		});
 	});
 });
