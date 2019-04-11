@@ -7,9 +7,28 @@ const check = function(answer, solution) {
 	}
 
 	// Check that the answer and solution contains the same amount of objects.
-	let solutionObjects = 0;
-	let answerObjects = 0;
-	if (solutionObjects !== answerObjects) {
+	let solutionIds = [];
+	let search = (obj) => {
+		if (obj._uniqueId == undefined) return;
+
+		// Add self
+		if (!solutionIds.includes(obj._uniqueId)) {
+			solutionIds.push(obj._uniqueId);
+		}
+
+		// Add children
+		if (!Array.isArray(obj.data)) return;
+
+		for (let i = 0; i < obj.data.length; i++) {
+			let data = obj.data[i];
+			if (!solutionIds.includes(data._uniqueId)) {
+				search(data);
+			}
+		}
+	};
+
+	search(solution);
+	if (solutionIds.length - 1 !== answer.objects.length) {
 		return false;
 	}
 
@@ -20,7 +39,7 @@ const check = function(answer, solution) {
 		}
 
 		return undefined;
-	};
+	};	
 
 	let checkData = (data, answer) => {
 		// Check that fields match datatype fields.
