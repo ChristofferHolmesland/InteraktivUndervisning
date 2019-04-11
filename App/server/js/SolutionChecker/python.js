@@ -1,16 +1,34 @@
 const check = function(answer, solution) {
 	solution = solution[solution.length - 1];
 
-	console.log("Answer");
-	console.log(answer);
-	console.log("Soltuion");
-	console.log(solution)
-
 	// Check that they have the same global variables.
+	if (answer.variables.length !== getProps(solution.objects).length) {
+		return false;
+	}
 
+	// Check that the answer and solution contains the same amount of objects.
+	let solutionIds = [];
+	let search = (obj) => {
+		if (obj._uniqueId == undefined) return;
 
-	// denen sjekken failer sannsynligvis alltid siden solution.objects er et objekt og ikke array
-	if (answer.variables.length !== solution.objects.length) {
+		// Add self
+		if (!solutionIds.includes(obj._uniqueId)) {
+			solutionIds.push(obj._uniqueId);
+		}
+
+		// Add children
+		if (!Array.isArray(obj.data)) return;
+
+		for (let i = 0; i < obj.data.length; i++) {
+			let data = obj.data[i];
+			if (!solutionIds.includes(data._uniqueId)) {
+				search(data);
+			}
+		}
+	};
+
+	search(solution);
+	if (solutionIds.length - 1 !== answer.objects.length) {
 		return false;
 	}
 
@@ -21,13 +39,9 @@ const check = function(answer, solution) {
 		}
 
 		return undefined;
-	};
+	};	
 
 	let checkData = (data, answer) => {
-		console.log("Check data (data, answer");
-		console.log(data);
-		console.log(answer);
-
 		// Check that fields match datatype fields.
 		let objectKeys = getProps(data.objects);
 		for (let k = 0; k < objectKeys.length; k++) {
@@ -40,24 +54,32 @@ const check = function(answer, solution) {
 					break;
 				}
 			}
-			if (index == -1) return false;
+			if (index == -1) {
+				return false;
+			}
 
 			// Convert node id to object
 			let id = answer.fields[index].value;
 			let answerObject = getAnswerObjectById(id);
-			if (answerObject == undefined) return false;
+			if (answerObject == undefined) {
+				return false;
+			}
 
 			let solutionObject = data.data[data.objects[v]];
 			
 			// Check that the objects have the same type
-			if (answerObject.type !== solutionObject.type) return false;
+			if (answerObject.type != solutionObject.type) {
+				return false;
+			}
 
 			if (answerObject.baseType) {
-				if (answerObject.value !== solutionObject.data) return false;
+				if (answerObject.value != solutionObject.data) {
+					return false;
+				}
 				continue;
 			}
 
-			if (!checkData(data, answerObject)) return false;
+			if (!checkData(solutionObject, answerObject)) return false;
 		}
 
 		return true;
@@ -66,26 +88,44 @@ const check = function(answer, solution) {
 	let objectKeys = getProps(solution.objects);
 	for (let k = 0; k < objectKeys.length; k++) {
 		let v = objectKeys[k];
-		console.log("CHecking property: " + v);
 
-		let answerVariableIndex = answer.variables.indexOf(v);
-		if (answerVariableIndex == -1) return false;
+		let answerVariableIndex = -1;
+		for (let i = 0; i < answer.variables.length; i++) {
+			if (answer.variables[i].name == v) {
+				answerVariableIndex = i;
+				break;
+			}
+		}
+
+		if (answerVariableIndex == -1) {
+			return false;
+		}
 		let answerVariable = answer.variables[answerVariableIndex];
+
+		// Check that the variable is pointing to exactly one object.
+		if (answerVariable.links.length !== 1) {
+			return false;
+		}
 
 		// Check that the variables point to objects of the same type and
 		// with the same values.
 		let data = solution.data[solution.objects[v]];
-		if (answerVariable.type !== data.type) return false;
+		let answerData = answerVariable.links[0];
+		if (answerData.type !== data.type) {
+			return false;
+		}
 		
 		// If the object is of basetype, the values should match.
-		if (answerVariable.baseType) {
-			if (answerVariable.value !== data.data) return false;
+		if (answerData.baseType) {
+			if (answerData.value != data.data) {
+				return false;
+			}
 			continue;
 		}
 
 		// Follow reference data types to check if all of the references
 		// matches.
-		if (!checkData(data, answerVariable)) return false;
+		if (!checkData(data, answerData)) return false;
 	}
 
 	return true;

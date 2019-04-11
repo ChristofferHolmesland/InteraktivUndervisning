@@ -758,6 +758,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 				socket.emit("addNewSemesterError", "seasonDoesTExist");
 				return;
 			}
+			let season = seasons[seasons.findIndex(season => season.id === newSemester.season)].season;
 
 			let years = await dbFunctions.get.years(db).catch((err) => {
 				console.error(err);
@@ -768,11 +769,12 @@ module.exports.admin = function(socket, db, user, sessions) {
 				socket.emit("addNewSemesterError", "yearDoesTExist");
 				return;
 			}
+			let year = years[years.findIndex(year => year.id === newSemester.year)].year;
 			
 			if (semesters.findIndex(semester => 
 				(
-					newSemester.season === semester.season &&
-					newSemester.year === semester.year
+					season === semester.season &&
+					year === semester.year
 				)
 			) > -1) {
 				socket.emit("addNewSemesterError", "semesterExists");
@@ -781,10 +783,12 @@ module.exports.admin = function(socket, db, user, sessions) {
 
 			await dbFunctions.insert.courseSemester(db, newSemester).then(() => {
 				socket.emit("addNewSemesterResponse");
+				return;
 			}).catch((err) => {
 				console.error(err);
 				socket.emit("addNewSemesterError", "addNewSemesterInsert");
 			});
+			return;
 		}).catch((err) => {
 			console.error(err);
 			socket.emit("addNewSemesterError", "dbError");

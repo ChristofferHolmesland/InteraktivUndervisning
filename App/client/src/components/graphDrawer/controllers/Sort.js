@@ -333,11 +333,14 @@ export default class Sort {
 
 	mobileSelectedButtons() {
 		let initializeNewArray = function(sortType) {
-			let sorter = sortType == "xSorter" ? this.gd.xSorter : this.gd.vSorter;
+			let sorter =
+				sortType == "xSorter" ? this.gd.xSorter : this.gd.vSorter;
 			this.selectedNodes.sort(sorter);
-			
-			let newArr = this.getNewArray(this.selectedNodes[0].x,
-										  this.selectedNodes[0].y + 100);
+
+			let newArr = this.getNewArray(
+				this.selectedNodes[0].x,
+				this.selectedNodes[0].y + 100
+			);
 
 			// Clones the selected nodes and puts them in the new array
 			for (let i = 0; i < this.selectedNodes.length; i++) {
@@ -345,7 +348,8 @@ export default class Sort {
 				clone.fillColor = undefined;
 				clone.strokeColor = undefined;
 
-				newArr.nodes.push(clone, true);
+				newArr.nodes.push(clone);
+				this.gd.addNode(clone, true);
 			}
 
 			this.arrays.push(newArr);
@@ -517,7 +521,7 @@ export default class Sort {
 		Calculate node positions based on their position in a given array
 	*/
 	_repositionNodes(ai) {
-		let start = this.arrays[ai].position
+		let start = this.arrays[ai].position;
 		for (let ni = 0; ni < this.arrays[ai].nodes.length; ni++) {
 			let node = this.arrays[ai].nodes[ni];
 			// Assumes all the nodes have the same width TODO: This assumption is no longer true
