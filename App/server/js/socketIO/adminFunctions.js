@@ -643,6 +643,13 @@ module.exports.admin = function(socket, db, user, sessions) {
 		}
 	*/
 	socket.on("setUserRightsLevel", function(data) {
+		let length = data.feideId.length;
+		if 
+		(
+			(length !== 6 && length !== 7 ) ||
+			!Number.isInteger(Number(data.feideId))
+		) return;
+
 		if (data.feideId == user.feide.idNumber && data.level === -1) return;
 		dbFunctions.get.userRightsByFeideId(db, {
 			feideId: data.feideId,
