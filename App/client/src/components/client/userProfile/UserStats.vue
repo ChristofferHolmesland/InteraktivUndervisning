@@ -74,11 +74,14 @@ export default {
 
 			for (let i = 0; i < this.sessionList.length; i++) {
 				if (this.courseList.indexOf(this.sessionList[i].id) === -1) {
-					this.courseList.push(this.sessionList[i].id);
+					this.courseList.push({
+						value: this.sessionList[i].id,
+						text: this.sessionList[i].course
+					});
 				}
 			}
 
-			this.courseSelected = this.courseList[0];
+			this.courseSelected = this.courseList[0].value;
 		}
 	},
 	methods: {

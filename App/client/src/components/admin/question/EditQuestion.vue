@@ -4,7 +4,9 @@
 	<b-modal :id="elementId" :ref="elementRef" :no-close-on-backdrop="true" :title="getTitle" @ok="callOkHandler" style="text-align: left;" size="lg">
         <b-form>
             <b-alert    :show="validationFailure"
-                        variant="danger">
+                        variant="danger"
+						dimissible
+						@dismissed="validationFailure = false">
                 <p v-for="(error, index) in validationErrors" :key="index">
                     {{getLocale[error]}}
                 </p>

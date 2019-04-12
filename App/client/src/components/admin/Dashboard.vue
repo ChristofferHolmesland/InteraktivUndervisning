@@ -71,14 +71,17 @@
 							</b-col>
 						</b-row>
 						<b-row>
-							<ul style="list-style-type: none;">
-								<li :key="admin.feideId" v-for="admin in courseAdmins">
-									{{ admin.feideId }} -  {{ admin.name }}
-									<b-button size="sm" variant="danger" :id="admin.feideId" @click="removeAdmin($event);">
-										x
-									</b-button>
-								</li>
-							</ul>
+							<b-col>
+								<ul style="list-style-type: none;">
+									<li :key="admin.feideId" v-for="admin in courseAdmins"
+										class="mt-1">
+										{{ admin.feideId }} -  {{ admin.name }}
+										<b-button size="sm" variant="danger" :id="admin.feideId" @click="removeAdmin($event);">
+											x
+										</b-button>
+									</li>
+								</ul>
+							</b-col>
 						</b-row>
 					</b-container>
 				</b-row>
@@ -100,14 +103,17 @@
 							</b-col>
 						</b-row>
 						<b-row>
-							<ul style="list-style-type: none;">
-								<li :key="assistant.feideId" v-for="assistant in courseAssistants">
-									{{ assistant.feideId }} -  {{ assistant.name }}
-									<b-button variant="danger" size="sm" :id="assistant.feideId" @click="removeAdmin($event);">
-										x
-									</b-button>
-								</li>
-							</ul>
+							<b-col>
+								<ul style="list-style-type: none;">
+									<li :key="assistant.feideId" v-for="assistant in courseAssistants"
+										class="mt-1">
+										{{ assistant.feideId }} -  {{ assistant.name }}
+										<b-button variant="danger" size="sm" :id="assistant.feideId" @click="removeAdmin($event);">
+											x
+										</b-button>
+									</li>
+								</ul>
+							</b-col>
 						</b-row>
 					</b-container>
 				</b-row>
@@ -178,7 +184,12 @@ export default {
 			// TODO: Write the function
 		},
 		addNewAdmin: function() {
-			if (this.newAdminFeideId == "") return;
+			let length = this.newAdminFeideId.length;
+			if 
+			(
+				(length !== 6 && length !== 7 ) ||
+				!Number.isInteger(Number(this.newAdminFeideId))
+			) return;
 
 			this.$socket.emit("setUserRightsLevel", {
 				feideId: this.newAdminFeideId,
@@ -189,6 +200,12 @@ export default {
 			this.newAdminFeideId = "";
 		},
 		addNewAssistant: function() {
+			let length = this.newAssistantFeideId.length;
+			if 
+			(
+				(length !== 6 && length !== 7 ) ||
+				!Number.isInteger(Number(this.newAssistantFeideId))
+			) return;
 			if (this.newAssistantFeideId == "") return;
 
 			this.$socket.emit("setUserRightsLevel", {

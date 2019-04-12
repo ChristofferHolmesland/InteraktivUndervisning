@@ -35,6 +35,7 @@ export default {
 		answerResponse(localeElement) {
 			this.localeElement = localeElement;
 			this.sessionState = 0;
+			this.$nextTick();
 		},
 		returnToClientDashboard() {
 			this.$router.push("/client");
