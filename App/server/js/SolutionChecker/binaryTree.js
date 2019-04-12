@@ -4,6 +4,12 @@ const GeneralTreeFunctions = require("../algorithms/trees/GeneralTreeFunctions.j
 const check = function (answerTree, solution, type) {
 	let result = false;
 	let treeList = GeneralTreeFunctions.createTreeObjectFromCanvasObjectver1(answerTree);
+
+	// The student didn't draw a tree
+	if (treeList == undefined) {
+		return false;
+	}
+
 	if (treeList.length === 1) {
 		if (BinaryTreeFunctions.checkTreeCriteria(treeList[0])) {
 			if (type !== 6) {

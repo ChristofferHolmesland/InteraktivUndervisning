@@ -3,13 +3,16 @@ const Tree = require("./Tree.js").Tree;
 
 //This function is going to transform a student's and teacher's drawn canvas tree to a Binary Search Tree object.
 module.exports.createTreeObjectFromCanvasObjectver1 = function(treeCanvas) {
+	if (treeCanvas.roots == undefined) return undefined;
+
 	replaceNullWithUndefinedCanvas(treeCanvas);
+
 	let listofTrees = [];
-	for (let l=0;l<treeCanvas.roots.length;l++) {	//can be more than 1 root
+	for (let l=0; l < treeCanvas.roots.length; l++) {	//can be more than 1 root
 		let listofConfiguredNodes = [];
 		let rootNode = new BinaryTreeNode(parseInt(treeCanvas.roots[l].v),undefined);
 		let tree = new Tree(rootNode);
-		convertCanvasNodeToTreeNode(treeCanvas.roots[l],rootNode,listofConfiguredNodes);
+		convertCanvasNodeToTreeNode(treeCanvas.roots[l], rootNode, listofConfiguredNodes);
 		tree.nodes = listofConfiguredNodes;
 		listofTrees.push(tree);
 	}
