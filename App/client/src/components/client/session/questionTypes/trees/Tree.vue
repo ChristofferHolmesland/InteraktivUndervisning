@@ -29,8 +29,6 @@
 		],
         methods: {
 			gotGraphDrawer: function (result) {
-				console.log("Got this from the graphdrawer");
-				console.log(result);
                 this.$emit("getTextResponse",result);
 			}
         },
