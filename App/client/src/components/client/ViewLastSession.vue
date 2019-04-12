@@ -1,18 +1,28 @@
 <template>
-<b-container id="ViewLastSession" class="jumbotron card">
-	<b-row class="center margin">
+<b-container id="ViewLastSession" class="jumbotron">
+	<b-row class="center firstRow row">
 		<b-col cols="12" class="px-0">
-			<h1>Previous session</h1>
+			<h1>{{ getLocale.title }}</h1>
 		</b-col>
 	</b-row>
-	<b-row class="margin rowMiddle">
+	<b-row class="margin middleRow row">
 		<b-col v-if="lastSessionBasicInfo === undefined">
-            <p>Can't find any sessions</p>
+            <p>{{ getLocale.noSessionFound }}</p>
+		</b-col>
+		<b-col v-else>
+			<p>{{ lastSessionBasicInfo.text }}</p>
 		</b-col>
 	</b-row>
-	<b-row class="center">
+	<b-row class="center lastRow row">
 		<b-col cols="12">
-			<b-button @click="goToLastSession" variant="primary" size="lg" class="btn" :disabled="lastSessionBasicInfo === undefined ? true : false">Go</b-button>
+			<b-button	@click="goToLastSession"
+						variant="primary"
+						size="lg"
+						class="btn"
+						:disabled="lastSessionBasicInfo === undefined ? true : false"
+						>
+				{{ getLocale.goBtn }}
+			</b-button>
 		</b-col>
 	</b-row>
 </b-container>
@@ -41,25 +51,52 @@ export default {
         getUserSessionInformationResponse: function() {
 
         }
-    }
+	},
+	computed: {
+		getLocale() {
+			let locale = this.$store.getters.getLocale("ViewLastSession");
+			if (locale) return locale;
+			return {};
+		}
+	}
 };
 </script>
 
 <style scoped>
+#ViewLastSession {
+	position: relative;
+	width: 350px;
+	height: 500px;
+	padding: 50px 35px;
+}
 .center {
 	text-align: center;
-}
-.margin {
-	margin-bottom: 2rem;
-}
-.card {
-	height: 100%;
 }
 .btn {
 	display: inline-block;
 	width: 50%;
 }
-.rowMiddle {
-	height: 30%;
+.firstRow {
+	position: absolute;
+	left: 45px;
+	top: 50px;
+	height: 105px;
+}
+.middleRow {
+	position: absolute;
+	left: 45px;
+	top: 160px;
+	height: 150px;
+	line-height: 150px;
+}
+.lastRow {
+	position: absolute;
+	left: 45px;
+	top: 310px;
+	height: 90px;
+	line-height: 90px;
+}
+.row {
+	width: 280px;
 }
 </style>

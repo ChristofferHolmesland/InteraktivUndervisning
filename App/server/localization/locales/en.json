@@ -371,5 +371,18 @@
             }
         },
         "textInputPlaceholder": "Test out the input field here"
+    },
+    "ViewLastSession": {
+        "goBtn": "Go",
+        "title": "Previous session",
+        "noSessionFound": "Can't find any previous sessions"
+    },
+    "ShowSandbox": {
+        "title": "Go to sandbox",
+        "text": [
+            "Practice with different question types.",
+            "Play with the graphdrawer to get familiar with the controls."
+        ],
+        "goBtn": "Go"
     }
 }

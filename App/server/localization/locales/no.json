@@ -82,9 +82,9 @@
         "questionType": {
             "Text": "Tekst", 
             "Multiple choice": "Flervalg", 
-            "Shellsort": "Shell sortering", 
+            "Shellsort": "Shellsortering", 
             "MergeSort": "Flette sortering", 
-            "QuickSort": "Quick sortering",
+            "QuickSort": "Quicksort",
             "BinaryTree": "Binærtre",
             "BinarySearchTree": "Binært søketre",
             "AVLTree": "AVLTree",
@@ -378,5 +378,18 @@
             }
         },
         "textInputPlaceholder": "Test out the input field here"
+    },
+    "ViewLastSession": {
+        "goBtn": "Åpne",
+        "title": "Forrige økt",
+        "noSessionFound": "Kan ikke finne noen tidligere økter"
+    },
+    "ShowSandbox": {
+        "title": "Gå til sandkassen",
+        "text": [
+            "Tren med de ulike spørsmåltypene.",
+            "Lær deg funksjone til graftegneren og de ulike kontrollene."
+        ],
+        "goBtn": "Åpne"
     }
 }
