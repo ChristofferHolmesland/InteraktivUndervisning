@@ -558,9 +558,9 @@ export default class Graph0 {
 			// buttons to navigate between them.
 			if (step.treeInfo.length > 1) {
 				this.addTreeSteppingButtons(step.treeInfo.length);
-				this.gd.stillDirty = true;
-			}
-			else this.steppingButtons = [];
+				// The tree stepping buttons are drawn after the gd.drawStatic call.
+				this.gd.drawStatic();
+			} else this.steppingButtons = [];
 
 			let p = this.gd.camera.project(this.gd.canvas.width / 2, 0);
 			// Add some padding between canvas top and the top of the tree
