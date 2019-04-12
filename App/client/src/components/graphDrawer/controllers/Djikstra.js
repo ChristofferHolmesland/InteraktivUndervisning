@@ -42,17 +42,17 @@ export default class Djikstra {
 			}
 		}
 
-		if (this.operatingMode == "Interactive") {
+		if (this.gd.operatingMode == "Interactive") {
 			this.buttons.push({
 				text: "<- Undo",
 				position: {},
-				handler: this.undoButtonClicked,
+				handler: this.undoButtonClicked.bind(this),
 				disabled: true
 			});
 			this.buttons.push({
 				text: "Redo ->",
 				position: {},
-				handler: this.redoButtonClicked,
+				handler: this.redoButtonClicked.bind(this),
 				disabled: true
 			});
 			this.positionButtons();
@@ -74,7 +74,8 @@ export default class Djikstra {
 			}
 		*/
 		this.buttons = [];
-		this.disabledColor = "lavender";
+		this.redoLog = [];
+		this.disabledColor = "dimgray";
 		this.relSize = 0.7;
 	}
 
@@ -129,11 +130,11 @@ export default class Djikstra {
 
 			// Text
 			this.gd.staticContext.fillStyle = "black";
-			let textWidth = this.gd.staticContext.measureText(btn.data.text).width;
+			let textWidth = this.gd.staticContext.measureText(btn.text).width;
 			let xPadding = (btn.position.width - textWidth) / 2;
 			let yPadding = (btn.position.height + this.gd.fontHeight) / 2;
 			this.gd.staticContext.fillText(
-				btn.data.text,
+				btn.text,
 				btn.position.x + xPadding,
 				btn.position.y + yPadding
 			);
@@ -150,21 +151,52 @@ export default class Djikstra {
 		let buttonY = this.gd.canvas.height - buttonMaxHeight;
 
 		for (let i = 0; i < this.buttons.length; i++) {
-			let btn = this.buttons[i];
-			btn.width = buttonWidth;
-			btn.height = buttonHeight;
+			let pos = this.buttons[i].position;
+			pos.width = buttonWidth;
+			pos.height = buttonHeight;
 
-			btn.x = buttonMaxWidth * i + (buttonMaxWidth - buttonWidth / 2);
-			btn.y = buttonY + (buttonMaxHeight - buttonHeight / 2);
+			pos.x = buttonMaxWidth * i + (buttonMaxWidth - buttonWidth) / 2;
+			pos.y = buttonY + (buttonMaxHeight - buttonHeight) / 2;
+		}
+	}
+
+	/*
+		Updates the disabled state of every button, and redraws if needed.
+	*/
+	determineButtonStates() {
+		let previousStates = [];
+		for (let i = 0; i < this.buttons.length; i++)
+			previousStates[i] = this.buttons[i].disabled;
+
+		// The undo button is disabled if there is no edges with a direction
+		let lastEdge = this.gd.edges[this.gd.edges.length - 1];
+		this.buttons[0].disabled = !lastEdge.directed;
+
+		// The redo button is disabled if the redo log is empty
+		this.buttons[1].disabled = this.redoLog.length == 0;
+
+		for (let i = 0; i < this.buttons.length; i++) {
+			if (this.buttons[i].disabled !== previousStates[i]) {
+				this.drawStatic();
+				return;
+			}
 		}
 	}
 
 	undoButtonClicked() {
+		let edge = this.gd.edges.pop();
+		this.redoLog.push(edge);
 
+		this.determineButtonStates();
+		this.gd.dirty = true;
 	}
 
 	redoButtonClicked() {
+		let edge = this.redoLog.pop();
+		this.gd.edges.push(edge);
 
+		this.determineButtonStates();
+		this.gd.dirty = true;
 	}
 
 	mouseDownHandler(e) {
@@ -177,7 +209,26 @@ export default class Djikstra {
 		return consumed;
 	}
 
-	checkUI() {
+	checkUI(e) {
+		for (let i = 0; i < this.buttons.length; i++) {
+			let btn = this.buttons[i];
+			if (btn.disabled) continue;
+
+			let inside = this.gd.isPointInRectangle(
+				e.offsetX,
+				e.offsetY,
+				btn.position.x,
+				btn.position.y,
+				btn.position.width,
+				btn.position.height
+			);
+
+			if (inside) {
+				btn.handler();
+				return true;
+			}
+		}
+
 		return false;
 	}
 
@@ -203,6 +254,9 @@ export default class Djikstra {
 					this.gd.dirty = true;
 				}
 			}
+
+			this.redoLog = [];
+			this.determineButtonStates();
 
 			this.gd.canvas.removeEventListener("mouseup", handler);
 			this.gd.canvas.removeEventListener("touchend", handler);
