@@ -236,9 +236,13 @@
         "answerBtnText": "Answer",
         "leaveSessionBody": "By clicking ok you will leave this session.\nAll answers up to this point will be saved.",
         "leaveSessionBodyAdmin": "You are now leaving the session. The session will be put on hold for 5 minutes before its removed. If you join the session again it will resume. All answers from students up until this point will be stored.",
+        "showQuestionType": "Question type:",
         "binaryTreeDesc": "Draw a BinaryTree with the following nodes: ",
         "bstavlOperationDesc": "Operation: ",
-        "bstavlNodesDesc": "Nodes: "
+        "bstavlNodesDesc": "Nodes: ",
+        "pythonCodeDesc": "Code: ",
+        "Add": "Add",
+        "Remove": "Remove"
     },
     "ClientSessionWaitingArea": {
         "title": "Waiting Area",

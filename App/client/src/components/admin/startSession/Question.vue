@@ -10,8 +10,22 @@
 		</b-row>
 		<b-row>
 			<b-col>
+				<h4>{{getLocale.showQuestionType}} {{getQuestionType}}</h4>
+			</b-col>
+		</b-row>
+		<b-row>
+			<b-col>
 				<p>{{ questionInfo.description }}</p>
 			</b-col>
+		</b-row>
+		<b-row>
+			<div>
+				<div style="display: inline" v-for="(info,index) in getExtraDesc" :key="index">
+					<pre v-if="info.code">{{info.value}}</pre>
+					<p style="display: inline" v-else>{{info.value}}</p>
+					<br v-if="info.linebreak"/>
+				</div>
+			</div>
 		</b-row>
 		<b-row v-if="getImagesLength > 0">
 			<b-col cols="12">
@@ -67,6 +81,11 @@ export default {
 		if (this.interval !== undefined) clearInterval(this.interval);
 	},
 	computed: {
+		getLocale() {
+			let locale = this.$store.getters.getLocale("DisplayQuestion");	//låner denne inntil videre
+			if (locale) return locale;
+			else return {};
+		},
 		getTimeUpdate() {
 			let min = Math.floor(this.timeLeft / 60).toString();
 			let sec = Math.floor(this.timeLeft % 60).toString();
@@ -82,7 +101,42 @@ export default {
 		getImgSrc() {
 			let file = this.questionInfo.object.files[this.selectedImageIndex];
             return "data:" + file.type + ";base64," + file.buffer;
-		}
+		},
+		getQuestionType() {
+			//indexes are 0-9, but question types are 1-10 :(
+			return this.$store.getters.getQuestionTypes[
+			this.questionInfo.type - 1
+				].name;
+		},
+		getExtraDesc() {
+			let order = [];
+			let extraDescLocales = this.questionInfo.object
+				.questionTypeDesc.locale;
+			let extraDescText = this.questionInfo.object
+				.questionTypeDesc.text;
+			console.log(extraDescLocales);
+			console.log(extraDescText);
+			for (let key in extraDescLocales) {
+				if (extraDescLocales.hasOwnProperty(key)) {
+					let loc = this.getLocale[extraDescLocales[key]];
+					if (loc[loc.length - 1] !== " ")
+						order.push({"value": loc, "linebreak": true, "code":false});
+					else
+						order.push({"value": loc, "linebreak": false, "code":false});
+				}
+			}
+			for (let key in extraDescText) {
+				if (extraDescText.hasOwnProperty(key)) {
+					let text = extraDescText[key];
+					let arr = text.split("\n");
+					if (arr.length > 1)
+						order.push({"value": text, "linebreak": true, "code":true});
+					else
+						order.push({"value": text, "linebreak": true, "code":false});
+				}
+			}
+			return order;
+		},
 	},
 	sockets: {
 		updateNumberOfAnswers(data) {
