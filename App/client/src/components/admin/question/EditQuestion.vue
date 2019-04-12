@@ -295,7 +295,7 @@
                     :requestAnswer="requestGraphDrawerObject"
                     controlType="Graph0"
                     exportType="Both"
-                    operationMode="Interactive"
+                    operatingMode="Interactive"
                     importType="Graph"
                     :steps="this.newQuestion.objects._graphdrawerGraph"
                 />
@@ -444,6 +444,7 @@ export default {
 					this.$nextTick(function() {
 						this.$forceUpdate();
 						if (this.$refs.graphdrawer !== undefined) {
+							this.$refs.graphdrawer.destroyDrawer();
 							this.$refs.graphdrawer.createDrawer();
 						}
 					});

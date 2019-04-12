@@ -74,6 +74,16 @@
                     nodeShape = "Rectangle"
                 }
 
+                /*
+                    There seems to be a bug in the garbage collection of browsers.
+                    The GraphDrawer object isn't collected even though nothing has
+                    a reference to it (after calling this.destroyDrawer()), which means
+                    that there will be two GraphDrawer objects attached to the same canvas.
+                */
+                if (this.graphDrawer !== undefined) {
+                    return;
+                }
+
                 this.graphDrawer = new GraphDrawer(this.canvas, {
                     nodeShape: nodeShape,
                     controlType: this.controlType,
