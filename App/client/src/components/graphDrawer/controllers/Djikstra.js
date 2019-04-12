@@ -41,12 +41,41 @@ export default class Djikstra {
 				this.gd.edges.push(edge);
 			}
 		}
+
+		if (this.operatingMode == "Interactive") {
+			this.buttons.push({
+				text: "<- Undo",
+				position: {},
+				handler: this.undoButtonClicked,
+				disabled: true
+			});
+			this.buttons.push({
+				text: "Redo ->",
+				position: {},
+				handler: this.redoButtonClicked,
+				disabled: true
+			});
+			this.positionButtons();
+			this.drawStatic();
+		}
 	}
 
 	constructor(graphDrawer, config) {
 		this.gd = graphDrawer;
 		this.gd.dirty = true;
 		this.config = config;
+
+		/*
+			{
+				text: String
+				position: { x, y, width, height },
+				handler: Function
+				disabled: Boolean
+			}
+		*/
+		this.buttons = [];
+		this.disabledColor = "lavender";
+		this.relSize = 0.7;
 	}
 
 	configure() {
@@ -76,10 +105,80 @@ export default class Djikstra {
 		return steps;
 	}
 
+	drawStatic() {
+		this.gd.resetStatic();
+
+		for (let i = 0; i < this.buttons.length; i++) {
+			let btn = this.buttons[i];
+			this.gd.staticContext.beginPath();
+
+			// Button
+			this.gd.staticContext.rect(
+				btn.position.x,
+				btn.position.y,
+				btn.position.width,
+				btn.position.height
+			);
+
+			if (btn.disabled)
+				this.gd.staticContext.fillStyle = this.disabledColor;
+			else this.gd.staticContext.fillStyle = "white";
+
+			this.gd.staticContext.fill();
+			this.gd.staticContext.stroke();
+
+			// Text
+			this.gd.staticContext.fillStyle = "black";
+			let textWidth = this.gd.staticContext.measureText(btn.data.text).width;
+			let xPadding = (btn.position.width - textWidth) / 2;
+			let yPadding = (btn.position.height + this.gd.fontHeight) / 2;
+			this.gd.staticContext.fillText(
+				btn.data.text,
+				btn.position.x + xPadding,
+				btn.position.y + yPadding
+			);
+			this.gd.staticContext.fillStyle = "white";
+			this.gd.staticContext.closePath();
+		}
+	}
+
+	positionButtons() {
+		let buttonMaxHeight = this.gd.canvas.height / 10;
+		let buttonMaxWidth = this.gd.canvas.width / this.buttons.length;
+		let buttonHeight = buttonMaxHeight * this.relSize;
+		let buttonWidth = buttonMaxWidth * this.relSize;
+		let buttonY = this.gd.canvas.height - buttonMaxHeight;
+
+		for (let i = 0; i < this.buttons.length; i++) {
+			let btn = this.buttons[i];
+			btn.width = buttonWidth;
+			btn.height = buttonHeight;
+
+			btn.x = buttonMaxWidth * i + (buttonMaxWidth - buttonWidth / 2);
+			btn.y = buttonY + (buttonMaxHeight - buttonHeight / 2);
+		}
+	}
+
+	undoButtonClicked() {
+
+	}
+
+	redoButtonClicked() {
+
+	}
+
 	mouseDownHandler(e) {
 		e.preventDefault();
-		let consumed = this.joinNode(e);
+
+		let consumed = this.checkUI(e);
+		if (consumed) return consumed;
+
+		consumed = this.joinNode(e);
 		return consumed;
+	}
+
+	checkUI() {
+		return false;
 	}
 
 	joinNode(e) {
