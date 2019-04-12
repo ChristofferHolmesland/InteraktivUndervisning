@@ -487,6 +487,18 @@ export default class Graph0 {
 	}
 
 	_parseTreeSteps() {
+		// If treeInfo is missing, the exporttype was set to tree, but the
+		// graph couldn't be exported as a tree, so it was exported as a graph instead.
+		if (
+			(this.importSource == "Student" &&
+				this.steps[this.gd.currentStep].roots == undefined) ||
+			(this.importSource == "Algorithm" &&
+				this.steps[this.gd.currentStep].treeInfo == undefined)
+		) {
+			this._parseGraphSteps();
+			return;
+		}
+
 		this.gd.nodes = [];
 		this.gd.edges = [];
 		this.gd.dirty = true;
@@ -764,6 +776,7 @@ export default class Graph0 {
 			} else {
 				console.error(`Found invalid step type: ${step.type} 
 					at index ${i}, skipping.`);
+				console.error(step);
 			}
 		}
 
@@ -840,6 +853,20 @@ export default class Graph0 {
 
 		for (let r = 0; r < tree.roots.length; r++) {
 			fixer(tree.roots[r]);
+		}
+
+		// If there are no roots, the algorithm wasn't able to parse
+		// the current graph as a tree. It is exported as a graph instead.
+		if (tree.roots.length == 0) {
+			// Before we can export it as a graph, it needs to have its children
+			// removed, because they may contain circular references, which
+			// leads to a never ending recursion when it's sent by socket.io
+			for (let i = 0; i < this.gd.nodes.length; i++) {
+				let node = this.gd.nodes[i];
+				delete node.children;
+			}
+
+			return Object.assign({ type: "Complete" }, this.exportAsGraph());
 		}
 
 		return tree;
