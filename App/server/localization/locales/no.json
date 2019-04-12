@@ -369,7 +369,11 @@
                 "Dette gjør du ved å trykke ned en museknapp over en node, hold nede knappen mens du beveger pekeren over en annen node, for å så slippe knappen. Da viser du at du mener at på dette tidspunktet så vil algoritmen sjekke kanten mellom disse to nodene."
             ],
             "Python": [
-
+                "Dette er en guide for hvordan du kan løse Python oppgaver i graftegneren:",
+                "Svaret ditt skal være et kart over forholdene mellom variabler og objekter.",
+                "For å legge til en variabel trykker du først på \"Add_Variable\" knappen og så trykker du der du vil ha variabelen. For å legge til et objekt bruker du \"Add_Object\" knappen. Når du klikker et sted får du først spørsmål om typen. Hvis du velger String, Number eller Boolean, vil du også få spørsmål om verdien.",
+                "For å vise forholdene må du bruke \"Join\" for å lage kanter mellom nodene. Variabler er linket fra variabelen til objektet. Objektegenskaper er linket fra objekt til objekt. Etter du har laget kanten vil du få et spørsmål om hvilken egenskap du vil linke objektet til.",
+                "I innstillinger menyen kan du skrive din egen kode. Når du klikker på \"Parse\" knappen vil koden bli evaluert og alle klassene som blir funnet vil være tilgjengelige som objekt typer."  
             ]
         },
         "settings": {

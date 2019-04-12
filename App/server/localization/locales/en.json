@@ -361,7 +361,11 @@
                 "You do this by clicking on a node, keep the mouse button pressed down, move the cursor over the other node and release the button. This signals that you think at this point in time, the algorithm is looking at the edge between these nodes."
             ],
             "Python": [
-
+                "This is the guide for using the GraphDrawer on questions about Python code:",
+                "Your answer should be a map of how the objects and variables reference eachother.",
+                "To add a variable click the \"Add_Variable\" button and enter the variable name in the prompt. To add an object use the \"Add_Object\" button. When you click a prompt will ask you for the type. If you select Number, String or Boolean, it will also ask you for the value.",
+                "To show the relationship you need to \"Join\" the nodes together. Variables are linked from the variable to the object. Objects are linked to properties by joining from the property object, to the other object. A prompt will appear asking you which property you want to link your object to.",
+                "In the settings menu you can write your own code, and then press the parse button. This will parse the code for you, and add any classes to the list of object types."
             ]
         },
         "settings": {
