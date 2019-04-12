@@ -5,13 +5,25 @@
 			<h1>{{ getLocale.title }}</h1>
 		</b-col>
 	</b-row>
-	<b-row class="margin middleRow row">
-		<b-col v-if="lastSessionBasicInfo === undefined">
-            <p>{{ getLocale.noSessionFound }}</p>
-		</b-col>
-		<b-col v-else>
-			<p>{{ lastSessionBasicInfo.text }}</p>
-		</b-col>
+	<b-row class="center middleRow row">
+		<div v-if="showError">
+			<b-alert	:show="showError"
+						dismissible
+						@dismissed="closeAlert"
+						class="center"
+						>
+				<p>{{ getLocale.error[errorText] }}</p>
+				<b-button>{{ getLocale.refreshBtn }}</b-button>
+			</b-alert>
+		</div>
+		<div v-else>
+			<b-col v-if="lastSessionBasicInfo === undefined">
+				<p>{{ getLocale.noSessionFound }}</p>
+			</b-col>
+			<b-col v-else>
+				<p>{{ lastSessionBasicInfo.text }}</p>
+			</b-col>
+		</div>
 	</b-row>
 	<b-row class="center lastRow row">
 		<b-col cols="12">
@@ -34,23 +46,30 @@ export default {
     data() {
         return {
             lastSessionBasicInfo: undefined,
-            lastSessionInfo: undefined
+			errorText: "",
+			showError: false
         }
     },
     mounted() {
-        this.$socket.emit("getUserLastSession");
+        this.$socket.emit("userLastSessionRequest");
     },
 	methods: {
 		goToLastSession() {
-            if (lastSessionBasicInfo === undefined) return;
-            if (Number(lastSessionBasicInfo.id) === NaN) return;
-            this.$socket.emit("getUserSessionInformationRequest", lastSessionBasicInfo.id);
+            if (this.lastSessionBasicInfo === undefined) return;
+			if (Number(this.lastSessionBasicInfo.id) === NaN) return;
+			this.$socket.emit("getSessionInformationRequest", this.lastSessionBasicInfo.id);
+			this.$router.push("/client/user-profile");
 		}
     },
     sockets: {
-        getUserSessionInformationResponse: function() {
-
-        }
+        userLastSessionResponse: function(data) {
+			this.lastSessionBasicInfo = data;
+			this.showError = false;
+		},
+		userLastSessionError: function(data) {
+			this.errorText = data;
+			this.showError = true;
+		}
 	},
 	computed: {
 		getLocale() {
@@ -98,5 +117,9 @@ export default {
 }
 .row {
 	width: 280px;
+}
+div {
+	width: 100%;
+	height: 100%;
 }
 </style>

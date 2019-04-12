@@ -382,7 +382,11 @@
     "ViewLastSession": {
         "goBtn": "Åpne",
         "title": "Forrige økt",
-        "noSessionFound": "Kan ikke finne noen tidligere økter"
+        "noSessionFound": "Kan ikke finne noen tidligere økter",
+        "error": {
+            "dbError": "En feil skjedde med databasen. Venligst prøv igjen senere."
+        },
+        "refreshBtn": "Last inn på nytt"
     },
     "ShowSandbox": {
         "title": "Gå til sandkassen",
