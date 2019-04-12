@@ -110,7 +110,26 @@
         "question": "Question",
         "solution": "Solution",
         "answer": "Answer",
-        "binaryTreeSolutionText": "The answer would be correct if the drawn tree fulfilled the requirements of a binary tree and consisted of the following nodes:"
+        "binaryTreeSolutionText": "The answer would be correct if the drawn tree fulfilled the requirements of a binary tree and consisted of the following nodes:",
+        "showQuestionType": "Question type:",
+        "questionType": {
+            "Text": "Text",
+            "Multiple choice": "Multiple choice",
+            "Shellsort": "Shellsort",
+            "MergeSort": "MergeSort",
+            "QuickSort": "QuickSort",
+            "BinaryTree": "BinaryTree",
+            "BinarySearchTree": "BinarySearchTree",
+            "AVLTree": "AVLTree",
+            "Dijkstra": "Dijkstra",
+            "Python": "Python"
+        },
+        "binaryTreeDesc": "Draw a BinaryTree with the following nodes: ",
+        "bstavlOperationDesc": "Operation: ",
+        "bstavlNodesDesc": "Nodes: ",
+        "pythonCodeDesc": "Code: ",
+        "Add": "Add",
+        "Remove": "Remove"
     },
     "Navbar": {
         "lang": "Language",
@@ -216,7 +235,10 @@
         "answerDontKnowBtnText": "Answer \"I don't know\"",
         "answerBtnText": "Answer",
         "leaveSessionBody": "By clicking ok you will leave this session.\nAll answers up to this point will be saved.",
-        "leaveSessionBodyAdmin": "You are now leaving the session. The session will be put on hold for 5 minutes before its removed. If you join the session again it will resume. All answers from students up until this point will be stored."
+        "leaveSessionBodyAdmin": "You are now leaving the session. The session will be put on hold for 5 minutes before its removed. If you join the session again it will resume. All answers from students up until this point will be stored.",
+        "binaryTreeDesc": "Draw a BinaryTree with the following nodes: ",
+        "bstavlOperationDesc": "Operation: ",
+        "bstavlNodesDesc": "Nodes: "
     },
     "ClientSessionWaitingArea": {
         "title": "Waiting Area",

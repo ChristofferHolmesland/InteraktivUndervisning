@@ -440,7 +440,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 		let valid = validateChecker.checkQuestion(question);
 		socket.emit("confirmQuestionRequirements", valid);
 		if (!valid.passed) return;
-
+		generalFunctions.createSpecialDescription(question);
 		question = generateSolution(question);
 
 		let objects = JSON.parse(JSON.stringify(question.objects));
@@ -489,7 +489,7 @@ module.exports.admin = function(socket, db, user, sessions) {
 		let valid = validateChecker.checkQuestion(question);
 		socket.emit("confirmQuestionRequirements", valid);
 		if (!valid.passed) return;
-
+		generalFunctions.createSpecialDescription(question);
 		question = generateSolution(question);
 
 		let filePath = path.join("../../images/questionImages/", question.id.toString(), "/");

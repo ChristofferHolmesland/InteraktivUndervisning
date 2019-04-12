@@ -117,7 +117,27 @@
         "question": "Spørsmål",
         "solution": "Løsning",
         "answer": "Svar",
-        "binaryTreeSolutionText": "Det ville blitt regnet som riktig svar hvis treet som ble gitt følger alle reglene til et Binear Tree og treet besto av følgende noder:"
+        "binaryTreeSolutionText": "Det ville blitt regnet som riktig svar hvis treet som ble gitt følger alle reglene til et Binear Tree og treet besto av følgende noder:",
+        "showQuestionType": "Spørsmål type:",
+        "questionType": {
+            "Text": "Tekst",
+            "Multiple choice": "Flervalg",
+            "Shellsort": "Shell sortering",
+            "MergeSort": "Flette sortering",
+            "QuickSort": "Quick sortering",
+            "BinaryTree": "Binærtre",
+            "BinarySearchTree": "Binært søketre",
+            "AVLTree": "AVLTree",
+            "Dijkstra": "Dijkstra",
+            "Python": "Python"
+        },
+        "binaryTreeDesc": "Tegn et binaer tree med følgende noder: ",
+        "bstavlOperationDesc": "Operasjon: ",
+        "bstavlNodesDesc": "Noder: ",
+        "pythonCodeDesc": "Kode: ",
+        "Add": "Legg til",
+        "Remove": "Slett"
+
     },
     "Navbar": {
         "lang": "Språk",
@@ -223,7 +243,10 @@
         "answerDontKnowBtnText": "Svar: \"Jeg vet ikke\"",
         "answerBtnText": "Send inn svar",
         "leaveSessionBody": "Ved å klikke ok, så vil du koble deg fra denne økten.\nAlle svare frem til nå vil være lagret.",
-        "leaveSessionBodyAdmin": "Du forlater nå økten. Økten vil bli satt på pause i 5 minutter før den fjernes. Hvis du kommer tilbake hit så vil økten fortsette. Alle svarene fra studentene opp til nå har blitt lagret."
+        "leaveSessionBodyAdmin": "Du forlater nå økten. Økten vil bli satt på pause i 5 minutter før den fjernes. Hvis du kommer tilbake hit så vil økten fortsette. Alle svarene fra studentene opp til nå har blitt lagret.",
+        "binaryTreeDesc": "Tegn et binaer tree med følgende noder: ",
+        "bstavlOperationDesc": "Operasjon: ",
+        "bstavlNodesDesc": "Noder: "
     },
     "ClientSessionWaitingArea": {
         "title": "Venteområde",

@@ -358,7 +358,11 @@ function initializeState() {
 				files: [],
 				graphs: [],
 				tables: [],
-				_graphdrawerGraph: undefined
+				_graphdrawerGraph: undefined,
+                questionTypeDesc: {
+					locale: Object,
+                    text: Object
+                }
 			}
 		},
 		solutionTypes: [],

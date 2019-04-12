@@ -17,7 +17,8 @@ export default new Vuex.Store({
 			localeList: undefined
 		},
 		courseList: [],
-		selectedCourse: ""
+		selectedCourse: "",
+		questionTypes: []
 	},
 	mutations: {
 		setSelectedCourse(state, data) {
@@ -27,6 +28,9 @@ export default new Vuex.Store({
 			if (data.length === 0) return;
 			state.selectedCourse = data[0].value;
 			state.courseList = data;
+		},
+		setQuestionTypes(state, data) {
+			state.questionTypes = data;
 		},
 		localeChange(state, data) {
 			state.locale = data;
@@ -89,6 +93,9 @@ export default new Vuex.Store({
 		},
 		getSelectedCourse: (state) => {
 			return state.selectedCourse;
+		},
+		getQuestionTypes: (state) => {
+			return state.questionTypes;
 		}
 	}
 });

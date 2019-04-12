@@ -2,7 +2,7 @@ const socketio = require('socket.io');
 const locales = (require("../../localization/localeLoader.js")).locales;
 const User = (require("../user.js")).User;
 const anonymousNames = (require("../anonymousName.js")).Animals;
-
+const dbFunctions = require("../database/databaseFunctions").dbFunctions;
 var sessions = new Map();
 
 module.exports.listen = function(server, users, db) {
@@ -63,6 +63,15 @@ module.exports.listen = function(server, users, db) {
 		socket.on("getLocaleRequest", function(locale) {
 			socket.emit("getLocaleResponse", {"locale": locales[locale], "localeList": locales.localeList});
 		});
+
+		socket.on("getQuestionTypeRequest", async function (solutionType) {
+			let types = await dbFunctions.get.questionTypes(db,solutionType).catch(() => {
+				//socket.emit("copyQuestionToCourseError", "dbError");
+			});
+			socket.emit("questionTypesResponse",types)
+		});
+
+
 
 		socket.on("verifyUserLevel", function(userLevel) {
 			if (user === undefined || user.userRights < userLevel) socket.emit("unauthorizedAccess");
