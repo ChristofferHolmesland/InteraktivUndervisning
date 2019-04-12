@@ -5,15 +5,16 @@
 			<h1>{{ getLocale.title }}</h1>
 		</b-col>
 	</b-row>
-	<b-row class="center middleRow row">
+	<b-row class="center middleRow row align-item-center">
 		<div v-if="showError">
 			<b-alert	:show="showError"
 						dismissible
-						@dismissed="closeAlert"
+						@dismissed="showError = false"
 						class="center"
+						variant="danger"
 						>
 				<p>{{ getLocale.error[errorText] }}</p>
-				<b-button>{{ getLocale.refreshBtn }}</b-button>
+				<b-button style="width: 150px;" @click="refresh">{{ getLocale.refreshBtn }}</b-button>
 			</b-alert>
 		</div>
 		<div v-else>
@@ -59,6 +60,9 @@ export default {
 			if (Number(this.lastSessionBasicInfo.id) === NaN) return;
 			this.$socket.emit("getSessionInformationRequest", this.lastSessionBasicInfo.id);
 			this.$router.push("/client/user-profile");
+		},
+		refresh: function() {
+			this.$socket.emit("userLastSessionRequest");
 		}
     },
     sockets: {
@@ -106,7 +110,6 @@ export default {
 	left: 45px;
 	top: 160px;
 	height: 150px;
-	line-height: 150px;
 }
 .lastRow {
 	position: absolute;
