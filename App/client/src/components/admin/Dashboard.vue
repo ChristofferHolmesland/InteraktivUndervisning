@@ -1,8 +1,8 @@
 <template>
-	<b-container class="jumbotron">
+	<b-container>
 		<b-row class="mb-5">
 			<!-- Select course-->
-			<b-col cols="4">
+			<b-col cols="5" class="jumbotron">
 					<b-row><h5>{{ getLocale.changeCourseTitle }}</h5></b-row>
 					<b-row>
 						<b-container class="px-0">
@@ -18,44 +18,20 @@
 						</b-container>
 					</b-row>
 			</b-col>
-			<!-- New question -->
-			<b-col cols="4" style="text-align: center;">
-				<b-row><h5>{{ getLocale.addNewQuestionBtnText }}</h5></b-row>
+			<b-col cols="2"></b-col>
+			<!-- Start session -->
+			<b-col cols="5" class="jumbotron">
 				<b-row>
-					<b-container class="pl-0" style="text-align: center;">
-						<b-row>
-							<b-col>
-								<b-button 	style="width: 100%;"
-											@click="newQuestionClicked"
-											disabled>
-									{{ getLocale.newQuestion }}
-								</b-button>
-							</b-col>
-						</b-row>
-					</b-container>
+					<h5>{{ getLocale.startSession }}</h5>
 				</b-row>
-			</b-col>
-			<!-- Last session -->
-			<b-col cols="4">
-				<b-row><h5>{{ getLocale.viewLastSession }}</h5></b-row>
 				<b-row>
-					<b-container class="pl-0" style="text-align: center;">
-						<b-row>
-							<b-col>
-								<b-button 	style="width: 100%;"
-											@click="viewLastSession"
-											disabled>
-									{{ getLocale.openLastSession }}
-								</b-button>
-							</b-col>
-						</b-row>
-					</b-container>
+					<SessionsOverview/>
 				</b-row>
 			</b-col>
 		</b-row>
 		<b-row>
 			<!-- Add admin -->
-			<b-col cols="4">
+			<b-col cols="5" class="jumbotron">
 				<b-row><h5>{{ getLocale.courseAdministrator }}</h5></b-row>
 				<b-row>
 					<b-container class="px-0">
@@ -86,8 +62,9 @@
 					</b-container>
 				</b-row>
 			</b-col>
+			<b-col cols="2"></b-col>
 			<!-- Add student assistant -->
-			<b-col cols="4">
+			<b-col cols="5" class="jumbotron">
 				<b-row><h5>{{getLocale.courseAssistants}}</h5></b-row>
 				<b-row>
 					<b-container class="px-0">
@@ -116,15 +93,6 @@
 							</b-col>
 						</b-row>
 					</b-container>
-				</b-row>
-			</b-col>
-			<!-- Start session -->
-			<b-col cols="4">
-				<b-row>
-					<h5>{{ getLocale.startSession }}</h5>
-				</b-row>
-				<b-row>
-					<SessionsOverview/>
 				</b-row>
 			</b-col>
 		</b-row>

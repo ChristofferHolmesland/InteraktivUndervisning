@@ -398,7 +398,7 @@
             "Lær deg funksjone til graftegneren og de ulike kontrollene."
         ],
         "goBtn": "Åpne"
-    }
+    },
     "AdminQuestionResultScreen": {
         "leaveSessionBodyAdmin": "Du prøver nå å avslutte økten før den er ferdig. Alle svarene til studentene er lagret frem til nå. Ønsker du fremdeles å avslutte økten?",
         "endSessionBtn": "Avslutt økten",
