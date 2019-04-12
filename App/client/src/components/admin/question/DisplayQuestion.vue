@@ -20,12 +20,15 @@
 									<b-col>
 										<p>{{ resultInfo.question.description }}</p>
 									</b-col>
-									<b-col>
+								</b-row>
+								<b-row>
+									<div>
 										<div style="display: inline" v-for="(info,index) in getExtraDesc" :key="index">
 											<pre v-if="info.code">{{info.value}}</pre>
-											<p style="display: inline" v-else>{{info.value}}<br v-if="info.linebreak"/></p>
+											<p style="display: inline" v-else>{{info.value}}</p>
+											<br v-if="info.linebreak"/>
 										</div>
-									</b-col>
+									</div>
 								</b-row>
 								<b-row v-if="getImagesLength > 0">
 									<b-col cols="12">
@@ -171,7 +174,8 @@ export default {
 			tabIndex: Number,
 			didntAnswerString: "You answered: I don't know!",
 			selectedImageIndex: 0,
-			reload: false
+			reload: false,
+			linebreak: false
 		};
 	},
 	computed: {
@@ -228,7 +232,7 @@ export default {
 				}
 			}
 			return order;
-		}
+		},
 	},
 	methods: {
 		setTab(event) {
@@ -249,7 +253,7 @@ export default {
 					this.reload = false;
 				});
 			});
-		}
+		},
 	},
 	components: {
 		TreeAnswer,
