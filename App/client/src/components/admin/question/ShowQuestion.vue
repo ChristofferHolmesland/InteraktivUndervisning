@@ -77,7 +77,7 @@
             </b-row>
             <b-row v-if="showSolution">
                 <b-col>
-                    <h6>{{ getLocale.showQuestionType }} {{ getLocale.questionType[questionTypes[question.solutionType - 1].text] }}</h6>
+                    <h6>{{ getLocale.showQuestionType }} {{ getQuestionTypeName }}</h6>
                     <p v-if="question.solutionType === 1">{{question.solution}}</p>
                     <b-container v-if="question.solutionType === 2" class="px-0">
                         <b-row>
@@ -178,12 +178,21 @@ export default {
         });
 
         this.$root.$on("bv::modal::show", () => {
-            if (this.$refs.graphdrawer !== undefined) {
-                this.$nextTick(function() {
-                    this.$refs.graphdrawer.createDrawer();
-                });
-            }
 			this.$socket.emit("getQuestionTypes");
+        });
+
+        this.$root.$on("bv::modal::shown", () => {
+            this.$nextTick(function() {
+                if (this.$refs.graphdrawer !== undefined) {
+                    this.$refs.graphdrawer.createDrawer();
+                }
+            });
+        });
+
+        this.$nextTick(function() {
+            if (this.$refs.graphdrawer !== undefined) {
+                this.$refs.graphdrawer.createDrawer();
+            }
         });
     },
     sockets: {
@@ -196,6 +205,13 @@ export default {
             let locale = this.$store.getters.getLocale("AdminQuestions");
             if(locale) return locale;
             else return {};
+        },
+        getQuestionTypeName: function() {
+            let questionTypeInfo = this.questionTypes[this.question.solutionType - 1];
+            if (questionTypeInfo == undefined) return "";
+            
+            let questionTypeInfoLocale = this.getLocale.questionType[questionTypeInfo.text];
+            return questionTypeInfoLocale;
         },
         getTime: function() {
             let min = Math.floor(this.question.time / 60).toString();
