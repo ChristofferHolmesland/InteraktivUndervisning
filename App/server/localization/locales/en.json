@@ -421,5 +421,17 @@
     },
     "AdminSessionOverview": {
         "startBtn": "Start"
+    },
+    "GraphDrawer": {
+        "Graph0": {
+            "buttons": {
+                "Add": "Add",
+                "Remove": "Remove",
+                "Move": "Move",
+                "Join": "Join",
+                "Edit": "Edit",
+                "Tree": "Tree"
+            }
+        }
     }
 }

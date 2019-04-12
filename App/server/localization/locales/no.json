@@ -429,5 +429,17 @@
     },
     "AdminSessionOverview": {
         "startBtn": "Start"
+    },
+    "GraphDrawer": {
+        "Graph0": {
+            "buttons": {
+                "Add": "Legg til",
+                "Remove": "Slett",
+                "Move": "Flytt",
+                "Join": "Koble",
+                "Edit": "Endre",
+                "Tree": "Tre"
+            }
+        }
     }
 }

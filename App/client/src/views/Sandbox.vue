@@ -345,7 +345,9 @@ export default {
 				this.requestGraphDrawerObject = !this.requestGraphDrawerObject;
 				if (this.$refs.graphdrawer !== undefined) {
 					this.$nextTick(function () {
-						this.$refs.graphdrawer.createDrawer();
+						if (this.$refs.graphdrawer !== undefined) {
+							this.$refs.graphdrawer.createDrawer();
+						}
 					});
 				}
 			}

@@ -61,21 +61,26 @@ export default class Graph0 {
 
 	constructor(graphDrawer, config) {
 		this.gd = graphDrawer;
-
+		this.locale = this.gd.locale.Graph0;
 		// Current interaction state.
-		this.currentState = "Add";
+		this.currentState = this.locale.buttons.Add;
 
 		// The buttons which the user may click on to select interaction state
-		this.buttons = ["Add", "Remove", "Move", "Join", "Edit"];
+		this.buttons = [
+			this.locale.buttons.Add,
+			this.locale.buttons.Remove,
+			this.locale.buttons.Move,
+			this.locale.buttons.Join,
+			this.locale.buttons.Edit
+		];
 
 		// Every interaction state and event handler.
-		this.stateHandlers = {
-			Add: this.addNode,
-			Remove: this.removeNode,
-			Join: this.joinNode,
-			Move: this.moveNode,
-			Edit: this.editNode
-		}
+		this.stateHandlers = {};
+		this.stateHandlers[this.locale.buttons.Add] = this.addNode;
+		this.stateHandlers[this.locale.buttons.Remove] = this.removeNode;
+		this.stateHandlers[this.locale.buttons.Move] = this.moveNode;
+		this.stateHandlers[this.locale.buttons.Join] = this.joinNode;
+		this.stateHandlers[this.locale.buttons.Edit] = this.editNode;
 
 		// Binds the "this" context to the GraphDrawer object.
 		for (let key in this.stateHandlers) {
@@ -95,7 +100,6 @@ export default class Graph0 {
 	mouseDownHandler(e) {
 		if (this.gd.operatingMode == "Presentation")
 			return this.detectTreeSteppingInput(e);
-		
 
 		// UI
 		let consumed = this.detectUIInput(e);
@@ -143,9 +147,11 @@ export default class Graph0 {
 				// Checks if the node is connected to anything with edges.
 				for (let j = 0; j < this.gd.edges.length; j++) {
 					// Removes the edges.
-					if (this.gd.edges[j].n1 == this.gd.nodes[i] 
-						|| this.gd.edges[j].n2 == this.gd.nodes[i]) {
-							this.gd.edges.splice(j, 1);
+					if (
+						this.gd.edges[j].n1 == this.gd.nodes[i] ||
+						this.gd.edges[j].n2 == this.gd.nodes[i]
+					) {
+						this.gd.edges.splice(j, 1);
 						j--;
 					}
 				}
@@ -433,7 +439,7 @@ export default class Graph0 {
 
 		this.steppingButtons.push({
 			data: {
-				text: "<-- Tree",
+				text: "<-- " + this.locale.buttons.Tree,
 				relSize: this.gd.relSize
 			},
 			handler: stepBack
@@ -447,7 +453,7 @@ export default class Graph0 {
 		});
 		this.steppingButtons.push({
 			data: {
-				text: "Tree -->",
+				text: this.locale.buttons.Tree + " -->",
 				relSize: this.gd.relSize
 			},
 			handler: stepForward

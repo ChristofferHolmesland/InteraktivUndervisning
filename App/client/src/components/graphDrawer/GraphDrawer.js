@@ -79,7 +79,7 @@ export default class GraphDrawer {
 		return this.controllers[this.controlType].export();
 	}
 
-	constructor(canvas, config) {
+	constructor(canvas, locale, config) {
 		// Radius of nodes.
 		this.R = 25;
 		// How often the canvas should be updated.
@@ -90,6 +90,8 @@ export default class GraphDrawer {
 		this.DEVICE = "Mobile";
 		// Size of the font in px.
 		this.fontHeight = 10;
+		// Contains all the text
+		this.locale = locale;
 
 		// Which step of the presentation the user is currently on
 		// Should be used by the controller to decide on what to display
