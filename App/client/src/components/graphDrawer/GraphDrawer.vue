@@ -64,6 +64,17 @@
         },
         methods: {
             destroyDrawer: function() {
+                // Recreate the canvas to remove the event listeners
+                let el = document.getElementById("canvas");
+                let elClone = el.cloneNode(true);
+                el.parentNode.replaceChild(elClone, el);
+
+                // Remove top level references from the GraphDrawer object
+                for (let prop in this.graphDrawer) {
+                    delete this.graphDrawer[prop];
+                }
+
+                delete this.graphDrawer;
                 this.graphDrawer = undefined;
             },
             createDrawer: function() {
@@ -81,7 +92,7 @@
                     that there will be two GraphDrawer objects attached to the same canvas.
                 */
                 if (this.graphDrawer !== undefined) {
-                    return;
+                    this.destroyDrawer();
                 }
 
                 this.graphDrawer = new GraphDrawer(this.canvas, {

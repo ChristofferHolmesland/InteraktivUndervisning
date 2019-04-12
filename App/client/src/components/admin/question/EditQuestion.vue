@@ -615,8 +615,6 @@ export default {
 			this.returnToOkHandler();
 		},
 		callOkHandler: function(e) {
-			//if the component is using the Graph Drawer, Graph drawer is used on Binary Tree 7 up to BFS 13
-			//Need a admin socket function for validating the question information given.
 			e.preventDefault();
 			if (
 				this.newQuestion.solutionType > 6 &&
