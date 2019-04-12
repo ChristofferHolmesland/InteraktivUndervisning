@@ -15,7 +15,8 @@
         name: 'GraphDrawer',
         data() {
             return {
-                graphDrawer: undefined
+                graphDrawer: undefined,
+                locale: undefined
             };
         },
         props: {
@@ -57,10 +58,21 @@
         watch: {
             requestAnswer: function() {
                 this.$emit("getValueResponse", this.graphDrawer.export());
+            },
+            getLocaleFromStore: function(newValue, oldValue) {
+                this.locale = newValue;
             }
         },
         mounted() {
+            this.locale = this.getLocaleFromStore;
             this.createDrawer();
+        },
+        computed: {
+            getLocaleFromStore() {
+                let locale = this.$store.getters.getLocale("GraphDrawer");
+                if (locale) return locale;
+			    else return {};
+            }
         },
         methods: {
             destroyDrawer: function() {
@@ -78,6 +90,12 @@
                 this.graphDrawer = undefined;
             },
             createDrawer: function() {
+                // A locale is needed to create the drawer.
+                if (this.locale == undefined) {
+                    console.log("Locale is undefined");
+                    return;
+                }
+
                 this.canvas = document.getElementById("canvas");
 
                 let nodeShape = "Circle";
@@ -95,7 +113,7 @@
                     this.destroyDrawer();
                 }
 
-                this.graphDrawer = new GraphDrawer(this.canvas, {
+                this.graphDrawer = new GraphDrawer(this.canvas, this.locale, {
                     nodeShape: nodeShape,
                     controlType: this.controlType,
                     operatingMode: this.operatingMode,
