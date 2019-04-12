@@ -41,12 +41,42 @@ export default class Djikstra {
 				this.gd.edges.push(edge);
 			}
 		}
+
+		if (this.gd.operatingMode == "Interactive") {
+			this.buttons.push({
+				text: "<- Undo",
+				position: {},
+				handler: this.undoButtonClicked.bind(this),
+				disabled: true
+			});
+			this.buttons.push({
+				text: "Redo ->",
+				position: {},
+				handler: this.redoButtonClicked.bind(this),
+				disabled: true
+			});
+			this.positionButtons();
+			this.drawStatic();
+		}
 	}
 
 	constructor(graphDrawer, config) {
 		this.gd = graphDrawer;
 		this.gd.dirty = true;
 		this.config = config;
+
+		/*
+			{
+				text: String
+				position: { x, y, width, height },
+				handler: Function
+				disabled: Boolean
+			}
+		*/
+		this.buttons = [];
+		this.redoLog = [];
+		this.disabledColor = "dimgray";
+		this.relSize = 0.7;
 	}
 
 	configure() {
@@ -76,10 +106,130 @@ export default class Djikstra {
 		return steps;
 	}
 
+	drawStatic() {
+		this.gd.resetStatic();
+
+		for (let i = 0; i < this.buttons.length; i++) {
+			let btn = this.buttons[i];
+			this.gd.staticContext.beginPath();
+
+			// Button
+			this.gd.staticContext.rect(
+				btn.position.x,
+				btn.position.y,
+				btn.position.width,
+				btn.position.height
+			);
+
+			if (btn.disabled)
+				this.gd.staticContext.fillStyle = this.disabledColor;
+			else this.gd.staticContext.fillStyle = "white";
+
+			this.gd.staticContext.fill();
+			this.gd.staticContext.stroke();
+
+			// Text
+			this.gd.staticContext.fillStyle = "black";
+			let textWidth = this.gd.staticContext.measureText(btn.text).width;
+			let xPadding = (btn.position.width - textWidth) / 2;
+			let yPadding = (btn.position.height + this.gd.fontHeight) / 2;
+			this.gd.staticContext.fillText(
+				btn.text,
+				btn.position.x + xPadding,
+				btn.position.y + yPadding
+			);
+			this.gd.staticContext.fillStyle = "white";
+			this.gd.staticContext.closePath();
+		}
+	}
+
+	positionButtons() {
+		let buttonMaxHeight = this.gd.canvas.height / 10;
+		let buttonMaxWidth = this.gd.canvas.width / this.buttons.length;
+		let buttonHeight = buttonMaxHeight * this.relSize;
+		let buttonWidth = buttonMaxWidth * this.relSize;
+		let buttonY = this.gd.canvas.height - buttonMaxHeight;
+
+		for (let i = 0; i < this.buttons.length; i++) {
+			let pos = this.buttons[i].position;
+			pos.width = buttonWidth;
+			pos.height = buttonHeight;
+
+			pos.x = buttonMaxWidth * i + (buttonMaxWidth - buttonWidth) / 2;
+			pos.y = buttonY + (buttonMaxHeight - buttonHeight) / 2;
+		}
+	}
+
+	/*
+		Updates the disabled state of every button, and redraws if needed.
+	*/
+	determineButtonStates() {
+		let previousStates = [];
+		for (let i = 0; i < this.buttons.length; i++)
+			previousStates[i] = this.buttons[i].disabled;
+
+		// The undo button is disabled if there is no edges with a direction
+		let lastEdge = this.gd.edges[this.gd.edges.length - 1];
+		this.buttons[0].disabled = !lastEdge.directed;
+
+		// The redo button is disabled if the redo log is empty
+		this.buttons[1].disabled = this.redoLog.length == 0;
+
+		for (let i = 0; i < this.buttons.length; i++) {
+			if (this.buttons[i].disabled !== previousStates[i]) {
+				this.drawStatic();
+				return;
+			}
+		}
+	}
+
+	undoButtonClicked() {
+		let edge = this.gd.edges.pop();
+		this.redoLog.push(edge);
+
+		this.determineButtonStates();
+		this.gd.dirty = true;
+	}
+
+	redoButtonClicked() {
+		let edge = this.redoLog.pop();
+		this.gd.edges.push(edge);
+
+		this.determineButtonStates();
+		this.gd.dirty = true;
+	}
+
 	mouseDownHandler(e) {
 		e.preventDefault();
-		let consumed = this.joinNode(e);
+
+		let consumed = this.checkUI(e);
+		if (consumed) return consumed;
+
+		consumed = this.joinNode(e);
 		return consumed;
+	}
+
+	checkUI(e) {
+		for (let i = 0; i < this.buttons.length; i++) {
+			let btn = this.buttons[i];
+			if (btn.disabled) continue;
+
+			let inside = this.gd.isPointInRectangle(
+				e.offsetX,
+				e.offsetY,
+				btn.position.x,
+				btn.position.y,
+				btn.position.width,
+				btn.position.height
+			);
+
+			if (inside) {
+				btn.handler();
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	joinNode(e) {
@@ -104,6 +254,9 @@ export default class Djikstra {
 					this.gd.dirty = true;
 				}
 			}
+
+			this.redoLog = [];
+			this.determineButtonStates();
 
 			this.gd.canvas.removeEventListener("mouseup", handler);
 			this.gd.canvas.removeEventListener("touchend", handler);

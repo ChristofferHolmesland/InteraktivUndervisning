@@ -64,6 +64,17 @@
         },
         methods: {
             destroyDrawer: function() {
+                // Recreate the canvas to remove the event listeners
+                let el = document.getElementById("canvas");
+                let elClone = el.cloneNode(true);
+                el.parentNode.replaceChild(elClone, el);
+
+                // Remove top level references from the GraphDrawer object
+                for (let prop in this.graphDrawer) {
+                    delete this.graphDrawer[prop];
+                }
+
+                delete this.graphDrawer;
                 this.graphDrawer = undefined;
             },
             createDrawer: function() {
@@ -72,6 +83,16 @@
                 let nodeShape = "Circle";
                 if (this.controlType == "Sort" || this.controlType == "Python") {
                     nodeShape = "Rectangle"
+                }
+
+                /*
+                    There seems to be a bug in the garbage collection of browsers.
+                    The GraphDrawer object isn't collected even though nothing has
+                    a reference to it (after calling this.destroyDrawer()), which means
+                    that there will be two GraphDrawer objects attached to the same canvas.
+                */
+                if (this.graphDrawer !== undefined) {
+                    this.destroyDrawer();
                 }
 
                 this.graphDrawer = new GraphDrawer(this.canvas, {

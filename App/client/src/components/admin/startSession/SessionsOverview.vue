@@ -9,7 +9,7 @@
 			</b-col>
 			<b-col cols="4" class="pl-0">
 				<b-button @click="initializeSession(selectedSession)">
-					Start
+					{{ getLocale.startBtn }}
 				</b-button>
 			</b-col>
 		</b-row>
@@ -62,6 +62,11 @@ export default {
 		},
 		getSelectedCourse() {
 			return this.$store.getters.getSelectedCourse;
+		},
+		getLocale: function() {
+			let locale = this.$store.getters.getLocale("AdminSessionOverview");
+			if (locale) return locale;
+			else return {};
 		}
 	},
 	watch: {

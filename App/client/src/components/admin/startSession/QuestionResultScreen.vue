@@ -4,19 +4,19 @@
 			<b-col cols="4">
 				<b-row>
 					<b-col>
-						<h1>User Stat</h1>
-						<p>Users: {{ resultInfo.users }}</p>
-						<p>Correct answers: {{ resultInfo.correctAnswer }}</p>
-						<p>Didn't know: {{ resultInfo.didntKnow }}</p>
-						<p>Wrong answers: {{ resultInfo.incorrectAnswer }}</p>
+						<h1>{{ getLocale.userStatHeadline }}</h1>
+						<p>{{ getLocale.users }} {{ resultInfo.users }}</p>
+						<p>{{ getLocale.correctAnswers }} {{ resultInfo.correctAnswer }}</p>
+						<p>{{ getLocale.didntKnow }} {{ resultInfo.didntKnow }}</p>
+						<p>{{ getLocale.wrong }} {{ resultInfo.incorrectAnswer }}</p>
 					</b-col>
 				</b-row>
 				<b-row>
 					<b-col>
-						<b-button @click="endSession" block variant="danger">End session</b-button>
+						<b-button @click="endSession" block variant="danger">{{ getLocale.endSessionBtn }}</b-button>
 					</b-col>
 					<b-col >
-						<b-button @click="nextQuestion" block variant="primary">Next</b-button>
+						<b-button @click="nextQuestion" block variant="primary">{{ getLocale.nextBtn }}</b-button>
 					</b-col>
 				</b-row>
 			</b-col>
@@ -67,7 +67,11 @@ export default {
 			this.$socket.emit("nextQuestionRequest");
 		},
 		endSession() {
-
+			if (
+				confirm(
+					this.getLocale.leaveSessionBodyAdmin
+				)
+			) this.$socket.emit("adminEndSession");
 		},
 		changeAnswer(event) {
 			this.selectedAnswer = Number(event.target.id);
@@ -77,6 +81,11 @@ export default {
 	computed: {
 		getIncorrectAnswers() {
 			return this.resultInfo.answerList;
+		},
+		getLocale: function() {
+			let locale = this.$store.getters.getLocale("AdminQuestionResultScreen");
+			if (locale) return locale;
+			else return {};
 		}
 	},
 	components: {

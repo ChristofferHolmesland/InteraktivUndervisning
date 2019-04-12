@@ -247,10 +247,10 @@ export default class GraphDrawer {
 	}
 
 	/*
-		Draws the stepping buttons to the buffer.
-		Must be called by a controller.
+		Removes everything from the staticBuffer, and 
+		resets the colors.
 	*/
-	drawStatic() {
+	resetStatic() {
 		this.staticContext.clearRect(
 			0,
 			0,
@@ -260,6 +260,14 @@ export default class GraphDrawer {
 
 		this.staticContext.fillStyle = "white";
 		this.staticContext.strokeStyle = "black";
+	}
+
+	/*
+		Draws the stepping buttons to the buffer.
+		Must be called by a controller.
+	*/
+	drawStatic() {
+		this.resetStatic();
 
 		for (let i = 0; i < this.steppingButtons.length; i++) {
 			let btn = this.steppingButtons[i];
@@ -900,6 +908,8 @@ export default class GraphDrawer {
 	}
 
 	checkSteppingButtons(e) {
+		if (this.steppingButtons == undefined) return false;
+
 		for (let i = 0; i < this.steppingButtons.length; i++) {
 			let btn = this.steppingButtons[i];
 			let inside = this.isPointInRectangle(

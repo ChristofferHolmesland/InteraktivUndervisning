@@ -998,4 +998,4 @@ const dijkstraObject = {
 	}
 };
 
-module.exports = dijkstraObject;
+export default dijkstraObject;

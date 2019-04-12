@@ -4,7 +4,9 @@
 	<b-modal :id="elementId" :ref="elementRef" :no-close-on-backdrop="true" :title="getTitle" @ok="callOkHandler" style="text-align: left;" size="lg">
         <b-form>
             <b-alert    :show="validationFailure"
-                        variant="danger">
+                        variant="danger"
+						dimissible
+						@dismissed="validationFailure = false">
                 <p v-for="(error, index) in validationErrors" :key="index">
                     {{getLocale[error]}}
                 </p>
@@ -293,7 +295,7 @@
                     :requestAnswer="requestGraphDrawerObject"
                     controlType="Graph0"
                     exportType="Both"
-                    operationMode="Interactive"
+                    operatingMode="Interactive"
                     importType="Graph"
                     :steps="this.newQuestion.objects._graphdrawerGraph"
                 />
@@ -442,6 +444,7 @@ export default {
 					this.$nextTick(function() {
 						this.$forceUpdate();
 						if (this.$refs.graphdrawer !== undefined) {
+							this.$refs.graphdrawer.destroyDrawer();
 							this.$refs.graphdrawer.createDrawer();
 						}
 					});
@@ -612,8 +615,6 @@ export default {
 			this.returnToOkHandler();
 		},
 		callOkHandler: function(e) {
-			//if the component is using the Graph Drawer, Graph drawer is used on Binary Tree 7 up to BFS 13
-			//Need a admin socket function for validating the question information given.
 			e.preventDefault();
 			if (
 				this.newQuestion.solutionType > 6 &&

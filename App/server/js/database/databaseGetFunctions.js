@@ -421,8 +421,23 @@ const get = {
 			db.get(statement, (err, row) => {
 				if (err) reject(customReject(err, "userLastSession"));
 				resolve(row);
-			});
+      });
 		});
+  },
+	courseInfoById(db, courseId) {
+		return new Promise(async (resolve, reject) => {
+			let statement = `SELECT CC.code, S.season, Y.year
+							FROM Course AS C
+							INNER JOIN CourseCode AS CC ON C.codeId = CC.id
+							INNER JOIN CourseSemester AS CS ON CS.id = C.semesterId
+							INNER JOIN Season AS S ON S.id = CS.seasonId
+							INNER JOIN Year AS Y ON Y.id = CS.yearId
+							WHERE C.id = ${courseId}`;
+			db.all(statement, (err, rows) => {
+				if (err) reject(customReject(err, "courseInfoById"));
+				resolve(rows[0]);
+			});
+    });
 	}
 };
 
