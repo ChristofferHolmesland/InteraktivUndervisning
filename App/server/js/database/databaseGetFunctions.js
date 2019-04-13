@@ -408,6 +408,22 @@ const get = {
 			});
 		});
 	},
+	userLastSession(db, feideId) {
+		return new Promise(async (resolve, reject) => {
+			let statement = `SELECT S.id AS id, S.name AS text
+							FROM Session AS S
+							INNER JOIN SessionHasQuestion AS SHQ ON SHQ.sessionId = S.id
+							INNER JOIN ANSWER AS A ON A.sessionHasQuestionId = SHQ.id
+							INNER JOIN User AS U ON U.id = A.userId
+							WHERE U.feideId = ${feideId}
+							ORDER BY A.id DESC
+							LIMIT 1;`;
+			db.get(statement, (err, row) => {
+				if (err) reject(customReject(err, "userLastSession"));
+				resolve(row);
+      });
+		});
+  },
 	courseInfoById(db, courseId) {
 		return new Promise(async (resolve, reject) => {
 			let statement = `SELECT CC.code, S.season, Y.year
@@ -421,7 +437,7 @@ const get = {
 				if (err) reject(customReject(err, "courseInfoById"));
 				resolve(rows[0]);
 			});
-		});
+    });
 	}
 };
 

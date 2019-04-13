@@ -1,22 +1,22 @@
 <template>
-	<b-container id="JoinRoom" class="jumbotron card">
-		<b-row class="center margin">
+	<b-container id="JoinRoom" class="jumbotron">
+		<b-row class="center firstRow">
 			<b-col cols="12">
 				<h1>{{ getTitle }}</h1>
 			</b-col>
 		</b-row>
-		<b-row class="center margin rowMiddle">
-			<b-col cols="12">
+		<b-row class="center middleRow">
+			<b-col cols="12" class="align-items-center">
 				<b-form-input 
 					v-model="sessionCode" 
 					type="text" 
 					:placeholder="getLocale.inputPlaceholder" 
 					maxlength="4" 
 					data-cy="joinSession"
-				/>&nbsp;
+				/>
 			</b-col>
 		</b-row>
-		<b-row class="center">
+		<b-row class="center lastRow">
 			<b-col cols="12">
 				<b-button size="lg" variant="primary" @click="quickJoin" class="btn">{{ getLocale.joinBtn }}</b-button>
 			</b-col>
@@ -92,29 +92,48 @@ export default {
 </script>
 
 <style scoped>
+#JoinRoom {
+	position: relative;
+	width: 350px;
+	height: 500px;
+	padding: 50px 35px;
+}
 .center {
 	text-align: center;
-}
-.margin {
-	margin-bottom: 2rem;
-}
-.card {
-	height: 100%;
 }
 .btn {
 	display: inline-block;
 	width: 50%;
 }
-.rowMiddle {
-	height: 30%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
+.firstRow {
+	position: absolute;
+	left: 45px;
+	top: 50px;
+	height: 105px;
+}
+.middleRow {
+	position: absolute;
+	left: 45px;
+	top: 160px;
+	height: 150px;
+	line-height: 150px;
+}
+.lastRow {
+	position: absolute;
+	left: 45px;
+	top: 310px;
+	height: 90px;
+	line-height: 90px;
+}
+.row {
+	width: 280px;
 }
 input {
 	text-align: center;
 	padding: 50px 30px;
 	font-size: 20px;
 	font-weight: 700;
+	position: relative;
+	top: 15%;
 }
 </style>

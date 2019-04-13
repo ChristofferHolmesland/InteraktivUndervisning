@@ -917,4 +917,14 @@ module.exports.admin = function(socket, db, user, sessions) {
 		}
 		socket.emit("deleteQuestionToCourseResponse");
 	});
+
+	socket.on("userLastSessionRequest", async function() {
+		let feideId = user.feide.idNumber;
+		await dbFunctions.get.userLastSession(db, feideId).then(row => {
+			socket.emit("userLastSessionResponse", row)
+		}).catch(err => {
+			console.error(err);
+			socket.emit("userLastSessionError", "dbError")	
+		});
+	});
 }

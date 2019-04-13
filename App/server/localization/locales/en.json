@@ -310,7 +310,7 @@
                 "This is the guide for a multiple choice question:",
                 "When doing a multiple choice question you will be shown a box for each choice available.",
                 "You will be able to select more then one answer. Click on the boxes that you would like to send as the correct answer.",
-                "A marker in the uper left corner will show which box you have selected for the answer.",
+                "A marker in the upper left corner will show which box you have selected for the answer.",
                 "When you would like to submit you answer, just click the \"Answer\" button.",
                 "When the answer is checked against the solution only answers with the exact number of boxes selected and the same boxes selected will get a correct answer."
             ],
@@ -321,6 +321,16 @@
                 "When adding a new row, it will copy the row from above and exclude the k value which you need to input.",
                 "To sort a row you will have to click on an element, it will now be marked. If you click on another element on the same round, these two elements will swap places.",
                 "The solution checker will check that each round of sorting have the correct k value and correct \"sorted list\" for that round."
+            ],
+            "Mergesort": [
+                "This is the guide for a mergesort question:",
+                "When doing a mergesort question you will be shown the drawer where the initial unsorted list will be shown.",
+                "Clicking on a single element or clicking and dragging over multiple elements will select and display possible actions.",
+                "The main task is to show how the mergesort algorithm works its way through an unsorted list.",
+                "By pressing the delete button the selected elements will be deleted, and edit value will promt you to change the value for that element.",
+                "By pressing move you can now click somewhere in the canvas and the selected list will be moved to that location",
+                "Pressing extract will take the selected elements from a list and extract them to a sublist.",
+                "The order of how you extract a sublist does matter. The mergesort algorithm is set up to check the left side first."
             ],
             "Quicksort": [
                 "This is the guide for a quicksort question:",
@@ -334,31 +344,28 @@
                 "Pressing extract will take the selected elements from a list and extract them to a sublist.",
                 "The order of how you extract a sublist does matter. The quicksort algorithm is set up to check the left side first."
             ],
-            "Mergesort": [
-                "This is the guide for a mergesort question:",
-                "When doing a mergesort question you will be shown the drawer where the initial unsorted list will be shown.",
-                "Clicking on a single element or clicking and dragging over multiple elements will select and display possible actions.",
-                "The main task is to show how the mergesort algorithm works its way through an unsorted list.",
-                "By pressing the delete button the selected elements will be deleted, and edit value will promt you to change the value for that element.",
-                "By pressing move you can now click somewhere in the canvas and the selected list will be moved to that location",
-                "Pressing extract will take the selected elements from a list and extract them to a sublist.",
-                "The order of how you extract a sublist does matter. The mergesort algorithm is set up to check the left side first."
-            ],
             "Tree": [
                 "This is the guide for using the graphDrawer on tree related questions:",
                 "Usually you would get a list of nodes or an existing binary tree or both, and you'll have to draw the resulting binary tree.",
                 "Whenever you should add or remove the nodes from the tree should be specified in the description of the question, the main focus here is to practice drawing resulting binary trees.",
                 "The GraphDrawer for trees have 5 different command options of which to choose from, namely: Add, Remove, Move, Join and Edit. The chosen command option should be highlighted and by default its set to use the Add command.",
-                "While using the Add command, clicking on the canvas will create a new node with a default value of 0",
-                "While using the Remove command, clicking on any of the nodes or lines visible on the canvas will remove them from the canvas.",
-                "While using the Move command, you can drag nodes around by clicking on a node and while not releasing you can move the node around the canvas. Releasing the node will place the node in its current position.",
-                "While using the Join command, you can create a line between two nodes. You do this by clicking on an existing node and then hover over to another node. Once you release your finger or mouse, a new line should appear between the two nodes.",
-                "While using the Edit command, clicking on any of the nodes will trigger an alert window to appear. In this alert window you can assign a value to the chosen node using the input field. Click on the OK button and the chosen node will be set to the value that was inputted in the alert window."
+                "While using the \"Add\" command, clicking on the canvas will create a new node with a default value of 0",
+                "While using the \"Remove\" command, clicking on any of the nodes or lines visible on the canvas will remove them from the canvas.",
+                "While using the \"Move\" command, you can drag nodes around by clicking on a node and while not releasing you can move the node around the canvas. Releasing the node will place the node in its current position.",
+                "While using the \"Join\" command, you can create a line between two nodes. You do this by clicking on an existing node and then hover over to another node. Once you release your finger or mouse, a new line should appear between the two nodes.",
+                "While using the \"Edit\" command, clicking on any of the nodes will trigger an alert window to appear. In this alert window you can assign a value to the chosen node using the input field. Click the OK button and the chosen node will be set to the value that was inputted in the alert window."
             ],
             "Dijkstra": [
                 "This is the guide for using the GraphDrawer on questions about the Dijkstra algorithm:",
                 "You need to show how the algorithm finds the path from the start (green) node to the end (red) node.",
                 "You do this by clicking on a node, keep the mouse button pressed down, move the cursor over the other node and release the button. This signals that you think at this point in time, the algorithm is looking at the edge between these nodes."
+            ],
+            "Python": [
+                "This is the guide for using the GraphDrawer on questions about Python code:",
+                "Your answer should be a map of how the objects and variables reference eachother.",
+                "To add a variable click the \"Add_Variable\" button and enter the variable name in the prompt. To add an object use the \"Add_Object\" button. When you click a prompt will ask you for the type. If you select Number, String or Boolean, it will also ask you for the value.",
+                "To show the relationship you need to \"Join\" the nodes together. Variables are linked from the variable to the object. Objects are linked to properties by joining from the property object, to the other object. A prompt will appear asking you which property you want to link your object to.",
+                "In the settings menu you can write your own code, and then press the parse button. This will parse the code for you, and add any classes to the list of object types."
             ]
         },
         "settings": {
@@ -374,6 +381,23 @@
             }
         },
         "textInputPlaceholder": "Test out the input field here"
+    },
+    "ViewLastSession": {
+        "goBtn": "Go",
+        "title": "Previous session",
+        "noSessionFound": "Can't find any previous sessions",
+        "error": {
+            "dbError": "An error occured with the database. Please try again later."
+        },
+        "refreshBtn": "Refresh"
+    },
+    "ShowSandbox": {
+        "title": "Go to sandbox",
+        "text": [
+            "Practice with different question types.",
+            "Play with the graphdrawer to get familiar with the controls."
+        ],
+        "goBtn": "Go"
     },
     "AdminQuestionResultScreen": {
         "leaveSessionBodyAdmin": "You are now trying to end the seasion early. All the students answers have been saved up until now. Do you still want to end the season?",
