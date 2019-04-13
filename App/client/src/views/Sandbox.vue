@@ -291,6 +291,9 @@ export default {
 			pythonSteps: []
 		};
 	},
+	created() {
+		this.$socket.emit("verifyUserLevel", 1);
+	},
 	sockets: {
 		"parsePythonCodeResponse": function(parsed) {
 			this.pythonSteps = parsed.objects.steps;
