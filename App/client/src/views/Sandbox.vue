@@ -306,7 +306,6 @@ export default {
 	methods: {
 		parsePythonCode() {
 			let code = this.$refs.codeInput.$refs.input.value;
-			console.log("Sending emit");
 			this.$socket.emit("parsePythonCodeRequest", { code: code });
 		},
 		keyDownInTextarea(e) {
