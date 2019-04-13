@@ -35,6 +35,9 @@ export default class Sort {
 
 	constructor(graphDrawer, config) {
 		this.gd = graphDrawer;
+		
+		this.locale = this.gd.locale.Sort;
+
 		/*
 			All the arrays stored as a object
 			{
@@ -164,7 +167,7 @@ export default class Sort {
 				// Edit value
 				this.clickedButtons.push({
 					data: {
-						text: "Edit value",
+						text:  this.locale.buttons.editValue,
 						relSize: relSize
 					},
 					handler: e =>  this.mobileSelectedButtons().edit(e)
@@ -173,7 +176,7 @@ export default class Sort {
 				if (this.sortType == "Quicksort") {
 					this.clickedButtons.push({
 						data: {
-							text: "Set pivot",
+							text: this.locale.buttons.setPivot,
 							relSize: relSize
 						},
 						handler: e => this.mobileSelectedButtons().pivot(e)
@@ -182,7 +185,7 @@ export default class Sort {
 				// Delete
 				this.clickedButtons.push({
 					data: {
-						text: "Delete",
+						text: this.locale.buttons.delete,
 						relSize: relSize
 					},
 					handler: e => this.mobileSelectedButtons().del(e)
@@ -204,7 +207,7 @@ export default class Sort {
 			if (extract) {
 				this.clickedButtons.push({
 					data: {
-						text: "Move array",
+						text: this.locale.buttons.moveArray,
 						relSize: relSize,
 					},
 					handler: e =>  this.mobileSelectedButtons().move(e, ai)
@@ -212,7 +215,7 @@ export default class Sort {
 
 				this.clickedButtons.push({
 					data: {
-						text: "Extract array",
+						text: this.locale.buttons.extractArray,
 						relSize: relSize,
 					},
 					handler: e =>  this.mobileSelectedButtons().extract(e, ai)
@@ -221,7 +224,7 @@ export default class Sort {
 				if (this.sortType == "Mergesort") {
 					this.clickedButtons.push({
 						data: {
-							text: "Join to array",
+							text: this.locale.buttons.joinToArray,
 							relSize: relSize,
 						},
 						handler: e => this.mobileSelectedButtons().join(e)

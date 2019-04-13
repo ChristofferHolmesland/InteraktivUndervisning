@@ -44,13 +44,13 @@ export default class Djikstra {
 
 		if (this.gd.operatingMode == "Interactive") {
 			this.buttons.push({
-				text: "<- Undo",
+				text: "<-- " + this.locale.undo,
 				position: {},
 				handler: this.undoButtonClicked.bind(this),
 				disabled: true
 			});
 			this.buttons.push({
-				text: "Redo ->",
+				text: this.locale.redo + " -->",
 				position: {},
 				handler: this.redoButtonClicked.bind(this),
 				disabled: true
@@ -64,6 +64,8 @@ export default class Djikstra {
 		this.gd = graphDrawer;
 		this.gd.dirty = true;
 		this.config = config;
+
+		this.locale = this.gd.locale.Dijkstra;
 
 		/*
 			{

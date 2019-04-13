@@ -423,6 +423,7 @@
         "startBtn": "Start"
     },
     "GraphDrawer": {
+        "editNodePrompt": "Enter new value:",
         "Graph0": {
             "buttons": {
                 "Add": "Add",
@@ -430,7 +431,36 @@
                 "Move": "Move",
                 "Join": "Join",
                 "Edit": "Edit",
-                "Tree": "Tree"
+                "Tree": "Tree",
+                "Mark": "Mark"
+            }
+        },
+        "Dijkstra": {
+            "undo": "Undo",
+            "redo": "Redo"
+        },
+        "Python": {
+            "buttons": {
+                "Join": "Join",
+                "Remove": "Remove",
+                "Move": "Move",
+                "Add_Variable": "Add Variable",
+                "Add_Object": "Add Object"
+            },
+            "propertyLinkPrompt": "Which property do you want to link to?",
+            "variableNamePrompt": "Enter variable name:",
+            "objectTypePrompt": "Enter object type:",
+            "objectValuePrompt": "Enter object value:",
+            "undefinedFieldValue": "not assigned"
+        },
+        "Sort": {
+            "buttons": {
+                "editValue": "Edit value",
+                "setPivot": "Set pivot",
+                "delete": "Delete",
+                "moveArray": "Move array",
+                "extractArray": "Extract array",
+                "joinToArray": "Join to array"
             }
         }
     }

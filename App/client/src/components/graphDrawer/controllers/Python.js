@@ -52,18 +52,26 @@ export default class Python {
 		this.gd = graphDrawer;
 		this.config = config;
 
+		this.locale = this.gd.locale.Python;
+
 		this.variables = [];
 		this.objects = [];
 
-		this.currentState = "Join";
-		this.buttons = ["Join", "Remove", "Move", "Add_Variable", "Add_Object"];
-		this.stateHandlers = {
-			Join: this.joinHandler,
-			Remove: this.removeHandler,
-			Move: this.moveHandler,
-			Add_Variable: this.addVariableHandler,
-			Add_Object: this.addObjectHandler
-		};
+		this.currentState = this.locale.buttons.Add_Variable;
+		this.buttons = [
+			this.locale.buttons.Join, 
+			this.locale.buttons.Remove, 
+			this.locale.buttons.Move, 
+			this.locale.buttons.Add_Variable, 
+			this.locale.buttons.Add_Object
+		];
+		
+		this.stateHandlers = {};
+		this.stateHandlers[this.locale.buttons.Join] = this.joinHandler;
+		this.stateHandlers[this.locale.buttons.Remove] = this.removeHandler;
+		this.stateHandlers[this.locale.buttons.Move] = this.moveHandler;
+		this.stateHandlers[this.locale.buttons.Add_Variable] = this.addVariableHandler;
+		this.stateHandlers[this.locale.buttons.Add_Object] = this.addObjectHandler;
 
 		this.objectTypes = [
 			{
@@ -137,7 +145,7 @@ export default class Python {
 						// Ask user which property of the object they want linked
 						let done = false;
 						while (!done) {
-							let text = "Which property do you want to link to?\n";
+							let text = this.locale.propertyLinkPrompt + "\n";
 							for (let i = 0; i < n2.object.fields.length; i++) {
 								text += "\n - " + n2.object.fields[i].name;
 							}
@@ -346,7 +354,7 @@ export default class Python {
 	addVariableHandler(e) {
 		let variableName = "";
 		while (variableName == "") {
-			variableName = prompt("Enter variable name:", "");
+			variableName = prompt(this.locale.variableNamePrompt, "");
 		}
 
 		if (variableName == undefined || variableName == null) return true;
@@ -366,7 +374,7 @@ export default class Python {
 	addObjectHandler(e) {
 		let objectType = "";
 		while (objectType == "") {
-			let text = "Enter object type?\n";
+			let text = this.locale.objectTypePrompt + "\n";
 			for (let i = 0; i < this.objectTypes.length; i++) {
 				text += "\n - " + this.objectTypes[i].name;
 			}
@@ -403,7 +411,7 @@ export default class Python {
 		let baseType = this.baseType(objectType);
 
 		let objectValue = undefined;
-		if (baseType) objectValue = prompt("Enter object value:", "");
+		if (baseType) objectValue = prompt(this.locale.objectValuePrompt, "");
 
 		let node = this.addObject({
 			objectType: objectType,
@@ -812,7 +820,8 @@ export default class Python {
 			for (let i = 0; i < info.object.fields.length; i++) {
 				let field = info.object.fields[i];
 				dataText += field.name + ": ";
-				dataText += field.value == undefined ? "not assigned" : field.value;
+				dataText += field.value == undefined ? 
+					this.locale.undefinedFieldValue : field.value;
 				if (i !== info.object.fields.length - 1) dataText += "\n";
 			}
 		} else dataText = "Data: " + info.object.value;

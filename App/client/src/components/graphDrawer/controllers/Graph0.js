@@ -48,8 +48,8 @@ export default class Graph0 {
 
 			if (this.subType == "Dijkstra") {
 				this.nextNodeMarking = undefined;
-				this.buttons.push("Mark");
-				this.stateHandlers.Mark = this.markNode.bind(this);
+				this.buttons.push(this.locale.buttons.Mark);
+				this.stateHandlers[this.locale.buttons.Mark] = this.markNode.bind(this);
 				this.drawStatic();
 			}
 		}
