@@ -406,6 +406,7 @@
         "startBtn": "Start"
     },
     "GraphDrawer": {
+        "editNodePrompt": "Skriv ny verdi:",
         "Graph0": {
             "buttons": {
                 "Add": "Legg til",
@@ -413,7 +414,36 @@
                 "Move": "Flytt",
                 "Join": "Koble",
                 "Edit": "Endre",
-                "Tree": "Tre"
+                "Tree": "Tre",
+                "Mark": "Marker"
+            }
+        },
+        "Dijkstra": {
+            "undo": "Angre",
+            "redo": "Gjenta"
+        },
+        "Python": {
+            "buttons": {
+                "Join": "Koble",
+                "Remove": "Slett",
+                "Move": "Flytt",
+                "Add_Variable": "Legg til variabel",
+                "Add_Object": "Legg til objekt"
+            },
+            "propertyLinkPrompt": "Hvilken egenskap vil du koble med?",
+            "variableNamePrompt": "Skriv variabelnavnet:",
+            "objectTypePrompt": "Velg objekt type:",
+            "objectValuePrompt": "Skriv objekt verdien",
+            "undefinedFieldValue": "ikke definert"
+        },
+        "Sort": {
+            "buttons": {
+                "editValue": "Endre verdi",
+                "setPivot": "Bestem pivot",
+                "delete": "Slett",
+                "moveArray": "Flytt array",
+                "extractArray": "Trekk ut array",
+                "joinToArray": "Koble til array"
             }
         }
     }

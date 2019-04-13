@@ -58,21 +58,12 @@
         watch: {
             requestAnswer: function() {
                 this.$emit("getValueResponse", this.graphDrawer.export());
-            },
-            getLocaleFromStore: function(newValue, oldValue) {
-                this.locale = newValue;
             }
         },
         mounted() {
-            this.locale = this.getLocaleFromStore;
+            // The GraphDrawer will only check the selected language when it's shown.
+            this.locale = this.$store.getters.getLocale("GraphDrawer");
             this.createDrawer();
-        },
-        computed: {
-            getLocaleFromStore() {
-                let locale = this.$store.getters.getLocale("GraphDrawer");
-                if (locale) return locale;
-			    else return {};
-            }
         },
         methods: {
             destroyDrawer: function() {

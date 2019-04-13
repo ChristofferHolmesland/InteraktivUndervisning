@@ -570,7 +570,7 @@ export default class GraphDrawer {
 	*/
 	_editNode(node) {
 		// This is the only way to open a keyboard in mobile browsers.
-		let new_value = prompt("Enter new value:", node.v);
+		let new_value = prompt(this.locale.editNodePrompt, node.v);
 		if (new_value == undefined) return;
 		node.v = new_value;
 		this.dirty = true;
