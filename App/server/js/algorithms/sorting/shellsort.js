@@ -7,8 +7,9 @@ module.exports = function (k,list) {
 
 	let steps = [
 		{
-			k:k,
-			list:originallist
+			Type: "Initial",
+			K: k,
+			List: originallist
 		}
 	];
 
@@ -38,7 +39,11 @@ module.exports = function (k,list) {
 			{
 				stepArray.push(array[p]);
 			}
-			steps.push({k:step,list:stepArray});
+			steps.push({
+				Type: "Step",
+				K: step,
+				List: stepArray
+			});
 		}
 	}
 
@@ -65,6 +70,9 @@ module.exports = function (k,list) {
 		reset: function() {
 			currentStep = 0;
 			return steps[currentStep];
+		},
+		getSteps: function() {
+			return steps;
 		}
 	}
 };

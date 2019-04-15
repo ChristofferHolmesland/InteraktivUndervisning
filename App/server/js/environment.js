@@ -4,8 +4,8 @@ module.exports.load = function loadEnvironmentVariables() {
 	let envfile = process.env.NODE_ENV;
 
 	if (envfile === undefined) {
-		console.log("You need to set the NODE_ENV variable to run this program.");
-		console.log("Rename the /env/default.env file to match your NODE_ENV variable, and fill in missing api keys");
+		console.error("You need to set the NODE_ENV variable to run this program.");
+		console.error("Rename the /env/default.env file to match your NODE_ENV variable, and fill in missing api keys");
 		return false;
 	}
 
@@ -22,7 +22,7 @@ module.exports.validate = function validateEnvironmentVariables() {
 	// Tests all requiredEnv vars if they are empty and if they are longer than 0 length
 	let unsetEnv = requiredEnv.filter((env) => !(process.env[env] !== ""));
 	if (unsetEnv.length > 0) {
-  		console.log("Required ENV variables are not set: [" + unsetEnv.join(", ") + "]");
+  		console.error("Required ENV variables are not set: [" + unsetEnv.join(", ") + "]");
   		return false;
 	}
 

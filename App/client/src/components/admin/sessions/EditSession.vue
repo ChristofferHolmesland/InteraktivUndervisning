@@ -55,8 +55,8 @@
         methods: {
             show() {
                 this.newSession.course = this.$store.getters.getSelectedCourse;
-                let c = this.$store.getters.getSelectedCourse.split(" ");
-                this.$socket.emit("getQuestionsInCourse", {code: c[0], semester: c[1]});
+                let courseId = this.$store.getters.getSelectedCourse;
+                this.$socket.emit("getQuestionsInCourse", courseId);
             },
             callOkHandler: function() {
                 this.okHandler(this.newSession);

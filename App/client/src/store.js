@@ -17,7 +17,8 @@ export default new Vuex.Store({
 			localeList: undefined
 		},
 		courseList: [],
-		selectedCourse: ""
+		selectedCourse: "",
+		questionTypes: []
 	},
 	mutations: {
 		setSelectedCourse(state, data) {
@@ -27,6 +28,9 @@ export default new Vuex.Store({
 			if (data.length === 0) return;
 			state.selectedCourse = data[0].value;
 			state.courseList = data;
+		},
+		setQuestionTypes(state, data) {
+			state.questionTypes = data;
 		},
 		localeChange(state, data) {
 			state.locale = data;
@@ -71,11 +75,27 @@ export default new Vuex.Store({
 			}
 			return response;
 		},
-		getCourseOptions: (state) => {
-			return state.courseList;
+		getCourseOptions: (state, getters) => {
+			let list = [];
+			for (let i = 0; i < state.courseList.length; i++) {
+				let course = state.courseList[i];
+				list.push({
+					value: course.courseId,
+					text:
+						course.code +
+						" " +
+						getters.getLocale("AddNewCourse")[course.season] +
+						" " +
+						course.year
+				});
+			}
+			return list;
 		},
 		getSelectedCourse: (state) => {
 			return state.selectedCourse;
+		},
+		getQuestionTypes: (state) => {
+			return state.questionTypes;
 		}
 	}
 });

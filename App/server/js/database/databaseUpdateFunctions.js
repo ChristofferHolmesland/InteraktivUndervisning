@@ -28,12 +28,11 @@ const update = {
 
 		return createPromise(db, statement, "session");
 	},
-	userRightsLevelByFeideId: function(db, feideId, courseSemester, courseCode, level) {
+	userRightsLevelByFeideId: function(db, data) {
 		let statement = `UPDATE UserRight
-						 SET level = ${level}
-						 WHERE feideId = ${feideId}
-						 AND courseSemester = '${courseSemester}'
-						 AND courseCode = '${courseCode}'`;
+						 SET level = ${data.level}
+						 WHERE feideId = '${data.feideId}'
+						 AND courseId = ${data.courseId}`;
 		return createPromise(db, statement, "userRightsLevelByFeideId");
 	},
 	feideSessionId: function(db, id, sessionId) {
@@ -41,6 +40,23 @@ const update = {
 						SET sessionId = '${sessionId}'
 						WHERE id = '${id}'`;
 		return createPromise(db, statement, "feideSessionId");
+	},
+	questionStatusToActive: function(db, questionId) {
+		let statement = `UPDATE Question
+						SET status = 1
+						WHERE id = ${questionId}`;
+		return createPromise(db, statement, "questionStatusToActive")
+	},
+	answerUserToAnonymous: function(db, feideId) {
+		let statement = `UPDATE Answer
+						SET userId = 1
+						WHERE userId IN (
+							SELECT A.userId
+							From Answer AS A
+							INNER JOIN User AS U ON U.id = A.userId
+							WHERE U.feideId = ${feideId}
+						);`;
+		return createPromise(db, statement, "answerUserToAnonymous")
 	}
 };
 
