@@ -93,7 +93,7 @@
 					</b-tabs>
 				</b-col>
 			</b-row>
-			<b-row>
+			<b-row class="text-center">
 				<b-col cols="12" lg="4" class="mt-3">
 					<b-btn variant="danger">{{ getLocale.exitSessionBtnText }}</b-btn> <!-- TODO add click event to leave seasion mid question -->
 				</b-col>

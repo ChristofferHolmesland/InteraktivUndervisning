@@ -134,3 +134,6 @@ App/server/images
 # cypress
 cypress/screenshots
 cypress/videos
+
+App/server/tools/locale-maker/build
+App/server/tools/locale-maker/dist
