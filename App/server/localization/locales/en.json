@@ -185,9 +185,6 @@
     },
     "startSession": {
         "question": "Question",
-        "solution": "Solution",
-        "answer": "Answer",
-        "binaryTreeSolutionText": "The answer would be correct if the drawn tree fulfilled the requirements of a binary tree and consisted of the following nodes:",
         "showQuestionType": "Question type:",
         "questionType": {
             "Text": "Text",
@@ -200,6 +197,13 @@
             "AVLTree": "AVLTree",
             "Dijkstra": "Dijkstra",
             "Python": "Python"
+        },
+        "binaryTreeDesc": "Draw a BinaryTree with the following nodes: ",
+        "bstavlOperationDesc": "Operation: ",
+        "bstavlNodesDesc": "Nodes: ",
+        "pythonCodeDesc": "Code: ",
+        "Add": "Add",
+        "Remove": "Remove"
     },
     "DeleteUserInfo": {
         "deleteInfoList": [

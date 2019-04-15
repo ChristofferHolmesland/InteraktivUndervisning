@@ -137,7 +137,6 @@
         "pythonCodeDesc": "Kode: ",
         "Add": "Legg til",
         "Remove": "Slett"
-
     },
     "Navbar": {
         "lang": "Språk",
@@ -193,9 +192,6 @@
     },
     "startSession": {
         "question": "Spørsmål",
-        "solution": "Løsning",
-        "answer": "Svar",
-        "binaryTreeSolutionText": "Det ville blitt regnet som riktig svar hvis treet som ble gitt følger alle reglene til et Binear Tree og treet besto av følgende noder:",
         "showQuestionType": "Spørsmål type:",
         "questionType": {
             "Text": "Tekst",
@@ -208,6 +204,13 @@
             "AVLTree": "AVLTree",
             "Dijkstra": "Dijkstra",
             "Python": "Python"
+        },
+        "binaryTreeDesc": "Tegn et binaer tree med følgende noder: ",
+        "bstavlOperationDesc": "Operasjon: ",
+        "bstavlNodesDesc": "Noder: ",
+        "pythonCodeDesc": "Kode: ",
+        "Add": "Legg til",
+        "Remove": "Slett"
     },
     "DeleteUserInfo": {
         "deleteInfoList": [
@@ -518,4 +521,4 @@
             }
         }
     }
-},
+}

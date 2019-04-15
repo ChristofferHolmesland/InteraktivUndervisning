@@ -114,8 +114,6 @@ export default {
 				.questionTypeDesc.locale;
 			let extraDescText = this.questionInfo.object
 				.questionTypeDesc.text;
-			console.log(extraDescLocales);
-			console.log(extraDescText);
 			for (let key in extraDescLocales) {
 				if (extraDescLocales.hasOwnProperty(key)) {
 					let loc = this.getLocale[extraDescLocales[key]];
