@@ -44,7 +44,12 @@ export default {
 		},
 		startSessionError() {
 			this.$router.push("/admin");
+		},
+		adminEndSessionResponse() {
+			this.state = 4;
 		}
+	},
+	methods: {
 	},
 	components: {
 		WaitingRoom,
@@ -52,18 +57,27 @@ export default {
 		QuestionResultScreen,
 		SessionOverScreen
 	},
-	methods: {
-		getLocale(localePage) {
-			let locale = this.$store.getters.getLocale(localePage);
-			if (locale) return locale;
-			else return {};
+	computed: {
+		getLocale: function() {
+			return (localePage) => {
+				let locale = this.$store.getters.getLocale(localePage);
+				if (locale) return locale;
+				else return {};
+			}
 		}
 	},
 	beforeDestroy() {
-		if (confirm(this.getLocale("ClientSessionQuestion").leaveSessionBody)) {
-			this.$socket.emit("adminLeaveSession", this.sessionId);
-		} else {
-			this.$router.push("/admin/session/" + this.sessionId);
+		if (this.state !== 4) {
+			if (
+				confirm(
+					this.getLocale("ClientSessionQuestion")
+						.leaveSessionBodyAdmin
+				)
+			) {
+				this.$socket.emit("adminLeaveSession", this.sessionId);
+			} else {
+				this.$router.push("/admin/session/" + this.sessionId);
+			}
 		}
 	}
 };

@@ -3,13 +3,16 @@ const Tree = require("./Tree.js").Tree;
 
 //This function is going to transform a student's and teacher's drawn canvas tree to a Binary Search Tree object.
 module.exports.createTreeObjectFromCanvasObjectver1 = function(treeCanvas) {
+	if (treeCanvas.roots == undefined) return undefined;
+
 	replaceNullWithUndefinedCanvas(treeCanvas);
+
 	let listofTrees = [];
-	for (let l=0;l<treeCanvas.roots.length;l++) {	//can be more than 1 root
+	for (let l=0; l < treeCanvas.roots.length; l++) {	//can be more than 1 root
 		let listofConfiguredNodes = [];
 		let rootNode = new BinaryTreeNode(parseInt(treeCanvas.roots[l].v),undefined);
 		let tree = new Tree(rootNode);
-		convertCanvasNodeToTreeNode(treeCanvas.roots[l],rootNode,listofConfiguredNodes);
+		convertCanvasNodeToTreeNode(treeCanvas.roots[l], rootNode, listofConfiguredNodes);
 		tree.nodes = listofConfiguredNodes;
 		listofTrees.push(tree);
 	}
@@ -17,8 +20,6 @@ module.exports.createTreeObjectFromCanvasObjectver1 = function(treeCanvas) {
 };
 
 function convertCanvasNodeToTreeNode(currentCanvasNode,currentTreeNode,nodelist,parentTreeNode) {
-	//console.log("Parent");
-	//console.log(parentTreeNode);
 	currentTreeNode.parent = parentTreeNode;
 	nodelist.push(currentTreeNode);
 	if(currentCanvasNode.children.length > 0){
@@ -26,8 +27,6 @@ function convertCanvasNodeToTreeNode(currentCanvasNode,currentTreeNode,nodelist,
 			if(currentCanvasNode.children[l] !== undefined) currentTreeNode.children[l] = new BinaryTreeNode(parseInt(currentCanvasNode.children[l].v));
 		}
 	}
-	//if(currentCanvasNode.children[0] === undefined && currentCanvasNode.children[1] === undefined) return;
-	//console.log(currentCanvasNode);
 	if(currentCanvasNode.children[0] !== undefined)	convertCanvasNodeToTreeNode(currentCanvasNode.children[0],currentTreeNode.children[0],nodelist,currentTreeNode);
 	if(currentCanvasNode.children[1] !== undefined)	convertCanvasNodeToTreeNode(currentCanvasNode.children[1],currentTreeNode.children[1],nodelist,currentTreeNode);
 }
@@ -50,17 +49,12 @@ function checkCanvasNodeForNull(canvasNode) {
 //Will return true if two trees are the same and false if they are not.
 // Is going to be used to check a students answer with the solution!
 function checkStudentAnswer(studentTree,solutionTree) {
-	/*console.log("Student");
-	console.log(studentTree);
-	console.log("Solution");
-	console.log(solutionTree);*/
 	let checkresult = true;
 	if (studentTree.nodes.length === solutionTree.nodes.length) {
 		checkresult = checkNode(studentTree.root,solutionTree.root,checkresult);
 	}else {
 		checkresult = false;
 	}
-	//should probably be done in recursive function
 
 	return checkresult
 }
@@ -96,7 +90,6 @@ function getHeight (node) {
 			childrenHeights.push(getHeight(node.children[i]));
 		}
 		for (let i = 0; i < childrenHeights.length; i++) {
-			//console.log(childrenHeights);
 			if (childrenHeights[i] > maxHeight) {
 				maxHeight = childrenHeights[i];
 			}
@@ -110,12 +103,6 @@ module.exports.getHeight = getHeight;
 //checks two nodes from different trees and returns false if they don't have the same value
 //Eventually the function will have traversed the entire tree in a inOrder algorithm
 function checkNode(studentNode,solutionNode,checkresult) {
-	//debug consoles
-	/*console.log("Student");
-	console.log(studentNode);
-	console.log(studentNode.children);
-	console.log("Solution");
-	console.log(solutionNode.children);*/
 	if (studentNode.value !== solutionNode.value) {
 		checkresult = false;
 	}
@@ -191,7 +178,6 @@ module.exports.removeDuplicateTreeResult = removeDuplicateTreeResult;
 //treeArray contains all known trees currently being used in the solutionmaker
 function createStepArray(description,treeType,treeArray) {
 	let newArray = [];
-	//console.log(treeArray);
 	for (let t=0;t<treeArray.length;t++){
 		newArray.push(treeArray[t].createDuplicateTree());
 	}
@@ -226,7 +212,7 @@ module.exports.makeBSTAVLTreeReadyForImport = function (tree) {
 	let root = {};
 	root.value = tree.root.value;
 	root.children = [];
-	root.parent = undefined;	//edited in
+	root.parent = undefined;
 
 	let nodeParser = function(node, parent) {
 		if (node === undefined || node === null) return undefined;
@@ -241,26 +227,8 @@ module.exports.makeBSTAVLTreeReadyForImport = function (tree) {
 	root.children[1] = tree.root.children[1];
 	tree.root = root;
 
-	tree.nodes[0].parent = undefined;	//edited in
-	checkCanvasNodeForNull(tree.root);	//edited in
-
-	/*if(tree.root.children[0] === null)	tree.root.children[0] = undefined;
-	if(tree.root.children[1] === null)	tree.root.children[1] = undefined;
-	for (let n=1;n<tree.nodes.length;n++) {
-		let parentValue = tree.nodes[n].parent;
-		let parentNode = undefined;
-		for (let p=0;p<tree.nodes.length;p++) {
-			if(tree.nodes[p].value === parentValue) {
-				parentNode = tree.nodes[p];
-				break;
-			}
-		}
-		tree.nodes[n].parent = parentNode;
-		console.log(parentNode);
-		if(tree.nodes[n].children[0] === null)	tree.nodes[n].children[0] = undefined;
-		if(tree.nodes[n].children[1] === null)	tree.nodes[n].children[1] = undefined;
-	}
-	tree.root = tree.nodes[0];*/
+	tree.nodes[0].parent = undefined;
+	checkCanvasNodeForNull(tree.root);
 };
 
 

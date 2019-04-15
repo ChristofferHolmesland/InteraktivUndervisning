@@ -1,42 +1,42 @@
 <template>
-	<div>
-		<b-container style="overflow-x:scroll;">
-			<b-row class="tableRow">
-				<b-col class="colKValue" cols="4" lg="1">
-					K Value
-				</b-col>
-				<b-col v-for="(value, index) in initialList" :key="index" class="colArrayElement">
-					{{ index }}
-				</b-col>
-			</b-row>
-			<b-row class="mb-2 tableRow">
-				<b-col class="colKValue" cols="4" lg="1">
-					<input type="text" disabled :value="initialKValue">
-				</b-col>
-				<b-col v-for="(value, index) in initialList" :key="index" class="colArrayElement">
-					<input type="text" disabled :value="value">
-				</b-col>
-			</b-row>
-			<b-row v-for="row in rows" :key="row" class="mb-1 tableRow">
-				<b-col class="colKValue" cols="4" lg="1">
-					<input type="text" placeholder="Enter k value" v-model="kValues[row - 1]">
-				</b-col>
-				<b-col v-for="(value, index) in getRowValues(row - 1)" :key="index" @click="elementClicked(row - 1, index)" class="colArrayElement">
-					<input type="text" disabled :value="value">
-				</b-col>
-			</b-row>
-		</b-container>
-		<b-container>
-			<b-row>
-				<b-col>
-					<b-btn variant="primary" @click="addNewLine">Add new row</b-btn>
-				</b-col>
-				<b-col>
-					<b-btn variant="danger" @click="removeLastLine">Remove last row</b-btn>
-				</b-col>
-			</b-row>
-		</b-container>
-	</div>
+<div>
+	<b-container id="ShellsortMainContainer">
+		<b-row class="shellsortRow">
+			<div class="shellsortColKvalue">
+				K Value
+			</div>
+			<div v-for="(value, index) in initialList" :key="index" class="shellsortColElement">
+				{{ index }}
+			</div>
+		</b-row>
+		<b-row class="mb-2 shellsortRow">
+			<div class="shellsortColKvalue">
+				<input type="text" disabled :value="initialKValue">
+			</div>
+			<div v-for="(value, index) in initialList" :key="index" class="shellsortColElement">
+				<input type="text" disabled :value="value">
+			</div>
+		</b-row>
+		<b-row v-for="row in rows" :key="row" class="mb-1 shellsortRow">
+			<div class="shellsortColKvalue">
+				<input type="text" placeholder="Enter k value" v-model="kValues[row - 1]">
+			</div>
+			<div v-for="(value, index) in getRowValues(row - 1)" :key="index" @click="elementClicked(row - 1, index)" class="shellsortColElement">
+				<input type="text" disabled :value="value" :class="checkIfSelected((row - 1), (index)) ? 'selected' : ''">
+			</div>
+		</b-row>
+	</b-container>
+	<b-container>
+		<b-row class="text-center">
+			<b-col>
+				<b-btn variant="primary" @click="addNewLine">Add new row</b-btn>
+			</b-col>
+			<b-col>
+				<b-btn variant="danger" @click="removeLastLine">Remove last row</b-btn>
+			</b-col>
+		</b-row>
+	</b-container>
+</div>
 </template>
 
 <script>
@@ -98,9 +98,18 @@ export default {
 		}
 	},
 	computed: {
-		getRowValues(row) {
+		getRowValues: function(row) {
 			return row => {
 				return this.rowValues[row];
+			}
+		},
+		checkIfSelected: function() {
+			return (row, element) => {
+				if (this.elementSelected === undefined) return false;
+				if (
+					this.elementSelected.row === row &&
+					this.elementSelected.element === element
+				) return true;
 			}
 		}
 	},
@@ -130,19 +139,36 @@ export default {
 
 <style scoped>
 input {
-	width: 60px;
+	width: 30px;
+	text-align: center;
+	margin: 0;
+}
+#ShellsortMainContainer {
+	overflow-x: scroll;
+	overflow-y: scroll;
+	max-height: 400px;
+	border: 1px solid black;
 	text-align: center;
 }
-.col {
+.shellsortColKvalue {
+	min-width: 80px;
+	max-width: 80px;
 	text-align: center;
+	float: left;
+	margin: 0;
 }
-.colKValue {
-	width: 120px;
+.shellsortColElement {
+	min-width: 40px;
+	max-width: 40px;
+	text-align: center;
+	float: left;
+	margin: 0;
 }
-.colArrayElement {
-	width: 120px;
-}
-.tableRow {
+.shellsortRow {
 	flex-wrap: nowrap;
+}
+.selected {
+	background-color: black;
+	color: white;
 }
 </style>

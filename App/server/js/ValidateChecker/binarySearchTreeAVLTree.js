@@ -7,15 +7,15 @@ const check = function (solutionInfo) {
 	let result = {
         passed: true,
         errors: []
-    }
+    };
 
-    let treeAction = solutionInfo.treeAction;
-    let questionType = solutionInfo.questionType;
-    let treeElements =  solutionInfo.treeElements;
-    let givenStartTree = solutionInfo.givenStartTree;
+	let treeAction = solutionInfo.treeAction;
+	let questionType = solutionInfo.questionType;
+	let treeElements =  solutionInfo.treeElements;
+	let givenStartTree = solutionInfo.givenStartTree;
 
-    let startTree = [];
-    let treeArray = [];
+	let startTree = [];
+	let treeArray = [];
 
     if (treeAction === "Add") {
         if((givenStartTree === undefined || givenStartTree.roots.length === 0) && (treeElements === undefined || treeElements === "")) {
@@ -45,6 +45,10 @@ const check = function (solutionInfo) {
                         result.passed = false;
                         result.errors.push("treeElementTypeError");
                         break;
+                    }else if(treeArray[i] === "") {
+                        result.passed = false;
+                        result.errors.push("treeElementEmptyError");
+                        break;
                     }
                 }
             }
@@ -63,15 +67,12 @@ const check = function (solutionInfo) {
                 if(questionType === 7 && result.passed) {
                     if (startTree.length > 0) treeObject = BinarySearchTreeFunctions.createBinarySearchTree(treeArray, true, startTree[0]);
                     else treeObject = BinarySearchTreeFunctions.createBinarySearchTree(treeArray, true);
-                    treeObject[0].printTree();
                     if(!BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(treeObject[0])){
                         result.passed = false;
                         result.errors.push("BSTAVLAddInvalidResultBinarySearchTreeError");
                     }
                 }
                 if(questionType === 8 && result.passed) {
-                    //startTree[0].printTree();
-                    startTree[0].printTree();
                     if (startTree.length > 0) treeObject = AVLTreeFunctions.createAVLTree(treeArray, true, startTree[0]);
                     else treeObject = AVLTreeFunctions.createAVLTree(treeArray, true);
                     if(!BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(treeObject[0]) || !AVLTreeFunctions.checkBalance(treeObject[0].root)) {
@@ -98,6 +99,10 @@ const check = function (solutionInfo) {
                     result.passed = false;
                     result.errors.push("treeElementTypeError");
                     break;
+                }else if(treeArray[i] === "") {
+                    result.passed = false;
+                    result.errors.push("treeElementEmptyError");
+                    break;
                 }
             }
             startTree = GeneralTreeFunctions.createTreeObjectFromCanvasObjectver1(givenStartTree);
@@ -115,16 +120,14 @@ const check = function (solutionInfo) {
             }
             if(!startTree[0].areValuesInTree(treeArray)){
                 result.passed = false;
-                result.errors("BSTAVLRemoveMissingElementError");
+                result.errors.push("BSTAVLRemoveMissingElementError");
             }
-            startTree[0].printTree();
             if(questionType === 7 && result.passed) {
                 let treeObject = BinarySearchTreeFunctions.createBinarySearchTree(treeArray,false,startTree[0]);
                 for(let i=0;i<treeObject.length;i++) {
-                    treeObject[i].printTree();
                     if(!BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(treeObject[i])) {
                         result.passed = false;
-                        result.errors("BSTAVLRemoveInvalidResultBinarySearchTreeError");
+                        result.errors.push("BSTAVLRemoveInvalidResultBinarySearchTreeError");
                     }
                     if (!result.passed) break;
                 }
@@ -132,10 +135,9 @@ const check = function (solutionInfo) {
             if(questionType === 8 && result.passed) {
                 let treeObject = AVLTreeFunctions.createAVLTree(treeArray,false,startTree[0]);
                 for(let i=0;i<treeObject.length;i++) {
-                    treeObject[i].printTree();
                     if(!BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(treeObject[i]) || !AVLTreeFunctions.checkBalance(treeObject[i].root)) {
                         result.passed = false;
-                        result.errors("BSTAVLRemoveInvalidResultAVLTreeError");
+                        result.errors.push("BSTAVLRemoveInvalidResultAVLTreeError");
                     }
                     if (!result.passed) break;
                 }
@@ -146,7 +148,7 @@ const check = function (solutionInfo) {
         result.errors.push("BSTAVLInvalidTreeActionError");
     }
 
-    return result;
+	return result;
 };
 
 module.exports.check = check;

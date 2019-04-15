@@ -27,7 +27,8 @@
 										:key="question.qqId" 
 										style="cursor: pointer;" 
 										:id="index"
-										@click="changeQuestion($event)">
+										@click="changeQuestion($event)"
+										:class="selectedQuestion == index ? 'selected' : ''">
 						{{question.question.text}} | {{question.correctAnswer}} %
 					</b-list-group-item>
 					<div v-if="getQuestionslength < 10">
@@ -38,8 +39,11 @@
 				</b-list-group>
 			</b-col>
 			<b-col lg="8">
-				<DisplayQuestion :selectedAnswer="selectedAnswer"
-									:resultInfo="getSession.questions[selectedQuestion]"/>
+				<DisplayQuestion
+								:selectedAnswer="selectedAnswer"
+								:resultInfo="getSession.questions[selectedQuestion]"
+								ref="displayQuestion"
+								/>
 			</b-col>
 		</b-row>
 		<b-row class="mt-3" v-if="getAnswerListSize">
@@ -54,7 +58,8 @@
 									style="cursor: pointer; min-width: 100px; min-height: 100px;"
 									@click="changeAnswer($event)"
 									:id="index"
-									no-body>
+									no-body
+									:class="selectedAnswer == index ? 'selected' : ''">
 								Answer {{index}}
 							</b-card>
 						</li>
@@ -109,11 +114,16 @@ export default {
 			return this.incorrectAnswers[this.selectedAnswer].answer;
 		},
 		getAnswerListSize() {
-			if (!this.getSession) return false;
-			if (!this.getSession.questions) return false;
-			if (!this.getSession.questions[this.selectedQuestion]) return false;
-			if (!this.getSession.questions[this.selectedQuestion].answerList) return false;
-			if (this.getSession.questions[this.selectedQuestion].answerList.length > 0) return true;
+			if (!this.getSession) 
+				return false;
+			if (!this.getSession.questions) 
+				return false;
+			if (!this.getSession.questions[this.selectedQuestion]) 
+				return false;
+			if (!this.getSession.questions[this.selectedQuestion].answerList) 
+				return false;
+			if (this.getSession.questions[this.selectedQuestion].answerList.length > 0) 
+				return true;
 			return false;
 		},
 		getQuestionslength() {
@@ -124,6 +134,14 @@ export default {
 	methods: {
 		changeAnswer(event) {
 			this.selectedAnswer = Number(event.target.id);
+
+			// This is used to change the content of the graphdrawer.
+			let displayQuestion = this.$refs.displayQuestion;
+			if (displayQuestion.$refs.graphdrawerContainer !== undefined) {
+				this.$nextTick(function() {
+					this.$refs.displayQuestion.$refs.graphdrawerContainer.$refs.graphdrawer.createDrawer();
+				});
+			}
 		},
 		changeQuestion(event) {
 			this.selectedQuestion = Number(event.target.id);
@@ -134,10 +152,29 @@ export default {
 			this.selectedQuestion = 0;
 			this.selectedAnswer = 0;
 			this.incorrectAnswers = [];
-		}
+		},
+		selectedQuestion: function() {
+			let display = this.$refs.displayQuestion;
+			if (display !== undefined) {
+				this.$nextTick(function() {
+					let container = display.$refs.graphdrawerContainer;
+					if (container !== undefined) {
+						this.$nextTick(function() {
+							container.$refs.graphdrawer.createDrawer();
+						});
+					}
+				});
+			}
+		},
 	},
 	components: {
 		DisplayQuestion
 	}
 };
 </script>
+
+<style scoped>
+.selected {
+	background-color: darkgray;
+}
+</style>

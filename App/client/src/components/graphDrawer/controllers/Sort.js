@@ -35,6 +35,9 @@ export default class Sort {
 
 	constructor(graphDrawer, config) {
 		this.gd = graphDrawer;
+		
+		this.locale = this.gd.locale.Sort;
+
 		/*
 			All the arrays stored as a object
 			{
@@ -164,7 +167,7 @@ export default class Sort {
 				// Edit value
 				this.clickedButtons.push({
 					data: {
-						text: "Edit value",
+						text:  this.locale.buttons.editValue,
 						relSize: relSize
 					},
 					handler: e =>  this.mobileSelectedButtons().edit(e)
@@ -173,7 +176,7 @@ export default class Sort {
 				if (this.sortType == "Quicksort") {
 					this.clickedButtons.push({
 						data: {
-							text: "Set pivot",
+							text: this.locale.buttons.setPivot,
 							relSize: relSize
 						},
 						handler: e => this.mobileSelectedButtons().pivot(e)
@@ -182,7 +185,7 @@ export default class Sort {
 				// Delete
 				this.clickedButtons.push({
 					data: {
-						text: "Delete",
+						text: this.locale.buttons.delete,
 						relSize: relSize
 					},
 					handler: e => this.mobileSelectedButtons().del(e)
@@ -204,7 +207,7 @@ export default class Sort {
 			if (extract) {
 				this.clickedButtons.push({
 					data: {
-						text: "Move array",
+						text: this.locale.buttons.moveArray,
 						relSize: relSize,
 					},
 					handler: e =>  this.mobileSelectedButtons().move(e, ai)
@@ -212,7 +215,7 @@ export default class Sort {
 
 				this.clickedButtons.push({
 					data: {
-						text: "Extract array",
+						text: this.locale.buttons.extractArray,
 						relSize: relSize,
 					},
 					handler: e =>  this.mobileSelectedButtons().extract(e, ai)
@@ -221,7 +224,7 @@ export default class Sort {
 				if (this.sortType == "Mergesort") {
 					this.clickedButtons.push({
 						data: {
-							text: "Join to array",
+							text: this.locale.buttons.joinToArray,
 							relSize: relSize,
 						},
 						handler: e => this.mobileSelectedButtons().join(e)
@@ -333,11 +336,14 @@ export default class Sort {
 
 	mobileSelectedButtons() {
 		let initializeNewArray = function(sortType) {
-			let sorter = sortType == "xSorter" ? this.gd.xSorter : this.gd.vSorter;
+			let sorter =
+				sortType == "xSorter" ? this.gd.xSorter : this.gd.vSorter;
 			this.selectedNodes.sort(sorter);
-			
-			let newArr = this.getNewArray(this.selectedNodes[0].x,
-										  this.selectedNodes[0].y + 100);
+
+			let newArr = this.getNewArray(
+				this.selectedNodes[0].x,
+				this.selectedNodes[0].y + 100
+			);
 
 			// Clones the selected nodes and puts them in the new array
 			for (let i = 0; i < this.selectedNodes.length; i++) {
@@ -346,7 +352,7 @@ export default class Sort {
 				clone.strokeColor = undefined;
 
 				newArr.nodes.push(clone);
-				this.gd.addNode(clone);
+				this.gd.addNode(clone, true);
 			}
 
 			this.arrays.push(newArr);
@@ -497,20 +503,20 @@ export default class Sort {
 			h: clickedNode.h,
 			v: 0,
 			shape: clickedNode.shape
-		}
+		};
 
 		this.arrays[event.data.ai].nodes.splice(
 			event.data.ni + (event.data.side == "left" ? 0 : 1),
 			0,
 			node
-		)
+		);
 
 		// Recalculate node position inside the array
 		if (event.data.side == "left") 
 			this.arrays[event.data.ai].position.x -= clickedNode.w;
 		this._repositionNodes(event.data.ai);
 
-		this.gd.addNode(node);
+		this.gd.addNode(node, true);
 		this.gd.dirty = true;
 	}
 
@@ -518,7 +524,7 @@ export default class Sort {
 		Calculate node positions based on their position in a given array
 	*/
 	_repositionNodes(ai) {
-		let start = this.arrays[ai].position
+		let start = this.arrays[ai].position;
 		for (let ni = 0; ni < this.arrays[ai].nodes.length; ni++) {
 			let node = this.arrays[ai].nodes[ni];
 			// Assumes all the nodes have the same width TODO: This assumption is no longer true
@@ -923,7 +929,7 @@ export default class Sort {
 					shape: this.gd.nodeShape
 				};
 
-				this.gd.addNode(node);
+				this.gd.addNode(node, true);
 				array.nodes.push(node);
 			}
 		};
@@ -1194,11 +1200,8 @@ export default class Sort {
 		// Delete node
 		let bSize = hoveredNode.w / this.bsf;
 		let bX = hoveredNode.x + hoveredNode.w / 2 - bSize / 2;
-		let dP = this.gd.camera.unproject(
-			bX,
-			hoveredNode.y
-		);
-		
+		let dP = this.gd.camera.unproject(bX, hoveredNode.y);
+
 		this.hoverButtons.push({
 			position: {
 				x: dP.x,

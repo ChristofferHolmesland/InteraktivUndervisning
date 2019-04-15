@@ -1,0 +1,38 @@
+Connect to the unix server
+	ssh badne7.ux.uis.no -l username
+
+First time setup:
+
+1. Install Node Version Manager
+	cd ~/
+	curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
+1.1.
+	Close the connection and reconnect to the server.
+2. Clone project repository
+	git clone https://github.com/ChristofferHolmesland/InteraktivUndervisning.git
+3. Install and use Node (newer versions may work)
+	nvm install v10.15.1
+	nvm use v10.15.1
+	if the previous command doesn't work:
+	nvm use --delete-prefix v10.15.1
+4. Build client page
+	cd ~/InteraktivUndervisning/App/client/
+	npm install
+	NODE_ENV=unix-production npm run build
+5. Create environment file and enter values
+	cd ~/InteraktivUndervisning/App/server
+	cp env/default.env env/production.env
+	vi env/production.env
+6. Install packages required by the server
+	cd ~/InteraktivUndervisning/App/server
+	npm install --only=prod
+
+Starting the server:
+
+1. Start Node
+	nvm use v10.15.1
+	if the first command doesn't work:
+	nvm use --delete-prefix v10.15.1
+2. Start server
+	cd ~/InteraktivUndervisning/App/server
+	NODE_ENV=production node server.js

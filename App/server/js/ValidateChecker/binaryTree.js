@@ -2,9 +2,9 @@ const check = function (solutionInfo) {
 	let result = {
         passed: true,
         errors: []
-    }
+    };
 
-    let treeElements = solutionInfo.treeElements;
+	let treeElements = solutionInfo.treeElements;
 
     if (treeElements === undefined || treeElements === "") {
         result.passed = false;
@@ -22,12 +22,16 @@ const check = function (solutionInfo) {
                     result.passed = false;
                     result.errors.push("treeElementTypeError");
                     break;
+                }else if(treeArray[i] === "") {
+                    result.passed = false;
+                    result.errors.push("treeElementEmptyError");
+                    break;
                 }
             }
         }
     }
 
-    return result;
+	return result;
 };
 
 module.exports.check = check;

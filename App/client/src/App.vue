@@ -24,6 +24,7 @@ export default {
 	},
 	created() {
 		this.$socket.emit("getLocaleRequest", "no");
+		this.$socket.emit("getQuestionTypeRequest");
 		this.$socket.emit("clientLoginInfoRequest");
 	},
 	sockets: {
@@ -49,6 +50,9 @@ export default {
 		},
 		serverRestarted() {
 			location.reload(true);
+		},
+		questionTypesResponse(questionTypes) {
+			this.$store.commit("setQuestionTypes",questionTypes)
 		}
 	}
 };

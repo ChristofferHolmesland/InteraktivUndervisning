@@ -47,8 +47,9 @@ export default class Graph0 {
 			this.endNodeColor = config.endNodeColor || "LightCoral";
 
 			if (this.subType == "Dijkstra") {
-				this.buttons.push("Mark");
-				this.stateHandlers.Mark = this.markNode.bind(this);
+				this.nextNodeMarking = undefined;
+				this.buttons.push(this.locale.buttons.Mark);
+				this.stateHandlers[this.locale.buttons.Mark] = this.markNode.bind(this);
 				this.drawStatic();
 			}
 		}
@@ -60,21 +61,26 @@ export default class Graph0 {
 
 	constructor(graphDrawer, config) {
 		this.gd = graphDrawer;
-
+		this.locale = this.gd.locale.Graph0;
 		// Current interaction state.
-		this.currentState = "Add";
+		this.currentState = this.locale.buttons.Add;
 
 		// The buttons which the user may click on to select interaction state
-		this.buttons = ["Add", "Remove", "Move", "Join", "Edit"];
+		this.buttons = [
+			this.locale.buttons.Add,
+			this.locale.buttons.Remove,
+			this.locale.buttons.Move,
+			this.locale.buttons.Join,
+			this.locale.buttons.Edit
+		];
 
 		// Every interaction state and event handler.
-		this.stateHandlers = {
-			Add: this.addNode,
-			Remove: this.removeNode,
-			Join: this.joinNode,
-			Move: this.moveNode,
-			Edit: this.editNode
-		}
+		this.stateHandlers = {};
+		this.stateHandlers[this.locale.buttons.Add] = this.addNode;
+		this.stateHandlers[this.locale.buttons.Remove] = this.removeNode;
+		this.stateHandlers[this.locale.buttons.Move] = this.moveNode;
+		this.stateHandlers[this.locale.buttons.Join] = this.joinNode;
+		this.stateHandlers[this.locale.buttons.Edit] = this.editNode;
 
 		// Binds the "this" context to the GraphDrawer object.
 		for (let key in this.stateHandlers) {
@@ -94,7 +100,6 @@ export default class Graph0 {
 	mouseDownHandler(e) {
 		if (this.gd.operatingMode == "Presentation")
 			return this.detectTreeSteppingInput(e);
-		
 
 		// UI
 		let consumed = this.detectUIInput(e);
@@ -142,9 +147,11 @@ export default class Graph0 {
 				// Checks if the node is connected to anything with edges.
 				for (let j = 0; j < this.gd.edges.length; j++) {
 					// Removes the edges.
-					if (this.gd.edges[j].n1 == this.gd.nodes[i] 
-						|| this.gd.edges[j].n2 == this.gd.nodes[i]) {
-							this.gd.edges.splice(j, 1);
+					if (
+						this.gd.edges[j].n1 == this.gd.nodes[i] ||
+						this.gd.edges[j].n2 == this.gd.nodes[i]
+					) {
+						this.gd.edges.splice(j, 1);
 						j--;
 					}
 				}
@@ -178,9 +185,14 @@ export default class Graph0 {
 		let node = this.gd.getNodeAtCursor(e).node;
 		if (node == undefined) return false;
 
-		if (node.marked == undefined) {
+		if (this.nextNodeMarking !== undefined) {
+			node.marked = "End";
+			node.fillColor = this.endNodeColor;
+			this.nextNodeMarking = undefined;
+		} else if (node.marked == undefined) {
 			node.marked = "Start";
 			node.fillColor = this.startNodeColor;
+			this.nextNodeMarking = true;
 		} else if (node.marked == "Start") {
 			node.marked = "End";
 			node.fillColor = this.endNodeColor;
@@ -427,7 +439,7 @@ export default class Graph0 {
 
 		this.steppingButtons.push({
 			data: {
-				text: "<-- Tree",
+				text: "<-- " + this.locale.buttons.Tree,
 				relSize: this.gd.relSize
 			},
 			handler: stepBack
@@ -441,7 +453,7 @@ export default class Graph0 {
 		});
 		this.steppingButtons.push({
 			data: {
-				text: "Tree -->",
+				text: this.locale.buttons.Tree + " -->",
 				relSize: this.gd.relSize
 			},
 			handler: stepForward
@@ -481,6 +493,18 @@ export default class Graph0 {
 	}
 
 	_parseTreeSteps() {
+		// If treeInfo is missing, the exporttype was set to tree, but the
+		// graph couldn't be exported as a tree, so it was exported as a graph instead.
+		if (
+			(this.importSource == "Student" &&
+				this.steps[this.gd.currentStep].roots == undefined) ||
+			(this.importSource == "Algorithm" &&
+				this.steps[this.gd.currentStep].treeInfo == undefined)
+		) {
+			this._parseGraphSteps();
+			return;
+		}
+
 		this.gd.nodes = [];
 		this.gd.edges = [];
 		this.gd.dirty = true;
@@ -538,9 +562,11 @@ export default class Graph0 {
 
 			// If there are more than one tree, there should be
 			// buttons to navigate between them.
-			if (step.treeInfo.length > 1)
+			if (step.treeInfo.length > 1) {
 				this.addTreeSteppingButtons(step.treeInfo.length);
-			else this.steppingButtons = [];
+				// The tree stepping buttons are drawn after the gd.drawStatic call.
+				this.gd.drawStatic();
+			} else this.steppingButtons = [];
 
 			let p = this.gd.camera.project(this.gd.canvas.width / 2, 0);
 			// Add some padding between canvas top and the top of the tree
@@ -717,7 +743,7 @@ export default class Graph0 {
 					v: n.v,
 					w: n.w,
 					h: n.h,
-					shape: this.gd.nodeShape,
+					shape: n.shape == undefined ? this.gd.nodeShape : n.shape,
 					marked: n.marked,
 					fillColor: n.fillColor
 				});
@@ -756,6 +782,7 @@ export default class Graph0 {
 			} else {
 				console.error(`Found invalid step type: ${step.type} 
 					at index ${i}, skipping.`);
+				console.error(step);
 			}
 		}
 
@@ -832,6 +859,20 @@ export default class Graph0 {
 
 		for (let r = 0; r < tree.roots.length; r++) {
 			fixer(tree.roots[r]);
+		}
+
+		// If there are no roots, the algorithm wasn't able to parse
+		// the current graph as a tree. It is exported as a graph instead.
+		if (tree.roots.length == 0) {
+			// Before we can export it as a graph, it needs to have its children
+			// removed, because they may contain circular references, which
+			// leads to a never ending recursion when it's sent by socket.io
+			for (let i = 0; i < this.gd.nodes.length; i++) {
+				let node = this.gd.nodes[i];
+				delete node.children;
+			}
+
+			return Object.assign({ type: "Complete" }, this.exportAsGraph());
 		}
 
 		return tree;

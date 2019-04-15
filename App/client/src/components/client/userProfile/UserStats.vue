@@ -73,12 +73,15 @@ export default {
 			this.sessionList = data.sessionList;
 
 			for (let i = 0; i < this.sessionList.length; i++) {
-				if (this.courseList.indexOf(this.sessionList[i].code) === -1) {
-					this.courseList.push(this.sessionList[i].code);
+				if (this.courseList.indexOf(this.sessionList[i].id) === -1) {
+					this.courseList.push({
+						value: this.sessionList[i].id,
+						text: this.sessionList[i].course
+					});
 				}
 			}
 
-			this.courseSelected = this.courseList[0];
+			this.courseSelected = this.courseList[0].value;
 		}
 	},
 	methods: {
@@ -101,7 +104,7 @@ export default {
 		courseSelected() {
 			let list = [];
 			for (let i = 0; i < this.sessionList.length; i++) {
-				if (this.sessionList[i].code === this.courseSelected) {
+				if (this.sessionList[i].id === this.courseSelected) {
 					list.push(this.sessionList[i]);
 				}
 			}

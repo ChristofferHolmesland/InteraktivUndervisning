@@ -5,6 +5,8 @@
                 :steps="answer"
                 :height="400"
                 :width="500"
+                :displayEdgeValues="true"
+                ref="graphdrawer"
                 />
 </template>
 

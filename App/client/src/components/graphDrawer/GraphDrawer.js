@@ -79,7 +79,7 @@ export default class GraphDrawer {
 		return this.controllers[this.controlType].export();
 	}
 
-	constructor(canvas, config) {
+	constructor(canvas, locale, config) {
 		// Radius of nodes.
 		this.R = 25;
 		// How often the canvas should be updated.
@@ -90,6 +90,8 @@ export default class GraphDrawer {
 		this.DEVICE = "Mobile";
 		// Size of the font in px.
 		this.fontHeight = 10;
+		// Contains all the text
+		this.locale = locale;
 
 		// Which step of the presentation the user is currently on
 		// Should be used by the controller to decide on what to display
@@ -174,6 +176,8 @@ export default class GraphDrawer {
 
 		this.canvas.addEventListener("mousedown", down);
 		this.canvas.addEventListener("touchstart", down);
+		this.canvas.addEventListener("wheel", this.detectZoomWheel.bind(this));
+
 
 		// Updates the GraphDrawer every <MS_PER_FRAME> milliseconds.
 		this.intervalId = setInterval((function() {
@@ -245,16 +249,27 @@ export default class GraphDrawer {
 	}
 
 	/*
-		Draws the stepping buttons to the buffer.
-		Must be called by a controller.
+		Removes everything from the staticBuffer, and 
+		resets the colors.
 	*/
-	drawStatic() {
+	resetStatic() {
 		this.staticContext.clearRect(
 			0,
 			0,
 			this.staticBuffer.width,
 			this.staticBuffer.height
 		);
+
+		this.staticContext.fillStyle = "white";
+		this.staticContext.strokeStyle = "black";
+	}
+
+	/*
+		Draws the stepping buttons to the buffer.
+		Must be called by a controller.
+	*/
+	drawStatic() {
+		this.resetStatic();
 
 		for (let i = 0; i < this.steppingButtons.length; i++) {
 			let btn = this.steppingButtons[i];
@@ -333,51 +348,48 @@ export default class GraphDrawer {
 				(this.edges[i].directed == undefined ||
 					this.edges[i].directed == true)
 			) {
-				// Normalize the line as (nx, ny)
-				let dx = center1.x - center2.x;
-				let dy = center1.y - center2.y;
-				let magnitude = Math.sqrt(dx * dx + dy * dy);
-				let nx = dx / magnitude;
-				let ny = dy / magnitude;
+				let b = {
+					x: center1.x,
+					y: center1.y
+				};
 
-				// Distance from the center of shape to the edge
-				let dstToEdgeW = this.edges[i].n2.w;
-				let dstToEdgeH = this.edges[i].n2.h;
-				if (this.edges[i].n2.shape == "Rectangle") {
-					dstToEdgeW /= 2;
-					dstToEdgeH /= 2;
+				// a is the intersection point
+				let a = {};
+				let node = this.edges[i].n2;
+				let line = {
+					x1: center1.x,
+					y1: center1.y,
+					x2: center2.x,
+					y2: center2.y
+				};
+
+				let intersection = this.lineIntersectsNode(line, node);
+				if (intersection !== undefined) {
+					a = intersection.p;
 				}
 
-				let a = { x: center2.x, y: center2.y };
-				a.x += nx * dstToEdgeW;
-				a.y += ny * dstToEdgeH;
-
-				let b = { x: a.x, y: a.y };
-				b.x += nx * dstToEdgeW;
-				b.y += ny * dstToEdgeH;
-
-				// TODO: When the nodeshape is square, the arrows
-				// are placed on the line, but not close to
-				// the last node.
-
-				let headlen = 15;
-				let angle = Math.atan2(a.y - b.y, a.x - b.x);
-				this.drawContext.beginPath();
-				this.drawContext.moveTo(a.x, a.y);
-				this.drawContext.lineTo(
-					a.x - headlen * Math.cos(angle - Math.PI / 6),
-					a.y - headlen * Math.sin(angle - Math.PI / 6)
-				);
-				this.drawContext.moveTo(a.x, a.y);
-				this.drawContext.lineTo(
-					a.x - headlen * Math.cos(angle + Math.PI / 6),
-					a.y - headlen * Math.sin(angle + Math.PI / 6)
-				);
-				if (this.edges[i].strokeColor) {
-					this.drawContext.strokeStyle = this.edges[i].strokeColor;
+				if (a !== undefined) {
+					let headlen = 15;
+					let angle = Math.atan2(a.y - b.y, a.x - b.x);
+					this.drawContext.beginPath();
+					this.drawContext.moveTo(a.x, a.y);
+					this.drawContext.lineTo(
+						a.x - headlen * Math.cos(angle - Math.PI / 6),
+						a.y - headlen * Math.sin(angle - Math.PI / 6)
+					);
+					this.drawContext.moveTo(a.x, a.y);
+					this.drawContext.lineTo(
+						a.x - headlen * Math.cos(angle + Math.PI / 6),
+						a.y - headlen * Math.sin(angle + Math.PI / 6)
+					);
+					if (this.edges[i].strokeColor) {
+						this.drawContext.strokeStyle = this.edges[i].strokeColor;
+					}
+					this.drawContext.stroke();
+					this.drawContext.strokeStyle = "black";
+				} else {
+					console.error("No intersection");
 				}
-				this.drawContext.stroke();
-				this.drawContext.strokeStyle = "black";
 			}
 
 			if (this.displayEdgeValues && this.edges[i].v !== undefined) {
@@ -443,12 +455,14 @@ export default class GraphDrawer {
 
 			// If a node is wider than needed, it will be assigned a smaller
 			// width, bounded by this.R.
-			if (maxTextWidth < this.nodes[i].w) {
-				this.nodes[i].w = maxTextWidth;
+			let minSize = this.nodes[i].shape == "Circle" ? this.R : this.R * 2;
 
-				let minSize = this.nodes[i].shape == "Circle" ? this.R : this.R * 2;
-				if (this.nodes[i].w < minSize) this.nodes[i].w = minSize;
-				this.stillDirty = true;
+			if (maxTextWidth < this.nodes[i].w) {
+				if (this.nodes[i].w !== minSize) {
+					this.nodes[i].w = maxTextWidth;	
+					if (this.nodes[i].w < minSize) this.nodes[i].w = minSize;
+					this.stillDirty = true;
+				}
 			}
 		}
 
@@ -463,8 +477,10 @@ export default class GraphDrawer {
 			x, y, w, h, v, shape,
 			selected, culled,
 			fillColor, strokeColor
+
+		If ref is true, then the object in props is added to the nodes list.
 	*/
-	addNode(props) {
+	addNode(props, ref) {
 		let nextId = this.nextId;
 		this.nextId++;
 
@@ -489,10 +505,19 @@ export default class GraphDrawer {
 			strokeColor: undefined
 		};
 
-		for (var prop in props) {
-			if (props.hasOwnProperty(prop)) {
-				node[prop] = props[prop];
+		if (ref == undefined || ref == false) {
+			for (var prop in props) {
+				if (props.hasOwnProperty(prop)) {
+					node[prop] = props[prop];
+				}
 			}
+		} else {
+			for (var nodeprop in node) {
+				if (!props.hasOwnProperty(nodeprop)) {
+					props[nodeprop] = node[nodeprop];
+				}
+			}
+			node = props;
 		}
 
 		// Check if the new node was given an id which is larger than the
@@ -545,9 +570,24 @@ export default class GraphDrawer {
 	*/
 	_editNode(node) {
 		// This is the only way to open a keyboard in mobile browsers.
-		let new_value = prompt("Enter new value:", node.v);
+		let new_value = prompt(this.locale.editNodePrompt, node.v);
 		if (new_value == undefined) return;
 		node.v = new_value;
+		this.dirty = true;
+	}
+
+	/*
+		Let's the user scroll using a mouse wheel.
+	*/
+	detectZoomWheel(e) {
+		// Prevent scrolling the page.
+		e.preventDefault();
+
+		let dir = -Math.sign(e.deltaY);
+		let rect = this.canvas.getBoundingClientRect();
+		let x = e.clientX - rect.left;
+		let y = e.clientY - rect.top;
+		this.camera.changeZoom(0.075 * dir, x, y);
 		this.dirty = true;
 	}
 
@@ -555,9 +595,11 @@ export default class GraphDrawer {
 		Can be called to let the user zoom using two fingers.
 	*/
 	detectZoomGesture(e) {
+		// Non touchscreen zooming
 		if (e.targetTouches == undefined) return;
 		if (e.targetTouches.length < 2) return;
 
+		// Touchscreen zooming
 		let getFingers = function(evt) {
 			let rect = this.canvas.getBoundingClientRect();
 
@@ -629,29 +671,9 @@ export default class GraphDrawer {
 
 	drawNode(node, context) {
 		if (node.shape == "Circle") {
-			/*context.arc(
-				node.x,
-				node.y,
-				node.w,
-				0,
-				2 * Math.PI
-			);*/
-			context.ellipse(
-				node.x,
-				node.y,
-				node.w,
-				node.h,
-				0,
-				0,
-				2 * Math.PI
-			);
+			context.ellipse(node.x, node.y, node.w, node.h, 0, 0, 2 * Math.PI);
 		} else if (node.shape == "Rectangle") {
-			context.rect(
-				node.x,
-				node.y,
-				node.w,
-				node.h
-			);
+			context.rect(node.x, node.y, node.w, node.h);
 		}
 	}
 
@@ -849,8 +871,7 @@ export default class GraphDrawer {
 	}
 
 	getCenter(node) {
-		if (node.shape == "Circle") 
-			return { x: node.x, y: node.y };
+		if (node.shape == "Circle") return { x: node.x, y: node.y };
 		if (node.shape == "Rectangle")
 			return { x: node.x + node.w / 2, y: node.y + node.h / 2 };
 	}
@@ -889,6 +910,8 @@ export default class GraphDrawer {
 	}
 
 	checkSteppingButtons(e) {
+		if (this.steppingButtons == undefined) return false;
+
 		for (let i = 0; i < this.steppingButtons.length; i++) {
 			let btn = this.steppingButtons[i];
 			let inside = this.isPointInRectangle(
@@ -1040,5 +1063,160 @@ export default class GraphDrawer {
 				height: btnHeight
 			};
 		}
+	}
+
+	/*
+		Returns the intersection point and side, or undefined if there is
+			no intersection.
+	*/
+	lineIntersectsNode(line, node) {
+		if (node.shape == "Rectangle") {
+			// Top
+			let t = this.lineSegmentIntersection(line, {
+				x1: node.x,
+				y1: node.y,
+				x2: node.x + node.w,
+				y2: node.y
+			});
+			if (t) return { p: t, side: "Top" };
+
+			// Bottom
+			let b = this.lineSegmentIntersection(line, {
+				x1: node.x,
+				y1: node.y + node.h,
+				x2: node.x + node.w,
+				y2: node.y + node.h
+			});
+			if (b) return { p: b, side: "Bottom" };
+
+			// Right
+			let r = this.lineSegmentIntersection(line, {
+				x1: node.x + node.w,
+				y1: node.y,
+				x2: node.x + node.w,
+				y2: node.y + node.h
+			});
+			if (r) return { p: r, side: "Right" };
+
+			// Left
+			let l = this.lineSegmentIntersection(line, {
+				x1: node.x,
+				y1: node.y,
+				x2: node.x,
+				y2: node.y + node.h
+			});
+			if (l) return { p: l, side: "Left" };
+
+			return undefined;
+		} else if (node.shape == "Circle") {
+			let intersections = this.lineSegmentEllipseIntersection(line, node);
+			if (intersections.length > 1)
+				console.error("More than one intersection!");
+			if (intersections.length == 0) {
+				console.error("No intersection :(");
+				return undefined;
+			}
+
+			return { p: intersections[0] };
+		}
+
+		console.error("No handler for this node");
+		return undefined;
+	}
+
+	/*
+		Returns the intersection point of a line segment and an ellipse.
+		Modified version of: (02.04.2019)
+		http://csharphelper.com/blog/2017/08/calculate-where-a-line-segment-and-an-ellipse-intersect-in-c/
+	*/
+	lineSegmentEllipseIntersection(line, ellipse) {
+		// Because the function changes the x,y properties of the ellipse,
+		// a copy should be used.
+		ellipse = JSON.parse(JSON.stringify(ellipse));
+
+		let pt1 = { x: line.x1, y: line.y1 };
+		let pt2 = { x: line.x2, y: line.y2 };
+
+		// Translate so the ellipse is centered at the origin.
+		let cx = ellipse.x;
+		let cy = ellipse.y;
+		ellipse.x -= cx;
+		ellipse.y -= cy;
+		pt1.x -= cx;
+		pt1.y -= cy;
+		pt2.x -= cx;
+		pt2.y -= cy;
+
+		// Get the semimajor and semiminor axes.
+		let a = ellipse.w;
+		let b = ellipse.h;
+
+		// Calculate the quadratic parameters.
+		let A = (pt2.x - pt1.x) * (pt2.x - pt1.x) / a / a + (pt2.y - pt1.y) * (pt2.y - pt1.y) / b / b;
+		let B = 2 * pt1.x * (pt2.x - pt1.x) / a / a + 2 * pt1.y * (pt2.y - pt1.y) / b / b;
+		let C = pt1.x * pt1.x / a / a + pt1.y * pt1.y / b / b - 1;
+
+		// Make a list of t values.
+		let t_values = [];
+
+		// Calculate the discriminant.
+		let discriminant = B * B - 4 * A * C;
+
+		if (discriminant == 0) {
+			// One real solution.
+			t_values.push(-B / 2 / A);
+		} else if (discriminant > 0) {
+			// Two real solutions.
+			t_values.push((-B + Math.sqrt(discriminant)) / 2 / A);
+			t_values.push((-B - Math.sqrt(discriminant)) / 2 / A);
+		}
+
+		// Convert the t values into points.
+		let points = [];
+		for (let i = 0; i < t_values.length; i++) {
+			let t = t_values[i];
+			// If the points are on the segment (or we
+			// don't care if they are), add them to the list.
+			if (t >= 0 && t <= 1) {
+				let x = pt1.x + (pt2.x - pt1.x) * t + cx;
+				let y = pt1.y + (pt2.y - pt1.y) * t + cy;
+				points.push({ x: x, y: y });
+			}
+		}
+
+		// Return the points.
+		return points;
+	}
+
+	/*
+		Returns the intersection point of two line segments.
+		Modified version of https://stackoverflow.com/a/1968345/ (01.04.2019)
+
+		Line 1 is defined by (l1.x1, l1.y1) and (l1.x2, l1.y2)
+		Line 2 is defined by (l2.x1, l2.y1) and (l2.x2, l2.y2)
+
+		Returns { x, y } if there was an intersection, or
+			undefined if there is no intersection.
+	*/
+	lineSegmentIntersection(l1, l2) {
+		let s1_x, s1_y, s2_x, s2_y;
+		s1_x = l1.x2 - l1.x1;
+		s1_y = l1.y2 - l1.y1;
+		s2_x = l2.x2 - l2.x1;
+		s2_y = l2.y2 - l2.y1;
+
+		let s, t;
+		s = (-s1_y * (l1.x1 - l2.x1) + s1_x * (l1.y1 - l2.y1)) / (-s2_x * s1_y + s1_x * s2_y);
+		t = ( s2_x * (l1.y1 - l2.y1) - s2_y * (l1.x1 - l2.x1)) / (-s2_x * s1_y + s1_x * s2_y);
+
+		if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
+			// Collision detected
+			return {
+				x: l1.x1 + (t * s1_x),
+				y: l1.y1 + (t * s1_y)
+			};
+		}
+
+		return undefined; // No collision
 	}
 }

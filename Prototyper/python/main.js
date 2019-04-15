@@ -310,25 +310,29 @@ function parse(code) {
             if (print) console.log("base type");
             return { 
                 data: Number(expression), 
-                type: "Number" 
+                type: "Number",
+                _uniqueId: uniqueId++
             };
         } else if (expression.startsWith("\"") && expression.endsWith("\"")) {
             if (print) console.log("base type");
             return {
                 data: expression.substring(1, expression.length - 1),
-                type: "String"
+                type: "String",
+                _uniqueId: uniqueId++
             };
         } else if (expression == "True") {
             if (print) console.log("base type");
             return {
                 data: true,
-                type: "Boolean"
+                type: "Boolean",
+                _uniqueId: uniqueId++
             };
         } else if (expression == "False") {
             if (print) console.log("base type");
             return {
                 data: false,
-                type: "Boolean"
+                type: "Boolean",
+                _uniqueId: uniqueId++
             };
         }
 
@@ -483,12 +487,14 @@ function parse(code) {
         let info = getOperationInfo(scope, expression);
         if (print) console.log(info);
 
+        let result = {
+            _uniqueId: uniqueId++
+        }
+
         if (info.operator == "+") {
             if (info.operand1.type !== info.operand2.type) return;
 
-            let result = {
-                type: info.operand1.type
-            }
+            result.type = info.operand1.type;
 
             if (info.operand1.type == "Number" || info.operand1.type == "String") {
                 result.data = info.operand1.data + info.operand2.data;
@@ -498,9 +504,7 @@ function parse(code) {
         } else if (info.operator == "-") {
             if (info.operand1.type !== info.operand2.type) return;
 
-            let result = {
-                type: info.operand1.type
-            }
+            result.type = info.operand1.type
 
             if (info.operand1.type == "Number") {
                 result.data = info.operand1.data - info.operand2.data;
@@ -510,9 +514,7 @@ function parse(code) {
         } else if (info.operator == "/") {
             if (info.operand1.type !== info.operand2.type) return;
 
-            let result = {
-                type: info.operand1.type
-            }
+            result.type = info.operand1.type
 
             if (info.operand1.type == "Number") {
                 result.data = info.operand1.data / info.operand2.data;
@@ -520,8 +522,6 @@ function parse(code) {
 
             return result;
         } else if (info.operator == "*") {
-            let result = {}
-
             if (info.operand1.type == "Number" && info.operand2.type == "Number") {
                 result.data = info.operand1.data * info.operand2.data;
                 result.type = "Number";
@@ -543,70 +543,58 @@ function parse(code) {
 
             return result;
         } else if (info.operator == "==") {
+            result.type = "Boolean";
             if (info.operand1.type !== info.operand2.type) {
-                return {
-                    type: "Boolean",
-                    data: false
-                };
+                result.data = false;
+            } else {
+                result.data = (info.operand1.data === info.operand2.data);
             }
 
-            return {
-                type: "Boolean",
-                data: (info.operand1.data === info.operand2.data)
-            };
+            return result;
         } else if (info.operator == "!=") {
+            result.type = "Boolean";
             if (info.operand1.type !== info.operand2.type) {
-                return {
-                    type: "Boolean",
-                    data: true
-                };
+                result.data = true;
+            } else {
+                result.data = info.operand1.data !== info.operand2.data
             }
 
-            return {
-                type: "Boolean",
-                data: info.operand1.data !== info.operand2.data
-            };
+            return result;
         } else if (info.operator == "is") {
-            return {
-                type: "Boolean",
-                data: info.operand1 == info.operand2
-            };
+            result.type = "Boolean";
+            result.data = info.operand1 == info.operand2;
+            return result;
         } else if (info.operator == "<") {
-            return {
-                type: "Boolean",
-                data: info.operand1.data < info.operand2.data
-            };
+            result.type = "Boolean";
+            result.data = info.operand1.data < info.operand2.data;
+            return result;
         } else if (info.operator == ">") {
-            return {
-                type: "Boolean",
-                data: info.operand1.data > info.operand2.data
-            };
+            result.type = "Boolean";
+            result.data = info.operand1.data > info.operand2.data;
+            return result;
         } else if (info.operator == ">=") {
-            return {
-                type: "Boolean",
-                data: info.operand1.data >= info.operand2.data
-            };
+            result.type = "Boolean";
+            result.data = info.operand1.data >= info.operand2.data;
+            return result;
         } else if (info.operator == "<=") {
-            return {
-                type: "Boolean",
-                data: info.operand1.data <= info.operand2.data
-            };
+            result.type = "Boolean";
+            result.data = info.operand1.data <= info.operand2.data;
+            return result;
         } else if (info.operator == "and") {
-            return {
-                type: "Boolean",
-                data: info.operand1.data == true && info.operand2.data == true
-            };
+            result.type = "Boolean";
+            result.data = info.operand1.data == true && info.operand2.data == true;
+            return result;
         } else if (info.operator == "or") {
-            return {
-                type: "Boolean",
-                data: info.operand1.data == true || info.operand2.data == true
-            }
+            result.type = "Boolean";
+            result.data = info.operand1.data == true || info.operand2.data == true;
+            return result;
         } else if (info.operator == "!") {
-            return {
-                type: "Boolean",
-                data: !info.operand.data
-            };
+            result.type = "Boolean";
+            result.data = !info.operand.data;
+            return result;
         }
+
+        console.error("Got to end of evaluate expression without any result");
     };
 
     let getOperationInfo = function(scope, expression) {

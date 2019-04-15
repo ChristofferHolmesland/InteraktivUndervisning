@@ -13,7 +13,6 @@ class Tree {
 	changeRoot (node) {
 		if (node !== this.root) {
 			let oldIndex = this.nodes.indexOf(node);
-			//console.log(oldIndex);
 			let tempRoot = this.root;
 			this.root = node;
 			this.nodes[0] = node;
@@ -138,11 +137,11 @@ class BinaryTreeNode {
 		} else if (this.value > parentNode.value && parentNode.children[1] === undefined) {
 			parentNode.children[1] = this;
 		} else {
-			console.log("Can not add node to parent node.");
-			console.log("Node: ");
-			console.log(this);
-			console.log("Parent Node: ");
-			console.log(parentNode);
+			console.error("Can not add node to parent node.");
+			console.error("Node: ");
+			console.error(this);
+			console.error("Parent Node: ");
+			console.error(parentNode);
 			this.parent = undefined;
 		}
 	}
@@ -152,14 +151,12 @@ class BinaryTreeNode {
 		let leftChild = this.children[0];
 		let rightChild = this.children[1];
 		if (this.children.length === 1 || this.children.length === 2) {
-			//console.log(this.children);
 			if (leftChild !== undefined) amount++;
 			if (rightChild !== undefined) amount++
 		}
 		else {
 			amount = this.children.length;
 		}
-		//console.log(amount);
 		return amount;
 	}
 

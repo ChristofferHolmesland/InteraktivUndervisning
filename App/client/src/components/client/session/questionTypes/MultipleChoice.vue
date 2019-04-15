@@ -5,7 +5,7 @@
 					:key="choice.id" 
 					class="choice" :id="choice.id"
 					@click="selectChoice($event)"
-					cols="12" lg="6"
+					cols="12" lg="5"
 			>
 				<div class="selected">
 					<div v-if="choice.selected">
@@ -62,8 +62,6 @@ export default {
 
 <style scoped>
 .choice {
-	float: left;
-	width: 40%;
 	min-height: 10em;
 	margin: 3em auto 0 auto;
 	background-color: #337ab7;
