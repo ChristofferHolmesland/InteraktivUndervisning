@@ -234,7 +234,8 @@
         "answer": "Svar nr",
         "noQuestions": "Ingen spørsmål",
         "correctCard": "Riktig",
-        "incorrectCard": "Feil"
+        "incorrectCard": "Feil",
+        "notAvailable": "Ikke tilgjengelig"
     },
     "ClientSessionQuestion": {
         "question": "Spørsmål",

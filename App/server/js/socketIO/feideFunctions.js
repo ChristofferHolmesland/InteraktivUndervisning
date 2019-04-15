@@ -198,6 +198,13 @@ module.exports.feide = function(socket, db, user){
 						(Number(questionAverageIncorrect) / Number(otherUserAnswers) * 100).toFixed(2);
 					question.otherUserDidntKnow = 
 						(Number(questionAverageDidntKnow) / Number(otherUserAnswers) * 100).toFixed(2);
+				
+					for (let prop in question) {
+						if (!question.hasOwnProperty(prop)) continue;
+		
+						if (question[prop] === "NaN")
+							question[prop] = "notAvailable";
+					}
 				});
 				
 				delete question.id;
@@ -223,6 +230,13 @@ module.exports.feide = function(socket, db, user){
 				(Number(sessionAverageIncorrect) / Number(sessionOtherUserAnswers) * 100).toFixed(2);
 			sessionInformation.otherUserDidntKnow = 
 				(Number(sessionAverageDidntKnow) / Number(sessionOtherUserAnswers) * 100).toFixed(2);
+		
+			for (let prop in sessionInformation) {
+				if (!sessionInformation.hasOwnProperty(prop)) continue;
+
+				if (sessionInformation[prop] === "NaN")
+					sessionInformation[prop] = "notAvailable";
+			}
 		});
 
 		socket.emit("getSessionInformationResponse", sessionInformation);
