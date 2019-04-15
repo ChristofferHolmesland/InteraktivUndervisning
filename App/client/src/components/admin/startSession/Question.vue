@@ -82,7 +82,7 @@ export default {
 	},
 	computed: {
 		getLocale() {
-			let locale = this.$store.getters.getLocale("DisplayQuestion");	//låner denne inntil videre
+			let locale = this.$store.getters.getLocale("startSession");
 			if (locale) return locale;
 			else return {};
 		},
