@@ -51,6 +51,8 @@ module.exports.createAVLTree = function (elements,add,existingTreeObject) {
 		if (existingTreeObject !== undefined) {
 			tree = existingTreeObject.createDuplicateTree();
 			//Balance any Tree given that is not an AVL Tree
+			console.log("Reached first checkbalance");
+			console.log(tree);
 			while (checkBalance(tree.root) === false) {
 				let rootHeight = getNodeHeight(tree.root);
 				if (rootHeight > 0) {	//choose which side of the tree to start with.
@@ -181,6 +183,8 @@ module.exports.createAVLTreeSolution = function (elements, add, existingTreeObje
 			let stepInitial = GeneralTreeFunctions.createStepArray("Initial","AVL",[tree]);
 			steps.push(stepInitial);
 			//Balance any Tree given that is not an AVL Tree
+			console.log("Reach first checkBalance");
+			console.log(tree);
 			while (checkBalance(tree.root) === false) {
 				let rootHeight = getNodeHeight(tree.root);
 				if (rootHeight > 0) {	//choose which side of the tree to start with.
@@ -501,8 +505,10 @@ function removeNodeFromAVLTree(node,tree,index,removeSteps,rotationSteps) {
 			}
 			newTree.nodes.splice(index, 1);
 			if (saveRecords) removeSteps.push(newTree.createDuplicateTree());
-			fixAVLCondition(parent,newTree,false);
-			if (saveRecords) rotationSteps.push(newTree.createDuplicateTree());
+			if (newTree.nodes.length > 2) {
+				fixAVLCondition(parent, newTree, false);
+				if (saveRecords) rotationSteps.push(newTree.createDuplicateTree());
+			}
 			newTreeList.push(newTree);
 		} else if (newNode.childrenAmount === 2) {
 			let tempNodeArray = GeneralTreeFunctions.getBestReplacementNodes(newNode, newTree);
@@ -519,7 +525,7 @@ function removeNodeFromAVLTree(node,tree,index,removeSteps,rotationSteps) {
 					childNode.parent = tempParent;
 					if (tempParent.children[0] === tempNode) tempParent.children[0] = childNode;
 					else tempParent.children[1] = childNode;
-				}else {
+				} else {
 					if (tempParent.children[0] === tempNode) tempParent.children[0] = undefined;	//may cause problems with children amount
 					if (tempParent.children[1] === tempNode) tempParent.children[1] = undefined;
 				}
@@ -528,7 +534,7 @@ function removeNodeFromAVLTree(node,tree,index,removeSteps,rotationSteps) {
 				if (newNode.value === newSubTree.root.value) {
 					tempNode.parent = undefined;
 					newSubTree.root = tempNode;
-				}else {
+				} else {
 					tempNode.parent = newSubNode.parent;
 					if (newSubNode.parent.children[0] === newSubNode) newSubNode.parent.children[0] = tempNode;
 					else newSubNode.parent.children[1] = tempNode;
@@ -538,19 +544,25 @@ function removeNodeFromAVLTree(node,tree,index,removeSteps,rotationSteps) {
 
 				newSubTree.nodes[index] = tempNode;
 				newSubTree.nodes.splice(tempIndex, 1);
-				if(saveRecords) removeSteps.push(newSubTree.createDuplicateTree());
-				fixAVLCondition(tempNode,newSubTree,false);
-				if(saveRecords) rotationSteps.push(newSubTree.createDuplicateTree());
+				if (saveRecords) removeSteps.push(newSubTree.createDuplicateTree());
+				fixAVLCondition(tempNode, newSubTree, false);
+				if (saveRecords) rotationSteps.push(newSubTree.createDuplicateTree());
 				newTreeList.push(newSubTree);
 			}
 		} else {	//no children
-			if (parent.children[0] === newNode) parent.children[0] = undefined;
-			else parent.children[1] = undefined;
-			newTree.nodes.splice(index, 1);
-			if(saveRecords) removeSteps.push(newTree.createDuplicateTree());
-			fixAVLCondition(parent,newTree,false);
-			if(saveRecords) rotationSteps.push(newTree.createDuplicateTree());
-			newTreeList.push(newTree);
+			if (newTree.nodes.length === 1) {
+				newTree.nodes.splice(index,1);
+				newTree.root = undefined;
+				newTreeList.push(newTree);
+			}else {
+				if (parent.children[0] === newNode) parent.children[0] = undefined;
+				else parent.children[1] = undefined;
+				newTree.nodes.splice(index, 1);
+				if (saveRecords) removeSteps.push(newTree.createDuplicateTree());
+				fixAVLCondition(parent, newTree, false);
+				if (saveRecords) rotationSteps.push(newTree.createDuplicateTree());
+				newTreeList.push(newTree);
+			}
 		}
 	}
 	return newTreeList

@@ -6,7 +6,8 @@ class Tree {
 		if (nodes !== undefined) {
 			this.nodes = nodes;
 		}else {
-			this.nodes = [rootNode];
+			if (rootNode !== undefined) this.nodes = [rootNode];
+			else this.nodes = [];
 		}
 	}
 

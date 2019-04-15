@@ -50,7 +50,9 @@ function checkCanvasNodeForNull(canvasNode) {
 // Is going to be used to check a students answer with the solution!
 function checkStudentAnswer(studentTree,solutionTree) {
 	let checkresult = true;
-	if (studentTree.nodes.length === solutionTree.nodes.length) {
+	if (studentTree.nodes.length === 0 && studentTree.root === undefined && solutionTree.nodes.length === 0 && solutionTree.root === undefined)
+		checkresult = true;
+	else if (studentTree.nodes.length === solutionTree.nodes.length) {
 		checkresult = checkNode(studentTree.root,solutionTree.root,checkresult);
 	}else {
 		checkresult = false;

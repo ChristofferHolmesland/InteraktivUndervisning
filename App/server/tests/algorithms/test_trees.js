@@ -1102,7 +1102,6 @@ describe('TestBinaryTrees', function () {
 			GeneralTreeFunctions.makeBSTAVLTreeReadyForImport(testTree);
 			assert(GeneralTreeFunctions.checkStudentAnswer(solutionTree,testTree));
 		});
-		//TODO THIS TEST MUST PASS BEFORE makeBSTAVLTREEREADYFORIMPORT FUNCTION WORKS CORRECTLY!!!
 		it("Test makeBSTAVLTreeReadyForImport where some nodes have value null",function () {
 			let solutionTree = BinarySearchTreeFunctions.createBinarySearchTree([6,3,5,8,9],true)[0];
 			let rootNode = new BinaryTreeNode(6);
@@ -1124,5 +1123,33 @@ describe('TestBinaryTrees', function () {
 			GeneralTreeFunctions.makeBSTAVLTreeReadyForImport(tree);
 			assert(GeneralTreeFunctions.checkStudentAnswer(solutionTree,tree));
 		});
+	});
+	describe("Check special remove cases",function () {
+		it("Check BST when the tree result will be empty",function () {
+			let rootNode = new BinaryTreeNode(0);
+			let tree = new Tree(rootNode);
+			let tree2 = new Tree(rootNode);
+			let node1 = new BinaryTreeNode(1);
+			node1.addParent(rootNode);
+			tree.nodes = [rootNode,node1];
+			let resultTree = BinarySearchTreeFunctions.createBinarySearchTree([0,1],false,tree)[0];
+			let resultTree2 = BinarySearchTreeFunctions.createBinarySearchTree([0],false,tree2)[0];
+			let solutionTree = new Tree();
+			assert(GeneralTreeFunctions.checkStudentAnswer(resultTree,solutionTree));
+			assert(GeneralTreeFunctions.checkStudentAnswer(resultTree2,solutionTree));
+		});
+		it("Check AVLTree when the tree result will be empty",function () {
+			let rootNode = new BinaryTreeNode(0);
+			let tree = new Tree(rootNode);
+			let tree2 = new Tree(rootNode);
+			let node1 = new BinaryTreeNode(1);
+			node1.addParent(rootNode);
+			tree.nodes = [rootNode,node1];
+			let resultTree = AVLFunctions.createAVLTree([0,1],false,tree)[0];
+			let resultTree2 = AVLFunctions.createAVLTree([0],false,tree2)[0];
+			let solutionTree = new Tree();
+			assert(GeneralTreeFunctions.checkStudentAnswer(resultTree,solutionTree));
+			assert(GeneralTreeFunctions.checkStudentAnswer(resultTree2,solutionTree));
+		})
 	})
 });
