@@ -1,3 +1,6 @@
+Connect to the unix server
+	ssh badne7.ux.uis.no -l username
+
 First time setup:
 
 1. Install Node Version Manager
