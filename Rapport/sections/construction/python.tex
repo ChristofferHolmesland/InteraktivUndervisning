@@ -35,9 +35,18 @@ A function is an object with a \code{name}, a list of arguments \code{args}, a l
     \item Every line found in the functions \code{code} list is parsed using \code{parseLine}. If a \code{return} statement is found before reaching the end, the function will stop parsing, before reaching the end.
     \item The scope of the function is restored to an empty state and data is returned if a return statement was found.
 \end{enumerate}
-A class is an object with a \code{name} and a list of the code lines belonging to the class \code{code}. A class should also be a scope. When a class is defined, the code is also parsed using the \code{parseLine} function. This is done so that any functions within the class is defined in the scope of the class. When the interpreter is instantiating an instance of the class, the \code{instantiateClass} function is called. \code{instantiateClass} will first create a new object which contains all the functions from the class. If the class has a constructor it is called. Finally, the object is returned to the called of \code{instantiateClass}.
-!! Write about expression evaluation !!
+A class is an object with a \code{name} and a list of the code lines belonging to the class \code{code}. A class should also be a scope. When a class is defined, the code is also parsed using the \code{parseLine} function. This is done so that any functions within the class is defined in the scope of the class. When the interpreter is instantiating an instance of the class, the \code{instantiateClass} function is called. \code{instantiateClass} will first create a new object which contains all the functions from the class. If the class has a constructor it is called. Finally, the object is returned to the caller of \code{instantiateClass}.
+\\[11pt]
+When a code line is not an statement, it is passed to \code{evaluateExpression} so it can be parsed. The following list contains information about how the parser determines what kind of expression the line is, and in what order it happens.
+\begin{enumerate}
+    \item The function starts by checking if the line is a base type value. Base types are defined as String, Number and Boolean. If the the expression is determined to be a base type value, an object which contains the \code{type} and \code{value} is returned. 
+    \item If the expression is not a base type value, then it could be a variable. The current scope is checked to see if it contains an variable with the same name as the line. If it does, the data referenced by the variable is returned.
+    \item If the line contains a "." it could be a property access or a function call. The possible object and property names are extracted. If an object with the given property name exists, the referenced data is returned. If the property doesn't exists, then it could either be a function 
+
+
 !! Write about operators !!
+
+!! Write about _uniqueId !!
 
 \subsubsection{Questions}
 !! TODO: Write this :=) !!
