@@ -61,10 +61,12 @@
                             <h6>{{getLocale.classStats}}</h6> 
                         </b-col>
                         <b-col>
-                            <h6>{{getLocale.correct}}{{sessionInformation.otherUserCorrect}}%</h6> 
+                            <h6 v-if="sessionInformation.otherUserCorrect !== 'notAvailable'">{{getLocale.correct}}{{sessionInformation.otherUserCorrect}}%</h6> 
+                            <h6 v-else>{{getLocale.correct}}{{getLocale.notAvailable}}</h6>
                         </b-col>
                         <b-col>
-                            <h6>{{getLocale.incorrect}}<span v-b-tooltip.hover :title="getLocale.incorrectTooltip">{{sessionInformation.otherUserIncorrect}}%</span> / <span v-b-tooltip.hover :title="getLocale.didntKnow">{{sessionInformation.otherUserDidntKnow}}%</span></h6> 
+                            <h6 v-if="sessionInformation.otherUserIncorrect !== 'notAvailable'">{{getLocale.incorrect}}<span v-b-tooltip.hover :title="getLocale.incorrectTooltip">{{sessionInformation.otherUserIncorrect}}%</span> / <span v-b-tooltip.hover :title="getLocale.didntKnow">{{sessionInformation.otherUserDidntKnow}}%</span></h6> 
+                            <h6 v-else>{{getLocale.incorrect}}{{getLocale.notAvailable}}</h6>
                         </b-col>
                     </b-row>
                     <b-row v-show="showSessionStat">
@@ -96,10 +98,12 @@
                             <h6>{{getLocale.classStats}}</h6> 
                         </b-col>
                         <b-col>
-                            <h6>{{getLocale.correct}}{{sessionInformation.questionList[selectedQuestion].otherUserCorrect}}%</h6> 
+                            <h6 v-if="sessionInformation.questionList[selectedQuestion].otherUserCorrect !== 'notAvailable'">{{getLocale.correct}}{{sessionInformation.questionList[selectedQuestion].otherUserCorrect}}%</h6> 
+                            <h6 v-else>{{getLocale.correct}}{{getLocale.notAvailable}}</h6>
                         </b-col>
                         <b-col>
-                            <h6>{{getLocale.incorrect}}<span v-b-tooltip.hover :title="getLocale.incorrectTooltip">{{sessionInformation.questionList[selectedQuestion].otherUserIncorrect}}%</span> / <span v-b-tooltip.hover :title="getLocale.didntKnow">{{sessionInformation.questionList[selectedQuestion].otherUserDidntKnow}}%</span></h6> 
+                            <h6 v-if="sessionInformation.questionList[selectedQuestion].otherUserIncorrect !== 'notAvailable'">{{getLocale.incorrect}}<span v-b-tooltip.hover :title="getLocale.incorrectTooltip">{{sessionInformation.questionList[selectedQuestion].otherUserIncorrect}}%</span> / <span v-b-tooltip.hover :title="getLocale.didntKnow">{{sessionInformation.questionList[selectedQuestion].otherUserDidntKnow}}%</span></h6> 
+                            <h6 v-else>{{getLocale.incorrect}}{{getLocale.notAvailable}}</h6>
                         </b-col>
                     </b-row>
                     <b-row v-show="showQuestionStat">

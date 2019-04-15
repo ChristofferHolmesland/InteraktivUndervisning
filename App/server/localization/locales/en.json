@@ -226,7 +226,8 @@
         "answer": "Answer",
         "noQuestions": "No questions",
         "correctCard": "Correct",
-        "incorrectCard": "Incorrect"
+        "incorrectCard": "Incorrect",
+        "notAvailable": "Not Available"
     },
     "ClientSessionQuestion": {
         "question": "Question",
