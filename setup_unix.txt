@@ -34,5 +34,5 @@ Starting the server:
 	if the first command doesn't work:
 	nvm use --delete-prefix v10.15.1
 2. Start server
-	cd InteraktivUndervisning/App/server
+	cd ~/InteraktivUndervisning/App/server
 	NODE_ENV=production node server.js
