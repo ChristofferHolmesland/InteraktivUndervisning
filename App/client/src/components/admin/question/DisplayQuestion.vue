@@ -22,13 +22,13 @@
 									</b-col>
 								</b-row>
 								<b-row>
-									<div>
-										<div style="display: inline" v-for="(info,index) in getExtraDesc" :key="index">
+									<b-col>
+										<div class="displayInline" v-for="(info,index) in getExtraDesc" :key="index">
 											<pre v-if="info.code">{{info.value}}</pre>
-											<p style="display: inline" v-else>{{info.value}}</p>
+											<p class="displayInline" v-else>{{info.value}}</p>
 											<br v-if="info.linebreak"/>
 										</div>
-									</div>
+									</b-col>
 								</b-row>
 								<b-row v-if="getImagesLength > 0">
 									<b-col cols="12">
@@ -296,5 +296,8 @@ pre {
 	border-style: solid;
 	border-width: 1px;
 	padding: 3px;
+}
+.displayInline {
+	display: inline;
 }
 </style>
