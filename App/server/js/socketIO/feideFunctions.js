@@ -186,12 +186,18 @@ module.exports.feide = function(socket, db, user){
 
 					question.answerList = answerList;
 
-					question.userCorrect = (questionUserCorrect / userAnswers * 100).toFixed(2);
-					question.userIncorrect = (questionUserIncorrect / userAnswers * 100).toFixed(2);
-					question.userDidntKnow = (questionUserDidntKnow / userAnswers * 100).toFixed(2);
-					question.otherUserCorrect = (questionAverageCorrect / otherUserAnswers * 100).toFixed(2);
-					question.otherUserIncorrect = (questionAverageIncorrect / otherUserAnswers * 100).toFixed(2);
-					question.otherUserDidntKnow = (questionAverageDidntKnow / otherUserAnswers * 100).toFixed(2);
+					question.userCorrect = 
+						(Number(questionUserCorrect) / Number(userAnswers) * 100).toFixed(2);
+					question.userIncorrect = 
+						(Number(questionUserIncorrect) / Number(userAnswers) * 100).toFixed(2);
+					question.userDidntKnow = 
+						(Number(questionUserDidntKnow) / Number(userAnswers) * 100).toFixed(2);
+					question.otherUserCorrect = 
+						(Number(questionAverageCorrect) / Number(otherUserAnswers) * 100).toFixed(2);
+					question.otherUserIncorrect = 
+						(Number(questionAverageIncorrect) / Number(otherUserAnswers) * 100).toFixed(2);
+					question.otherUserDidntKnow = 
+						(Number(questionAverageDidntKnow) / Number(otherUserAnswers) * 100).toFixed(2);
 				});
 				
 				delete question.id;
@@ -205,12 +211,18 @@ module.exports.feide = function(socket, db, user){
 
 			sessionInformation.questionList = questionList;
 
-			sessionInformation.userCorrect = (sessionUserCorrect / sessionUserAnswers * 100).toFixed(2);
-			sessionInformation.userIncorrect = (sessionUserIncorrect / sessionUserAnswers * 100).toFixed(2);
-			sessionInformation.userDidntKnow = (sessionUserDidntKnow / sessionUserAnswers * 100).toFixed(2);
-			sessionInformation.otherUserCorrect = (sessionAverageCorrect / sessionOtherUserAnswers * 100).toFixed(2);
-			sessionInformation.otherUserIncorrect = (sessionAverageIncorrect / sessionOtherUserAnswers * 100).toFixed(2);
-			sessionInformation.otherUserDidntKnow = (sessionAverageDidntKnow / sessionOtherUserAnswers * 100).toFixed(2);
+			sessionInformation.userCorrect = 
+				(Number(sessionUserCorrect) / Number(sessionUserAnswers) * 100).toFixed(2);
+			sessionInformation.userIncorrect = 
+				(Number(sessionUserIncorrect) / Number(sessionUserAnswers) * 100).toFixed(2);
+			sessionInformation.userDidntKnow = 
+				(Number(sessionUserDidntKnow) / Number(sessionUserAnswers) * 100).toFixed(2);
+			sessionInformation.otherUserCorrect = 
+				(Number(sessionAverageCorrect) / Number(sessionOtherUserAnswers) * 100).toFixed(2);
+			sessionInformation.otherUserIncorrect = 
+				(Number(sessionAverageIncorrect) / Number(sessionOtherUserAnswers) * 100).toFixed(2);
+			sessionInformation.otherUserDidntKnow = 
+				(Number(sessionAverageDidntKnow) / Number(sessionOtherUserAnswers) * 100).toFixed(2);
 		});
 
 		socket.emit("getSessionInformationResponse", sessionInformation);
