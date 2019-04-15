@@ -256,7 +256,11 @@ function parse(code) {
 	}
 
 	let callFunc = function(func, scope, args) {
-		// Add arguments as local functions
+        if (func.args.length == args.length - 1) {
+            func.args.unshift("self");
+        }
+
+		// Add arguments as local data
 		for (let i = 0; i < func.args.length; i++) {
 			func.objects[func.args[i]] = func.data.length;
 			func.data[func.data.length] = args[i];
@@ -345,7 +349,7 @@ function parse(code) {
 			// needs to be evaluated.
 			let first = expression.indexOf(".");
 			let objectName = expression.slice(0, first);
-			let propertyName = expression.slice(first + 1);
+            let propertyName = expression.slice(first + 1);
 
 			// Checks if the property contains a (, which means that its
 			// a function call instead of property access.
@@ -450,7 +454,8 @@ function parse(code) {
 				let object = scope.data[objectAddr];
 				let funcName = s[1];
 				// Add the self argument
-				args.unshift(object);
+                args.unshift(object);
+
 				return callFunc(
 					object.functions[funcName],
 					scope,
