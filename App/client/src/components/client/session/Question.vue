@@ -214,19 +214,13 @@ export default {
 		},
 		getExtraDesc() {
 			let order = [];
-			console.log(this.questionInfo);
 			let extraDescLocales = this.questionInfo.object
 				.questionTypeDesc.locale;
 			let extraDescText = this.questionInfo.object
 				.questionTypeDesc.text;
-			console.log(extraDescLocales);
-			console.log(extraDescText);
 			for (let key in extraDescLocales) {
 				if (extraDescLocales.hasOwnProperty(key)) {
-					console.log(key);
 					let loc = this.getLocale[extraDescLocales[key]];
-					console.log("LOC");
-					console.log(loc);
 					if (loc[loc.length - 1] !== " ")
 						order.push({"value": loc, "linebreak": true, "code":false});
 					else
