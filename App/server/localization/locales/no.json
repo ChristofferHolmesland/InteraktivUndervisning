@@ -191,6 +191,24 @@
     "Sessions": {
 
     },
+    "startSession": {
+        "question": "Spørsmål",
+        "solution": "Løsning",
+        "answer": "Svar",
+        "binaryTreeSolutionText": "Det ville blitt regnet som riktig svar hvis treet som ble gitt følger alle reglene til et Binear Tree og treet besto av følgende noder:",
+        "showQuestionType": "Spørsmål type:",
+        "questionType": {
+            "Text": "Tekst",
+            "Multiple choice": "Flervalg",
+            "Shellsort": "Shell sortering",
+            "MergeSort": "Flette sortering",
+            "QuickSort": "Quick sortering",
+            "BinaryTree": "Binærtre",
+            "BinarySearchTree": "Binært søketre",
+            "AVLTree": "AVLTree",
+            "Dijkstra": "Dijkstra",
+            "Python": "Python"
+    },
     "DeleteUserInfo": {
         "deleteInfoList": [
             "Ved å trykke på ok under så vil vi slette all informasjon om deg på server og i databasen.",
@@ -499,4 +517,4 @@
             }
         }
     }
-}
+},

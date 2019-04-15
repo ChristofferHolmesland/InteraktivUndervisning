@@ -183,6 +183,24 @@
     "Sessions": {
 
     },
+    "startSession": {
+        "question": "Question",
+        "solution": "Solution",
+        "answer": "Answer",
+        "binaryTreeSolutionText": "The answer would be correct if the drawn tree fulfilled the requirements of a binary tree and consisted of the following nodes:",
+        "showQuestionType": "Question type:",
+        "questionType": {
+            "Text": "Text",
+            "Multiple choice": "Multiple choice",
+            "Shellsort": "Shellsort",
+            "MergeSort": "MergeSort",
+            "QuickSort": "QuickSort",
+            "BinaryTree": "BinaryTree",
+            "BinarySearchTree": "BinarySearchTree",
+            "AVLTree": "AVLTree",
+            "Dijkstra": "Dijkstra",
+            "Python": "Python"
+    },
     "DeleteUserInfo": {
         "deleteInfoList": [
             "By pressing ok under we will delete all the information we have on the server and database about you.",
