@@ -14,7 +14,7 @@ First time setup:
 	nvm install v10.15.1
 	nvm use v10.15.1
 	if the previous command doesn't work:
-	nvm use --prefix-delete v10.15.1
+	nvm use --delete-prefix v10.15.1
 4. Build client page
 	cd ~/InteraktivUndervisning/App/client/
 	npm install
@@ -32,7 +32,7 @@ Starting the server:
 1. Start Node
 	nvm use v10.15.1
 	if the first command doesn't work:
-	nvm use --prefix-delete v10.15.1
+	nvm use --delete-prefix v10.15.1
 2. Start server
 	cd InteraktivUndervisning/App/server
 	NODE_ENV=production node server.js
