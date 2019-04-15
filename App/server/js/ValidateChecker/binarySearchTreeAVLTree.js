@@ -17,13 +17,16 @@ const check = function (solutionInfo) {
 	let startTree = [];
 	let treeArray = [];
 
+	console.log("startTree");
+    console.log(givenStartTree);
     if (treeAction === "Add") {
-        if((givenStartTree === undefined || givenStartTree.roots.length === 0) && (treeElements === undefined || treeElements === "")) {
+        //givenStartTree === undefined || givenStartTree.roots === undefined || givenStartTree.roots.length === 0) &&
+        if (treeElements === undefined || treeElements === "") {
             result.passed = false;
-            result.errors.push("BSTAVLAddMissingFields");
+            result.errors.push("BSTAVLAddMissingFieldsError");
         }
         else {
-            if(givenStartTree !== undefined && givenStartTree.roots.length !== 0) {
+            if(givenStartTree !== undefined && givenStartTree.roots !== undefined && givenStartTree.roots.length !== 0) {
                 startTree = GeneralTreeFunctions.createTreeObjectFromCanvasObjectver1(givenStartTree);
                 if(startTree.length > 1) {
                     result.passed = false;
@@ -84,7 +87,7 @@ const check = function (solutionInfo) {
         }
     }
     else if (treeAction === "Remove") {
-        if ((givenStartTree === undefined || givenStartTree.roots.length === 0) || treeElements === undefined || treeElements === "") {
+        if ((givenStartTree === undefined || givenStartTree.roots === undefined || givenStartTree.roots.length === 0) || treeElements === undefined || treeElements === "") {
             result.passed = false;
             result.errors.push("BSTAVLRemoveMissingFieldsError");
         }
