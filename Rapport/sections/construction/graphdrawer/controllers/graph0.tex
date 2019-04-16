@@ -26,10 +26,10 @@ The Graph0 controller defines five different states, Add, Remove, Move, Join and
     \item Mark. The Mark state lets the user mark nodes as either a start or end node. If a node is found under the interaction event. It's marked value is updated bases on its current value. A unmarked node is marked as the start node. A start node is marked as the end node. A end node is set to unmarked. The event is consumed if a node changed its marked value.
 \end{enumerate}
 Before any of the import functions can be used, the data which should be imported needs to be placed in the controller property \code{steps}.
-Graph0 can import a list of graphs with the \code{_parseGraphSteps} function. \code{steps} should contain an array of graph objects. If the graph object has the correct format, it will be read and placed into the world. The graph object should have the following properties.
+Graph0 can import a list of graphs with the \code{\_parseGraphSteps} function. \code{steps} should contain an array of graph objects. If the graph object has the correct format, it will be read and placed into the world. The graph object should have the following properties.
 \begin{enumerate}
     \item \code{type}, with its value set to \code{"Complete"}.
     \item \code{nodes}, which should be an array of node objects. The node objects in the array are copied to the world.
     \item \code{edges}, which should be an array of edge objects. The edge objects in the array are copied to the world.
 \end{enumerate}
-A tree structure can also be imported with the \code{_parseTreeSteps} function. Importing a tree is more complicated, because the nodes and edges are not available for copying, so they need to be constructed from the tree information instead. To read a tree object, it needs to have the \code{treeInfo}. \code{treeInfo} should contain an array of tree roots. If there are more than one root, only one of them is added to the world. Buttons which let the user navigate between different trees are added.
+A tree structure can also be imported with the \code{\_parseTreeSteps} function. Importing a tree is more complicated, because the nodes and edges are not available for copying, so they need to be constructed from the tree information instead. To read a tree object, it needs to have the \code{treeInfo}. \code{treeInfo} should contain an array of tree roots. If there are more than one root, only one of them is added to the world. Buttons which let the user navigate between different trees are added.
