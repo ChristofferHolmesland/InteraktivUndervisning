@@ -41,12 +41,17 @@ When a code line is not an statement, it is passed to \code{evaluateExpression} 
 \begin{enumerate}
     \item The function starts by checking if the line is a base type value. Base types are defined as String, Number and Boolean. If the the expression is determined to be a base type value, an object which contains the \code{type} and \code{value} is returned. 
     \item If the expression is not a base type value, then it could be a variable. The current scope is checked to see if it contains an variable with the same name as the line. If it does, the data referenced by the variable is returned.
-    \item If the line contains a "." it could be a property access or a function call. The possible object and property names are extracted. If an object with the given property name exists, the referenced data is returned. If the property doesn't exists, then it could either be a function 
-
-
-!! Write about operators !!
-
-!! Write about _uniqueId !!
+    \item If the line contains a "." it could be a property access or a function call. The possible object and property names are extracted. If an object with the given property name exists, the referenced data is returned. If it doesn't exists, the expression can either be an undefined property, or an operation e.g. \code{self.x + 1} will first evaluate to the property \code{x + 1} of the \code{self} object. If the property is undefined, an error will be thrown. If the property name contains an operation, it can be resolved by evaluating the propertyName as an expression relative to the object scope.
+    \item The expression is now checked if it is an operation, function call or class instantiation. This is done by looking at the parentheses.
+    \item If the expression is a function call or a class instantiation, the arguments are extracted and evaluated, before the function is called. This is done because a function call can contain expressions inside it, and any argument which is not an expression will return itself. Example: This \code{my\_console.print("Hello, " + "World! From: " + my\_name)} function call contains one argument call which references variables which belong in the global scope. When the function is called, the code is evaluated relative to the \code{my\_console} scope, which doesn't contain a reference to the \code{my\_name} variable. Python doesn't allow classes and functions to have the same name, which means that there is no need to differentiate between function calls and class instantiation, because class instantiation is a function call to the \code{\_\_init\_\_} function.
+    \item Any expression which hasn't already been evaluated, should be an operation. An operation is any expression which contains at least one operator and at least one expression. An operation expression is always evaluated left to right, unless parentheses are used to group and seperate operations. E.g. \code{1 + 2 + 3} is split into expression1 = 1, operator = + and expression2 = "2 + 3".
+\end{enumerate}
+Python code is always written on the client side by a user, and then sent to the server so it can be interpreted. Code is simply text, so transfering it works flawlessly. After the code has been parsed, it is either stored in the database when a question is created, or sent back to the user if it came from the sandbox. The result of the interpretation is an array of state objects. Normally one of the state objects could be inspected and it would be possible to see that both \code{a} and \code{b} reference the same object in the following code snippet:
+\code{
+    a = "Dummy-text"
+    b = a
+}.
+Before transfering a JavaScript object to a database or over a network, the object needs to be converted to a JSON object. When this conversion happens, the references are lost. They are also not available when the JSON object is converted back to a JavaScript object. When inspecting the code, it would like \code{a} and \code{b} reference two different objects with the same value. For this reason, a system for manually tracking object references was implemented. Every scope, variable and object is assigned an unique id. When the SolutionChecker or the GraphDrawer wants to check if two objects are the same, the usual JavaScript comparison (\code{a == b}) can not be used because it would always return false. Instead, the id needs to be checked, \code{a.id == b.id}. The id stays the same between different interpretation steps, which means that the GraphDrawer can keep track of which variable links to what object simply by creating a mapping from the unique id to the GraphDrawer node.
 
 \subsubsection{Questions}
-!! TODO: Write this :=) !!
+% TODO: Write this %
