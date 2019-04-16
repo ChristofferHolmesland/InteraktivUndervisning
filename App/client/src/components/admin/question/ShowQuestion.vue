@@ -21,7 +21,7 @@
             <b-row v-if="showBasicInfo">
                 <b-col>
                     <h5>{{ getLocale.description }}</h5>
-                    <p>{{ question.description }}</p>
+                    <p v-for="(line, index) in getDescription" :key="index">{{ line }}</p>
                     <h5>{{ getLocale.time }}</h5>
                     <p>{{ getTime }}</p>
                 </b-col>
@@ -230,7 +230,10 @@ export default {
 				let file = this.question.objects.files[index];
 				return "data:" + file.type + ";base64," + file.buffer;
 			};
-		}
+        },
+        getDescription: function() {
+            return this.question.description.split("\n");
+        }
     },
     methods: {
         changeShowBasicInfo: function() {

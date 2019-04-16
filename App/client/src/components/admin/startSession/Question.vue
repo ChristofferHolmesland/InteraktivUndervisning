@@ -15,7 +15,7 @@
 		</b-row>
 		<b-row>
 			<b-col>
-				<p>{{ questionInfo.description }}</p>
+				<p v-for="(line, index) in getDescription" :key="index">{{ line }}</p>
 			</b-col>
 		</b-row>
 		<b-row>
@@ -81,6 +81,9 @@ export default {
 		if (this.interval !== undefined) clearInterval(this.interval);
 	},
 	computed: {
+		getDescription: function() {
+			return this.questionInfo.description.split("\n");
+		},
 		getLocale() {
 			let locale = this.$store.getters.getLocale("startSession");
 			if (locale) return locale;

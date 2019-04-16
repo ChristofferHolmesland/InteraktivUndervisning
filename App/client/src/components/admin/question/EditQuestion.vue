@@ -39,10 +39,11 @@
                 <b-form-group 	id="questionText"
                                 :label="getLocale.newQuestionText"
                                 label-for="questionTextInput">
-                    <b-form-input 	id="questionTextInput"
-                                    type="text"
-                                    v-model="newQuestion.description">
-                    </b-form-input>
+					<b-form-textarea	id="questionTextInput"
+										v-model="newQuestion.description"
+										max-rows="10"
+										>
+					</b-form-textarea>
                 </b-form-group>
                 <b-form-group id="questionTime">
                     <b-col>
