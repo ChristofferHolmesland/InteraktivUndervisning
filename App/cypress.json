@@ -1,0 +1,4 @@
+{
+  "pluginsFile": "server/tests/cypress/plugins/index.js",
+  "chromeWebSecurity": false
+}

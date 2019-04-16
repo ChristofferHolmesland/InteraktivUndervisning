@@ -2,6 +2,7 @@ import Graph0 from "./controllers/Graph0.js";
 import Graph1 from "./controllers/Graph1.js";
 import Sort from "./controllers/Sort.js";
 import Djikstra from "./controllers/Djikstra.js";
+import Python from "./controllers/Python.js";
 import Camera from "./Camera.js";
 
 /*
@@ -35,14 +36,15 @@ export default class GraphDrawer {
 	_config(config) {
 		/*
 			What shape is drawn for the nodes
-			Possible values: Circle, Square
+			Possible values: Circle, Rectangle
 		*/
-		this.nodeShape = config.nodeShape || "Square";
+		this.nodeShape = config.nodeShape || "Rectangle";
 		/*
 			Determines how the user can interact with the canvas.
 			Graph0 = Buttons are shown.
 			Graph1 = Simple mode 
 			Sort = Quicksort or Mergesort
+			Python = Python
 		*/
 		this.controlType = config.controlType || "Sort";
 		/*
@@ -77,11 +79,9 @@ export default class GraphDrawer {
 		return this.controllers[this.controlType].export();
 	}
 
-	constructor(canvas, config) {
+	constructor(canvas, locale, config) {
 		// Radius of nodes.
 		this.R = 25;
-		// Relative size of square nodes compared to circle nodes.
-		this.SQUARE_FACTOR = 1.5;
 		// How often the canvas should be updated.
 		this.FPS = 60;
 		// Milliseconds between each update.
@@ -90,26 +90,28 @@ export default class GraphDrawer {
 		this.DEVICE = "Mobile";
 		// Size of the font in px.
 		this.fontHeight = 10;
+		// Contains all the text
+		this.locale = locale;
 
 		// Which step of the presentation the user is currently on
 		// Should be used by the controller to decide on what to display
-		this.currentStep = -1;
+		this.currentStep = 0;
 		// Buttons used to change step in presentation mode.
 		this.steppingButtons = [];
 		// Decides how much of the assigned button space should be used
 		// by a button.
-		this.relSize = 0.6;
+		this.relSize = 0.7;
 
 		this._config(config);
 
 		/*
 			Nodes in the graph 
 			{
-				x, y, r, v, 
+				x, y, w, h, v, shape
 				selected (can be undefined), 
 				culled (can be undefined),
 				fillColor (undefined => white),
-				strokeColor (undefined => black)
+				strokeColor (undefined => black),
 			}.
 		*/
 		this.nodes = [];
@@ -123,10 +125,19 @@ export default class GraphDrawer {
 		*/
 		this.edges = [];
 
+		// This value can be used by any object needing an id.
+		// It should always be incremented after using the id.
+		this.nextId = 0;
+
 		// Flag which determines if the graph state should
 		// be redrawn. Default value is true, so the UI
 		// is rendered.
 		this.dirty = true;
+
+		// Flag which determines if the dirty flag should remain
+		// true after a draw operation. This can not stay true 
+		// after being used.
+		this.stillDirty = false;
 
 		// Canvas used to display graph.
 		this.canvas = canvas;
@@ -142,8 +153,8 @@ export default class GraphDrawer {
 		// Offscreen canvas used for drawing. This draws
 		// in world space and the camera converts it to canvas space.
 		this.drawBuffer = document.createElement("CANVAS");
-		this.drawBuffer.width = canvas.width * 3;
-		this.drawBuffer.height = canvas.height * 3;
+		this.drawBuffer.width = canvas.width * 5;
+		this.drawBuffer.height = canvas.height * 5;
 		this.drawContext = this.drawBuffer.getContext("2d");
 
 		let down = function(e) {
@@ -165,6 +176,8 @@ export default class GraphDrawer {
 
 		this.canvas.addEventListener("mousedown", down);
 		this.canvas.addEventListener("touchstart", down);
+		this.canvas.addEventListener("wheel", this.detectZoomWheel.bind(this));
+
 
 		// Updates the GraphDrawer every <MS_PER_FRAME> milliseconds.
 		this.intervalId = setInterval((function() {
@@ -177,9 +190,10 @@ export default class GraphDrawer {
 			Graph0: new Graph0(this, config.graph),
 			Graph1: new Graph1(this),
 			Sort: new Sort(this, config.sort),
-			Dijkstra: new Djikstra(this, config.dijkstra)
+			Dijkstra: new Djikstra(this, config.dijkstra),
+			Python: new Python(this, config.python)
 		};
-		
+
 		this.setController(this.controlType);
 	}
 
@@ -211,10 +225,10 @@ export default class GraphDrawer {
 
 		this.canvasContext.drawImage(
 			this.drawBuffer,
-			camera.Left,
-			camera.Top,
-			camera.Width,
-			camera.Height,
+			camera.left,
+			camera.top,
+			camera.width,
+			camera.height,
 			0,
 			0,
 			this.canvas.width,
@@ -235,16 +249,27 @@ export default class GraphDrawer {
 	}
 
 	/*
-		Draws the stepping buttons to the buffer.
-		Must be called by a controller.
+		Removes everything from the staticBuffer, and 
+		resets the colors.
 	*/
-	drawStatic() {
+	resetStatic() {
 		this.staticContext.clearRect(
 			0,
 			0,
 			this.staticBuffer.width,
 			this.staticBuffer.height
 		);
+
+		this.staticContext.fillStyle = "white";
+		this.staticContext.strokeStyle = "black";
+	}
+
+	/*
+		Draws the stepping buttons to the buffer.
+		Must be called by a controller.
+	*/
+	drawStatic() {
+		this.resetStatic();
 
 		for (let i = 0; i < this.steppingButtons.length; i++) {
 			let btn = this.steppingButtons[i];
@@ -273,6 +298,9 @@ export default class GraphDrawer {
 			this.staticContext.fillStyle = "white";
 			this.staticContext.closePath();
 		}
+
+		if (this.controllers[this.controlType].afterDrawStatic)
+			this.controllers[this.controlType].afterDrawStatic();
 	}
 
 	/*
@@ -300,23 +328,12 @@ export default class GraphDrawer {
 		for (let i = 0; i < this.edges.length; i++) {
 			if (this.camera.cull(this.edges[i], false)) continue;
 
-			let cx1 = this.edges[i].n1.x;
-			let cy1 = this.edges[i].n1.y;
-			let cx2 = this.edges[i].n2.x;
-			let cy2 = this.edges[i].n2.y;
-
-			if (this.nodeShape == "Square") {
-				let n1 = this.edges[i].n1;
-				let n2 = this.edges[i].n2;
-				cx1 += n1.r / 2;
-				cy1 += n1.r / 2;
-				cx2 += n2.r / 2;
-				cy2 += n2.r / 2;
-			}
+			let center1 = this.getCenter(this.edges[i].n1);
+			let center2 = this.getCenter(this.edges[i].n2);
 
 			this.drawContext.beginPath();
-			this.drawContext.moveTo(cx1, cy1);
-			this.drawContext.lineTo(cx2, cy2);
+			this.drawContext.moveTo(center1.x, center1.y);
+			this.drawContext.lineTo(center2.x, center2.y);
 
 			if (this.edges[i].strokeColor) {
 				this.drawContext.strokeStyle = this.edges[i].strokeColor;
@@ -331,54 +348,53 @@ export default class GraphDrawer {
 				(this.edges[i].directed == undefined ||
 					this.edges[i].directed == true)
 			) {
-				let dx = cx1 - cx2;
-				let dy = cy1 - cy2;
-				let magnitude = Math.sqrt(dx * dx + dy * dy);
-				let nx = dx / magnitude;
-				let ny = dy / magnitude;
-				let a = { x: this.edges[i].n2.x, y: this.edges[i].n2.y };
-				a.x += nx * this.edges[i].n2.r;
-				a.y += ny * this.edges[i].n2.r;
-				let b = { x: a.x, y: a.y };
-				b.x += nx * this.edges[i].n2.r;
-				b.y += ny * this.edges[i].n2.r;
+				let b = {
+					x: center1.x,
+					y: center1.y
+				};
 
-				if (this.nodeShape == "Square") {
-					let halfWidth = (this.R * this.SQUARE_FACTOR) / 2;
-					a.x += halfWidth;
-					a.y += halfWidth;
-					b.x += halfWidth;
-					b.y += halfWidth;
+				// a is the intersection point
+				let a = {};
+				let node = this.edges[i].n2;
+				let line = {
+					x1: center1.x,
+					y1: center1.y,
+					x2: center2.x,
+					y2: center2.y
+				};
+
+				let intersection = this.lineIntersectsNode(line, node);
+				if (intersection !== undefined) {
+					a = intersection.p;
 				}
 
-				// TODO: When the nodeshape is square, the arrows
-				// are placed on the line, but not close to
-				// the last node.
-
-				let headlen = 15;
-				let angle = Math.atan2(a.y - b.y, a.x - b.x);
-				this.drawContext.beginPath();
-				this.drawContext.moveTo(b.x, b.y);
-				this.drawContext.lineTo(a.x, a.y);
-				this.drawContext.lineTo(
-					a.x - headlen * Math.cos(angle - Math.PI / 6),
-					a.y - headlen * Math.sin(angle - Math.PI / 6)
-				);
-				this.drawContext.moveTo(a.x, a.y);
-				this.drawContext.lineTo(
-					a.x - headlen * Math.cos(angle + Math.PI / 6),
-					a.y - headlen * Math.sin(angle + Math.PI / 6)
-				);
-				if (this.edges[i].strokeColor) {
-					this.drawContext.strokeStyle = this.edges[i].strokeColor;
+				if (a !== undefined) {
+					let headlen = 15;
+					let angle = Math.atan2(a.y - b.y, a.x - b.x);
+					this.drawContext.beginPath();
+					this.drawContext.moveTo(a.x, a.y);
+					this.drawContext.lineTo(
+						a.x - headlen * Math.cos(angle - Math.PI / 6),
+						a.y - headlen * Math.sin(angle - Math.PI / 6)
+					);
+					this.drawContext.moveTo(a.x, a.y);
+					this.drawContext.lineTo(
+						a.x - headlen * Math.cos(angle + Math.PI / 6),
+						a.y - headlen * Math.sin(angle + Math.PI / 6)
+					);
+					if (this.edges[i].strokeColor) {
+						this.drawContext.strokeStyle = this.edges[i].strokeColor;
+					}
+					this.drawContext.stroke();
+					this.drawContext.strokeStyle = "black";
+				} else {
+					console.error("No intersection");
 				}
-				this.drawContext.stroke();
-				this.drawContext.strokeStyle = "black";
 			}
 
 			if (this.displayEdgeValues && this.edges[i].v !== undefined) {
-				let tx = (cx1 + cx2) / 2 + 5;
-				let ty = (cy1 + cy2) / 2 + 5;
+				let tx = (center1.x + center2.x) / 2 + 5;
+				let ty = (center1.y + center2.y) / 2 + 5;
 				this.drawContext.fillText(this.edges[i].v, tx, ty);
 			}
 		}
@@ -386,22 +402,7 @@ export default class GraphDrawer {
 		for (let i = 0; i < this.nodes.length; i++) {
 			if (this.camera.cull(this.nodes[i], true)) continue;
 			this.drawContext.beginPath();
-			if (this.nodeShape == "Circle") {
-				this.drawContext.arc(
-					this.nodes[i].x,
-					this.nodes[i].y,
-					this.R,
-					0,
-					2 * Math.PI
-				);
-			} else if (this.nodeShape == "Square") {
-				this.drawContext.rect(
-					this.nodes[i].x,
-					this.nodes[i].y,
-					this.nodes[i].r,
-					this.nodes[i].r
-				);
-			}
+
 			if (this.nodes[i].fillColor == undefined)
 				this.drawContext.fillStyle = "white";
 			else this.drawContext.fillStyle = this.nodes[i].fillColor;
@@ -410,28 +411,137 @@ export default class GraphDrawer {
 				this.drawContext.strokeStyle = "black";
 			else this.drawContext.strokeStyle = this.nodes[i].strokeColor;
 
+			this.drawNode(this.nodes[i], this.drawContext);
+
 			this.drawContext.fill();
 			this.drawContext.stroke();
 			this.drawContext.closePath();
 			this.drawContext.strokeStyle = "black";
+
 			// Text
+			let center = this.getCenter(this.nodes[i]);
 			this.drawContext.fillStyle = "black";
-			/*
-				Width is the only property
-				https://developer.mozilla.org/en-US/docs/Web/API/TextMetrics
-			*/
-			let textWidth = this.drawContext.measureText(this.nodes[i].v).width;
-			let ox = this.nodeShape == "Circle" ? 0 : this.nodes[i].r / 2;
-			let oy = this.nodeShape == "Circle" ? 0 : this.nodes[i].r / 2;
-			this.drawContext.fillText(
-				this.nodes[i].v,
-				this.nodes[i].x - textWidth / 2 + ox,
-				this.nodes[i].y + this.fontHeight / 2 + oy
-			);
+			let lines = [];
+			if (typeof this.nodes[i].v == "string")
+				lines = this.nodes[i].v.split("\n");
+			else lines.push("" + this.nodes[i].v);
+
+			let firstY = -(lines.length - 1) * 0.5;
+
+			// Fix nodes where the text overflows the height of the node
+			if (this.nodes[i].h < lines.length * this.fontHeight) {
+				this.nodes[i].h = lines.length * this.fontHeight + 5;
+				this.stillDirty = true;
+			}
+
+			let maxTextWidth = 0;
+			for (let l = 0; l < lines.length; l++) {
+				let textWidth = this.drawContext.measureText(lines[l]).width;
+
+				// Fix nodes where the text overflows the width of the node
+				if (this.nodes[i].w < textWidth) {
+					this.nodes[i].w = textWidth + 5;
+					this.stillDirty = true;
+				}
+
+				if (textWidth > maxTextWidth) maxTextWidth = textWidth;
+
+				this.drawContext.fillText(
+					lines[l],
+					center.x - textWidth / 2,
+					center.y + this.fontHeight / 2 + this.fontHeight * firstY + this.fontHeight * l
+				);
+			}
+
+			// If a node is wider than needed, it will be assigned a smaller
+			// width, bounded by this.R.
+			let minSize = this.nodes[i].shape == "Circle" ? this.R : this.R * 2;
+
+			if (maxTextWidth < this.nodes[i].w) {
+				if (this.nodes[i].w !== minSize) {
+					this.nodes[i].w = maxTextWidth;	
+					if (this.nodes[i].w < minSize) this.nodes[i].w = minSize;
+					this.stillDirty = true;
+				}
+			}
 		}
 
 		for (let i = 0; i < this.nodes.length; i++)
 			this.nodes[i].culled = undefined;
+	}
+
+	/*
+		Adds a node and returns a reference to it.
+		props should be an object with mapping from attribute->value.
+		Possible attributes: (all optional)
+			x, y, w, h, v, shape,
+			selected, culled,
+			fillColor, strokeColor
+
+		If ref is true, then the object in props is added to the nodes list.
+	*/
+	addNode(props, ref) {
+		let nextId = this.nextId;
+		this.nextId++;
+
+		// If a node comes with a defined id, it needs to be checked
+		// to see if a node with that id already exists. If a node exists
+		// this nodes id should be set to nextId, instead of the defined id.
+		if (props.id !== undefined) {
+			let n = this.getNode(props.id);
+			if (n !== undefined) props.id = nextId;
+		}
+
+		let node = {
+			id: nextId,
+			x: 0,
+			y: 0,
+			w: this.R,
+			h: this.R,
+			shape: this.nodeShape,
+			selected: undefined,
+			culled: undefined,
+			fillColor: undefined,
+			strokeColor: undefined
+		};
+
+		if (ref == undefined || ref == false) {
+			for (var prop in props) {
+				if (props.hasOwnProperty(prop)) {
+					node[prop] = props[prop];
+				}
+			}
+		} else {
+			for (var nodeprop in node) {
+				if (!props.hasOwnProperty(nodeprop)) {
+					props[nodeprop] = node[nodeprop];
+				}
+			}
+			node = props;
+		}
+
+		// Check if the new node was given an id which is larger than the
+		// next id. If it was, nextId needs to be changed to prevent duplicate ids.
+		if (node.id >= this.nextId) nextId = node.id + 1;
+
+		this.nodes.push(node);
+		return node;
+	}
+
+	getNode(id) {
+		for (let i = 0; i < this.nodes.length; i++) {
+			if (this.nodes[i].id == id) return this.nodes[i];
+		}
+
+		return undefined;
+	}
+
+	getNodeByValue(v) {
+		for (let i = 0; i < this.nodes.length; i++) {
+			if (this.nodes[i].v == v) return this.nodes[i];
+		}
+
+		return undefined;
 	}
 
 	/*
@@ -445,9 +555,12 @@ export default class GraphDrawer {
 				this.controllers[this.controlType].dirtyUpdate();
 			}
 
+			//this.moveGraphInsideWorld();
 			this.draw();
 			this.switchBuffers();
-			this.dirty = false;
+
+			if (this.stillDirty) this.stillDirty = false;
+			else this.dirty = false;
 		}
 	}
 
@@ -457,9 +570,24 @@ export default class GraphDrawer {
 	*/
 	_editNode(node) {
 		// This is the only way to open a keyboard in mobile browsers.
-		let new_value = prompt("Enter new value:", node.v);
+		let new_value = prompt(this.locale.editNodePrompt, node.v);
 		if (new_value == undefined) return;
 		node.v = new_value;
+		this.dirty = true;
+	}
+
+	/*
+		Let's the user scroll using a mouse wheel.
+	*/
+	detectZoomWheel(e) {
+		// Prevent scrolling the page.
+		e.preventDefault();
+
+		let dir = -Math.sign(e.deltaY);
+		let rect = this.canvas.getBoundingClientRect();
+		let x = e.clientX - rect.left;
+		let y = e.clientY - rect.top;
+		this.camera.changeZoom(0.075 * dir, x, y);
 		this.dirty = true;
 	}
 
@@ -467,9 +595,11 @@ export default class GraphDrawer {
 		Can be called to let the user zoom using two fingers.
 	*/
 	detectZoomGesture(e) {
+		// Non touchscreen zooming
 		if (e.targetTouches == undefined) return;
 		if (e.targetTouches.length < 2) return;
 
+		// Touchscreen zooming
 		let getFingers = function(evt) {
 			let rect = this.canvas.getBoundingClientRect();
 
@@ -539,6 +669,14 @@ export default class GraphDrawer {
 		this.canvas.addEventListener("touchleave", zoomStopHandler);
 	}
 
+	drawNode(node, context) {
+		if (node.shape == "Circle") {
+			context.ellipse(node.x, node.y, node.w, node.h, 0, 0, 2 * Math.PI);
+		} else if (node.shape == "Rectangle") {
+			context.rect(node.x, node.y, node.w, node.h);
+		}
+	}
+
 	/*
 		Can be called to determine if the event e is the start of a panning gesture.
 		This let's the user move the camera around the world.
@@ -577,8 +715,8 @@ export default class GraphDrawer {
 				// to render anything outside the world.
 				this.camera.translateX(
 					-dX,
-					frustum.Width / 2,
-					this.drawBuffer.width - frustum.Width / 2
+					frustum.width / 2,
+					this.drawBuffer.width - frustum.width / 2
 				);
 				hasMoved = true;
 			}
@@ -586,8 +724,8 @@ export default class GraphDrawer {
 				dY -= Math.sign(dY) * threshold;
 				this.camera.translateY(
 					-dY,
-					frustum.Height / 2,
-					this.drawBuffer.height - frustum.Height / 2
+					frustum.height / 2,
+					this.drawBuffer.height - frustum.height / 2
 				);
 				hasMoved = true;
 			}
@@ -633,7 +771,7 @@ export default class GraphDrawer {
 	*/
 	getNodeAtPoint(x, y) {
 		for (let i = 0; i < this.nodes.length; i++) {
-			if (this.isPointInNode(x, y, this.nodes[i].x, this.nodes[i].y)) {
+			if (this.isPointInNode(x, y, this.nodes[i])) {
 				return {
 					index: i,
 					node: this.nodes[i]
@@ -648,21 +786,35 @@ export default class GraphDrawer {
 	}
 
 	/*
-		Checks whether a point (x, y) is inside a node (nx, ny).
+		Checks whether a point (x, y) is inside a node.
 	*/
-	isPointInNode(x, y, nx, ny) {
-		if (this.nodeShape == "Circle") {
-			return this.isPointInCircle(x, y, nx, ny, this.R);
+	isPointInNode(x, y, node) {
+		if (node.shape == "Circle") {
+			return this.isPointInEllipse(x, y, node.x, node.y, node.w, node.h);
 		}
-		if (this.nodeShape == "Square") {
-			return this.isPointInSquare(
+		if (node.shape == "Rectangle") {
+			return this.isPointInRectangle(
 				x,
 				y,
-				nx,
-				ny,
-				this.R * this.SQUARE_FACTOR
+				node.x,
+				node.y,
+				node.w,
+				node.h
 			);
 		}
+	}
+
+	/*
+		Check wheter a point (x, y) is inside an ellipse
+		with center (nx, ny) and radius (rx, ry).
+
+
+		TODO: Check if this can be used for nodes where rx == ry
+	*/
+	isPointInEllipse(x, y, nx, ny, rx, ry) {
+		let xx = ((x - nx) * (x - nx)) / (rx * rx);
+		let yy = ((y - ny) * (y - ny)) / (ry * ry);
+		return xx + yy <= 1;
 	}
 
 	/*
@@ -674,12 +826,12 @@ export default class GraphDrawer {
 	}
 
 	/*
-		Checks whether a point (x, y) is inside a square with radius r.
+		Checks whether a point (x, y) is inside a rectangle with width w and height h.
 		Top left corner of square (nx, ny).
 	*/
-	isPointInSquare(x, y, nx, ny, r) {
-		if (x < nx || x > nx + r) return false;
-		if (y < ny || y > ny + r) return false;
+	isPointInRectangle(x, y, nx, ny, w, h) {
+		if (x < nx || x > nx + w) return false;
+		if (y < ny || y > ny + h) return false;
 		return true;
 	}
 
@@ -690,17 +842,10 @@ export default class GraphDrawer {
 		let p = {
 			x: x,
 			y: y
-		}
-
-		let p1 = {
-			x: edge.n1.x,
-			y: edge.n1.y
 		};
 
-		let p2 = {
-			x: edge.n2.x,
-			y: edge.n2.y
-		};
+		let p1 = this.getCenter(edge.n1);
+		let p2 = this.getCenter(edge.n2);
 
 		return Math.sqrt(this._distToSegmentSquared(p, p1, p2));
 	}
@@ -723,6 +868,12 @@ export default class GraphDrawer {
 			x: v.x + t * (w.x - v.x),
 			y: v.y + t * (w.y - v.y)
 		});
+	}
+
+	getCenter(node) {
+		if (node.shape == "Circle") return { x: node.x, y: node.y };
+		if (node.shape == "Rectangle")
+			return { x: node.x + node.w / 2, y: node.y + node.h / 2 };
 	}
 
 	// Sort the selected nodes based on x coordinate to get them in the right order
@@ -759,15 +910,89 @@ export default class GraphDrawer {
 	}
 
 	checkSteppingButtons(e) {
+		if (this.steppingButtons == undefined) return false;
+
 		for (let i = 0; i < this.steppingButtons.length; i++) {
 			let btn = this.steppingButtons[i];
-			if (this.isPointInSquare(e.offsetX, e.offsetY, btn.position.x,
-									btn.position.y, btn.position.width)) {
+			let inside = this.isPointInRectangle(
+				e.offsetX,
+				e.offsetY,
+				btn.position.x,
+				btn.position.y,
+				btn.position.width,
+				btn.position.height
+			);
+
+			if (inside) {
 				btn.handler(e);
 				return true;
 			}
 		}
 		return false;
+	}
+
+	moveGraphInsideWorld() {
+		let dx = 0;
+		let dy = 0;
+		let maxX = this.drawBuffer.width;
+		let maxY = this.drawBuffer.height;
+
+		// Find the nodes which are the furthest away
+		// from the world border.
+		for (let i = 0; i < this.nodes.length; i++) {
+			let n = this.nodes[i];
+
+			if (n.x > maxX) {
+				// Cant move the graph if there are nodes outside both edges
+				if (Math.sign(dx) == 1) return;
+
+				let ndx = maxX - n.x;
+				if (ndx > dx) dx = ndx;
+			}
+
+			if (n.y > maxY) {
+				if (Math.sign(dy) == 1) return;
+				let ndy = maxY - n.y;
+				if (ndy > dy) dy = ndy;
+			}
+
+			if (n.x < 0) {
+				if (Math.sign(dx) == -1) return;
+				let ndx = maxX - n.x;
+				if (ndx > dx) dx = ndx;
+			}
+
+			if (n.y < 0) {
+				if (Math.sign(dy) == -1) return;
+				let ndy = maxY - n.y;
+				if (ndy > dy) dy = ndy;
+			}
+		}
+
+		if (dx !== 0 || dy !== 0) {
+			this.camera.centerX += dx;
+			this.camera.centerY += dy;
+
+			for (let i = 0; i < this.nodes.length; i++) {
+				let n = this.nodes[i];
+				n.x += dx;
+				n.y += dy;
+			}
+		}
+	}
+
+	centerCameraOnGraph() {
+		let tx = 0;
+		let ty = 0;
+
+		for (let i = 0; i < this.nodes.length; i++) {
+			let center = this.getCenter(this.nodes[i]);
+			tx += center.x;
+			ty += center.y;
+		}
+
+		this.camera.centerX = tx / this.nodes.length;
+		this.camera.centerY = ty / this.nodes.length;
 	}
 
 	addSteppingButtons() {
@@ -783,7 +1008,7 @@ export default class GraphDrawer {
 		};
 
 		let stepForward = () => {
-			if (this.currentStep < numOfSteps - 1) {	
+			if (this.currentStep < numOfSteps - 1) {
 				this.currentStep += 1;
 				this.controllers[this.controlType].parseSteps();
 				this.addSteppingButtons();
@@ -838,5 +1063,160 @@ export default class GraphDrawer {
 				height: btnHeight
 			};
 		}
+	}
+
+	/*
+		Returns the intersection point and side, or undefined if there is
+			no intersection.
+	*/
+	lineIntersectsNode(line, node) {
+		if (node.shape == "Rectangle") {
+			// Top
+			let t = this.lineSegmentIntersection(line, {
+				x1: node.x,
+				y1: node.y,
+				x2: node.x + node.w,
+				y2: node.y
+			});
+			if (t) return { p: t, side: "Top" };
+
+			// Bottom
+			let b = this.lineSegmentIntersection(line, {
+				x1: node.x,
+				y1: node.y + node.h,
+				x2: node.x + node.w,
+				y2: node.y + node.h
+			});
+			if (b) return { p: b, side: "Bottom" };
+
+			// Right
+			let r = this.lineSegmentIntersection(line, {
+				x1: node.x + node.w,
+				y1: node.y,
+				x2: node.x + node.w,
+				y2: node.y + node.h
+			});
+			if (r) return { p: r, side: "Right" };
+
+			// Left
+			let l = this.lineSegmentIntersection(line, {
+				x1: node.x,
+				y1: node.y,
+				x2: node.x,
+				y2: node.y + node.h
+			});
+			if (l) return { p: l, side: "Left" };
+
+			return undefined;
+		} else if (node.shape == "Circle") {
+			let intersections = this.lineSegmentEllipseIntersection(line, node);
+			if (intersections.length > 1)
+				console.error("More than one intersection!");
+			if (intersections.length == 0) {
+				console.error("No intersection :(");
+				return undefined;
+			}
+
+			return { p: intersections[0] };
+		}
+
+		console.error("No handler for this node");
+		return undefined;
+	}
+
+	/*
+		Returns the intersection point of a line segment and an ellipse.
+		Modified version of: (02.04.2019)
+		http://csharphelper.com/blog/2017/08/calculate-where-a-line-segment-and-an-ellipse-intersect-in-c/
+	*/
+	lineSegmentEllipseIntersection(line, ellipse) {
+		// Because the function changes the x,y properties of the ellipse,
+		// a copy should be used.
+		ellipse = JSON.parse(JSON.stringify(ellipse));
+
+		let pt1 = { x: line.x1, y: line.y1 };
+		let pt2 = { x: line.x2, y: line.y2 };
+
+		// Translate so the ellipse is centered at the origin.
+		let cx = ellipse.x;
+		let cy = ellipse.y;
+		ellipse.x -= cx;
+		ellipse.y -= cy;
+		pt1.x -= cx;
+		pt1.y -= cy;
+		pt2.x -= cx;
+		pt2.y -= cy;
+
+		// Get the semimajor and semiminor axes.
+		let a = ellipse.w;
+		let b = ellipse.h;
+
+		// Calculate the quadratic parameters.
+		let A = (pt2.x - pt1.x) * (pt2.x - pt1.x) / a / a + (pt2.y - pt1.y) * (pt2.y - pt1.y) / b / b;
+		let B = 2 * pt1.x * (pt2.x - pt1.x) / a / a + 2 * pt1.y * (pt2.y - pt1.y) / b / b;
+		let C = pt1.x * pt1.x / a / a + pt1.y * pt1.y / b / b - 1;
+
+		// Make a list of t values.
+		let t_values = [];
+
+		// Calculate the discriminant.
+		let discriminant = B * B - 4 * A * C;
+
+		if (discriminant == 0) {
+			// One real solution.
+			t_values.push(-B / 2 / A);
+		} else if (discriminant > 0) {
+			// Two real solutions.
+			t_values.push((-B + Math.sqrt(discriminant)) / 2 / A);
+			t_values.push((-B - Math.sqrt(discriminant)) / 2 / A);
+		}
+
+		// Convert the t values into points.
+		let points = [];
+		for (let i = 0; i < t_values.length; i++) {
+			let t = t_values[i];
+			// If the points are on the segment (or we
+			// don't care if they are), add them to the list.
+			if (t >= 0 && t <= 1) {
+				let x = pt1.x + (pt2.x - pt1.x) * t + cx;
+				let y = pt1.y + (pt2.y - pt1.y) * t + cy;
+				points.push({ x: x, y: y });
+			}
+		}
+
+		// Return the points.
+		return points;
+	}
+
+	/*
+		Returns the intersection point of two line segments.
+		Modified version of https://stackoverflow.com/a/1968345/ (01.04.2019)
+
+		Line 1 is defined by (l1.x1, l1.y1) and (l1.x2, l1.y2)
+		Line 2 is defined by (l2.x1, l2.y1) and (l2.x2, l2.y2)
+
+		Returns { x, y } if there was an intersection, or
+			undefined if there is no intersection.
+	*/
+	lineSegmentIntersection(l1, l2) {
+		let s1_x, s1_y, s2_x, s2_y;
+		s1_x = l1.x2 - l1.x1;
+		s1_y = l1.y2 - l1.y1;
+		s2_x = l2.x2 - l2.x1;
+		s2_y = l2.y2 - l2.y1;
+
+		let s, t;
+		s = (-s1_y * (l1.x1 - l2.x1) + s1_x * (l1.y1 - l2.y1)) / (-s2_x * s1_y + s1_x * s2_y);
+		t = ( s2_x * (l1.y1 - l2.y1) - s2_y * (l1.x1 - l2.x1)) / (-s2_x * s1_y + s1_x * s2_y);
+
+		if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
+			// Collision detected
+			return {
+				x: l1.x1 + (t * s1_x),
+				y: l1.y1 + (t * s1_y)
+			};
+		}
+
+		return undefined; // No collision
 	}
 }

@@ -41,7 +41,15 @@ export default {
 		},
 		endSessionScreen() {
 			this.state = 4;
+		},
+		startSessionError() {
+			this.$router.push("/admin");
+		},
+		adminEndSessionResponse() {
+			this.state = 4;
 		}
+	},
+	methods: {
 	},
 	components: {
 		WaitingRoom,
@@ -49,8 +57,28 @@ export default {
 		QuestionResultScreen,
 		SessionOverScreen
 	},
+	computed: {
+		getLocale: function() {
+			return (localePage) => {
+				let locale = this.$store.getters.getLocale(localePage);
+				if (locale) return locale;
+				else return {};
+			}
+		}
+	},
 	beforeDestroy() {
-		// TODO add logic if the admin goes to another path before the sessions ends
+		if (this.state !== 4) {
+			if (
+				confirm(
+					this.getLocale("ClientSessionQuestion")
+						.leaveSessionBodyAdmin
+				)
+			) {
+				this.$socket.emit("adminLeaveSession", this.sessionId);
+			} else {
+				this.$router.push("/admin/session/" + this.sessionId);
+			}
+		}
 	}
 };
 </script>
