@@ -5,6 +5,8 @@
                 :steps="answer"
                 :height="400"
                 :width="500"
+                :displayEdgeValues="true"
+                ref="graphdrawer"
                 />
 </template>
 
@@ -15,9 +17,6 @@ export default {
     name: "DijkstraAnswer",
     props: {
         answer: Array
-    },
-    created() {
-        console.log(this.answer)
     },
     components: {
         GraphDrawer

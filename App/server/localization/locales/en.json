@@ -1,7 +1,8 @@
 {
     "AdminQuestions": {
         "emptyQuestionList": "No questions.",
-        "newQuestion": "New question",
+        "addTitle": "New question",
+        "editTitle": "Change question",
         "searchQuestion": "Search for a question",
         "newQuestionTitle": "Question title:",
         "newQuestionText": "Question text:",
@@ -11,14 +12,87 @@
         "addToSession": "Add",
         "solutionText": "Solution: ",
         "selectSessionText": "Select session: ",
-        "time": "Time:"
-    },
-    "AdminSessions": {
-        "newSession": "New session",
-        "newSessionTitle": "Title",
-        "selectCourse": "Select course",
-        "selectQuestions": "Add question",
-        "selectedQuestions": "Questions in session"
+        "time": "Time:",
+        "description": "Description:",
+        "mediaTypes": [
+            {"text":"Images", "value": 0},
+            {"text":"Graphs", "value": 0},
+            {"text":"Tables", "value": 0}
+        ],
+        "multipleChoiceHeader": "Choices:",
+        "addNewMultipleChoice": "Add new choice",
+        "multipleChoiceDeleteBtn": "Delete",
+        "basicInfo": "Basic Information",
+        "TitleIsEmptyError": "The title of the question cannot be empty!",
+        "DescriptionIsEmptyError": "The description of the question cannot be empty!",
+        "EmptyTextSolutionError": "The solution for a text question cannot be empty!",
+        "NoMultiChoiceSolutionError": "None of the options were marked as solution!",
+        "NoMultipleChoiceOptionsError": "There are no options available for the question!",
+        "MissingOptionInformationError": "Options are required to have some content!",
+        "MarkedSolutionIsNotAnOptionError": "The marked solution options is not an available option in the question!",
+        "mediaErrorFileSize": "The combined file size has exceeded the limit of 1.5MB!",
+        "mediaWarningFileSize": "The combined file size is about to about to exceed the limit of 1.5MB! Please consider uploading less files or smaller files.",
+        "mediaErrorFileType": " file(s) type uploaded was found not to be supported! Please only upload images.",
+        "NoKValueError": "K value is not defined!",
+        "ShellSortNoElementsError": "No elements are given for the array that is to be sorted!",
+        "ShellSortArrayWrongFormatError": "The elements given are written in the wrong format.\nOnly support numbered values and , divides the different elements!",
+        "InvalidKValueError": "The k value is not a number!",
+        "KValueTooBigError": "The K value is too large compared to the length of the array given!",
+        "ShellSortArrayDataTypeError": "Atleast one of the elements given is not a number!",
+        "ShellSortEmptyArrayElementError": "Any element in the given array cannot be empty!",
+        "MergeQuickSortNoElementsError": "No elements are given for the array that is to be sorted!",
+        "MergeQuickSortArrayWrongFormatError": "The elements given are written in the wrong format.\nOnly support numbered values and , divides the different elements!",
+        "MergeQuickSortArrayDataTypeError": "Atleast one of the elements given is not a number!",
+        "MergeQuickSortEmptyArrayElementError": "Any element in the given array cannot be empty!",
+        "binaryTreeNoElementsError": "You need to input the elements that are going to be in the tree",
+        "binaryTreeWrongFormatError": "Wrong format for the element list!\nOnly number values and the elements should be separated by a ,",
+        "BSTAVLAddMissingFieldsError": "Missing required fields for an add tree question!",
+        "BSTAVLAddDuplicateElementError": "Cannot add a node to the existing tree that has the same value as an existing node!",
+        "BSTAVLAddInvalidResultBinarySearchTreeError": "The resulting tree is not a valid Binary Search Tree",
+        "BSTAVLAddInvalidResultAVLTreeError": "The resulting tree is not a valid AVL Tree",
+        "BSTAVLRemoveMissingFieldsError": "Missing required fields for an remove tree question!",
+        "BSTAVLRemoveMissingElementError": "An element that is to be removed from the given tree does not exist in the given tree!",
+        "BSTAVLRemoveInvalidResultBinarySearchTreeError": "One of the resulting trees are not a valid Binary Search Tree",
+        "BSTAVLRemoveInvalidResultAVLTreeError": "One of the resulting trees are not a valid AVL Tree",
+        "BSTAVLRootCountError": "The given tree has more than 1 root node!",
+        "BSTAVLInvalidBinaryTreeError": "The given tree is not a valid Binary Tree!",
+        "BSTAVLInvalidBinarySearchTreeError": "The given tree is not a valid Binary Search Tree!",
+        "treeElementTypeError": "The element list should only contain numbered-valued elements!",
+        "treeElementEmptyError": "Any element given in the add/remove list cannot be empty!",
+        "BSTAVLInvalidTreeActionError": "Neither add tree question or remove tree question was chosen!",
+        "UndefinedGraphError": "The graph object is not given!",
+        "InvalidDjikstraEdgeValue": "The edges cannot have a negative cost in a dijkstra question!",
+        "NoPathBetweenStartNodeAndEndNodeError": "A djikstra question needs to have a route from the given start node and the end node!",
+        "ToManyStartOrEndNodesError": "There can only be a single start node and a single end node!",
+        "MissingStartOrEndNodeError": "Either start node or end node is not given!",
+        "InvalidDijkstraGraphError": "The given graph is not qualified as a djikstra question object.\nMissing either nodes or edges!",
+        "questionTypeError": "No question type was selected!",
+        "imageInputLabel": "Choose a file upload...",
+        "filename": "Filename",
+        "filesize": "Filesize",
+        "filetype": "filetype",
+        "deleteBtn": "Delete",
+        "courseMissing": "No course is selected. Please select a course or go to Admin tab and create a new course.",
+        "selectBtn": "Select",
+        "copySelectedBtn": "Copy selected",
+        "deleteSelectedBtn": "Delete selected",
+        "closeBtn": "Close",
+        "noQuestionsSelectedError": "No questions are selected!",
+        "showQuestionType": "Question type:",
+        "questionType": {
+            "Text": "Text", 
+            "Multiple choice": "Multiple choice", 
+            "Shellsort": "Shellsort", 
+            "MergeSort": "MergeSort", 
+            "QuickSort": "QuickSort",
+            "BinaryTree": "BinaryTree",
+            "BinarySearchTree": "BinarySearchTree",
+            "AVLTree": "AVLTree",
+            "Dijkstra": "Dijkstra",
+            "Python": "Python"
+        },
+        "NoCode": "You need to write Python code to create the question.",
+        "binaryTreeSolutionText": "The answer would be correct if the drawn tree fulfilled the requirements of a binary tree and consisted of the following nodes:"
     },
     "AdminDashboard": {
         "courseAdministrator": "Course administrators",
@@ -30,16 +104,32 @@
         "addNewQuestionBtnText": "Add new question",
         "newQuestion": "New question",
         "viewLastSession": "View last session",
-        "openLastSession": "Open",
-        "addCourseTitle": "New course",
-        "addCourseCourseCode": "Course code:",
-        "addCourseCourseSemester": "Course semester:",
-        "addCourseCourseName": "Course name:"
+        "openLastSession": "Open"
     },
     "DisplayQuestion": {
         "question": "Question",
         "solution": "Solution",
-        "answer": "Answer"
+        "answer": "Answer",
+        "binaryTreeSolutionText": "The answer would be correct if the drawn tree fulfilled the requirements of a binary tree and consisted of the following nodes:",
+        "showQuestionType": "Question type:",
+        "questionType": {
+            "Text": "Text",
+            "Multiple choice": "Multiple choice",
+            "Shellsort": "Shellsort",
+            "MergeSort": "MergeSort",
+            "QuickSort": "QuickSort",
+            "BinaryTree": "BinaryTree",
+            "BinarySearchTree": "BinarySearchTree",
+            "AVLTree": "AVLTree",
+            "Dijkstra": "Dijkstra",
+            "Python": "Python"
+        },
+        "binaryTreeDesc": "Draw a BinaryTree with the following nodes: ",
+        "bstavlOperationDesc": "Operation: ",
+        "bstavlNodesDesc": "Nodes: ",
+        "pythonCodeDesc": "Code: ",
+        "Add": "Add",
+        "Remove": "Remove"
     },
     "Navbar": {
         "lang": "Language",
@@ -93,6 +183,28 @@
     "Sessions": {
 
     },
+    "startSession": {
+        "question": "Question",
+        "showQuestionType": "Question type:",
+        "questionType": {
+            "Text": "Text",
+            "Multiple choice": "Multiple choice",
+            "Shellsort": "Shellsort",
+            "MergeSort": "MergeSort",
+            "QuickSort": "QuickSort",
+            "BinaryTree": "BinaryTree",
+            "BinarySearchTree": "BinarySearchTree",
+            "AVLTree": "AVLTree",
+            "Dijkstra": "Dijkstra",
+            "Python": "Python"
+        },
+        "binaryTreeDesc": "Draw a BinaryTree with the following nodes: ",
+        "bstavlOperationDesc": "Operation: ",
+        "bstavlNodesDesc": "Nodes: ",
+        "pythonCodeDesc": "Code: ",
+        "Add": "Add",
+        "Remove": "Remove"
+    },
     "DeleteUserInfo": {
         "deleteInfoList": [
             "By pressing ok under we will delete all the information we have on the server and database about you.",
@@ -102,20 +214,42 @@
         ],
         "title": "Delete all user data!",
         "okTitle": "Delete!",
-        "cancelTitle": "Cancel"
+        "cancelTitle": "Cancel",
+        "error": {
+            "dbError": "An error occured with the database. Please try again later or contact the system admin."
+        }
     },
     "UserInfo": {
         "title": "User info",
         "deleteBtnTitle": "Delete my data",
         "userRightsTitle": "User rights",
         "studentAssistant": "Student assistant",
-        "admin": "Administrator"
+        "admin": "Administrator",
+        "spring": "Spring",
+        "autumn": "Autumn"
     },
     "UserStats": {
         "title": "User stats",
         "totalSessions": "Total number of sessions:",
         "correctAnswers": "Correct answers:",
-        "incorrectAnswers": "Incorrect answers:"
+        "incorrectAnswers": "Incorrect answers:",
+        "didntKnowAnswers": "Didn't know answers:"
+    },
+    "SessionStat": {
+        "goBackBtn": "Go Back",
+        "sessionStats": "SessionStats",
+        "classStats": "Class stats: ",
+        "userStats": "User stats: ",
+        "correct": "Correct: ",
+        "incorrect": "Incorrect: ",
+        "incorrectTooltip": "Incorrect answer",
+        "didntKnow": "Didn't know",
+        "questionStats": "Question Stats",
+        "answer": "Answer",
+        "noQuestions": "No questions",
+        "correctCard": "Correct",
+        "incorrectCard": "Incorrect",
+        "notAvailable": "Not Available"
     },
     "ClientSessionQuestion": {
         "question": "Question",
@@ -123,7 +257,15 @@
         "exitSessionBtnText": "Leave session",
         "answerDontKnowBtnText": "Answer \"I don't know\"",
         "answerBtnText": "Answer",
-        "leaveSessionBody": "By clicking ok you will leave this session.\nAll answers up to this point will be saved."
+        "leaveSessionBody": "By clicking ok you will leave this session.\nAll answers up to this point will be saved.",
+        "leaveSessionBodyAdmin": "You are now leaving the session. The session will be put on hold for 5 minutes before its removed. If you join the session again it will resume. All answers from students up until this point will be stored.",
+        "showQuestionType": "Question type:",
+        "binaryTreeDesc": "Draw a BinaryTree with the following nodes: ",
+        "bstavlOperationDesc": "Operation: ",
+        "bstavlNodesDesc": "Nodes: ",
+        "pythonCodeDesc": "Code: ",
+        "Add": "Add",
+        "Remove": "Remove"
     },
     "ClientSessionWaitingArea": {
         "title": "Waiting Area",
@@ -133,7 +275,8 @@
         "betweenQuestionsCorrect": "You have answered and your answer was correct!\nWaiting for admin to start the next question",
         "betweenQuestionsIncorrect": "You have answered and your answer was incorrect!\nYou can check your answer towards the solution after the session is over.\nWaiting for admin to start the next question",
         "betweenQuestionsNotAnswered": "You answered \"I don't know\"!\nYou can check the solution after the session is over.\nWaiting for admin to start the next question",
-        "sessionFinished": "The session is over!\nAll your answers are stored and you can view them with the solution back at the dashboard if you haven't logged in as anonomously."
+        "sessionFinished": "The session is over!\nAll your answers are stored and you can view them with the solution back at the dashboard if you haven't logged in as anonomously.",
+        "waitingForAdmin": "Waiting for admin to start the next question"
     },
     "JoinSession": {
         "title": "Quick join session!",
@@ -143,5 +286,231 @@
     },
     "clientSessionTextInput": {
         "placeholder": "Input your answer here!"
+    },
+    "AddNewCourse": {
+        "title": "New course",
+        "code": "Course code:",
+        "semester": "Course semester:",
+        "name": "Course name:",
+        "spring": "Spring",
+        "autumn": "Autumn",
+        "addNewCourseCode": "Add new Course code:",
+        "addNewSemester": "Add new Semester:",
+        "AddNewSemesterSeason": "Choose season:",
+        "AddNewSemesterYear": "Choose a year:",
+        "add": "Add",
+        "errorMessage": {
+            "courseCodeMissing": "Input field for course code is empty.",
+            "courseCodeWrongPattern": "Input field for course code is following the wrong pattern.\nThe code should be 3 capital letters followed by 3 numbers.",
+            "courseCodeExists": "The entered course code already exists.",
+            "insertCourseCodeError": "An error occured when creating the course code.\nPlease try again later.",
+            "dbError": "An error occured with the database.\nPlease try again later.",
+            "semesterExists": "This semester already exists.",
+            "seasonDoesTExist": "The selected season does not exist.",
+            "semesterDoesnTExist": "The semester doesn't exist.",
+            "yearDoesTExist": "The selected year does not exist.",
+            "addNewSemesterInsert": "An error occured when creating the semester.\nPlease try again later.",
+            "courseCodeDoesnTExist": "The course code does not exist.",
+            "nameMissing": "Course is missing a name.",
+            "courseExists": "Course already exists."
+        }
+    },
+    "SelectCourse": {
+        "noCourseText": "No course. Add new course"
+    },
+    "CopyQuestions": {
+        "errors": {
+            "dbError": "A database error occured. Please try again later.",
+            "missingData": "No data was sent. Please try again.",
+            "noCoursesSelected": "Zero courses was selected. Please select the course(s) that should recieve a copy of these questions.",
+            "noQuestionsSelected": "Zero questions was recieved. Please mark the questions that should be copied."
+        },
+        "okBtn": "Copy questions",
+        "cancelBtn": "Cancel",
+        "title": "Copy questions to other courses",
+        "removeBtn": "Remove",
+        "selectedQuestionsTitle": "Selected questions:",
+        "selectCoursesTitle": "Select courses that should get a copy of the selected questions:",
+        "selectedCoursesTitle": "Selected courses that should get a copy of the selected questions:"
+    },
+    "DeleteQuestions": {
+        "errors": {
+            "dbError": "A database error occured. Please try again later.",
+            "dataError": "The data was not sent in the correct format! Please try again."
+        },
+        "okBtn": "Delete questions",
+        "cancelBtn": "Cancel",
+        "title": "Delete questions from course",
+        "selectedQuestionsTitle": "Selected questions:",
+        "removeBtn": "Remove",
+        "info": [
+            "When you delete the selected questions, only questions that aren't linked to a session will be deleted."
+        ]
+    },
+    "Sandbox": {
+        "guide": {
+            "Text": [
+                "This is the guide for a text question:",
+                "When doing a text question you will be shown a text input field, like the one shown here.",
+                "All you have to do is write the correct answer into this field and click the \"Answer\" button",
+                "When checking the against the solution it will not be case sensitive, but all letters or words need to be present."
+            ],
+            "Multiple choice": [
+                "This is the guide for a multiple choice question:",
+                "When doing a multiple choice question you will be shown a box for each choice available.",
+                "You will be able to select more then one answer. Click on the boxes that you would like to send as the correct answer.",
+                "A marker in the upper left corner will show which box you have selected for the answer.",
+                "When you would like to submit you answer, just click the \"Answer\" button.",
+                "When the answer is checked against the solution only answers with the exact number of boxes selected and the same boxes selected will get a correct answer."
+            ],
+            "Shellsort": [
+                "This is the guide for a shellsort question:",
+                "When doing a shellsort question you will be show an array of a unsorted list and a k value.",
+                "You job is to show each round of sorting. When adding a new row, you will have to add the k value for that round of sort and the sorted list for that k value.",
+                "When adding a new row, it will copy the row from above and exclude the k value which you need to input.",
+                "To sort a row you will have to click on an element, it will now be marked. If you click on another element on the same round, these two elements will swap places.",
+                "The solution checker will check that each round of sorting have the correct k value and correct \"sorted list\" for that round."
+            ],
+            "Mergesort": [
+                "This is the guide for a mergesort question:",
+                "When doing a mergesort question you will be shown the drawer where the initial unsorted list will be shown.",
+                "Clicking on a single element or clicking and dragging over multiple elements will select and display possible actions.",
+                "The main task is to show how the mergesort algorithm works its way through an unsorted list.",
+                "By pressing the delete button the selected elements will be deleted, and edit value will promt you to change the value for that element.",
+                "By pressing move you can now click somewhere in the canvas and the selected list will be moved to that location",
+                "Pressing extract will take the selected elements from a list and extract them to a sublist.",
+                "The order of how you extract a sublist does matter. The mergesort algorithm is set up to check the left side first."
+            ],
+            "Quicksort": [
+                "This is the guide for a quicksort question:",
+                "When doing a quicksort question you will be shown the drawer where the initial unsorted list will be shown.",
+                "Clicking on a single element or clicking and dragging over multiple elements will select and display possible actions.",
+                "The main task is to show how the quicksort algorithm works its way through an unsorted list.",
+                "The way the pivot point should be selected is the meadian element of the first, last and middle element.",
+                "When a pivot point has been selected it will be marked so it's easy to spot.",
+                "By pressing the delete button the selected elements will be deleted, and edit value will promt you to change the value for that element.",
+                "By pressing move you can now click somewhere in the canvas and the selected list will be moved to that location",
+                "Pressing extract will take the selected elements from a list and extract them to a sublist.",
+                "The order of how you extract a sublist does matter. The quicksort algorithm is set up to check the left side first."
+            ],
+            "Tree": [
+                "This is the guide for using the graphDrawer on tree related questions:",
+                "Usually you would get a list of nodes or an existing binary tree or both, and you'll have to draw the resulting binary tree.",
+                "Whenever you should add or remove the nodes from the tree should be specified in the description of the question, the main focus here is to practice drawing resulting binary trees.",
+                "The GraphDrawer for trees have 5 different command options of which to choose from, namely: Add, Remove, Move, Join and Edit. The chosen command option should be highlighted and by default its set to use the Add command.",
+                "While using the \"Add\" command, clicking on the canvas will create a new node with a default value of 0",
+                "While using the \"Remove\" command, clicking on any of the nodes or lines visible on the canvas will remove them from the canvas.",
+                "While using the \"Move\" command, you can drag nodes around by clicking on a node and while not releasing you can move the node around the canvas. Releasing the node will place the node in its current position.",
+                "While using the \"Join\" command, you can create a line between two nodes. You do this by clicking on an existing node and then hover over to another node. Once you release your finger or mouse, a new line should appear between the two nodes.",
+                "While using the \"Edit\" command, clicking on any of the nodes will trigger an alert window to appear. In this alert window you can assign a value to the chosen node using the input field. Click the OK button and the chosen node will be set to the value that was inputted in the alert window."
+            ],
+            "Dijkstra": [
+                "This is the guide for using the GraphDrawer on questions about the Dijkstra algorithm:",
+                "You need to show how the algorithm finds the path from the start (green) node to the end (red) node.",
+                "You do this by clicking on a node, keep the mouse button pressed down, move the cursor over the other node and release the button. This signals that you think at this point in time, the algorithm is looking at the edge between these nodes."
+            ],
+            "Python": [
+                "This is the guide for using the GraphDrawer on questions about Python code:",
+                "Your answer should be a map of how the objects and variables reference eachother.",
+                "To add a variable click the \"Add_Variable\" button and enter the variable name in the prompt. To add an object use the \"Add_Object\" button. When you click a prompt will ask you for the type. If you select Number, String or Boolean, it will also ask you for the value.",
+                "To show the relationship you need to \"Join\" the nodes together. Variables are linked from the variable to the object. Objects are linked to properties by joining from the property object, to the other object. A prompt will appear asking you which property you want to link your object to.",
+                "In the settings menu you can write your own code, and then press the parse button. This will parse the code for you, and add any classes to the list of object types."
+            ]
+        },
+        "settings": {
+            "Shellsort": {
+                "kValueLabel": "Initial k value:",
+                "listLabel": "Initial list:"
+            },
+            "Quicksort": {
+                "listLabel": "Initial list:"
+            },
+            "Mergesort": {
+                "listLabel": "Initial list:"
+            }
+        },
+        "textInputPlaceholder": "Test out the input field here"
+    },
+    "ViewLastSession": {
+        "goBtn": "Go",
+        "title": "Previous session",
+        "noSessionFound": "Can't find any previous sessions",
+        "error": {
+            "dbError": "An error occured with the database. Please try again later."
+        },
+        "refreshBtn": "Refresh"
+    },
+    "ShowSandbox": {
+        "title": "Go to sandbox",
+        "text": [
+            "Practice with different question types.",
+            "Play with the graphdrawer to get familiar with the controls."
+        ],
+        "goBtn": "Go"
+    },
+    "AdminQuestionResultScreen": {
+        "leaveSessionBodyAdmin": "You are now trying to end the seasion early. All the students answers have been saved up until now. Do you still want to end the season?",
+        "endSessionBtn": "End session",
+        "nextBtn": "Next question",
+        "userStatHeadline": "User stats",
+        "users": "Users:",
+        "correctAnswers": "Correct answers:",
+        "didntKnow": "Didn't know:",
+        "wrong": "Wrong answers:"
+    },
+    "AdminWaitingRoom": {
+        "code": "Code:",
+        "usersConnected": "Number of users connected:",
+        "waitingtext": "Waiting for users to connect",
+        "start": "Start"
+    },
+    "AdminSessionOver": {
+        "header": "Session is now over!",
+        "goBackBtn": "Go back to admin dashboard"
+    },
+    "AdminSessionOverview": {
+        "startBtn": "Start"
+    },
+    "GraphDrawer": {
+        "editNodePrompt": "Enter new value:",
+        "Graph0": {
+            "buttons": {
+                "Add": "Add",
+                "Remove": "Remove",
+                "Move": "Move",
+                "Join": "Join",
+                "Edit": "Edit",
+                "Tree": "Tree",
+                "Mark": "Mark"
+            }
+        },
+        "Dijkstra": {
+            "undo": "Undo",
+            "redo": "Redo"
+        },
+        "Python": {
+            "buttons": {
+                "Join": "Join",
+                "Remove": "Remove",
+                "Move": "Move",
+                "Add_Variable": "Add Variable",
+                "Add_Object": "Add Object"
+            },
+            "propertyLinkPrompt": "Which property do you want to link to?",
+            "variableNamePrompt": "Enter variable name:",
+            "objectTypePrompt": "Enter object type:",
+            "objectValuePrompt": "Enter object value:",
+            "undefinedFieldValue": "not assigned"
+        },
+        "Sort": {
+            "buttons": {
+                "editValue": "Edit value",
+                "setPivot": "Set pivot",
+                "delete": "Delete",
+                "moveArray": "Move array",
+                "extractArray": "Extract array",
+                "joinToArray": "Join to array"
+            }
+        }
     }
 }

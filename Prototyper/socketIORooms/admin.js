@@ -13,7 +13,6 @@ socket.on("createRoomFailure", function(){
 });
 
 socket.on("roomInfoResponse", function(info){
-    console.log("roomInfoResponse");
 });
 
 function addRoomToList(roomId){
@@ -27,7 +26,6 @@ function addRoomToList(roomId){
     $(".deletebtn").click(function(){
         id = this.id.split("-");
         deleteRoom(id[1]);
-        console.log(id);
     });
 }
 
@@ -41,7 +39,6 @@ function createRoom(){
 }
 
 function deleteRoom(roomId){
-    console.log("-" + roomId + "-")
     $(`#room-${roomId}`).remove();
     socket.emit("deleteRoom", roomId);
 }
