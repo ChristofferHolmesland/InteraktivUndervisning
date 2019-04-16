@@ -11,78 +11,103 @@ module.exports.client = function(socket, db, user, sessions) {
 		socket.emit("parsePythonCodeResponse", parsed);
 	});
 
-	socket.on("verifySessionExists", function(sessionCode) {
+	socket.on("verifySessionExists", async function(sessionCode) {
 		let session = sessions.get(sessionCode);
-		if (session === undefined) {
+		if (
+			session === undefined
+		) {
 			socket.emit("verifySessionExistsError");
+			return;
 		}
-		else {
-			if (user !== undefined) {
-				if (user.feide !== undefined) {
-					session = session.session;
-					let userList = session.userList;
-					for (let i = 0; i < userList.length; i++) {
-						// Anonymous users doesn't have the feide property
-						if (userList[i].feide == undefined) continue;
+		if (user === undefined) {
+			await new Promise((resolve) => {
+				setTimeout(() => {
+					resolve();
+				}, 2000);
+			})
+			if (user === undefined) {
+				socket.emit("verifySessionExistsError");
+				return;
+			}
+		}
 
-						if (user.feide.idNumber === userList[i].feide.idNumber) {
-							socket.join(sessionCode);
-							if (session.currentQuestion > -1) {
-								let answerList = session.questionList[session.currentQuestion].answerList;
-								let answered = false;
-								let answer = {}
+		// If user is a feide user
+		if (user.feide !== undefined) {
+			session = session.session;
+			let userList = session.userList;
 
-								if (answered) {
-									
+			for (let i = 0; i < userList.length; i++) {
+				// Anonymous users doesn't have the feide property
+				if (userList[i].feide == undefined) continue;
+
+				// Checks if user has join session
+				if (user.feide.idNumber === userList[i].feide.idNumber) {
+					socket.join(sessionCode);
+					if (session.currentQuestion > -1) {
+						let answerList = session.questionList[session.currentQuestion].answerList;
+						let answered = false;
+						let answerIndex = answerList.findIndex(answer => answer.userId === user.feide.userId);
+						if (answerIndex > -1) answered = true;
+						if (answered) {
+							/*
+								1 = correct
+								0 = incorrect
+								-1 = didn't know
+							*/
+							switch (answerList[answerIndex].result) {
+							case 1:
+								socket.emit("answerResponse", "betweenQuestionsCorrect")
+								break;
+							case 0:
+								socket.emit("answerResponse", "betweenQuestionsIncorrect")
+								break;
+							case -1:
+								socket.emit("answerResponse", "betweenQuestionsNotAnswered")
+								break;
+							}
+							return;
+						} else {
+							let question = session.questionList[session.currentQuestion];
+
+							if (question.resultScreen) {
+								socket.emit("answerResponse", "waitingForAdmin");
+								return;
+							}
+							else {
+								let timeLeft = -1
+								if (question.time > 0) {       
+									timeLeft = question.time - ((Date.now() - question.timeStarted) / 1000)
+								}      
+				
+								let safeQuestion = {
+									"text": question.text,
+									"description": question.description,
+									"object": question.object,
+									"type": question.type,
+									"time": timeLeft,
+									"participants": session.currentUsers
 								}
+				
+								socket.emit("nextQuestion", safeQuestion);
 
-								else {
-									let question = session.questionList[session.currentQuestion];
-
-
-									if (question.resultScreen) {
-										socket.emit("answerResponse", "waitingForAdmin")
-									}
-									else {
-										let timeLeft = -1
-										if (question.time > 0) {               
-											timeLeft = question.time - ((Date.now() - question.timeStarted) / 1000)
-										}     
+								let adminSocket = sessions.get(sessionCode).adminSocket;
+					
+								adminSocket.emit("updateParticipantCount", session.currentUsers);
+				
+								let numAnswers = question.answerList.length;
+								let participants = question.connectedUsers;
 						
-										let safeQuestion = {
-											"text": question.text,
-											"description": question.description,
-											"object": question.object,
-											"type": question.type,
-											"time": timeLeft,
-											"participants": session.currentUsers
-										}
-						
-										socket.emit("nextQuestion", safeQuestion);
-	
-										let adminSocket = sessions.get(sessionCode).adminSocket;
-							
-										adminSocket.emit("updateParticipantCount", session.currentUsers);
-						
-										let numAnswers = question.answerList.length;
-										let participants = question.connectedUsers;
-								
-										adminSocket.emit("updateNumberOfAnswers", numAnswers, participants);
-									}
-								}
-							} else {
+								adminSocket.emit("updateNumberOfAnswers", numAnswers, participants);
 
-							} 
-							break;
+								return;
+							}
 						}
 					}
 				}
 			}
-			else if (socket.rooms[sessionCode] === undefined) {
+			if (socket.rooms[sessionCode] === undefined) {
 				socket.emit("verifySessionExistsError");
-			}
-			else {
-				socket.emit("verifySessionExistsError");
+				return
 			}
 		}
 	});
@@ -111,8 +136,11 @@ module.exports.client = function(socket, db, user, sessions) {
 				
 				if (session.currentQuestion > -1) {
 					let question = session.questionList[session.currentQuestion];
-	
-					let timeLeft = question.time - ((Date.now() - question.timeStarted) / 1000)
+
+					let timeLeft = -1
+					if (question.time > 0) {         
+						timeLeft = question.time - ((Date.now() - question.timeStarted) / 1000)
+					} 
 	
 					let safeQuestion = {
 						"text": question.text,
@@ -151,7 +179,6 @@ module.exports.client = function(socket, db, user, sessions) {
 		session.userLeaving(socket.id);
 		socket.leave(sessionCode);
 
-		socket.emit("returnToClientDashboard");
 		adminSocket.emit("updateParticipantCount", session.currentUsers);
 
 		if (session.currentQuestion > -1) {

@@ -95,7 +95,7 @@
 			</b-row>
 			<b-row class="text-center">
 				<b-col cols="12" lg="4" class="mt-3">
-					<b-btn variant="danger">{{ getLocale.exitSessionBtnText }}</b-btn> <!-- TODO add click event to leave seasion mid question -->
+					<b-btn variant="danger" @click="exitSession">{{ getLocale.exitSessionBtnText }}</b-btn> <!-- TODO add click event to leave seasion mid question -->
 				</b-col>
 				<b-col cols="12" lg="4" class="mt-3">
 					<b-btn variant="warning" @click="questionNotAnswered">{{ getLocale.answerDontKnowBtnText }}</b-btn>
@@ -158,9 +158,9 @@ export default {
 			this.$socket.emit("questionAnswered", inputText, this.sessionCode);
 		},
 		exitSession() {
-			if (confirm(this.getLocale.leaveSessionBody)) {
-				this.$socket.emit("leaveSession", this.sessionCode);
-			}
+			if (confirm(this.getLeaveConfirmBody())) {
+				this.$router.push("/client");
+			}	
 		},
 		getStartArray(array) {
 			let elements = array.split(",");
@@ -177,6 +177,12 @@ export default {
 			) {
 				this.selectedImageIndex += step;
 			}
+		},
+		getLeaveConfirmBody() {
+			let locale = this.$store.getters.getLocale("ClientSessionQuestion")
+					.leaveSessionBody;
+			if (locale) return locale;
+			else return {};
 		}
 	},
 	computed: {

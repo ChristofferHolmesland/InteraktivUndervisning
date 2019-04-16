@@ -58,7 +58,7 @@ class User {
 					user = new User(row.admin, row.name, row.sessionId, {
 						accessToken: row.accessToken, 
 						idNumber: row.id,
-						userId: ""
+						userId: row.userId
 					});
 					await dbFunctions.get.userRightByFeideId(db, user.feide.idNumber).then((rows) => {
 						if (rows.length > 0){

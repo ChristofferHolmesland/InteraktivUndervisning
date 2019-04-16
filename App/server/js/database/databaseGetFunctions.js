@@ -62,8 +62,9 @@ const get = {
 		});
 	},
 	userInformationBySessionToken: function (db, sessionToken) {
-		let statement = `SELECT id, accessToken, name, sessionId, admin
-						FROM Feide
+		let statement = `SELECT U.id AS userId, F.id, F.accessToken, F.name, F.sessionId, F.admin
+						FROM Feide AS F
+						INNER JOIN User AS U ON U.feideId = F.id
 						WHERE sessionId = '${sessionToken}'
 						`;
 		return new Promise((resolve, reject) => {

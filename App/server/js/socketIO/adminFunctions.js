@@ -201,6 +201,10 @@ module.exports.admin = function(socket, db, user, sessions) {
 				currentSession = sessions.get(sessionCode);
 				currentSession.adminSocket = socket;
 				socket.join(sessionCode);
+				if (currentSession.closeTimeout !== undefined) {
+					clearTimeout(currentSession.closeTimeout);
+					delete currentSession.closeTimeout;
+				}
 			}
 			if (currentSession.session.currentQuestion > -1) {
 				let session = currentSession.session;

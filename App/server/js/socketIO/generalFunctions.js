@@ -39,11 +39,12 @@ module.exports.listen = function(server, users, db) {
 					if (user.feide.idNumber === adminId) {
 						tempSession.closeTimeout = setTimeout((function(sessionCode, adminSocket) {
 							let session = sessions.get(sessionCode);
+							if (session === undefined) return;
 							if (session.adminSocket.id === adminSocket) {
 								io.sockets.in(sessionCode).emit("answerResponse", "sessionFinished");
 								sessions.delete(sessionCode);
 							}
-						}).bind(this, tempSession.session.sessionCode, tempSession.adminSocket.id), 1000*60*5); // 5 min timeout
+						}).bind(this, tempSession.session.sessionCode, tempSession.adminSocket.id), 1000*10); // 5 min timeout
 					}
 				});
 			}            

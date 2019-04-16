@@ -44,9 +44,15 @@ export default {
 	},
 	methods: {
 		leaveSession() {
-			if (this.localeElement === "sessionFinished")
+			if (confirm(this.getLeaveConfirmBody())) {
 				this.$router.push("/client");
-			else this.$socket.emit("leaveSession", this.sessionCode);
+			}	
+		},
+		getLeaveConfirmBody() {
+			let locale = this.$store.getters.getLocale("ClientSessionQuestion")
+					.leaveSessionBody;
+			if (locale) return locale;
+			else return {};
 		}
 	},
 	computed: {
