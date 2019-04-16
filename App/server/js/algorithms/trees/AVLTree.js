@@ -52,7 +52,7 @@ module.exports.createAVLTree = function (elements,add,existingTreeObject) {
 			tree = existingTreeObject.createDuplicateTree();
 			//Balance any Tree given that is not an AVL Tree
 			console.log("Reached first checkbalance");
-			console.log(tree);
+			//console.log(tree);
 			while (checkBalance(tree.root) === false) {
 				let rootHeight = getNodeHeight(tree.root);
 				if (rootHeight > 0) {	//choose which side of the tree to start with.
@@ -278,20 +278,22 @@ function checkBalance(node) {
 	let balanced = true;
 	let leftHeight = 0;
 	let rightHeight = 0;
-	if (node.children[0] !== undefined) {
-		leftHeight = GeneralTreeFunctions.getHeight(node.children[0]);
-		balanced = checkBalance(node.children[0]);
-	}
-	if (!balanced) return balanced;
-	if (node.children[1] !== undefined) {
-		rightHeight = GeneralTreeFunctions.getHeight(node.children[1]);
-		balanced = checkBalance(node.children[1]);
-	}
-	if (!balanced) return balanced;
-	if (balanced) {
-		if (Math.abs(leftHeight - rightHeight) > 1) {
-			balanced = false;
-			return balanced
+	if (node !== undefined && node.children.length > 0) {
+		if (node.children[0] !== undefined) {
+			leftHeight = GeneralTreeFunctions.getHeight(node.children[0]);
+			balanced = checkBalance(node.children[0]);
+		}
+		if (!balanced) return balanced;
+		if (node.children[1] !== undefined) {
+			rightHeight = GeneralTreeFunctions.getHeight(node.children[1]);
+			balanced = checkBalance(node.children[1]);
+		}
+		if (!balanced) return balanced;
+		if (balanced) {
+			if (Math.abs(leftHeight - rightHeight) > 1) {
+				balanced = false;
+				return balanced
+			}
 		}
 	}
 	return balanced
@@ -553,6 +555,7 @@ function removeNodeFromAVLTree(node,tree,index,removeSteps,rotationSteps) {
 			if (newTree.nodes.length === 1) {
 				newTree.nodes.splice(index,1);
 				newTree.root = undefined;
+				//if (saveRecords) removeSteps.push(newTree.createDuplicateTree());
 				newTreeList.push(newTree);
 			}else {
 				if (parent.children[0] === newNode) parent.children[0] = undefined;

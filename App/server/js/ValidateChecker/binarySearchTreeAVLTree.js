@@ -138,6 +138,7 @@ const check = function (solutionInfo) {
             if(questionType === 8 && result.passed) {
                 let treeObject = AVLTreeFunctions.createAVLTree(treeArray,false,startTree[0]);
                 for(let i=0;i<treeObject.length;i++) {
+                	console.log(treeObject);
                     if(!BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(treeObject[i]) || !AVLTreeFunctions.checkBalance(treeObject[i].root)) {
                         result.passed = false;
                         result.errors.push("BSTAVLRemoveInvalidResultAVLTreeError");

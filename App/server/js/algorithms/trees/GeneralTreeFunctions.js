@@ -50,6 +50,9 @@ function checkCanvasNodeForNull(canvasNode) {
 // Is going to be used to check a students answer with the solution!
 function checkStudentAnswer(studentTree,solutionTree) {
 	let checkresult = true;
+	if ((studentTree !== undefined && solutionTree === undefined) || (studentTree === undefined && solutionTree !== undefined)) {
+		return checkresult
+	}
 	if (studentTree.nodes.length === 0 && studentTree.root === undefined && solutionTree.nodes.length === 0 && solutionTree.root === undefined)
 		checkresult = true;
 	else if (studentTree.nodes.length === solutionTree.nodes.length) {
@@ -209,28 +212,30 @@ module.exports.areValuesInTree = function(valueList,tree) {
 	}
 	return result
 };
-//TODO if(tree.children[0] or [1] === null --> tree.children[0] or [1] = undefined right now returning undefined will not change the reference to node in children and parent.)
+
 module.exports.makeBSTAVLTreeReadyForImport = function (tree) {
-	let root = {};
-	root.value = tree.root.value;
-	root.children = [];
-	root.parent = undefined;
+	if (tree.root !== undefined) {
+		let root = {};
+		root.value = tree.root.value;
+		root.children = [];
+		root.parent = undefined;
 
-	let nodeParser = function(node, parent) {
-		if (node === undefined || node === null) return undefined;
-		node.parent = parent;
-		nodeParser(node.children[0], node);
-		nodeParser(node.children[1], node);
-	};
+		let nodeParser = function (node, parent) {
+			if (node === undefined || node === null) return undefined;
+			node.parent = parent;
+			nodeParser(node.children[0], node);
+			nodeParser(node.children[1], node);
+		};
 
-	nodeParser(tree.root.children[0], root);
-	nodeParser(tree.root.children[1], root);
-	root.children[0] = tree.root.children[0];
-	root.children[1] = tree.root.children[1];
-	tree.root = root;
+		nodeParser(tree.root.children[0], root);
+		nodeParser(tree.root.children[1], root);
+		root.children[0] = tree.root.children[0];
+		root.children[1] = tree.root.children[1];
+		tree.root = root;
 
-	tree.nodes[0].parent = undefined;
-	checkCanvasNodeForNull(tree.root);
+		tree.nodes[0].parent = undefined;
+		checkCanvasNodeForNull(tree.root);
+	}
 };
 
 
