@@ -28,23 +28,21 @@ export default {
 		this.$socket.emit("verifySessionExists", this.sessionCode);
 	},
 	sockets: {
-		nextQuestion(questionInfo) {
+		nextQuestion: function(questionInfo) {
 			this.questionInfo = questionInfo;
 			this.sessionState = 1;
 		},
-		answerResponse(localeElement) {
+		answerResponse: function(localeElement) {
 			this.localeElement = localeElement;
 			this.sessionState = 0;
 			this.$nextTick();
 		},
-		returnToClientDashboard() {
-			this.$router.push("/client");
-		},
-		finishSessionResponse(localeElement) {
+		finishSessionResponse: function(localeElement) {
 			this.localeElement = localeElement;
 			this.sessionState = 0;
 		},
-		verifySessionExistsError() {
+		verifySessionExistsError: function() {
+			console.log("test");
 			this.$router.push("/client");
 		}
 	},
@@ -53,26 +51,12 @@ export default {
 		Question
 	},
 	computed: {
-		getSessionState() {
+		getSessionState: function() {
 			return this.sessionState;
 		}
 	},
-	methods: {
-		getLeaveConfirmBody() {
-			let locale = this.$store.getters.getLocale("ClientSessionQuestion")
-					.leaveSessionBody;
-			if (locale) return locale;
-			else return {};
-		}
-	},
 	beforeDestroy() {
-		if (this.localeElement !== "sessionFinished") {
-			if (confirm(this.getLeaveConfirmBody())) {
-				this.$socket.emit("leaveSession", this.sessionCode);
-			} else {
-				this.$router.push("/client/session/" + this.sessionCode);
-			}
-		}
+		this.$socket.emit("leaveSession", this.sessionCode);
 	}
 };
 </script>
