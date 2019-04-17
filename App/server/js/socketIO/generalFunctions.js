@@ -26,7 +26,7 @@ module.exports.listen = function(server, users, db) {
 			if (user.userRights === 1) require("./anonymousFunctions.js").anonymous(socket, db);
 			if (user.userRights > 1) require("./feideFunctions.js").feide(socket, db, user);
 			if (user.userRights > 2) require("./studentAssistantFunctions.js").studentAssistant(socket, db, user, sessions);
-			if (user.userRights === 4) require("./adminFunctions.js").admin(socket, db, user, sessions);
+			if (user.userRights === 4) require("./adminFunctions.js").admin(socket, db, user);
 		}
 
 		//--------------------------------------------//

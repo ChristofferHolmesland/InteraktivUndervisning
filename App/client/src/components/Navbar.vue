@@ -9,7 +9,7 @@
 				<b-navbar-nav class="ml-auto" v-if="getUser.loggedIn" data-cy="adminOptions">
 					<b-nav-item center @click="clientRedirect">{{getLocale.dashboard}}</b-nav-item>
 
-					<b-nav-item center @click="adminRedirect" v-if="getUser.userRights == 4 && getUser.loggedIn">{{getLocale.admin}}</b-nav-item>
+					<b-nav-item center @click="adminRedirect" v-if="getUser.userRights >= 3 && getUser.loggedIn">{{getLocale.admin}}</b-nav-item>
 
 					<b-nav-item center @click="questionsRedirect" v-if="getUser.userRights >= 3 && getUser.loggedIn">{{getLocale.questions}}</b-nav-item>
 

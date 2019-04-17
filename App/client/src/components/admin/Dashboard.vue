@@ -11,8 +11,8 @@
 									<SelectCourse/>
 								</b-col>
 								<b-col cols="4">
-									<b-button @click="showAddNewCourseModal" data-cy="addCourseButton">{{ getLocale.newCourseBtnText }} </b-button>
-									<AddNewCourse ref="AddNewCourseModal" elementRef="InnerAddNewCourseModal"/>
+									<b-button @click="showAddNewCourseModal" data-cy="addCourseButton" v-if="getUser.userRights === 4 && getUser.loggedIn">{{ getLocale.newCourseBtnText }} </b-button>
+									<AddNewCourse ref="AddNewCourseModal" elementRef="InnerAddNewCourseModal" v-if="getUser.userRights === 4 && getUser.loggedIn"/>
 								</b-col>
 							</b-row>
 						</b-container>
@@ -35,7 +35,7 @@
 				<b-row><h5>{{ getLocale.courseAdministrator }}</h5></b-row>
 				<b-row>
 					<b-container class="px-0">
-						<b-row>
+						<b-row v-if="getUser.userRights === 4 && getUser.loggedIn">
 							<b-col cols="8">
 								<b-form-input	v-model="newAdminFeideId" 
 												type="text"
@@ -52,7 +52,7 @@
 									<li :key="admin.feideId" v-for="admin in courseAdmins"
 										class="mt-1">
 										{{ admin.feideId }} -  {{ admin.name }}
-										<b-button size="sm" variant="danger" :id="admin.feideId" @click="removeAdmin($event);">
+										<b-button size="sm" variant="danger" :id="admin.feideId" @click="removeAdmin($event);" v-if="getUser.userRights === 4 && getUser.loggedIn">
 											x
 										</b-button>
 									</li>
@@ -68,7 +68,7 @@
 				<b-row><h5>{{getLocale.courseAssistants}}</h5></b-row>
 				<b-row>
 					<b-container class="px-0">
-						<b-row>
+						<b-row v-if="getUser.userRights === 4 && getUser.loggedIn">
 							<b-col cols="8">
 								<b-form-input	v-model="newAssistantFeideId" 
 												type="text"
@@ -85,7 +85,7 @@
 									<li :key="assistant.feideId" v-for="assistant in courseAssistants"
 										class="mt-1">
 										{{ assistant.feideId }} -  {{ assistant.name }}
-										<b-button variant="danger" size="sm" :id="assistant.feideId" @click="removeAdmin($event);">
+										<b-button variant="danger" size="sm" :id="assistant.feideId" @click="removeAdmin($event);" v-if="getUser.userRights === 4 && getUser.loggedIn">
 											x
 										</b-button>
 									</li>
@@ -122,6 +122,13 @@ export default {
 			let locale = this.$store.getters.getLocale("AdminDashboard");
 			if (locale) return locale;
 			else return {};
+		},
+		getUser() {
+			let user = this.$store.getters.getUser({
+				userRights: true,
+				loggedIn: true
+			});
+			return user;
 		}
 	},
 	watch: {
