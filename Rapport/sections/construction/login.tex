@@ -13,6 +13,8 @@ When a user visits the website they need to decide between logging in using thei
         \caption{This is how the login page looks when feide is picked.}
         \label{fig:loginPageFeide}
     \end{subfigure}
+    \caption{Login Page}
+    \label{fig:loginPage}
 \end{figure}
 \noindent
 If a user wants to be anonymous, their user-rights level is first set to 1. They are then redirected to the client page. Since we have decided that a anonymous shouldn't be tracked or have any information stored about them, they will be limited to only clicking on buttons on the page to navigate. Any attempts to reload the page or go dirrectly to a URL will result in the user getting redirected to the 401 error message indicating that the user isn't authenticated to view this part of the web app. All answers that are sent in by a anonymous user will be stored in the database for the lecturer to view, but there will be no link between the user that answered and the answer that is stored.
