@@ -686,8 +686,15 @@ module.exports.admin = function(socket, db, user, sessions) {
 	});
 
 	socket.on("adminLeaveSession", function(sessionCode) {
-		
-		// TODO add logic for session to be ended when admin leaves session before it is finished
+		if (currentSession === undefined) return;
+		currentSession.closeTimeout = setTimeout((function(sessionCode, adminSocket) {
+			let session = sessions.get(sessionCode);
+			if (session === undefined) return;
+			if (session.adminSocket.id === adminSocket) {
+				io.sockets.in(sessionCode).emit("answerResponse", "sessionFinished");
+				sessions.delete(sessionCode);
+			}
+		}).bind(this, sessionCode, socket.id), 1000*60*5);
 	});
 
 	socket.on("adminEndSession", function() {

@@ -44,7 +44,10 @@ export default {
 	},
 	methods: {
 		leaveSession() {
-			if (confirm(this.getLeaveConfirmBody())) {
+			if (
+				this.localeElement === "sessionFinished" ||
+				confirm(this.getLeaveConfirmBody())
+			) {
 				this.$router.push("/client");
 			}	
 		},
