@@ -295,6 +295,16 @@ module.exports.feide = function(socket, db, user){
 
 		socket.emit("deleteUserDataResponse");
 	});
+	
+	socket.on("userLastSessionRequest", async function() {
+		let feideId = user.feide.idNumber;
+		await dbFunctions.get.userLastSession(db, feideId).then(row => {
+			socket.emit("userLastSessionResponse", row)
+		}).catch(err => {
+			console.error(err);
+			socket.emit("userLastSessionError", "dbError")	
+		});
+	});
 }
 
 async function sendUserInfo(db, socket, user) {

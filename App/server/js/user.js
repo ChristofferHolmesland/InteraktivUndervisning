@@ -38,7 +38,6 @@ class User {
 	static async getUser(db, users, socket){
 		// If the user have never connected to the website, it will not have any cookies
 		if(!socket.handshake.headers.cookie) return undefined;
-		
 		let sessionId = cookie.parse(socket.handshake.headers.cookie).sessionId;
 		let user = users.get(socket.id);
 

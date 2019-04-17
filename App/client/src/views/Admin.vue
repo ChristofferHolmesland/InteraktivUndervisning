@@ -23,7 +23,7 @@ export default {
 		sessions: Sessions
 	},
 	created() {
-		this.$socket.emit("verifyUserLevel", 4);
+		this.$socket.emit("verifyUserLevel", 3);
 		let componentName = this.getLastPathEntry(this.$route.path);
 		this.shownComponent = componentName;
 	},

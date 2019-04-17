@@ -94,7 +94,7 @@ app.get('/login/callback/feide', passport.authenticate('passport-openid-connect'
 	temp = temp[0].split(":");
 	let idNumber = temp[1];
 	let admin = 2;
-	if (admins.indexOf(idNumber) > -1) admin = 4;
+	//if (admins.indexOf(idNumber) > -1) admin = 4;
 	
 	dbFunctions.get.userRightByFeideId(db, idNumber).then((rows) => {
 		for (let i = 0; i < rows.length; i++) {
@@ -109,7 +109,6 @@ app.get('/login/callback/feide', passport.authenticate('passport-openid-connect'
 			"userId": userId,
 			"idNumber": idNumber
 		});
-		console.log(tempUser);
 
 		dbFunctions.get.userIdByFeideId(db, idNumber).then((id) => {
 			if (id === undefined) {
