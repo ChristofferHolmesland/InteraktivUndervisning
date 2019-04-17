@@ -6,7 +6,9 @@
     "serve": "vue-cli-service serve",
     "buildDevWatch": "vue-cli-service build --mode \"dev\" --watch",
     "build": "vue-cli-service build",
+    "buildUnix": "NODE_ENV=unix-production vue-cli-service build --mode \"dev\"",
     "buildDev": "vue-cli-service build --mode \"dev\"",
+    "buildTest": "vue-cli-service build --mode \"test\"",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

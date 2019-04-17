@@ -1,12 +1,15 @@
 <template>
 	<div id="Dijkstra">
+		test tekst
 		<b-container>
 			<GraphDrawer 
 					@getValueResponse="gotGraphDrawer" 
 					:requestAnswer="requestAnswerFromGraphDrawer" 
 					controlType="Dijkstra"
 					operatingMode="Interactive"
-					:graph="getGraphFromSteps" />
+					:graph="getGraphFromSteps"
+					:displayEdgeValues="true"
+					/>
 		</b-container>
 	</div>
 </template>
@@ -23,7 +26,6 @@ export default {
 	},
 	methods: {
 		gotGraphDrawer: function(result) {
-			console.log("Got response from graphdrawer, sending it to parent");
 			this.$emit("getTextResponse", result);
 		}
 	},
@@ -38,7 +40,6 @@ export default {
 	},
 	watch: {
 		requestAnswer: function() {
-			console.log("Dijkstra got request for getting answer");
 			this.requestAnswerFromGraphDrawer = !this.requestAnswerFromGraphDrawer;
 		}
 	}

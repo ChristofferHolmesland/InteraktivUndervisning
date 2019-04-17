@@ -39,8 +39,8 @@
         },
         methods: {
             onShown: function() {
-                let c = this.$store.getters.getSelectedCourse.split(" ");
-                this.$socket.emit("getSessionWithinCourse", {code: c[0], semester: c[1]});
+                let courseId = this.$store.getters.getSelectedCourse;
+                this.$socket.emit("getSessionWithinCourse", courseId);
             },
             okHandler: function() {
                 this.$socket.emit("addQuestionToSession", {

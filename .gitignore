@@ -118,7 +118,7 @@ Rapport/*.log
 # vue
 App/server/public
 
-# images for question
+# Images
 App/server/images
 
 # database
@@ -130,3 +130,10 @@ App/server/images
 *.pdf
 *.gz
 *.toc
+
+# cypress
+cypress/screenshots
+cypress/videos
+
+App/server/tools/locale-maker/build
+App/server/tools/locale-maker/dist
