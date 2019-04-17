@@ -41,6 +41,7 @@ Developers can add or remove features from the GraphDrawer by creating controlle
     \item Optional: \code{dirtyUpdate()}. \code{dirtyUpdate()} is called right before the world is rendered and drawn to the screen.
     \item Optional: \code{parseSteps()} and the \code{steps} property. If the \code{operationMode} of the GraphDrawer is set to \code{"Presentation"}, then the controller is expected to have a list of steps in the \code{steps} property of the controller. The user can navigate through the list. \code{parseSteps()} is called every time the user changes the viewed step. The index of the viewed step is stored in the GraphDrawer property \code{currentStep}.
 \end{enumerate}
+Even though the controllers allows for configuration, not all of the configuration can be changed when the GraphDrawer component is included. E.g. Dijkstra start and end colors are defined inside the component, and not as a property on the component. This is done to enforce a consistent style in the application. If it was possible to change the colors every time you included the GraphDrawer on a page, it would be confusing for the users. The colors can be changed in the component definition, but they have to be the same for the whole application.
 
 \input{sections/construction/graphdrawer/camera.tex}
 
