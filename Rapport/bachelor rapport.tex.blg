@@ -1,5 +1,0 @@
-[0] Config.pm:302> INFO - This is Biber 2.9
-[1] Config.pm:305> INFO - Logfile is 'bachelor rapport.tex.blg'
-[38] biber:313> INFO - === ti. april 16, 2019, 12:19:10
-[137] Utils.pm:185> ERROR - Cannot find control file 'bachelor rapport.tex.bcf'! - did you pass the "backend=biber" option to BibLaTeX?
-[138] Biber.pm:114> INFO - ERRORS: 1
