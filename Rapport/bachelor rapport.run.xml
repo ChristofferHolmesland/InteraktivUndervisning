@@ -59,6 +59,7 @@
       <file>ieee.bbx</file>
       <file>numeric-comp.cbx</file>
       <file>ieee.cbx</file>
+      <file>numeric.cbx</file>
       <file>biblatex.cfg</file>
       <file>english.lbx</file>
     </requires>
