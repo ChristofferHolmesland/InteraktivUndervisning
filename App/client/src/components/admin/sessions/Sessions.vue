@@ -11,8 +11,8 @@
 							<SelectCourse :changeHandler="courseChanged"/>
 						</b-col>
 						<b-col lg="2" class="pl-0">
-							<b-button @click="AddNewSession">+</b-button>
-							<EditSession ref="newSessionModal" :okHandler="addNewSessionHandler" elementId="newSessionModal" elementRef="innerModal"/>
+							<b-button @click="AddNewSession" variant="primary">+</b-button>
+							<EditSession ref="newSessionModal" :okHandler="addNewSessionHandler" elementId="newSessionModal" elementRef="innerModal" v-if="showNewSession"/>
 						</b-col>
 					</b-row>
 					<b-row v-if="showError" style="text-align: center;">
@@ -70,13 +70,24 @@ export default {
 			searchText: "",
 			session: {},
 			showError: false,
-			errorText: ""
+			errorText: "",
+			showNewSession: false
 		}
 	},
 	created() {
 		let courseId = this.$store.getters.getSelectedCourse;
 		
 		this.$socket.emit("getSessions", courseId);
+	},
+	mounted() {
+		this.$root.$on('bv::modal::hidden', (bvEvent, modalId) => {
+			let id = bvEvent.target.id;
+
+			if (id.includes("newSessionModal")) {
+				this.showNewSession = false;
+
+			}
+		});
 	},
 	sockets: {
 		getSessionsResponse(data) {
@@ -122,7 +133,12 @@ export default {
 				this.showError = true;
 				return;
 			}
-			this.$refs.newSessionModal.$refs.innerModal.show();
+			this.$nextTick(() => {
+				this.showNewSession = true;
+				this.$nextTick(() => {
+					this.$refs.newSessionModal.$refs.innerModal.show();
+				});
+			});
 		}
 	},
 	computed: {

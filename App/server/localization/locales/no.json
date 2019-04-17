@@ -96,10 +96,11 @@
     },
     "AdminSessions": {
         "newSession": "Ny økt",
-        "newSessionTitle": "Tittel",
-        "selectCourse": "Velg kurs",
-        "selectQuestions": "Legg til spørsmål",
-        "selectedQuestions": "Spørsmål i økten"
+        "newSessionTitle": "Tittel:",
+        "selectCourse": "Velg kurs:",
+        "selectQuestions": "Legg til spørsmål:",
+        "selectedQuestions": "Spørsmål i økten:",
+        "removeBtn": "Fjern"
     },
     "AdminDashboard": {
         "courseAdministrator": "Fag adminstrator",
