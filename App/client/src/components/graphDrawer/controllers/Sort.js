@@ -19,13 +19,13 @@ export default class Sort {
 		// If there are some starting steps, they are parsed
 		// and put into the world.
 		if (config.steps) {
-			this.gd.currentStep = config.steps.length - 1;
 			this.steps = config.steps;
 			if (this.gd.operatingMode == "Presentation") {
+				this.gd.currentStep = config.steps.length - 1;
 				this.gd.addSteppingButtons();
 				this.gd.drawStatic();
-				this.parseSteps();
 			}
+			this.parseSteps();
 		}
 	}
 
@@ -35,6 +35,9 @@ export default class Sort {
 
 	constructor(graphDrawer, config) {
 		this.gd = graphDrawer;
+		
+		this.locale = this.gd.locale.Sort;
+
 		/*
 			All the arrays stored as a object
 			{
@@ -105,13 +108,11 @@ export default class Sort {
 			if (this.arrays.length == 0) {
 				this.gd.controllers["Graph0"].addNode(e);
 				let node = this.gd.nodes[this.gd.nodes.length - 1];
-				this.arrays.push(
-					{
-						position: { x: node.x, y: node.y },
-						nodes: [node],
-						links: []
-					}
-				);
+				this.arrays.push({
+					position: { x: node.x, y: node.y },
+					nodes: [node],
+					links: []
+				});
 				return true;
 			}
 
@@ -166,7 +167,7 @@ export default class Sort {
 				// Edit value
 				this.clickedButtons.push({
 					data: {
-						text: "Edit value",
+						text:  this.locale.buttons.editValue,
 						relSize: relSize
 					},
 					handler: e =>  this.mobileSelectedButtons().edit(e)
@@ -175,7 +176,7 @@ export default class Sort {
 				if (this.sortType == "Quicksort") {
 					this.clickedButtons.push({
 						data: {
-							text: "Set pivot",
+							text: this.locale.buttons.setPivot,
 							relSize: relSize
 						},
 						handler: e => this.mobileSelectedButtons().pivot(e)
@@ -184,7 +185,7 @@ export default class Sort {
 				// Delete
 				this.clickedButtons.push({
 					data: {
-						text: "Delete",
+						text: this.locale.buttons.delete,
 						relSize: relSize
 					},
 					handler: e => this.mobileSelectedButtons().del(e)
@@ -206,7 +207,7 @@ export default class Sort {
 			if (extract) {
 				this.clickedButtons.push({
 					data: {
-						text: "Move array",
+						text: this.locale.buttons.moveArray,
 						relSize: relSize,
 					},
 					handler: e =>  this.mobileSelectedButtons().move(e, ai)
@@ -214,7 +215,7 @@ export default class Sort {
 
 				this.clickedButtons.push({
 					data: {
-						text: "Extract array",
+						text: this.locale.buttons.extractArray,
 						relSize: relSize,
 					},
 					handler: e =>  this.mobileSelectedButtons().extract(e, ai)
@@ -223,7 +224,7 @@ export default class Sort {
 				if (this.sortType == "Mergesort") {
 					this.clickedButtons.push({
 						data: {
-							text: "Join to array",
+							text: this.locale.buttons.joinToArray,
 							relSize: relSize,
 						},
 						handler: e => this.mobileSelectedButtons().join(e)
@@ -335,11 +336,14 @@ export default class Sort {
 
 	mobileSelectedButtons() {
 		let initializeNewArray = function(sortType) {
-			let sorter = sortType == "xSorter" ? this.gd.xSorter : this.gd.vSorter;
+			let sorter =
+				sortType == "xSorter" ? this.gd.xSorter : this.gd.vSorter;
 			this.selectedNodes.sort(sorter);
-			
-			let newArr = this.getNewArray(this.selectedNodes[0].x,
-										  this.selectedNodes[0].y + 100);
+
+			let newArr = this.getNewArray(
+				this.selectedNodes[0].x,
+				this.selectedNodes[0].y + 100
+			);
 
 			// Clones the selected nodes and puts them in the new array
 			for (let i = 0; i < this.selectedNodes.length; i++) {
@@ -348,7 +352,7 @@ export default class Sort {
 				clone.strokeColor = undefined;
 
 				newArr.nodes.push(clone);
-				this.gd.nodes.push(clone);
+				this.gd.addNode(clone, true);
 			}
 
 			this.arrays.push(newArr);
@@ -458,8 +462,8 @@ export default class Sort {
 		// Checks the + buttons between nodes
 		for (let i = 0; i < this.buttons.length; i++) {
 			let btn = this.buttons[i];
-			if (this.gd.isPointInSquare(e.offsetX, e.offsetY, btn.position.x, btn.position.y, 
-				btn.position.width)) {
+			if (this.gd.isPointInRectangle(e.offsetX, e.offsetY, btn.position.x, btn.position.y, 
+				btn.position.width, btn.position.height)) {
 				btn.handler(btn);
 				return true;
 			}
@@ -469,8 +473,8 @@ export default class Sort {
 		if (this.gd.DEVICE == "Mobile") {
 			for (let i = 0; i < this.clickedButtons.length; i++) {
 				let btn = this.clickedButtons[i];
-				if (this.gd.isPointInSquare(e.offsetX, e.offsetY, btn.position.x,
-					btn.position.y, btn.position.width)) {
+				if (this.gd.isPointInRectangle(e.offsetX, e.offsetY, btn.position.x,
+					btn.position.y, btn.position.width, btn.position.height)) {
 					btn.handler(e);
 					return true;
 				}
@@ -493,24 +497,26 @@ export default class Sort {
 	addNewNodeToArray(event) {
 		let clickedNode = this.arrays[event.data.ai].nodes[event.data.ni];
 		let node = {
-			x: clickedNode.x + (event.data.side == "left" ? -clickedNode.r : clickedNode.r),
+			x: clickedNode.x + (event.data.side == "left" ? -clickedNode.w : clickedNode.w),
 			y: clickedNode.y,
-			r: clickedNode.r,
-			v: 0
-		}
+			w: clickedNode.w,
+			h: clickedNode.h,
+			v: 0,
+			shape: clickedNode.shape
+		};
 
 		this.arrays[event.data.ai].nodes.splice(
 			event.data.ni + (event.data.side == "left" ? 0 : 1),
 			0,
 			node
-		)
+		);
 
 		// Recalculate node position inside the array
 		if (event.data.side == "left") 
-			this.arrays[event.data.ai].position.x -= clickedNode.r;
+			this.arrays[event.data.ai].position.x -= clickedNode.w;
 		this._repositionNodes(event.data.ai);
 
-		this.gd.nodes.push(node);
+		this.gd.addNode(node, true);
 		this.gd.dirty = true;
 	}
 
@@ -518,11 +524,11 @@ export default class Sort {
 		Calculate node positions based on their position in a given array
 	*/
 	_repositionNodes(ai) {
-		let start = this.arrays[ai].position
+		let start = this.arrays[ai].position;
 		for (let ni = 0; ni < this.arrays[ai].nodes.length; ni++) {
 			let node = this.arrays[ai].nodes[ni];
-			// Assumes all the nodes have the same width
-			node.x = start.x + ni * node.r;
+			// Assumes all the nodes have the same width TODO: This assumption is no longer true
+			node.x = start.x + ni * node.w;
 			node.y = start.y;
 		}
 
@@ -640,10 +646,10 @@ export default class Sort {
 		Creates a + button next to a node on a given side.
 	*/
 	_renderAddNodeButton(node, side, ai, ni) {
-		let bSize = node.r / this.bsf;
-		let bX = node.x + node.r - bSize / 2;
+		let bSize = node.w / this.bsf;
+		let bX = node.x + node.w - bSize / 2;
 		if (side == "left") {
-			bX -= node.r;
+			bX -= node.w;
 		}
 
 		let point = this.gd.camera.unproject(
@@ -910,18 +916,20 @@ export default class Sort {
 		let user = this.steps[0].position != undefined;
 		let yPadding = 75;
 		let xPadding = 25;
-		let r = this.gd.nodeShape == "Circle" ? this.gd.R : this.gd.R * this.gd.SQUARE_FACTOR;
+		let r = this.gd.nodeShape == "Circle" ? this.gd.R : this.gd.R * 2;
 
 		let nodesFromValueList = (list, array) => {
 			for (let i = 0; i < list.length; i++) {
 				let node = {
 					x: array.position.x + r * i,
 					y: array.position.y,
-					r: r,
-					v: list[i]
+					w: r,
+					h: r,
+					v: list[i],
+					shape: this.gd.nodeShape
 				};
 
-				this.gd.nodes.push(node);
+				this.gd.addNode(node, true);
 				array.nodes.push(node);
 			}
 		};
@@ -929,6 +937,8 @@ export default class Sort {
 		// The inital array is placed centered
 		// at the top of the canvas relative 
 		// to the current camera position.
+		// If this is not the first time parseInitial is ran,
+		// it will be placed at the position of the first run instead.
 		let parseInitial = (step) => {
 			let p = this.gd.camera.project(this.gd.canvas.width / 2, 0);
 
@@ -938,6 +948,13 @@ export default class Sort {
 			// Assumes same size nodes
 			let arrayWidth = step.list.length * r;
 			p.x -= arrayWidth / 2;
+
+			if (this._initialArrayPosition == undefined) {
+				this._initialArrayPosition = { x: p.x, y: p.y };
+			} else {
+				p.x -= (p.x - this._initialArrayPosition.x);
+				p.y -= (p.y - this._initialArrayPosition.y);
+			}
 
 			let newArr = this.getNewArray(p.x, p.y);
 			nodesFromValueList(step.list, newArr);
@@ -960,14 +977,14 @@ export default class Sort {
 		let parseSplit = (step, pos) => {
 			let parent = this._findArrayFromNodeValues(step.list);
 
-			if (step.left.length > 0) {
+			if (step.left !== undefined && step.left.length > 0) {
 				let left = this.getNewArray(pos.left.x, pos.left.y);
 				nodesFromValueList(step.left, left);
 				this.arrays.push(left);
 				this.arrays[parent].links.push(left);
 			}
 
-			if (step.right.length > 0) {
+			if (step.right !== undefined && step.right.length > 0) {
 				let right = this.getNewArray(pos.right.x, pos.right.y);
 				nodesFromValueList(step.right, right);
 				this.arrays.push(right);
@@ -1019,17 +1036,17 @@ export default class Sort {
 
 			for (let i = 0; i < step.arrays.length; i++) {
 				let arr = step.arrays[i];
-
 				let newArr = {
 					position: {
-						x: arr.position.x + pos.dx,
-						y: arr.position.y + pos.dy
+						x: arr.position.x + pos.x,
+						y: arr.position.y + pos.y
 					},
 					nodes: [],
 					links: []
 				};
 				nodesFromValueList(arr.nodes, newArr);
 				this.arrays.push(newArr);
+				this.gd.centerCameraOnGraph();
 			}
 
 			for (let i = 0; i < this.arrays.length; i++) {
@@ -1090,8 +1107,6 @@ export default class Sort {
 				// Quicksort shouldn't show the merge step
 				//if (this.sortType == "Quicksort") continue;
 				if (step.list1 == undefined || step.list2 == undefined) {
-					console.log("Continue because something is undefined");
-					console.log(step);
 					continue;
 				}
 
@@ -1140,11 +1155,9 @@ export default class Sort {
 
 				parseMerge(step, pos);
 			} else if (step.type == "Complete") {
-				if (offset == undefined) {
-					pos = {
-						dx: 0,
-						dy: 0
-					};
+				if (offset !== undefined) {
+					pos.x = offset.dx;
+					pos.y = offset.dy;
 				}
 				parseComplete(step, pos);
 			} else {
@@ -1185,13 +1198,10 @@ export default class Sort {
 		if (hoveredNode == undefined) return;
 
 		// Delete node
-		let bSize = hoveredNode.r / this.bsf;
-		let bX = hoveredNode.x + hoveredNode.r / 2 - bSize / 2;
-		let dP = this.gd.camera.unproject(
-			bX,
-			hoveredNode.y
-		);
-		
+		let bSize = hoveredNode.w / this.bsf;
+		let bX = hoveredNode.x + hoveredNode.w / 2 - bSize / 2;
+		let dP = this.gd.camera.unproject(bX, hoveredNode.y);
+
 		this.hoverButtons.push({
 			position: {
 				x: dP.x,

@@ -1,7 +1,8 @@
 {
     "AdminQuestions": {
         "emptyQuestionList": "Ingen spørsmål.",
-        "newQuestion": "Nytt spørsmål",
+        "addTitle": "Nytt spørsmål",
+        "editTitle": "Endre spørsmål",
         "searchQuestion": "Søk etter spørsmål",
         "newQuestionTitle": "Spørsmål tittel:",
         "newQuestionText": "Spørsmål tekst:",
@@ -11,7 +12,87 @@
         "addToSession": "Legg til",
         "solutionText": "Løsning: ",
         "selectSessionText": "Velg økt: ",
-        "time": "Tid:"
+        "time": "Tid:",
+        "description": "Beskrivelse:",
+        "mediaTypes": [
+            {"text":"Bilder", "value": 0},
+            {"text":"Grafer", "value": 0},
+            {"text":"Tabeller", "value": 0}
+        ],
+        "multipleChoiceHeader": "Alternativer:",
+        "addNewMultipleChoice": "Legg til nytt alternativ",
+        "multipleChoiceDeleteBtn": "Slett",
+        "basicInfo": "Grunnleggende Informasjon",
+        "TitleIsEmptyError": "Spørsmålet mangler en tittel!",
+        "DescriptionIsEmptyError": "Spørsmålet mangler en beskrivelse!",
+        "EmptyTextSolutionError": "Fasiten kan ikke være tom!",
+        "NoMultiChoiceSolutionError": "Ingen av alternativene er blitt satt som fasit!",
+        "NoMultipleChoiceOptionsError": "Spørsmålet mangler alternativer!",
+        "MissingOptionInformationError": "Det kreves at alle alternativene har noe innehold, de kan ikke være tomme!",
+        "MarkedSolutionIsNotAnOptionError": "Alternativet som er makert som fasit er ikke et alternativ som er gitt i spørsmålet!",
+        "NoKValueError": "K verdien er ikke definert!",
+        "mediaErrorFileSize": "Summen av filstørrelsene overstiger maks størrelse på 1.5MB!",
+        "mediaWarningFileSize": "Summen av filstørrelsene overstiger snart maks størrelse på 1.5MB!\nVurder om færre eller mindre filer er mulig.",
+        "mediaErrorFileType": " fil(er) ble lastet opp med feil filtype! Kun bilder blir godkjent.",
+        "ShellSortNoElementsError": "Ingen elementer har blitt gitt som skal være med i tabellen!",
+        "ShellSortArrayWrongFormatError": "Formatet er ikke riktig!\nElementer kan bare bestå av tall verdier, og elementene skal være delt opp med ,!",
+        "InvalidKValueError": "K verdien er ikke et tall!",
+        "KValueTooBigError": "K verdien er for stor i forhold til inneholdet i tabellen!",
+        "ShellSortArrayDataTypeError": "En av elementene i tabellen er ikke et tall!",
+        "ShellSortEmptyArrayElementError": "En av elemenetene i tabellen er et tomt element!",
+        "MergeQuickSortNoElementsError": "Ingen elementer har blitt gitt som skal være med i tabellen!",
+        "MergeQuickSortArrayWrongFormatError": "Formatet er ikke riktig!\nElementer kan bare bestå av tall verdier, og elementene skal være delt opp med ,!",
+        "MergeQuickSortArrayDataTypeError": "En av elementene i tabellen er ikke et tall!",
+        "MergeQuickSortEmptyArrayElementError": "En av elemenetene i tabellen er et tomt element!",
+        "binaryTreeNoElementsError": "Mangler elementene som skal være i treet!",
+        "binaryTreeWrongFormatError": "Feil format for elementene i listen!\n Kun tall og de skal separeres med et komma \",\"",
+        "BSTAVLAddMissingFieldsError": "Mangler felt for å kunne lage et spørsmål hvor elementer blir lagt til i et tre!",
+        "BSTAVLAddDuplicateElementError": "Kan ikke lege til en node med samme verdi som en eksisterende node!",
+        "BSTAVLAddInvalidResultBinarySearchTreeError": "Resultatet er ikke et godkjent Binært Søketre!",
+        "BSTAVLAddInvalidResultAVLTreeError": "Resultatet er ikke et godkjent AVL Tre",
+        "BSTAVLRemoveMissingFieldsError": "Mangler felt for å kunne lage et spørsmål hvor elementer blir fjernet fra et tre!",
+        "BSTAVLRemoveMissingElementError": "Elementet som skal fjernes finnes ikke i treet!",
+        "BSTAVLRemoveInvalidResultBinarySearchTreeError": "Et av resultatene er ikke et godkjent Binært Søketre!",
+        "BSTAVLRemoveInvalidResultAVLTreeError": "Et av resultatene er ikke et godkjent AVL tre!",
+        "BSTAVLRootCountError": "Treet gitt har mer en en rot!",
+        "BSTAVLInvalidBinaryTreeError": "Det gitte treet er ikke et godkjent Binærtre!",
+        "BSTAVLInvalidBinarySearchTreeError": "Det gitte treet er ikke et godkjent Binært Søketre!",
+        "treeElementTypeError": "Elementene i listen skal kun inneholde tall elementer!",
+        "treeElementEmptyError": "Ingen element i listen som skal legges til/fjernes kan være tomme!",
+        "BSTAVLInvalidTreeActionError": "Må velge enten å legge til elementer eller å fjerne elementer på fasittype!",
+        "UndefinedGraphError": "Graph object ikke laget!",
+        "InvalidDjikstraEdgeValue": "Kanter kan ikke ha negativ verdi i en dijkstra spørsmål!",
+        "NoPathBetweenStartNodeAndEndNodeError": "Det finnes ingen rute mellom start noden og slutt noden!",
+        "ToManyStartOrEndNodesError": "Det skal bare være en start node og en slutt node!\nDet er enten for mange start noder eller sluttnoder!",
+        "MissingStartOrEndNodeError": "Mangler enten start node eller slutt node!",
+        "InvalidDijkstraGraphError": "Den gitte graf er ikke kvalifisert til å være en dijkstra graf!\nMangler enten noder eller kanter!",
+        "questionTypeError": "Spørsmåltype er ikke valgt!",
+        "imageInputLabel": "Velg en fil som skal lastes opp...",
+        "filename": "Filnavn",
+        "filesize": "Filstørrelse",
+        "filetype": "Filtype",
+        "deleteBtn": "Slett",
+        "courseMissing": "Ingen fag er valgt. Velg et fag eller gå til Admin taben og lag et nytt fag.",
+        "selectBtn": "Marker",
+        "copySelectedBtn": "Kopier markerte",
+        "deleteSelectedBtn": "Slett markerte",
+        "closeBtn": "Lukk",
+        "noQuestionsSelectedError": "Ingen spørsmål er markert!",
+        "showQuestionType": "Spørsmål type:",
+        "questionType": {
+            "Text": "Tekst", 
+            "Multiple choice": "Flervalg", 
+            "Shellsort": "Shellsortering", 
+            "MergeSort": "Flette sortering", 
+            "QuickSort": "Quicksort",
+            "BinaryTree": "Binærtre",
+            "BinarySearchTree": "Binært søketre",
+            "AVLTree": "AVLTree",
+            "Dijkstra": "Dijkstra",
+            "Python": "Python"
+        },
+        "NoCode": "Du må skrive kode for å lage et Python spørsmål.",
+        "binaryTreeSolutionText": "Det ville blitt regnet som riktig svar hvis treet som ble gitt følger alle reglene til et Binear Tree og treet besto av følgende noder:"
     },
     "AdminSessions": {
         "newSession": "Ny økt",
@@ -30,16 +111,32 @@
         "addNewQuestionBtnText": "Legg til nytt spørsmål",
         "newQuestion": "Nytt spørsmål",
         "viewLastSession": "Vis forrige økt",
-        "openLastSession": "Åpne",
-        "addCourseTitle": "Nytt fag",
-        "addCourseCourseCode": "Fag kode:",
-        "addCourseCourseSemester": "Fag semester:",
-        "addCourseCourseName": "Fag navn:"
+        "openLastSession": "Åpne"
     },
     "DisplayQuestion": {
         "question": "Spørsmål",
         "solution": "Løsning",
-        "answer": "Svar"
+        "answer": "Svar",
+        "binaryTreeSolutionText": "Det ville blitt regnet som riktig svar hvis treet som ble gitt følger alle reglene til et Binear Tree og treet besto av følgende noder:",
+        "showQuestionType": "Spørsmål type:",
+        "questionType": {
+            "Text": "Tekst",
+            "Multiple choice": "Flervalg",
+            "Shellsort": "Shell sortering",
+            "MergeSort": "Flette sortering",
+            "QuickSort": "Quick sortering",
+            "BinaryTree": "Binærtre",
+            "BinarySearchTree": "Binært søketre",
+            "AVLTree": "AVLTree",
+            "Dijkstra": "Dijkstra",
+            "Python": "Python"
+        },
+        "binaryTreeDesc": "Tegn et binaer tree med følgende noder: ",
+        "bstavlOperationDesc": "Operasjon: ",
+        "bstavlNodesDesc": "Noder: ",
+        "pythonCodeDesc": "Kode: ",
+        "Add": "Legg til",
+        "Remove": "Slett"
     },
     "Navbar": {
         "lang": "Språk",
@@ -93,6 +190,28 @@
     "Sessions": {
 
     },
+    "startSession": {
+        "question": "Spørsmål",
+        "showQuestionType": "Spørsmål type:",
+        "questionType": {
+            "Text": "Tekst",
+            "Multiple choice": "Flervalg",
+            "Shellsort": "Shell sortering",
+            "MergeSort": "Flette sortering",
+            "QuickSort": "Quick sortering",
+            "BinaryTree": "Binærtre",
+            "BinarySearchTree": "Binært søketre",
+            "AVLTree": "AVLTree",
+            "Dijkstra": "Dijkstra",
+            "Python": "Python"
+        },
+        "binaryTreeDesc": "Tegn et binaer tree med følgende noder: ",
+        "bstavlOperationDesc": "Operasjon: ",
+        "bstavlNodesDesc": "Noder: ",
+        "pythonCodeDesc": "Kode: ",
+        "Add": "Legg til",
+        "Remove": "Slett"
+    },
     "DeleteUserInfo": {
         "deleteInfoList": [
             "Ved å trykke på ok under så vil vi slette all informasjon om deg på server og i databasen.",
@@ -102,20 +221,42 @@
         ],
         "title": "Slett all bruker data!",
         "okTitle": "Slett!",
-        "cancelTitle": "Avbryt"
+        "cancelTitle": "Avbryt",
+        "error": {
+            "dbError": "En feil skjedde med databasen! Venligst prøv igjen senere eller kontakt system administratoren."
+        }
     },
     "UserInfo": {
         "title": "Bruker informasjon",
         "deleteBtnTitle": "Slett brukerdata",
         "userRightsTitle": "Bruker rettigheter",
         "studentAssistant": "Student Assistent",
-        "admin": "Administrator"
+        "admin": "Administrator",
+        "spring": "Vår",
+        "autumn": "Høst"
     },
     "UserStats": {
         "title": "Bruker statistikk",
         "totalSessions": "Antall økter:",
         "correctAnswers": "Antall rett svar:",
-        "incorrectAnswers": "Antall feil svar:"
+        "incorrectAnswers": "Antall feil svar:",
+        "didntKnowAnswers": "Antall vet ikke svar:"
+    },
+    "SessionStat": {
+        "goBackBtn": "Tilbake",
+        "sessionStats": "Statistikk for økt",
+        "classStats": "Statistikk for klasse: ",
+        "userStats": "Statistikk for bruker: ",
+        "correct": "Riktig: ",
+        "incorrect": "Feil: ",
+        "incorrectTooltip": "Feil svar",
+        "didntKnow": "Vet ikke",
+        "questionStats": "Statistikk for spørsmål",
+        "answer": "Svar nr",
+        "noQuestions": "Ingen spørsmål",
+        "correctCard": "Riktig",
+        "incorrectCard": "Feil",
+        "notAvailable": "Ikke tilgjengelig"
     },
     "ClientSessionQuestion": {
         "question": "Spørsmål",
@@ -123,7 +264,15 @@
         "exitSessionBtnText": "Forlat økt",
         "answerDontKnowBtnText": "Svar: \"Jeg vet ikke\"",
         "answerBtnText": "Send inn svar",
-        "leaveSessionBody": "Ved å klikke ok, så vil du koble deg fra denne økten.\nAlle svare frem til nå vil være lagret."
+        "leaveSessionBody": "Ved å klikke ok, så vil du koble deg fra denne økten.\nAlle svare frem til nå vil være lagret.",
+        "leaveSessionBodyAdmin": "Du forlater nå økten. Økten vil bli satt på pause i 5 minutter før den fjernes. Hvis du kommer tilbake hit så vil økten fortsette. Alle svarene fra studentene opp til nå har blitt lagret.",
+        "showQuestionType": "Spørsmål type:",
+        "binaryTreeDesc": "Tegn et binaer tree med følgende noder: ",
+        "bstavlOperationDesc": "Operasjon: ",
+        "bstavlNodesDesc": "Noder: ",
+        "pythonCodeDesc": "Kode: ",
+        "Add": "Legg til",
+        "Remove": "Slett"
     },
     "ClientSessionWaitingArea": {
         "title": "Venteområde",
@@ -133,7 +282,8 @@
         "betweenQuestionsCorrect": "Du har svart og svaret ditt er riktig!\nVenter på at admin skal starte neste spørsmål",
         "betweenQuestionsIncorrect": "Du har svart og svaret ditt er feil!\nDu kan sjekke svaret ditt mot fasiten etter økten er ferdig.\nVenter på at admin skal starte neste spørmsål",
         "betweenQuestionsNotAnswered": "Du svarte \"Vet ikke\"!\nDu vil kunne se fasiten når økten er over.\nVenter på at admin skal starte neste spørsmål",
-        "sessionFinished": "Økten er nå over!\nAlle svarene dine er nå lagret og du kan sjekke dem mot løsningen på skrivebordet hvis du ikke har logget inn som anonym."
+        "sessionFinished": "Økten er nå over!\nAlle svarene dine er nå lagret og du kan sjekke dem mot løsningen på skrivebordet hvis du ikke har logget inn som anonym.",
+        "waitingForAdmin": "Venter på at admin skal starte neste spørsmål"
     },
     "JoinSession": {
         "title": "Bli med i økt!",
@@ -143,5 +293,232 @@
     },
     "clientSessionTextInput": {
         "placeholder": "Skriv inn svaret ditt her!"
+    },
+    "AddNewCourse": {
+        "title": "Nytt fag",
+        "code": "Fag kode:",
+        "semester": "Fag semester:",
+        "name": "Fag navn:",
+        "spring": "Vår",
+        "autumn": "Høst",
+        "addNewCourseCode": "Legg til ny fag kode:",
+        "addNewSemester": "Legg til nytt semester:",
+        "AddNewSemesterSeason": "Velg sesong:",
+        "AddNewSemesterYear": "Velg et år:",
+        "add": "Legg til",
+        "errorMessage": {
+            "courseCodeMissing": "Inndata feltet for fag koden er tomt.",
+            "courseCodeWrongPattern": "Inndata feltet for fag koden har feil format.\nKoden skal ha 3 store bokstaver etterfulgt med 3 tall.",
+            "courseCodeExists": "Fag koden som bler skrevet inn finnes allerede.",
+            "insertCourseCodeError": "En feil skjedde når fag koden skulle lages.\nVenligst prøv på nytt senere.",
+            "dbError": "En feil skjedde med databasen.\nVenligst prøv på nytt senere.",
+            "semesterExists": "Dette semesteret finnes allerede.",
+            "seasonDoesTExist": "Den valgte sesongen eksisterer ikke.",
+            "semesterDoesnTExist": "Semesteret finnes ikke.",
+            "yearDoesTExist": "Det valgte året eksisterer ikke.",
+            "addNewSemesterInsert": "En feil skjedde når semesteret skulle lages.\nVenligs prøv igjen senere.",
+            "courseCodeDoesnTExist": "Fag koden eksisterer ikke.",
+            "nameMissing": "Faget mangler et navn.",
+            "courseExists": "Faget finnes allerede."
+        }
+    },
+    "SelectCourse": {
+        "noCourseText": "Ingen fag. Legg til nytt fag"
+    },
+    "CopyQuestions": {
+        "errors": {
+            "dbError": "Det skjedde en feil med databasen. Venligst prøv igjen senere.",
+            "missingData": "Serveren mottok ikke noe data. Venligst prøv på nytt.",
+            "noCoursesSelected": "Ingen fag var valgt. Velg fagene som skal motta en kopi av spørsmålene.",
+            "noQuestionsSelected": "Ingen spørsmål ble mottatt. Venligst marker spørsmålene som skal sendes."
+        },
+        "okBtn": "Kopier spørsmålene",
+        "cancelBtn": "Avbryt",
+        "title": "Kopier spørsmål til andre fag",
+        "removeBtn": "Fjern",
+        "selectedQuestionsTitle": "Markerte spørsmål:",
+        "selectCoursesTitle": "Marker fagene som skal få en kopi av spørsmålene:",
+        "selectedCoursesTitle": "Fagene som har blitt markert og vil få en kopi av de markerte spørsmålene:"
+    },
+    "DeleteQuestions": {
+        "errors": {
+            "dbError": "Det skjedde en feil med databasen. Venligst prøv igjen senere.",
+            "dataError": "Dataen ble ikke sent i rett format! Venligst prøv igjen."
+        },
+        "okBtn": "Slett spørsmål",
+        "cancelBtn": "Avbryt",
+        "title": "Slett spørsmål fra fag",
+        "selectedQuestionsTitle": "Valgte spørsmål:",
+        "removeBtn": "Fjern",
+        "info": [
+            "Når du sletter spørsmål så vil kun spørsmål som er linket til en økt bli slettet."
+        ]
+    },
+    "Sandbox": {
+        "guide": {
+            "Text": [
+                "Dette er en guide for et tekst spørsmål:",
+                "Når du skal gjøre et tekst spørsmål så vil du bli gitt et inntastingsfelt slik som vist her.",
+                "Det du trenger å gjøre er bare å skrive inn det riktige svaret i inntastingsfeltet og trykke på \"Svar\" knappen.",
+                "Forskjeller mellom store og små bokstaver vil bli ignorert når svaret sjekkes mot fasiten, men alle bokstavene og ordene må stemme rett med fasiten."
+            ],
+            "Multiple choice": [
+                "Dette er en guide for et flervalgs spørsmål:",
+                "Når du skal gjøre et flervalgs spørsmål som vil du bli gitt en boks for vært av de mulige svar alternativene.",
+                "Du har muligheten til å velge mer enn et svar. Du trenger bare å trykke på de boksene som du mener inneholder det riktige svaret.",
+                "Etter at du har klikket på av alternativene du mener stemmer, så vil boksen til alternativet få en markør på toppen av venstre hjørne.",
+                "Når du er klar til å sende svaret ditt, så trykker du på \"Svar\" knappen.",
+                "Bare angitte svar som har klart å velge alle de riktige alternativene i oppgaven vil bli regnet som riktige."
+            ],
+            "Shellsort": [
+                "Dette er en guide for type Shellsort spørsmål:",
+                "Når du får en shellsort spørsmål så vil du bli gitt en usortert liste og en k verdi.",
+                "Din jobb er å vise resultat av den usorterte listen etter hver k sorteringen. Når du legger til en ny rad, så må de legge til k-verdien som skal brukes i tillegg til resultatet av den k-sorterte listen.",
+                "Når du legger til en ny rad, så vil den nye raden som dukker opp være en direkte kopi av den forrige raden, med unntakk av k-verdien som du selv må legge til.",
+                "For å sortere radene så må du klikke på 2 forskjellige elementer i samme rad, disse elementene vil da bytte plass. Når du har klikket på et element så vil det elementet bli uthevet.",
+                "Svaret du gir vil bli sjekt for at hver runde av sorteringen har fått riktig k verdi og korrekt sortert liste."
+            ],
+            "Mergesort": [
+                "Dette er en guide for type  flettesortering spørsmål:",
+                "Når spørsmålet er et flettesortering spørsmålt så vil du starte med en usorterte liste som skal sorteres i den gitte graf tegneren.",
+                "Ved å trykke på en eller flere elementer i listen, så vil det dukke opp de forskjellige kommandoene som du kan bruke. Du velger flere elementer ved å trykke ned og deretter hovre over de elementene som ønsker å ta med.",
+                "I disse oppgavene skal du vise hvordan flettesortering algoritmen sorterer den gitte usorterte listen.",
+                "Ved å trykke på \"slette\" knappen så vil det valgte elementet bli slettet",
+                "Ved å trykke på \"endre\" knappen kan du endre verdier på elementet ved å trykke på de. Etter å trykt på et element, så vil det komme en prompt som lar deg skrive inn verdien som du ønsker å gi det valgte elementet.",
+                "Ved å trykke på \"flytt\" knappen kan du flytte rundt på elementer ved å først velge de, og deretter trykke på et annen sted i lerretet.",
+                "Ved å trykke på \"ekstrakt\" knappen så vil de valgte elementene i listen bli dratt ut av listen og lagt i en ny underliste.",
+                "Hvilken rekkefølge du velger å ekstrakte ut elementene har noe å si. Mergesort algorithmen er satt opp til å alltid sjekke venstre side først."
+            ],
+            "Quicksort": [
+                "Dette er en guide for quicksort type spørsmål:",
+                "Når spørsmålet er et quicksort spørsmålt så vil du starte med en usorterte liste som skal sorteres i den gitte graf tegneren.",
+                "Ved å trykke på en eller flere elementer i listen, så vil det dukke opp de forskjellige kommandoene som du kan bruke. Du velger flere elementer ved å trykke ned og deretter hovre over de elementene som ønsker å ta med.",
+                "I disse oppgavene skal du vise hvordan quicksort algoritmen sorterer den gitte usorterte listen.",
+                "Pivoten skal velges utifra medianen elementet av det første, mellomste og det siste elementet",
+                "Ved å trykke på \"Slett\" knappen så vil det valgte elementet bli slettet",
+                "Ved å trykke på \"Endre\" knappen kan du endre verdier på elementet ved å trykke på de. Etter å trykt på et element, så vil det komme en prompt som lar deg skrive inn verdien du ønsker å gi det valgte elementet.",
+                "Ved å trykke på \"Flytt\" knappen kan du flytte rundt på elementer ved å først velge de, og deretter trykke på et annen sted i lerretet.",
+                "Ved å trykke på \"Ekstrakt\" knappen så vil de valgte elementene i listen bli dratt ut av listen og lagt i en ny underliste.",
+                "Hvilken rekkefølge du velger å ekstrakte ut elementene har noe å si. Mergesort algorithmen er satt opp til å alltid sjekke venstre side først."
+            ],
+            "Tree": [
+                "Dette er en guide for tre relaterte spørsmål som bruker graphdrawer:",
+                "Normalt will et tre spørsmål bestå av en liste med noder og en add/remove action i oppgave beskrivelsen, i tilegg kan du få et eksisterende tre som skal brukes som base. Din jobb er å tegne hvordan treet skal se ut etter operasjonene har blitt gjort.",
+                "Her er det fokus på å la dere teste ut graftegneren, og la dere øve på å tegne forskjellige binaer tre.",
+                "Graf tegneren bruker 5 forskjellige kommandoer, disse kommandoene er: Legg til, Slett, Flytt, Slå sammen og Endre. Den valgte kommandoen vil bli fremhevet, som standard vil graftegneren bruke add kommandoen.",
+                "Når \"Legg til\" kommandoen er valgt, kan du lage nye noder ved å trykke innenfor tegneren. Etter å ha trykket vil en node med standard verdi 0 bli laget.",
+                "Når \"Slett\" kommandoen er valgt, kan du trykke på en node eller en linje for å fjerne den fra tegningen.",
+                "Når \"Flytt\" kommandoen er valgt, kan du flytte rundt på en node og ved å trykke på noden og holde inne noden mens du flytte rundt på tegningen. Ved slippe noden vil noden bli plassert der du slapp den.",
+                "Når \"Slå sammen\" kommandoen er valgt, kan du lage linjer mellom noder ved å trykke på en node og holde inne til du kommer til en annen node og tilslutt slippe taket for å lage linjen.",
+                "Når \"Endre\" kommandoen er valgt, vil en alert boks dukke opp ved å trykke på en av nodene. Hvis du fyller inn en verdi i inntastningsfeltet og trykker på ok-knappen så vil den valgte noden få verdien du skrev inn."
+            ],
+            "Dijkstra": [
+                "Dette er en guide for hvordan du kan løse oppgaver om Dijkstra algoritmen:",
+                "Du skal vise hvordan algoritmen finner stien mellom start (grønn) noden og slutt (rød) noden.",
+                "Dette gjør du ved å trykke ned en museknapp over en node, hold nede knappen mens du beveger pekeren over en annen node, for å så slippe knappen. Da viser du at du mener at på dette tidspunktet så vil algoritmen sjekke kanten mellom disse to nodene."
+            ],
+            "Python": [
+                "Dette er en guide for hvordan du kan løse Python oppgaver i graftegneren:",
+                "Svaret ditt skal være et kart over forholdene mellom variabler og objekter.",
+                "For å legge til en variabel trykker du først på \"Add_Variable\" knappen og så trykker du der du vil ha variabelen. For å legge til et objekt bruker du \"Add_Object\" knappen. Når du klikker et sted får du først spørsmål om typen. Hvis du velger String, Number eller Boolean, vil du også få spørsmål om verdien.",
+                "For å vise forholdene må du bruke \"Join\" for å lage kanter mellom nodene. Variabler er linket fra variabelen til objektet. Objektegenskaper er linket fra objekt til objekt. Etter du har laget kanten vil du få et spørsmål om hvilken egenskap du vil linke objektet til.",
+                "I innstillinger menyen kan du skrive din egen kode. Når du klikker på \"Parse\" knappen vil koden bli evaluert og alle klassene som blir funnet vil være tilgjengelige som objekt typer."  
+            ]
+        },
+        "settings": {
+            "Shellsort": {
+                "kValueLabel": "Initial k value:",
+                "listLabel": "Initial list:"
+            },
+            "Quicksort": {
+                "listLabel": "Initial list:"
+            },
+            "Mergesort": {
+                "listLabel": "Initial list:"
+            }
+        },
+        "textInputPlaceholder": "Test out the input field here"
+    },
+    "ViewLastSession": {
+        "goBtn": "Åpne",
+        "title": "Forrige økt",
+        "noSessionFound": "Kan ikke finne noen tidligere økter",
+        "error": {
+            "dbError": "En feil skjedde med databasen. Venligst prøv igjen senere."
+        },
+        "refreshBtn": "Last inn på nytt"
+    },
+    "ShowSandbox": {
+        "title": "Gå til sandkassen",
+        "text": [
+            "Tren med de ulike spørsmåltypene.",
+            "Lær deg funksjone til graftegneren og de ulike kontrollene."
+        ],
+        "goBtn": "Åpne"
+    },
+    "AdminQuestionResultScreen": {
+        "leaveSessionBodyAdmin": "Du prøver nå å avslutte økten før den er ferdig. Alle svarene til studentene er lagret frem til nå. Ønsker du fremdeles å avslutte økten?",
+        "endSessionBtn": "Avslutt økten",
+        "nextBtn": "Neste spørsmål",
+        "userStatHeadline": "Bruker statistikk",
+        "users": "Brukere:",
+        "correctAnswers": "Riktige svar:",
+        "didntKnow": "Vet ikke:",
+        "wrong": "Feil svar:"
+    },
+    "AdminWaitingRoom": {
+        "code": "Kode:",
+        "usersConnected": "Antall brukere som er koblet til:",
+        "waitingtext": "Venter på at brukere skal koble seg til",
+        "start": "Start"
+    },
+    "AdminSessionOver": {
+        "header": "Økten er nå over!",
+        "goBackBtn": "Gå tilbake til skrivebordet"
+    },
+    "AdminSessionOverview": {
+        "startBtn": "Start"
+    },
+    "GraphDrawer": {
+        "editNodePrompt": "Skriv ny verdi:",
+        "Graph0": {
+            "buttons": {
+                "Add": "Legg til",
+                "Remove": "Slett",
+                "Move": "Flytt",
+                "Join": "Koble",
+                "Edit": "Endre",
+                "Tree": "Tre",
+                "Mark": "Marker"
+            }
+        },
+        "Dijkstra": {
+            "undo": "Angre",
+            "redo": "Gjenta"
+        },
+        "Python": {
+            "buttons": {
+                "Join": "Koble",
+                "Remove": "Slett",
+                "Move": "Flytt",
+                "Add_Variable": "Legg til variabel",
+                "Add_Object": "Legg til objekt"
+            },
+            "propertyLinkPrompt": "Hvilken egenskap vil du koble med?",
+            "variableNamePrompt": "Skriv variabelnavnet:",
+            "objectTypePrompt": "Velg objekt type:",
+            "objectValuePrompt": "Skriv objekt verdien",
+            "undefinedFieldValue": "ikke definert"
+        },
+        "Sort": {
+            "buttons": {
+                "editValue": "Endre verdi",
+                "setPivot": "Bestem pivot",
+                "delete": "Slett",
+                "moveArray": "Flytt array",
+                "extractArray": "Trekk ut array",
+                "joinToArray": "Koble til array"
+            }
+        }
     }
 }

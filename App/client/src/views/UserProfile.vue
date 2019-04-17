@@ -1,11 +1,16 @@
 <template>
-	<b-container>
-		<b-row align-h="center" class="mt-3">
-			<b-col cols="12" lg="5">
+	<b-container class="pt-3">
+		<b-row align-h="center" v-if="!showSession">
+			<b-col	cols="12" lg="5">
 				<UserInfo/>
 			</b-col>
-			<b-col cols="12" lg="5" offset-lg="1">
+			<b-col	cols="12" lg="5" offset-lg="1">
 				<UserStats/>
+			</b-col>
+		</b-row>
+		<b-row align-h="center" v-if="showSession">
+			<b-col cols="12">
+				<Session :sessionInformation="sessionInformation" @showUserStats="showUserStats"/>
 			</b-col>
 		</b-row>
 	</b-container>
@@ -14,15 +19,35 @@
 <script>
 import UserInfo from "../components/client/userProfile/UserInfo.vue";
 import UserStats from "../components/client/userProfile/UserStats.vue";
+import Session from "../components/client/userProfile/Session.vue";
 
 export default {
 	name: "userProfile",
+	data() {
+		return {
+			showSession: false,
+			sessionInformation: {}
+		};
+	},
 	created() {
 		this.$socket.emit("verifyUserLevel", 2);
 	},
+	sockets: {
+		getSessionInformationResponse(data) {
+			this.sessionInformation = data;
+			this.showSession = true;
+		}
+	},
+	methods: {
+		showUserStats() {
+			this.sessionInformation = {};
+			this.showSession = false;
+		}
+	},
 	components: {
 		UserInfo,
-		UserStats
+		UserStats,
+		Session
 	}
 };
 </script>

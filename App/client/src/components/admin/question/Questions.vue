@@ -1,58 +1,106 @@
 <template>
 	<b-container class="jumbotron vertical-center" style="margin-top: 2rem;">
-		<b-row>
-			<b-col cols="2"></b-col>
-			<b-col cols="2" class="text-center">
+		<EditQuestion 	v-if="renderEditQuestion"
+						elementId="editQuestionModal"
+						elementRef="innerModalEditAdd"
+						ref="editQuestionModal"
+						:okHandler="okHandler"
+						:question="question"
+						/>
+		<ShowQuestion 	v-if="renderShowQuestion"
+						elementRef="innerModalShow"
+						ref="showQuestionModal"
+						/>
+		<AddQuestionToSession 	v-if="renderAddQuestionToSession"
+								elementRef="innerModalAddToSession"
+								ref="addQuestionToSessionModal"
+								/>
+		<b-row class="mb-2">
+			<b-col cols="1"></b-col>
+			<b-col cols="3" class="text-center">
 				<SelectCourse :changeHandler="courseChanged"/>
 			</b-col>
-			<b-col cols="5" class="text-center mb-5 px-0">
+			<b-col cols="4" class="text-center">
 				<b-form-input	v-model="questionSearchText" 
 								type="text" 
 								:placeholder="getLocale.searchQuestion">
 				</b-form-input>
 			</b-col>
-			<b-col cols="1" class="text-center mb-5 pl-0">
-				<b-button v-b-modal.newQuestionModal variant="primary">
-					<span style="visibility: hidden;">+</span>
-					+
-					<span style="visibility: hidden;">+</span>
+			<b-col cols="1" class="text-center">
+				<b-button @click="showAddQuestionModal" variant="primary" id="addQuestionBtn" data-cy="addQuestionButton">
+					<h6>+</h6>
 				</b-button>
-				<EditQuestion elementId="newQuestionModal" :okHandler="addNewQuestionHandler"></EditQuestion>
 			</b-col>
-			<b-col cols="2"></b-col>
+			<b-col cols="2" class="text-center">
+				<b-button @click="selectChange" variant="primary" id="selectBtn">
+					<h6 v-if="selectPressed">{{ getLocale.closeBtn }}</h6>
+					<h6 v-else>{{ getLocale.selectBtn }}</h6>
+				</b-button>
+			</b-col>
+			<b-col cols="1"></b-col>
+		</b-row>
+		<b-row v-if="selectPressed" class="mb-3">
+			<b-col></b-col>
+			<b-col style="text-align: center;">
+				<b-button @click="openCopyQuestion" variant="success">
+					{{ getLocale.copySelectedBtn }}
+				</b-button>
+				<CopyQuestions ref="copyQuestionModal" :selectedQuestions="getSelectedQuestions"/>
+			</b-col>
+			<b-col></b-col>
+			<b-col style="text-align: center;">
+				<b-button @click="openDeleteQuestion" variant="danger">
+					{{ getLocale.deleteSelectedBtn }}
+				</b-button>
+				<DeleteQuestions ref="deleteQuestionModal" :selectedQuestions="getSelectedQuestions"/>
+			</b-col>
+			<b-col></b-col>
+		</b-row>
+		<b-row v-if="showError" style="text-align: center;">
+			<b-col></b-col>
+			<b-col cols="10">
+				<b-alert	:show="showError"
+							@dismissed="showError = false"
+							variant="danger"
+							dismissible>
+					<p>{{ getLocale[errorText] }}</p>
+				</b-alert>
+			</b-col>
+			<b-col></b-col>
 		</b-row>
 		<b-row>
-			<b-col cols="0" lg="2"></b-col>
-			<b-col cols="12" lg="8">
+			<b-col cols="0" lg="1"></b-col>
+			<b-col cols="12" lg="10">
 				<b-list-group style="min-height: 300px; max-height: 300px; overflow-y:scroll;">
-					<EditQuestion elementRef="innerModal" ref="editQuestionModal" :okHandler="editQuestionHandler"></EditQuestion>
-					<ShowQuestion elementRef="innerModal" ref="showQuestionModal"></ShowQuestion>
-					<AddQuestionToSession elementRef="innerModal" ref="addQuestionToSessionModal"></AddQuestionToSession>
-
-                    <b-list-group-item class="border-0" :key="item.id" v-for="item in currentQuestions">
-						<b-container>
-							<b-row>
-								<b-col cols="8">
-									{{item.text}}
-								</b-col>
-								<b-col cols="1">
-									<b-button @click="showShowQuestionModal(item)" >V</b-button>
-								</b-col>
-								<b-col cols="1">
-									<b-button @click="showEditQuestionModal(item)" >E</b-button>
-								</b-col>	
-								<b-col cols="2">
-									<b-button @click="showAddQuestionToSessionModal(item)">{{getLocale.addToSession}}</b-button>
-								</b-col>
-							</b-row>
-						</b-container>
-					</b-list-group-item>
+					<b-form-checkbox-group v-model="selectedQuestions">
+						<b-list-group-item class="border-0" :key="item.id" v-for="item in currentQuestions">
+							<b-container>
+								<b-row>
+									<b-col cols="1" v-if="selectPressed">
+										<b-form-checkbox :value="item.id"/>
+									</b-col>
+									<b-col :cols="selectPressed ? 7 : 8">
+										{{item.text}}
+									</b-col>
+									<b-col cols="1">
+										<b-button @click="showShowQuestionModal(item)" >V</b-button>
+									</b-col>
+									<b-col cols="1">
+										<b-button @click="showEditQuestionModal(item)" >E</b-button>
+									</b-col>	
+									<b-col cols="2">
+										<b-button @click="showAddQuestionToSessionModal(item)">{{getLocale.addToSession}}</b-button>
+									</b-col>
+								</b-row>
+							</b-container>
+						</b-list-group-item>
+					</b-form-checkbox-group>
 					<b-list-group-item class="border-0" v-show="showNoQuestions">
 						{{ getLocale.emptyQuestionList }}
 					</b-list-group-item>
-                </b-list-group>
+								</b-list-group>
 			</b-col>
-			<b-col cols="0" lg="2"></b-col>
+			<b-col cols="0" lg="1"></b-col>
 		</b-row>
 	</b-container>
 </template>
@@ -62,23 +110,51 @@
 	import ShowQuestion from "./ShowQuestion.vue";
 	import AddQuestionToSession from "./AddQuestionToSession.vue";
 	import SelectCourse from "../SelectCourse.vue";
+	import CopyQuestions from "./CopyQuestions.vue";
+	import DeleteQuestions from "./DeleteQuestions.vue";
 
 	export default {
 		name: 'Questions',
 		data() {
 			return {
 				questionSearchText: "",
-				questionList: []
+				questionList: [],
+				okHandler: "add",
+				question: undefined,
+				showError: false,
+				errorText: "",
+				selectPressed: false,
+				action: "edit",
+				selectedQuestions: [],
+				renderEditQuestion: false,
+				renderShowQuestion: false,
+				renderAddQuestionToSession: false
 			}
 		},
 		components: {
 			EditQuestion,
 			ShowQuestion,
 			AddQuestionToSession,
-			SelectCourse
+			SelectCourse,
+			CopyQuestions,
+			DeleteQuestions
 		},
-		created() {
-			this.$socket.emit("getAllQuestionsWithinCourse", this.$store.getters.getSelectedCourse.split(" ")[0]);
+		mounted() {
+			this.$socket.emit(
+				"getAllQuestionsWithinCourse", 
+				this.$store.getters.getSelectedCourse
+			);
+
+			this.$root.$on('bv::modal::hidden', (bvEvent, modalId) => {
+				let id = bvEvent.target.id;
+
+				if (id.includes("edit")){ 
+					this.renderEditQuestion = false;
+					this.requestNewQuestions();
+				}
+				else if (id.includes("show")) this.renderShowQuestion = false;
+				else if (id.includes("session")) this.renderAddQuestionToSession = false;
+			});
 		},
 		computed: {
 			currentQuestions: function() {
@@ -96,51 +172,149 @@
 			showNoQuestions: function() {
 				return this.currentQuestions.length == 0;
 			},
-			getLocale() {
+			getLocale: function() {
 				let locale = this.$store.getters.getLocale("AdminQuestions");
-                if(locale) return locale;
-			    else return {};
+								if(locale) return locale;
+					else return {};
+			},
+			getSelectedQuestions: function() {
+				let list = [];
+				for (let i = 0; i < this.selectedQuestions.length; i++) {
+					let selectedId = this.selectedQuestions[i];
+					let index = this.questionList.findIndex(question => question.id === selectedId);
+					if (index === -1) continue;
+					let question = this.questionList[index];
+					list.push({
+						id: question.id,
+						text: question.text
+					});
+				}
+				return list;
 			}
 		},
 		sockets: {
 			sendAllQuestionsWithinCourse: function(questions) {
 				this.questionList = questions;
+			},
+			questionChangeComplete: function() {
+				this.requestNewQuestions();
+			},
+			questionInfoByIdResponse: function(question) {
+				switch (this.action) {
+					case "edit":
+						this.okHandler = "edit";
+						if (question.time === -1) question.time = 0;
+						this.question = question;
+
+						// Database, server and client object properties
+						// doesn't have the same name because we are stupid.
+						this.question.objects = this.question.object;
+						this.question.solutionType = this.question.type;
+
+						this.renderEditQuestion = true;
+						this.$nextTick(function() {
+							this.$refs.editQuestionModal.$refs.innerModalEditAdd.show();
+						});
+						break; 
+					case "show":
+						if (question.time === -1) question.time = 0;
+						this.renderShowQuestion = true;
+						
+						question.solutionType = question.type;
+						question.objects = question.object;
+
+						this.$nextTick(function() {
+							this.$refs.showQuestionModal._data.question = JSON.parse(JSON.stringify(question));
+							// Set the solution type to 0 to destroy all the GraphDrawer components.
+							this.$refs.showQuestionModal._data.question.solutionType = 0;
+							// Wait for the page to render.
+							this.$nextTick(function() {
+								// Set the correct solution type.
+								this.$refs.showQuestionModal._data.question.solutionType = question.solutionType;
+								// Wait for the page to render.
+								this.$nextTick(function() {
+									// Finally show modal.
+									this.$refs.showQuestionModal.$refs.innerModalShow.show();
+								});
+							});
+						});
+						break;
+				}
+			},
+			questionInfoByIdError: function(error) {
+				this.errorText = error;
+				this.showError = true;
 			}
 		},
 		methods: {
+			requestNewQuestions: function() {
+				this.$socket.emit("getAllQuestionsWithinCourse",
+					this.$store.getters.getSelectedCourse);
+			},
 			courseChanged: function(newCourse) {
-				let c = newCourse.split(" ");
-				this.$socket.emit("getAllQuestionsWithinCourse", c[0]);
+				this.$socket.emit("getAllQuestionsWithinCourse", newCourse);
+				this.selectedQuestions = [];
+				this.selectPressed = false;
 			},
 			showEditQuestionModal: function(item) {
-				if (item.time === -1) item.time = 0;
-				this.$refs.editQuestionModal._data.newQuestion = item;
-				this.$refs.editQuestionModal.$refs.innerModal.show();
+				this.action = "edit";
+				this.$socket.emit("questionInfoByIdRequest", item.id);
+			},
+			showAddQuestionModal: function() {
+				let courseId = this.$store.getters.getSelectedCourse;
+				if (courseId === undefined || courseId === "") {
+					this.errorText = "courseMissing";
+					this.showError = true;
+					return;
+				}
+				this.okHandler = "add";
+				this.question = undefined;
+				this.renderEditQuestion = true;
+				this.$nextTick(function() {
+					this.$refs.editQuestionModal.$refs.innerModalEditAdd.show();
+				});
 			},
 			showShowQuestionModal: function(item) {
-				if (item.time === -1) item.time = 0;
-				this.$refs.showQuestionModal._data.question = item;
-				this.$refs.showQuestionModal.$refs.innerModal.show();
+				this.action = "show";
+				this.$socket.emit("questionInfoByIdRequest", item.id);
 			},
 			showAddQuestionToSessionModal: function(item) {
-				this.$refs.addQuestionToSessionModal._data.question.id = item.id;
-				this.$refs.addQuestionToSessionModal._data.question.text = item.text;
-				this.$refs.addQuestionToSessionModal.$refs.innerModal.show();
+				this.renderAddQuestionToSession = true;
+				this.$nextTick(function() {
+					this.$refs.addQuestionToSessionModal.$refs.innerModalAddToSession.show();
+					this.$refs.addQuestionToSessionModal._data.question.id = item.id;
+					this.$refs.addQuestionToSessionModal._data.question.text = item.text;
+				});
 			},
-			addNewQuestionHandler: function(newQuestion) {
-				if (newQuestion.time === 0) newQuestion.time = -1;
-				this.$socket.emit("addNewQuestion", Object.assign({}, newQuestion, {courseCode: this.$store.getters.getSelectedCourse.split(" ")[0]}));
-				this.$socket.emit("getAllQuestionsWithinCourse", this.$store.getters.getSelectedCourse.split(" ")[0]);
+			selectChange: function() {
+				this.selectedQuestions = [];
+				this.selectPressed = !this.selectPressed;
 			},
-			editQuestionHandler: function(updatedQuestion) {
-				if (updatedQuestion.time === 0) updatedQuestion.time = -1;
-				this.$socket.emit("updateQuestion", updatedQuestion);
-				this.$socket.emit("getAllQuestionsWithinCourse", this.$store.getters.getSelectedCourse.split(" ")[0]);
-
+			openCopyQuestion: function() {
+				if (this.selectedQuestions.length > 0) {
+					this.$refs.copyQuestionModal.$refs.copyQuestionInnerModal.show();
+				} else {
+					this.errorText = "noQuestionsSelectedError";
+					this.showError = true;
+				}
+			},
+			openDeleteQuestion: function() {
+				if (this.selectedQuestions.length > 0) {
+					this.$refs.deleteQuestionModal.$refs.deleteQuestionInnerModal.show();
+				} else {
+					this.errorText = "noQuestionsSelectedError";
+					this.showError = true;
+				}
 			}
 		}
 	}
 </script>
 
 <style scoped>
+#addQuestionBtn, #selectBtn {
+	width: 70%;
+	text-align: center;
+	height: 100%;
+	line-height: 100%;
+}
 </style>
