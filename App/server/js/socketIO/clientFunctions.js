@@ -71,8 +71,6 @@ module.exports.client = function(socket, db, user, sessions, currentClientSessio
 						} else {
 							let question = session.questionList[session.currentQuestion];
 
-							console.log(question);
-
 							if (question.resultScreen) {
 								socket.emit("answerResponse", "waitingForAdmin");
 								return;
@@ -195,7 +193,6 @@ module.exports.client = function(socket, db, user, sessions, currentClientSessio
 					}
 	
 					socket.emit("nextQuestion", safeQuestion);
-					console.log("sent")
 				}
 	
 				adminSocket.emit("updateParticipantCount", session.currentUsers);
