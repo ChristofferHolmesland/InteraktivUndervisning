@@ -123,7 +123,6 @@ app.get('/login/callback/feide', passport.authenticate('passport-openid-connect'
 				dbFunctions.update.feideSessionId(db, idNumber, sessionId);
 			}
 			users.set(sessionId, tempUser);
-			console.log(users);
 
 			// Stores a new cooikie with a random generated userid
 			let cookieOptions = {

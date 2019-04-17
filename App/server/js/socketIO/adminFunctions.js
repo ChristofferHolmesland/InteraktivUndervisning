@@ -141,7 +141,6 @@ module.exports.admin = function(socket, db, user) {
 	});
 
 	socket.on("addNewCourseCodeRequest", async function(newCourseCode) {
-		console.log("test")
 		let pattern = new RegExp("^[A-Z]{3}[0-9]{3}$");
 		if (newCourseCode === "" || newCourseCode === undefined) {
 			socket.emit("addNewCourseCodeError", "courseCodeMissing");

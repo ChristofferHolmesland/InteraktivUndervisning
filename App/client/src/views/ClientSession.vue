@@ -42,7 +42,6 @@ export default {
 			this.sessionState = 0;
 		},
 		verifySessionExistsError: function() {
-			console.log("test");
 			this.$router.push("/client");
 		}
 	},
