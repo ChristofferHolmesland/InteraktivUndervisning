@@ -5,12 +5,16 @@
 				<h1>{{ questionInfo.text }}</h1>
 			</b-col>
 		</b-row>
-		<b-row>
+		<b-row class="text-center">
+			<b-col></b-col>
 			<b-col cols="2" v-if="timeLeft > 0">
-				<p v-if="timeLeft !== undefined">Time Left: {{ getTimeUpdate }}</p>
+				<p v-if="timeLeft !== undefined" style="line-height: 100%">{{ getLocale.timeLeft }} {{ getTimeUpdate }}</p>
 			</b-col>
 			<b-col cols="2">
 				<p>{{ getNumberOfAnswers }}</p>
+			</b-col>
+			<b-col cols="2">
+				<p>{{ getLocale.sessionCode }} {{ sessionId }}</p>
 			</b-col>
 			<b-col cols="1">
 				<b-button @click="btnNextClick" variant="primary">Next</b-button>
@@ -39,7 +43,7 @@
 		<b-row v-if="getImagesLength > 0">
 			<b-col cols="12">
 				<b-row>
-					<b-col>   
+					<b-col class="text-center">   
 						<img    :src="getImgSrc" width="500" height="500"
 								style="border: 3px solid black;"
 								/>
@@ -63,7 +67,7 @@
 <script>
 export default {
 	name: "Question",
-	props: ["questionInfo"],
+	props: ["questionInfo", "sessionId"],
 	data() {
 		return {
 			interval: undefined,

@@ -37,7 +37,7 @@
 								<b-row v-if="getImagesLength > 0">
 									<b-col cols="12">
 										<b-row>
-											<b-col>
+											<b-col class="text-center">
 												<img    :src="getImgSrc" width="500" height="500"
 														style="border: 3px solid black;"
 												/>
