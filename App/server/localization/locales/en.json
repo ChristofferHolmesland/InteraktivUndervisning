@@ -211,7 +211,9 @@
         "bstavlNodesDesc": "Nodes: ",
         "pythonCodeDesc": "Code: ",
         "Add": "Add",
-        "Remove": "Remove"
+        "Remove": "Remove",
+        "timeLeft": "Time left:",
+        "sessionCode": "Session code:"
     },
     "DeleteUserInfo": {
         "deleteInfoList": [
