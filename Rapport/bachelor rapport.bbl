@@ -1,0 +1,86 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.0 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global}
+    \entry{VUE:DOC}{online}{}
+      \name{author}{1}{}{%
+        {{hash=c181205d8e6010f589e6c498afe0fe11}{%
+           family={You},
+           familyi={Y\bibinitperiod},
+           given={Evan},
+           giveni={E\bibinitperiod}}}%
+      }
+      \strng{namehash}{c181205d8e6010f589e6c498afe0fe11}
+      \strng{fullhash}{c181205d8e6010f589e6c498afe0fe11}
+      \strng{bibnamehash}{c181205d8e6010f589e6c498afe0fe11}
+      \strng{authorbibnamehash}{c181205d8e6010f589e6c498afe0fe11}
+      \strng{authornamehash}{c181205d8e6010f589e6c498afe0fe11}
+      \strng{authorfullhash}{c181205d8e6010f589e6c498afe0fe11}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{API}
+      \field{urlmonth}{5}
+      \field{urlyear}{2019}
+      \field{year}{2019}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://vuejs.org/v2/api
+      \endverb
+      \verb{url}
+      \verb https://vuejs.org/v2/api
+      \endverb
+    \endentry
+    \entry{CPython}{online}{}
+      \name{author}{1}{}{%
+        {{hash=dd5b7439ca8912ff0502985e0fa2397c}{%
+           family={Foundation},
+           familyi={F\bibinitperiod},
+           given={The\bibnamedelimb Python\bibnamedelima Software},
+           giveni={T\bibinitperiod\bibinitdelim P\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+      }
+      \strng{namehash}{dd5b7439ca8912ff0502985e0fa2397c}
+      \strng{fullhash}{dd5b7439ca8912ff0502985e0fa2397c}
+      \strng{bibnamehash}{dd5b7439ca8912ff0502985e0fa2397c}
+      \strng{authorbibnamehash}{dd5b7439ca8912ff0502985e0fa2397c}
+      \strng{authornamehash}{dd5b7439ca8912ff0502985e0fa2397c}
+      \strng{authorfullhash}{dd5b7439ca8912ff0502985e0fa2397c}
+      \field{sortinit}{2}
+      \field{sortinithash}{cbff857e587bcb4635511624d773949e}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{CPython}
+      \field{urlday}{17}
+      \field{urlmonth}{4}
+      \field{urlyear}{2019}
+      \field{year}{2019}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://github.com/python/cpython
+      \endverb
+      \verb{url}
+      \verb https://github.com/python/cpython
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
