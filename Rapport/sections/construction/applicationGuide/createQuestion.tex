@@ -3,13 +3,12 @@
 %Todo take a screenshot of all the components talked about in this part. Question.vue, EditQuestion.vue and ShowQuestion.vue.
 Everything in the application that is restricted to admin will only use the admin.vue component as the view file. In order to start creating questions you’ll have to load the Question.vue component onto the admin.vue view. You do this by clicking on the Questions tab on the dashboard, this will call a method in Admin.vue that will you use the vue router to update the path to /admin/question which will make the admin.vue load the needed Question.vue component. The Question.vue component consist of other components such as EditQuestion.vue, ShowQuestion.vue, SelectCourse.vue and AddQuestionToSession.vue. All components that is related to creating a question can be found in the App/client/components/admin/question folder. On the /admin/question page there will be a select form to the left, which is the selectCourse component. In this select form the user can choose between the available courses in the database. Keep in mind that a course must be chosen for the user to able to create new question. This is done so that a question will immediately be assigned to the given course, since every question should to be assigned to at least a single course before the question should allowed to be used in an active session.  If the user tries to create a question without there being a course in the database, an error message will be displayed instead.\\[11pt]
 The area with white background is where the current questions for the selected course will be listed. If there are no questions for the given course, then a message “no question” will be displayed instead. Whenever the Question component is loaded, the course is changed, a question is edited or created, a socket emit request is sent to the server. This emit message will ask server for all the current questions for the current selected course. The server then calls the appropriate select statement in the database and returns the result. The result is then used by the Question component to update the list of questions. In this way the list should be always up to date with the contents in the database. 
-\begin{figure}[h]
+\begin{figure}[H]
 	\centering
-	\includegraphics[width=\linewidth]{/createQuestion/questionvueEnglish.JPG}
+	\includegraphics[width=0.80\linewidth]{/createQuestion/questionvueEnglish}
 	\caption{The figure displays an image of the Question.vue. This is the component is primarly used for allowing users to create new questions for a selected course. It uses the vue path /admin/questions}
 	\label{fig:questionVue}
 \end{figure}
-\\[11pt]
 To create a new question all the user needs to do is to click on the button with the label “+”. This will show the EditQuestion component which contain a vue modal element that has all the needed forms needed for creating a question. There may be some confusion revolving the name of the EditQuestion component since it called edit when the component is used for adding new questions. EditQuestion is a component that is used for both adding new questions and editing existing questions. The main difference between the add and edit operation for the component is that title of the modal will be different, edit will have to load the data from the database and fill in the forms accordingly and finally the request sent to the server once the ok button is clicked. The server request is different primarily to distinguish between the insert and update command needed for the database. Originally there were 2 components used for the two operations, but this was later changed in development because having 2 components that were practically was deemed unnecessary. The modal is divided into 3 parts, namely Basic Information, Media and Solution type.  These parts can be opened and closed to the users preference, where basic information will be opened by default and the other parts will be closed. Though a user needs to fill inn at least the information in basic information and solution type in order for the wanted question to be valid. Basic Information part contains an input field for assigning the question title, a textbox for giving the question a description, a time input field and a time slider. The input for title, the textbox and the time slider are all using v model to mount to a variable in the data layer so that data in these fields are relatively easy to acquire and keep track of. The time input has a watcher that checks for changes to the variable that the time slider is mounted to. This means in that these elements always changing their value dependent on the other, resulting in them having the same value.\\[11pt]
 The media part is an optional part and does not need to be used in order for a question to be created. By clicking on the “Media” label the EditQuestion component will show … 
 Here the user can add images to the question.  By clicking on add image a file browser will be displayed for the user and allow them to choose an image on their computer and put it onto the question. Once the image is chosen, the EditQuestion component will take the image and then validate the image given, in order to be sure that the file taken was an actual image file. If the validation passes, then the image is turned into a buffer. When the question is going to be saved on the database, the question will also contain the file paths to the images given to the question. The buffer is then sent to the server and is turned back into an image and is stored in on the path stored in the database. Whenever a question is obtained from the database that has images, the server will collect the images will by using the routes stored with the question. When the image is going to be used on the client again the image will be transformed back into a buffer. A question cannot have to many images assigned to it, as this would take up a lot of the needed data.\\[11pt]
@@ -17,7 +16,7 @@ The solution type part focuses on setting the type of question the new question 
 \begin{figure}[H]
 	\centering
 	\begin{subfigure}{0.30\linewidth}
-		\includegraphics[width=\linewidth]{/createQuestion/editQuestionUnOpenedEnglish.JPG}
+		\includegraphics[width=\linewidth]{/createQuestion/editQuestionUnOpenedEnglish}
 		\caption{This figure displays an image of the editquestion component when all the 3 parts Basic Information, Media and Solution type are hidden. Click on the labels would reveal the content of chosen part.}
 		\label{fig:editquestionUnOpened}
 	\end{subfigure}
@@ -29,22 +28,22 @@ Next by clicking on the button labelled “V” the component ShowQuestion will 
 \begin{figure}[H]
 	\centering
 	\begin{subfigure}{0.80\linewidth}
-		\includegraphics[width=\linewidth]{/createQuestion/showQuestionEnglishUnOpened.JPG}
+		\includegraphics[width=\linewidth]{/createQuestion/showQuestionEnglishUnOpened}
 		\caption{}
 		\label{fig:showQuestionUnOpened}
 	\end{subfigure}
 	\begin{subfigure}{0.32\linewidth}
-		\includegraphics[width=\linewidth]{/createQuestion/showQuestionEnglishBasicOpened.JPG}
+		\includegraphics[width=\linewidth]{/createQuestion/showQuestionEnglishBasicOpened}
 		\caption{}
 		\label{fig:showQuestionBasicOpened}
 	\end{subfigure}
 	\begin{subfigure}{0.32\linewidth}
-		\includegraphics[width=\linewidth]{/createQuestion/showQuestionEnglishMediaOpened.JPG}
+		\includegraphics[width=\linewidth]{/createQuestion/showQuestionEnglishMediaOpened}
 		\caption{}
 		\label{fig:showQuestionMediaOpened}
 	\end{subfigure}
 	\begin{subfigure}{0.32\linewidth}
-		\includegraphics[width=\linewidth]{/createQuestion/showQuestionEnglishSolutionOpened.JPG}
+		\includegraphics[width=\linewidth]{/createQuestion/showQuestionEnglishSolutionOpened}
 		\caption{}
 		\label{fig:showQuestionSolutionOpened}
 	\end{subfigure}
