@@ -21,15 +21,29 @@ class Session {
 	}
 
 	addUser(user) {
-		this.userList.push(user);
-		this.currentUsers++;
-		if (this.currentQuestion > -1) this.questionList[this.currentQuestion].connectedUsers++;
+		if (
+			user.feide === undefined ||
+			this.userList.findIndex(
+				connectedUser => {
+					if (connectedUser.feide !== undefined) {
+						if (connectedUser.feide.idNumber === user.feide.idNumber) {
+							return true;
+						}
+					}
+					return false;
+				}
+			) === -1
+		) {
+			this.userList.push(user);
+			this.currentUsers++;
+			if (this.currentQuestion > -1) this.questionList[this.currentQuestion].connectedUsers++;
+		}
 	}
 
-	userLeaving(socket) {
+	userLeaving(id) {
 		let question = this.questionList[this.currentQuestion];
 
-		if (!question.socketsAnswered[socket]) {
+		if (!question.socketsAnswered[id]) {
 			this.currentUsers--;
 			question.connectedUsers--;
 		} else {

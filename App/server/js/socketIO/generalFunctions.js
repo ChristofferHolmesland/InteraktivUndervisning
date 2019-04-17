@@ -4,6 +4,7 @@ const User = (require("../user.js")).User;
 const anonymousNames = (require("../anonymousName.js")).Animals;
 const dbFunctions = require("../database/databaseFunctions").dbFunctions;
 var sessions = new Map();
+var currentClientSession = "";
 
 module.exports.listen = function(server, users, db) {
 	io = socketio.listen(server, {
@@ -21,7 +22,7 @@ module.exports.listen = function(server, users, db) {
 		let user = await User.getUser(db, users, socket);
 		
 		if(user != undefined){
-			if (user.userRights > 0) require("./clientFunctions.js").client(socket, db, user, sessions);
+			if (user.userRights > 0) require("./clientFunctions.js").client(socket, db, user, sessions, currentClientSession);
 			if (user.userRights === 1) require("./anonymousFunctions.js").anonymous(socket, db);
 			if (user.userRights > 1) require("./feideFunctions.js").feide(socket, db, user);
 			if (user.userRights > 2) require("./studentAssistantFunctions.js").studentAssistant(socket, db, user, sessions);
@@ -44,10 +45,71 @@ module.exports.listen = function(server, users, db) {
 								io.sockets.in(sessionCode).emit("answerResponse", "sessionFinished");
 								sessions.delete(sessionCode);
 							}
-						}).bind(this, tempSession.session.sessionCode, tempSession.adminSocket.id), 1000*10); // 5 min timeout
+						}).bind(this, tempSession.session.sessionCode, tempSession.adminSocket.id), 1000*60*5); // 5 min timeout
 					}
 				});
-			}            
+			}
+
+			if (currentClientSession !== "") {
+				if (!sessions.get(currentClientSession)) return;
+				let session = sessions.get(currentClientSession).session;
+				let question = session.questionList[session.currentQuestion];
+				let adminSocket = sessions.get(currentClientSession).adminSocket;
+
+				if (user.feide !== undefined) {
+					session.userLeaving(user.feide.idNumber);
+				} else {
+					session.userLeaving(socket.id);
+				}
+				
+				adminSocket.emit("updateParticipantCount", session.currentUsers);
+
+				if (session.currentQuestion > -1) {
+					let numAnswers = question.answerList.length;
+					let participants = question.connectedUsers;
+			
+					adminSocket.emit("updateNumberOfAnswers", numAnswers, participants);
+
+					if(numAnswers === participants) {
+						let answerList = [];
+						if (question.answerList) answerList = question.answerList;
+				
+						let filteredAnswerList = [];
+						let correctAnswer = 0;
+						let incorrectAnswer = 0;
+						let didntKnow = 0;
+						
+						for (let i = 0; i < answerList.length; i++) {
+							let answer = answerList[i];
+							let filteredAnswer = {};
+							if (answer.result === 0) {
+								filteredAnswer.answerObject = answer.answerObject;
+								filteredAnswerList.push(filteredAnswer)
+								incorrectAnswer++;
+							};
+							if (answer.result === -1) didntKnow++; 
+							if (answer.result === 0) correctAnswer++;
+						}
+				
+						let response = {
+							question: {
+								text: question.text,
+								description: question.description,
+								object: question.object,
+								type: question.type
+							},
+							solution: question.solution,
+							answerList: filteredAnswerList,
+							correctAnswer: correctAnswer,
+							incorrectAnswer: incorrectAnswer,
+							didntKnow: didntKnow,
+							users: answerList.length
+						};
+			
+						adminSocket.emit("goToQuestionResultScreen", response);
+					}
+				}
+			}
 
 			if (user) users.delete(user.sessionId);
 		});

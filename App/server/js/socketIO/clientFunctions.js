@@ -3,7 +3,7 @@ const dbFunctions = require("../database/databaseFunctions.js").dbFunctions;
 const solutionChecker = require("../SolutionChecker/solutionChecker.js").solutionChecker;
 const parser = require("../SolutionGenerator/python");
 
-module.exports.client = function(socket, db, user, sessions) {
+module.exports.client = function(socket, db, user, sessions, currentClientSession) {
 
 	socket.on("parsePythonCodeRequest", function(data) {
 		let questionObject = { solution: data.code };
@@ -30,6 +30,8 @@ module.exports.client = function(socket, db, user, sessions) {
 				return;
 			}
 		}
+
+		currentClientSession = sessionCode;
 
 		// If user is a feide user
 		if (user.feide !== undefined) {
@@ -68,6 +70,8 @@ module.exports.client = function(socket, db, user, sessions) {
 							return;
 						} else {
 							let question = session.questionList[session.currentQuestion];
+
+							console.log(question);
 
 							if (question.resultScreen) {
 								socket.emit("answerResponse", "waitingForAdmin");
@@ -109,6 +113,46 @@ module.exports.client = function(socket, db, user, sessions) {
 				socket.emit("verifySessionExistsError");
 				return
 			}
+		} else {
+			session = session.session;
+			if (session.currentQuestion > -1) {
+				let question = session.questionList[session.currentQuestion];
+
+				if (question.resultScreen) {
+					socket.emit("answerResponse", "waitingForAdmin");
+					return;
+				}
+				else {
+					let timeLeft = -1
+					if (question.time > 0) {       
+						timeLeft = question.time - ((Date.now() - question.timeStarted) / 1000)
+					}      
+	
+					let safeQuestion = {
+						"text": question.text,
+						"description": question.description,
+						"object": question.object,
+						"type": question.type,
+						"time": timeLeft,
+						"participants": session.currentUsers
+					}
+	
+					socket.emit("nextQuestion", safeQuestion);
+
+					let adminSocket = sessions.get(sessionCode).adminSocket;
+		
+					adminSocket.emit("updateParticipantCount", session.currentUsers);
+	
+					let numAnswers = question.answerList.length;
+					let participants = question.connectedUsers;
+			
+					adminSocket.emit("updateNumberOfAnswers", numAnswers, participants);
+
+					return;
+				}
+			} else {
+
+			}
 		}
 	});
 
@@ -133,7 +177,6 @@ module.exports.client = function(socket, db, user, sessions) {
 				socket.join(sessionCode);
 	
 				socket.emit("joinSession", sessionCode);
-				
 				if (session.currentQuestion > -1) {
 					let question = session.questionList[session.currentQuestion];
 
@@ -144,7 +187,7 @@ module.exports.client = function(socket, db, user, sessions) {
 	
 					let safeQuestion = {
 						"text": question.text,
-						"description": question.description,
+						"description":	 question.description,
 						"object": question.object,
 						"type": question.type,
 						"time": timeLeft,
@@ -152,6 +195,7 @@ module.exports.client = function(socket, db, user, sessions) {
 					}
 	
 					socket.emit("nextQuestion", safeQuestion);
+					console.log("sent")
 				}
 	
 				adminSocket.emit("updateParticipantCount", session.currentUsers);
@@ -170,13 +214,17 @@ module.exports.client = function(socket, db, user, sessions) {
 		}
 	});
 
-	socket.on("leaveSession",function (sessionCode) {
+	socket.on("leaveSession", async function (sessionCode) {
 		if (!sessions.get(sessionCode)) return;
 		let session = sessions.get(sessionCode).session;
 		let question = session.questionList[session.currentQuestion];
 		let adminSocket = sessions.get(sessionCode).adminSocket;
 
-		session.userLeaving(socket.id);
+		if (user.feide !== undefined) {
+			session.userLeaving(user.feide.idNumber);
+		} else {
+			session.userLeaving(socket.id);
+		}
 		socket.leave(sessionCode);
 
 		adminSocket.emit("updateParticipantCount", session.currentUsers);
@@ -226,6 +274,8 @@ module.exports.client = function(socket, db, user, sessions) {
 				adminSocket.emit("goToQuestionResultScreen", response);
 			}
 		}
+
+		currentClientSession = "";
 	});
 
 	socket.on("questionAnswered", async function (answerObject, sessionCode) {
@@ -269,7 +319,11 @@ module.exports.client = function(socket, db, user, sessions) {
 		
 		await insertAnswerToDatabase(information);
 
-		question.socketsAnswered[socket.id] = true;
+		if (user.feide) {
+			question.socketsAnswered[user.feide.idNumber] = true;
+		} else {
+			question.socketsAnswered[socket.id] = true;
+		}
 	});
 
 	/*

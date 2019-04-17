@@ -3,10 +3,19 @@
 		<b-row>
 			<b-col>
 				<h1>{{ questionInfo.text }}</h1>
-				<p class="displayInline" v-if="timeLeft !== undefined">Time Left{{ getTimeUpdate }}</p>
-				<p class="displayInline">{{ getNumberOfAnswers }}</p>
-				<b-button @click="btnNextClick">Next</b-button>
 			</b-col>
+		</b-row>
+		<b-row>
+			<b-col cols="2" v-if="timeLeft > 0">
+				<p v-if="timeLeft !== undefined">Time Left: {{ getTimeUpdate }}</p>
+			</b-col>
+			<b-col cols="2">
+				<p>{{ getNumberOfAnswers }}</p>
+			</b-col>
+			<b-col cols="1">
+				<b-button @click="btnNextClick" variant="primary">Next</b-button>
+			</b-col>
+			<b-col></b-col>
 		</b-row>
 		<b-row>
 			<b-col>
