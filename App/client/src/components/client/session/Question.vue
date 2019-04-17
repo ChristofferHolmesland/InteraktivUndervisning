@@ -11,8 +11,8 @@
 										<h4>{{getLocale.showQuestionType}} {{getQuestionTypeName}}</h4>
 									</b-col>
 								</b-row>
-								<p v-if="getQuestionInfo.description !== undefined">
-									{{ getQuestionInfo.description }}
+								<p v-for="(line, index) in getDescription" :key="index">
+									{{ line }}
 								</p>
 								<div class="displayInline" v-for="(info,index) in getExtraDesc" :key="index">
 									<pre v-if="info.code">{{info.value}}</pre>
@@ -180,6 +180,9 @@ export default {
 		}
 	},
 	computed: {
+		getDescription: function() {
+			return this.getQuestionInfo.description.split("\n");
+		},
 		updateTimer() {
 			let min = Math.floor(this.timeLeft / 60).toString();
 			let sec = Math.floor(this.timeLeft % 60).toString();

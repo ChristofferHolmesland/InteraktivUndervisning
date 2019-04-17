@@ -18,7 +18,11 @@
 								</b-row>
 								<b-row>
 									<b-col>
-										<p>{{ resultInfo.question.description }}</p>
+										<p 	v-for="(line, index) in getDescription"
+											:key="index"
+											>
+											{{ line }}
+										</p>
 									</b-col>
 								</b-row>
 								<b-row>
@@ -179,6 +183,9 @@ export default {
 		};
 	},
 	computed: {
+        getDescription: function() {
+            return this.resultInfo.question.description.split("\n");
+        },
 		getLocale() {
 			let locale = this.$store.getters.getLocale("DisplayQuestion");
 			if (locale) return locale;
