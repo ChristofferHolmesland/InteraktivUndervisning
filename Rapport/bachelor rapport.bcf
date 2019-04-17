@@ -91,11 +91,7 @@
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>maxbibnames</bcf:key>
-<<<<<<< HEAD
       <bcf:value>999</bcf:value>
-=======
-      <bcf:value>3</bcf:value>
->>>>>>> rapport
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>maxcitenames</bcf:key>
@@ -103,11 +99,7 @@
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>maxsortnames</bcf:key>
-<<<<<<< HEAD
       <bcf:value>999</bcf:value>
-=======
-      <bcf:value>3</bcf:value>
->>>>>>> rapport
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>maxitems</bcf:key>
@@ -119,7 +111,6 @@
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>minbibnames</bcf:key>
-<<<<<<< HEAD
       <bcf:value>3</bcf:value>
     </bcf:option>
     <bcf:option type="singlevalued">
@@ -129,17 +120,6 @@
     <bcf:option type="singlevalued">
       <bcf:key>minsortnames</bcf:key>
       <bcf:value>3</bcf:value>
-=======
-      <bcf:value>1</bcf:value>
-    </bcf:option>
-    <bcf:option type="singlevalued">
-      <bcf:key>mincitenames</bcf:key>
-      <bcf:value>1</bcf:value>
-    </bcf:option>
-    <bcf:option type="singlevalued">
-      <bcf:key>minsortnames</bcf:key>
-      <bcf:value>1</bcf:value>
->>>>>>> rapport
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>minitems</bcf:key>
@@ -159,11 +139,7 @@
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>sortingtemplatename</bcf:key>
-<<<<<<< HEAD
       <bcf:value>none</bcf:value>
-=======
-      <bcf:value>nty</bcf:value>
->>>>>>> rapport
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>sortsets</bcf:key>
@@ -2022,51 +1998,16 @@
   <bcf:section number="0">
   </bcf:section>
   <!-- SORTING TEMPLATES -->
-<<<<<<< HEAD
   <bcf:sortingtemplate name="none">
     <bcf:sort order="1">
       <bcf:sortitem order="1">citeorder</bcf:sortitem>
-=======
-  <bcf:sortingtemplate name="nty">
-    <bcf:sort order="1">
-      <bcf:sortitem order="1">presort</bcf:sortitem>
-    </bcf:sort>
-    <bcf:sort order="2" final="1">
-      <bcf:sortitem order="1">sortkey</bcf:sortitem>
-    </bcf:sort>
-    <bcf:sort order="3">
-      <bcf:sortitem order="1">sortname</bcf:sortitem>
-      <bcf:sortitem order="2">author</bcf:sortitem>
-      <bcf:sortitem order="3">editor</bcf:sortitem>
-      <bcf:sortitem order="4">translator</bcf:sortitem>
-      <bcf:sortitem order="5">sorttitle</bcf:sortitem>
-      <bcf:sortitem order="6">title</bcf:sortitem>
-    </bcf:sort>
-    <bcf:sort order="4">
-      <bcf:sortitem order="1">sorttitle</bcf:sortitem>
-      <bcf:sortitem order="2">title</bcf:sortitem>
-    </bcf:sort>
-    <bcf:sort order="5">
-      <bcf:sortitem order="1">sortyear</bcf:sortitem>
-      <bcf:sortitem order="2">year</bcf:sortitem>
-    </bcf:sort>
-    <bcf:sort order="6">
-      <bcf:sortitem order="1">volume</bcf:sortitem>
-      <bcf:sortitem order="2">0</bcf:sortitem>
->>>>>>> rapport
     </bcf:sort>
   </bcf:sortingtemplate>
   <!-- DATALISTS -->
   <bcf:datalist section="0"
-<<<<<<< HEAD
                 name="none/global//global/global"
                 type="entry"
                 sortingtemplatename="none"
-=======
-                name="nty/global//global/global"
-                type="entry"
-                sortingtemplatename="nty"
->>>>>>> rapport
                 sortingnamekeytemplatename="global"
                 labelprefix=""
                 uniquenametemplatename="global"
