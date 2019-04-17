@@ -24,8 +24,17 @@
             </b-form-group>
             {{ getLocale.selectedQuestions }}
             <b-form-group style="overflow-y: scroll; max-height: 200px;">
-                <b-list-group-item class="border-0" :key="item.value" v-for="item in getCurrentQuestions">
-                    {{ item.text }}
+                <b-list-group-item class="border-0" :key="item.value" v-for="(item, index) in getCurrentQuestions">
+                    <b-container class="px-0">
+                        <b-row>
+                            <b-col cols="8">
+                                {{ item.text }}
+                            </b-col>
+                            <b-col cols="4" class="align-right">
+                                <b-button @click="removeQuestion(index)" variant="danger">{{ getLocale.removeBtn }}</b-button>
+                            </b-col>
+                        </b-row>
+                    </b-container>
                 </b-list-group-item>
             </b-form-group>
         </b-form>
@@ -72,6 +81,9 @@
                         text: selectedQuestionText
                     });
                 }
+            },
+            removeQuestion: function(index) {
+                this.newSession.questions.splice(index, 1);
             }
         },
         computed: {
