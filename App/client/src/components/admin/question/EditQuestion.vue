@@ -33,8 +33,8 @@
                         </label>
                     </b-col>
                     <b-col cols="2" style="text-align: right;">
-                        <p v-if="showBasicInfo">^</p>
-                        <p v-else>V</p>
+                        <p v-if="showBasicInfo"><i class="fas fa-angle-up"></i></p>
+                        <p v-else><i class="fas fa-angle-down"></i></p>
                     </b-col>
                 </b-row>
             </b-container>
@@ -100,8 +100,8 @@
 							</label>
 						</b-col>
 						<b-col cols="2" style="text-align: right;">
-							<p v-if="showMedia">^</p>
-							<p v-else>V</p>
+							<p v-if="showMedia"><i class="fas fa-angle-up"></i></p>
+							<p v-else><i class="fas fa-angle-down"></i></p>
 						</b-col>
 					</b-row>
 				</b-container>
@@ -198,8 +198,8 @@
                             </label>
                         </b-col>
                         <b-col cols="2" style="text-align: right;">
-                            <p v-if="showSolution">^</p>
-                            <p v-else>V</p>
+                            <p v-if="showSolution"><i class="fas fa-angle-up"></i></p>
+                            <p v-else><i class="fas fa-angle-down"></i></p>
                         </b-col>
                     </b-row>
                 </b-container>
