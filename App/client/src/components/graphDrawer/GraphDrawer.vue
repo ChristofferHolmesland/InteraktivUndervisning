@@ -67,6 +67,11 @@
         },
         methods: {
             destroyDrawer: function() {
+                // Stop the update loop
+                if (this.graphDrawer !== undefined) {
+                    clearInterval(this.graphDrawer.intervalId);
+                }
+
                 // Recreate the canvas to remove the event listeners
                 let el = document.getElementById("canvas");
                 let elClone = el.cloneNode(true);

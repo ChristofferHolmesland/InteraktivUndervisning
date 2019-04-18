@@ -1,5 +1,10 @@
 <template>
 	<b-container class="jumbotron vertical-center" style="margin-top: 2rem;">
+		<!-- 
+			The "elementId" property should match the "ref" attribute.
+			This is used by the GraphDrawer to detect when a modal is closed, so the
+			GraphDrawer object can be destroyed.
+		 -->
 		<EditQuestion 	v-if="renderEditQuestion"
 						elementId="editQuestionModal"
 						elementRef="innerModalEditAdd"
@@ -8,10 +13,12 @@
 						:question="question"
 						/>
 		<ShowQuestion 	v-if="renderShowQuestion"
+						elementId="showQuestionModal"
 						elementRef="innerModalShow"
 						ref="showQuestionModal"
 						/>
 		<AddQuestionToSession 	v-if="renderAddQuestionToSession"
+								elementId="addQuestionToSessionModal"
 								elementRef="innerModalAddToSession"
 								ref="addQuestionToSessionModal"
 								/>
@@ -147,6 +154,8 @@
 
 			this.$root.$on('bv::modal::hidden', (bvEvent, modalId) => {
 				let id = bvEvent.target.id;
+				let drawer = this.$refs[id].$refs.graphdrawer;
+				if (drawer !== undefined) drawer.destroyDrawer();
 
 				if (id.includes("edit")){ 
 					this.renderEditQuestion = false;

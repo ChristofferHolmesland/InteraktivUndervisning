@@ -437,6 +437,10 @@
             },
             "Mergesort": {
                 "listLabel": "Initial list:"
+            },
+            "Python": {
+                "buttonLabel": "Parse code",
+                "textareaPlaceholder": "Write Python code here..."
             }
         },
         "textInputPlaceholder": "Test out the input field here"

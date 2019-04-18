@@ -186,10 +186,10 @@
 						<b-container class="jumbotron" v-if="questionType === 'Python'">
 							<b-row>
 								<b-col>
-										<b-button variant="primary" @click="parsePythonCode">Parse</b-button>
-										<b-form-textarea 	
+										<b-button variant="primary" @click="parsePythonCode">{{ getSettingObject.buttonLabel }}</b-button>
+										<b-form-textarea
 											id="pythonCodeInput"
-											placeholder="Write Python code here..."
+											:placeholder="getSettingObject.textareaPlaceholder"
 											ref="codeInput"
 											v-model="pythonCode"
 											@keydown.native.tab="keyDownInTextarea">

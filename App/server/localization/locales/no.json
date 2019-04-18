@@ -438,6 +438,10 @@
             },
             "Mergesort": {
                 "listLabel": "Initial list:"
+            },
+            "Python": {
+                "buttonLabel": "Tolk koden",
+                "textareaPlaceholder": "Skriv Python kode her..."
             }
         },
         "textInputPlaceholder": "Test out the input field here"
