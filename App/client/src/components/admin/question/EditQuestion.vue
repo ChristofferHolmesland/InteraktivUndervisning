@@ -1,7 +1,18 @@
 <template>
     <!-- Check watchers when fixing bugs!11!!1! -->
 	
-	<b-modal :id="elementId" :ref="elementRef" :no-close-on-backdrop="true" :title="getTitle" @ok="callOkHandler" style="text-align: left;" size="lg">
+	<b-modal 	:id="elementId"
+				:ref="elementRef"
+				:no-close-on-backdrop="true"
+				:title="getTitle"
+				@ok="callOkHandler"
+				style="text-align: left;"
+				size="lg"
+				cancel-variant="danger"
+				:hide-header-close="true"
+				:cancel-title="getLocale.cancelBtn"
+				:ok-title="getLocale.okBtn"
+				>
         <b-form>
             <b-alert    :show="validationFailure"
                         variant="danger"

@@ -8,6 +8,7 @@
                 size="lg"
                 :ok-only="true"
                 :ok-title="getLocale.closeBtn"
+			    :hide-header-close="true"
                 >
         <b-container class="px-0">
             <b-row @click="changeShowBasicInfo" class="cursor">
