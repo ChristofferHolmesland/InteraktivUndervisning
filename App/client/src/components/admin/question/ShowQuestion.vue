@@ -8,6 +8,7 @@
                 size="lg"
                 :ok-only="true"
                 :ok-title="getLocale.closeBtn"
+			    :hide-header-close="true"
                 >
         <b-container class="px-0">
             <b-row @click="changeShowBasicInfo" class="cursor">
@@ -15,7 +16,7 @@
                     <h4>{{ getLocale.basicInfo }}</h4>
                 </b-col>
                 <b-col cols="1">
-                    <p>{{ showBasicInfo ? '^' : 'V' }}</p>
+                    <p><i :class="showBasicInfo ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i></p>
                 </b-col>
             </b-row>
             <b-row v-if="showBasicInfo">
@@ -33,7 +34,7 @@
                     <h4>Media:</h4>
                 </b-col>
                 <b-col cols="1">
-                    <p>{{ showMedia ? '^' : 'V' }}</p>
+                    <p><i :class="showMedia ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i></p>
                 </b-col> 
             </b-row>
             <b-row v-if="question.objects.files.length > 0 && showMedia">
@@ -72,7 +73,7 @@
                     <h4>{{ getLocale.solutionText }}</h4>
                 </b-col>
                 <b-col cols="1">
-                    <p>{{ showSolution ? '^' : 'V' }}</p>
+                    <p><i :class="showSolution ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i></p>
                 </b-col> 
             </b-row>
             <b-row v-if="showSolution">

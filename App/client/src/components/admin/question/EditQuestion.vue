@@ -1,7 +1,18 @@
 <template>
     <!-- Check watchers when fixing bugs!11!!1! -->
 	
-	<b-modal :id="elementId" :ref="elementRef" :no-close-on-backdrop="true" :title="getTitle" @ok="callOkHandler" style="text-align: left;" size="lg">
+	<b-modal 	:id="elementId"
+				:ref="elementRef"
+				:no-close-on-backdrop="true"
+				:title="getTitle"
+				@ok="callOkHandler"
+				style="text-align: left;"
+				size="lg"
+				cancel-variant="danger"
+				:hide-header-close="true"
+				:cancel-title="getLocale.cancelBtn"
+				:ok-title="getLocale.okBtn"
+				>
         <b-form>
             <b-alert    :show="validationFailure"
                         variant="danger"
@@ -22,8 +33,8 @@
                         </label>
                     </b-col>
                     <b-col cols="2" style="text-align: right;">
-                        <p v-if="showBasicInfo">^</p>
-                        <p v-else>V</p>
+                        <p v-if="showBasicInfo"><i class="fas fa-angle-up"></i></p>
+                        <p v-else><i class="fas fa-angle-down"></i></p>
                     </b-col>
                 </b-row>
             </b-container>
@@ -89,8 +100,8 @@
 							</label>
 						</b-col>
 						<b-col cols="2" style="text-align: right;">
-							<p v-if="showMedia">^</p>
-							<p v-else>V</p>
+							<p v-if="showMedia"><i class="fas fa-angle-up"></i></p>
+							<p v-else><i class="fas fa-angle-down"></i></p>
 						</b-col>
 					</b-row>
 				</b-container>
@@ -187,8 +198,8 @@
                             </label>
                         </b-col>
                         <b-col cols="2" style="text-align: right;">
-                            <p v-if="showSolution">^</p>
-                            <p v-else>V</p>
+                            <p v-if="showSolution"><i class="fas fa-angle-up"></i></p>
+                            <p v-else><i class="fas fa-angle-down"></i></p>
                         </b-col>
                     </b-row>
                 </b-container>

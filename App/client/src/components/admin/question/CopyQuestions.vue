@@ -5,7 +5,10 @@
             style="text-align: left;"
             @ok="okHandler"
             :ok-title="getLocale.okBtn"
-            :cancel-title="getLocale.cancelBtn">
+            :cancel-title="getLocale.cancelBtn"
+            cancel-variant="danger"
+            :hide-header-close="true"
+            >
     <b-alert    :show="showError"
                 variant="danger"
                 dismissible

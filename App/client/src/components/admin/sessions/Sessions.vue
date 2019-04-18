@@ -11,7 +11,9 @@
 							<SelectCourse :changeHandler="courseChanged"/>
 						</b-col>
 						<b-col lg="2" class="pl-0">
-							<b-button @click="AddNewSession" variant="primary">+</b-button>
+							<b-button @click="AddNewSession" variant="primary">
+								<i class="fas fa-plus-square"></i>
+							</b-button>
 							<EditSession ref="newSessionModal" :okHandler="addNewSessionHandler" elementId="newSessionModal" elementRef="innerModal" v-if="showNewSession"/>
 						</b-col>
 					</b-row>

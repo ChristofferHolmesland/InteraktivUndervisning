@@ -11,7 +11,7 @@
 									<SelectCourse/>
 								</b-col>
 								<b-col cols="4">
-									<b-button @click="showAddNewCourseModal" data-cy="addCourseButton" v-if="getUser.userRights === 4 && getUser.loggedIn">{{ getLocale.newCourseBtnText }} </b-button>
+									<b-button @click="showAddNewCourseModal" data-cy="addCourseButton" v-if="getUser.userRights === 4 && getUser.loggedIn" variant="primary">{{ getLocale.newCourseBtnText }} </b-button>
 									<AddNewCourse ref="AddNewCourseModal" elementRef="InnerAddNewCourseModal" v-if="getUser.userRights === 4 && getUser.loggedIn"/>
 								</b-col>
 							</b-row>
@@ -43,7 +43,7 @@
 								</b-form-input>
 							</b-col>
 							<b-col cols="4">
-								<b-button @click="addNewAdmin">{{ getLocale.addBtnText }}</b-button>
+								<b-button @click="addNewAdmin" variant="success"><i class="fas fa-user-plus"></i></b-button>
 							</b-col>
 						</b-row>
 						<b-row>
@@ -53,7 +53,7 @@
 										class="mt-1">
 										{{ admin.feideId }} -  {{ admin.name }}
 										<b-button size="sm" variant="danger" :id="admin.feideId" @click="removeAdmin($event);" v-if="getUser.userRights === 4 && getUser.loggedIn">
-											x
+											<i class="fas fa-times-circle"></i>
 										</b-button>
 									</li>
 								</ul>
@@ -76,7 +76,7 @@
 								</b-form-input>
 							</b-col>
 							<b-col cols="4">
-								<b-button @click="addNewAssistant">{{ getLocale.addBtnText }}</b-button>
+								<b-button @click="addNewAssistant" variant="success"><i class="fas fa-user-plus"></i></b-button>
 							</b-col>
 						</b-row>
 						<b-row>
@@ -86,7 +86,7 @@
 										class="mt-1">
 										{{ assistant.feideId }} -  {{ assistant.name }}
 										<b-button variant="danger" size="sm" :id="assistant.feideId" @click="removeAdmin($event);" v-if="getUser.userRights === 4 && getUser.loggedIn">
-											x
+											<i class="fas fa-times-circle"></i>
 										</b-button>
 									</li>
 								</ul>

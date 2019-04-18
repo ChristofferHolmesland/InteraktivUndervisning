@@ -4,7 +4,12 @@
 			:no-close-on-backdrop="true"
 			:title="getLocale.title"
 			@ok="addCourse"
-			style="text-align: left;">
+			style="text-align: left;"
+			cancel-variant="danger"
+			:hide-header-close="true"
+			:cancel-title="getLocale.cancelBtn"
+			:ok-title="getLocale.okBtn"
+			>
 	
 	<b-alert :show="showError" variant="danger" dismissible>
 		<p>{{getLocale.errorMessage[errorText]}}</p>
@@ -21,7 +26,9 @@
 		<b-form-select  :options="getCourseCodes"
 						v-model="newCourse.code"
 						id="courseCodeSelect">
-
+			<template slot="first" v-if="getCourseCodes.length === 0">
+				<option value="" disabled>{{ getLocale.noCourseCodeText }}</option>
+			</template>
 		</b-form-select>
 		&nbsp;
 		<b-container class="px-0">
@@ -30,20 +37,26 @@
 					<h6>{{ getLocale.addNewCourseCode }}</h6>
 				</b-col>
 				<b-col cols="4" style="text-align: right;">
-					<p v-if="showAddNewCourseCode">^</p>
-					<p v-else>V</p>
+                    <p><i :class="showAddNewCourseCode ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i></p>
 				</b-col>
 			</b-row>
 			<b-row v-if="showAddNewCourseCode">
-				<b-col cols="9">                   
-					<b-form-input 	id="addCourseCodeInput"
-									type="text"
-									v-model="newCourseCode">
-					</b-form-input>
-				</b-col>
-				<b-col cols="3" style="text-align: right;">
-					<b-button @click="addNewCourseCode">{{getLocale.add}}</b-button>
-				</b-col>
+				<b-container>
+					<b-row>
+						<b-col cols="12">                   
+							<b-form-input 	id="addCourseCodeInput"
+											type="text"
+											v-model="newCourseCode">
+							</b-form-input>
+						</b-col>
+					</b-row>
+					&nbsp;
+					<b-row>
+						<b-col cols="12" style="text-align: center;">
+							<b-button @click="addNewCourseCode" class="addSemesterBtn" variant="success">{{getLocale.addCourseCode}}</b-button>
+						</b-col>
+					</b-row>
+				</b-container>
 			</b-row>
 		</b-container>
 	</b-form-group>									
@@ -52,7 +65,9 @@
 		<b-form-select  :options="getSemesters"
 						v-model="newCourse.semester"
 						id="courseSemesterSelect">
-
+			<template slot="first" v-if="getSemesters.length === 0">
+				<option value="" disabled>{{ getLocale.noSemesterText }}</option>
+			</template>
 		</b-form-select>
 		&nbsp;
 		<b-container class="px-0">
@@ -61,8 +76,7 @@
 					<h6>{{ getLocale.addNewSemester }}</h6>
 				</b-col>
 				<b-col cols="4" style="text-align: right;">
-					<p v-if="showAddNewCourseCode">^</p>
-					<p v-else>V</p>
+                    <p><i :class="showAddNewCourseCode ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i></p>
 				</b-col>
 			</b-row>
 			<b-row v-if="showAddNewSemester">
@@ -98,7 +112,7 @@
 			&nbsp;
 			<b-row v-if="showAddNewSemester">
 				<b-col cols="12" style="text-align: center;">
-					<b-button @click="addNewSemester" class="addSemesterBtn">{{getLocale.add}}</b-button>
+					<b-button @click="addNewSemester" class="addSemesterBtn" variant="success">{{getLocale.addSemester}}</b-button>
 				</b-col>
 			</b-row>
 		</b-container>

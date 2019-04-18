@@ -5,10 +5,13 @@
 				<b-form-select 	id="courseSelect"
 								:options="getSessions"
 								v-model="selectedSession">
+					<template slot="first" v-if="getSessions.length === 0">
+        				<option value="" disabled>{{ getLocale.noSessionText }}</option>
+					</template>
 				</b-form-select>
 			</b-col>
 			<b-col cols="4" class="pl-0">
-				<b-button @click="initializeSession(selectedSession)">
+				<b-button @click="initializeSession(selectedSession)" variant="primary">
 					{{ getLocale.startBtn }}
 				</b-button>
 			</b-col>
@@ -21,9 +24,9 @@ export default {
 	name: "session",
 	data() {
 		return {
-			sessionList: undefined,
-			selectedSession: undefined,
-			selectedCourse: undefined
+			sessionList: [],
+			selectedSession: "",
+			selectedCourse: ""
 		};
 	},
 	created() {

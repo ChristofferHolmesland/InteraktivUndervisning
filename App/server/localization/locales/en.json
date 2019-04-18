@@ -92,7 +92,10 @@
             "Python": "Python"
         },
         "NoCode": "You need to write Python code to create the question.",
-        "binaryTreeSolutionText": "The answer would be correct if the drawn tree fulfilled the requirements of a binary tree and consisted of the following nodes:"
+        "binaryTreeSolutionText": "The answer would be correct if the drawn tree fulfilled the requirements of a binary tree and consisted of the following nodes:",
+        "cancelBtn": "Cancel",
+        "okBtn": "Add",
+        "noSessionText": "No sessions. Add new session"
     },
     "AdminSessions": {
         "newSession": "New session",
@@ -100,7 +103,9 @@
         "selectCourse": "Select course:",
         "selectQuestions": "Add question:",
         "selectedQuestions": "Question added:",
-        "removeBtn": "Remove"
+        "removeBtn": "Remove",
+        "cancelBtn": "Cancel",
+        "okBtn": "Add"
     },
     "AdminDashboard": {
         "courseAdministrator": "Course administrators",
@@ -308,7 +313,8 @@
         "addNewSemester": "Add new Semester:",
         "AddNewSemesterSeason": "Choose season:",
         "AddNewSemesterYear": "Choose a year:",
-        "add": "Add",
+        "addCourseCode": "Add course code",
+        "addSemester": "Add semester",
         "errorMessage": {
             "courseCodeMissing": "Input field for course code is empty.",
             "courseCodeWrongPattern": "Input field for course code is following the wrong pattern.\nThe code should be 3 capital letters followed by 3 numbers.",
@@ -323,7 +329,11 @@
             "courseCodeDoesnTExist": "The course code does not exist.",
             "nameMissing": "Course is missing a name.",
             "courseExists": "Course already exists."
-        }
+        },
+        "noCourseCodeText": "No course codes. Add new course code",
+        "noSemesterText": "No semester. Add new semester",
+        "cancelBtn": "Cancel",
+        "okBtn": "Add"
     },
     "SelectCourse": {
         "noCourseText": "No course. Add new course"
@@ -443,7 +453,12 @@
                 "textareaPlaceholder": "Write Python code here..."
             }
         },
-        "textInputPlaceholder": "Test out the input field here"
+        "textInputPlaceholder": "Test out the input field here",
+        "newRowBtn": "Add new row",
+        "removeRowBtn": "Remove last row",
+        "backBtn": "Go back",
+        "settingsTitle": "Settings",
+        "guideTitle": "Guide"
     },
     "ViewLastSession": {
         "goBtn": "Go",
@@ -483,7 +498,8 @@
         "goBackBtn": "Go back to admin dashboard"
     },
     "AdminSessionOverview": {
-        "startBtn": "Start"
+        "startBtn": "Start",
+        "noSessionText": "No sessions. Add new session"
     },
     "GraphDrawer": {
         "editNodePrompt": "Enter new value:",

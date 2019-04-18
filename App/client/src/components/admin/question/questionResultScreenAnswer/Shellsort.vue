@@ -40,7 +40,7 @@ export default {
 
 <style scoped>
 input {
-	width: 30px;
+	width: 60px;
 	text-align: center;
 	margin: 0;
 }
@@ -52,15 +52,15 @@ input {
 	text-align: center;
 }
 .shellsortColKvalue {
-	min-width: 80px;
-	max-width: 80px;
+	width: 140px;
+	width: 140px;
 	text-align: center;
 	float: left;
 	margin: 0;
 }
 .shellsortColElement {
-	min-width: 40px;
-	max-width: 40px;
+	width: 130px;
+	width: 130px;
 	text-align: center;
 	float: left;
 	margin: 0;

@@ -18,7 +18,7 @@
 			</b-row>
 			<b-row align-h="center">
 				<b-col lg="8">
-					<b-button size="lg" @click="startSession">{{ getLocale.start }}</b-button>
+					<b-button size="lg" @click="startSession" variant="success">{{ getLocale.start }}</b-button>
 				</b-col>
 			</b-row>
 		</b-container>
