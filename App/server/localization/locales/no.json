@@ -448,6 +448,10 @@
             },
             "Mergesort": {
                 "listLabel": "Start liste:"
+            },
+            "Python": {
+                "buttonLabel": "Tolk koden",
+                "textareaPlaceholder": "Skriv Python kode her..."
             }
         },
         "textInputPlaceholder": "Test ut inntastingsfeltet her",
