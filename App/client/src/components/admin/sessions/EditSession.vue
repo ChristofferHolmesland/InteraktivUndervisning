@@ -1,7 +1,15 @@
 <template>
-    <b-modal @show="show" :id="elementId" :ref="elementRef" 
-            :no-close-on-backdrop="true" :title="getLocale.newSession" 
-            @ok="callOkHandler" style="text-align: left;">
+    <b-modal    @show="show"
+                :id="elementId"
+                :ref="elementRef" 
+                :no-close-on-backdrop="true"
+                :title="getLocale.newSession" 
+                @ok="callOkHandler"
+                style="text-align: left;"
+                cancel-variant="danger"
+				:hide-header-close="true"
+				:cancel-title="getLocale.cancelBtn"
+                >
         <b-form>
             <b-form-group 	id="sessionTitle"
                             :label="getLocale.newSessionTitle"

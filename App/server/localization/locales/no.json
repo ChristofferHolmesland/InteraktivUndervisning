@@ -92,7 +92,10 @@
             "Python": "Python"
         },
         "NoCode": "Du må skrive kode for å lage et Python spørsmål.",
-        "binaryTreeSolutionText": "Det ville blitt regnet som riktig svar hvis treet som ble gitt følger alle reglene til et Binear Tree og treet besto av følgende noder:"
+        "binaryTreeSolutionText": "Det ville blitt regnet som riktig svar hvis treet som ble gitt følger alle reglene til et Binear Tree og treet besto av følgende noder:",
+        "cancelBtn": "Avbryt",
+        "okBtn": "Legg til",
+        "noSessionText": "Ingen økter. Legg til ny økt"
     },
     "AdminSessions": {
         "newSession": "Ny økt",
@@ -100,7 +103,9 @@
         "selectCourse": "Velg kurs:",
         "selectQuestions": "Legg til spørsmål:",
         "selectedQuestions": "Spørsmål i økten:",
-        "removeBtn": "Fjern"
+        "removeBtn": "Fjern",
+        "cancelBtn": "Avbryt",
+        "okBtn": "Legg til"
     },
     "AdminDashboard": {
         "courseAdministrator": "Fag adminstrator",
@@ -308,7 +313,8 @@
         "addNewSemester": "Legg til nytt semester:",
         "AddNewSemesterSeason": "Velg sesong:",
         "AddNewSemesterYear": "Velg et år:",
-        "add": "Legg til",
+        "addCourseCode": "Legg til fag kode",
+        "addSemester": "Legg til semester",
         "errorMessage": {
             "courseCodeMissing": "Inndata feltet for fag koden er tomt.",
             "courseCodeWrongPattern": "Inndata feltet for fag koden har feil format.\nKoden skal ha 3 store bokstaver etterfulgt med 3 tall.",
@@ -323,7 +329,11 @@
             "courseCodeDoesnTExist": "Fag koden eksisterer ikke.",
             "nameMissing": "Faget mangler et navn.",
             "courseExists": "Faget finnes allerede."
-        }
+        },
+        "noCourseCodeText": "Ingen fag koder. Legg til ny fag kode",
+        "noSemesterText": "Ingen semester. Legg til nytt semester",
+        "cancelBtn": "Avbryt",
+        "okBtn": "Legg til"
     },
     "SelectCourse": {
         "noCourseText": "Ingen fag. Legg til nytt fag"
@@ -480,7 +490,8 @@
         "goBackBtn": "Gå tilbake til skrivebordet"
     },
     "AdminSessionOverview": {
-        "startBtn": "Start"
+        "startBtn": "Start",
+        "noSessionText": "Ingen økter. Legg til ny økt"
     },
     "GraphDrawer": {
         "editNodePrompt": "Skriv ny verdi:",

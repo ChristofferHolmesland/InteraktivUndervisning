@@ -83,13 +83,13 @@
 										{{item.text}}
 									</b-col>
 									<b-col cols="1">
-										<b-button @click="showShowQuestionModal(item)" >V</b-button>
+										<b-button @click="showShowQuestionModal(item)" variant="warning">V</b-button>
 									</b-col>
 									<b-col cols="1">
-										<b-button @click="showEditQuestionModal(item)" >E</b-button>
+										<b-button @click="showEditQuestionModal(item)" variant="primary">E</b-button>
 									</b-col>	
 									<b-col cols="2">
-										<b-button @click="showAddQuestionToSessionModal(item)">{{getLocale.addToSession}}</b-button>
+										<b-button @click="showAddQuestionToSessionModal(item)" variant="success">{{getLocale.addToSession}}</b-button>
 									</b-col>
 								</b-row>
 							</b-container>
