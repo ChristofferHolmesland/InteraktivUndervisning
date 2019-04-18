@@ -11,7 +11,7 @@
 				</b-form-select>
 			</b-col>
 			<b-col cols="4" class="pl-0">
-				<b-button @click="initializeSession(selectedSession)">
+				<b-button @click="initializeSession(selectedSession)" variant="primary">
 					{{ getLocale.startBtn }}
 				</b-button>
 			</b-col>

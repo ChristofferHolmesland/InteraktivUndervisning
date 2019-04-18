@@ -440,17 +440,22 @@
         },
         "settings": {
             "Shellsort": {
-                "kValueLabel": "Initial k value:",
-                "listLabel": "Initial list:"
+                "kValueLabel": "Start k verdi:",
+                "listLabel": "Start liste:"
             },
             "Quicksort": {
-                "listLabel": "Initial list:"
+                "listLabel": "Start liste:"
             },
             "Mergesort": {
-                "listLabel": "Initial list:"
+                "listLabel": "Start liste:"
             }
         },
-        "textInputPlaceholder": "Test out the input field here"
+        "textInputPlaceholder": "Test ut inntastingsfeltet her",
+        "newRowBtn": "Legg til ny rad",
+        "removeRowBtn": "Fjern siste rad",
+        "backBtn": "Tilbake",
+        "settingsTitle": "Innstillinger",
+        "guideTitle": "Veiledning"
     },
     "ViewLastSession": {
         "goBtn": "Åpne",

@@ -94,7 +94,8 @@
         "NoCode": "You need to write Python code to create the question.",
         "binaryTreeSolutionText": "The answer would be correct if the drawn tree fulfilled the requirements of a binary tree and consisted of the following nodes:",
         "cancelBtn": "Cancel",
-        "okBtn": "Add"
+        "okBtn": "Add",
+        "noSessionText": "No sessions. Add new session"
     },
     "AdminSessions": {
         "newSession": "New session",
@@ -448,7 +449,12 @@
                 "listLabel": "Initial list:"
             }
         },
-        "textInputPlaceholder": "Test out the input field here"
+        "textInputPlaceholder": "Test out the input field here",
+        "newRowBtn": "Add new row",
+        "removeRowBtn": "Remove last row",
+        "backBtn": "Go back",
+        "settingsTitle": "Settings",
+        "guideTitle": "Guide"
     },
     "ViewLastSession": {
         "goBtn": "Go",

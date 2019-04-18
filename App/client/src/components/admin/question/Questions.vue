@@ -28,7 +28,7 @@
 			</b-col>
 			<b-col cols="1" class="text-center">
 				<b-button @click="showAddQuestionModal" variant="primary" id="addQuestionBtn" data-cy="addQuestionButton">
-					<h6>+</h6>
+					<i class="fas fa-plus-square"></i>
 				</b-button>
 			</b-col>
 			<b-col cols="2" class="text-center">
@@ -83,10 +83,14 @@
 										{{item.text}}
 									</b-col>
 									<b-col cols="1">
-										<b-button @click="showShowQuestionModal(item)" variant="warning">V</b-button>
+										<b-button @click="showShowQuestionModal(item)" variant="warning">
+											<i class="fas fa-eye"></i>
+										</b-button>
 									</b-col>
 									<b-col cols="1">
-										<b-button @click="showEditQuestionModal(item)" variant="primary">E</b-button>
+										<b-button @click="showEditQuestionModal(item)" variant="primary">
+											<i class="fas fa-edit"></i>
+										</b-button>
 									</b-col>	
 									<b-col cols="2">
 										<b-button @click="showAddQuestionToSessionModal(item)" variant="success">{{getLocale.addToSession}}</b-button>

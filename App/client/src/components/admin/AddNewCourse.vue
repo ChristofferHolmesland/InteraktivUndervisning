@@ -37,8 +37,7 @@
 					<h6>{{ getLocale.addNewCourseCode }}</h6>
 				</b-col>
 				<b-col cols="4" style="text-align: right;">
-					<p v-if="showAddNewCourseCode">^</p>
-					<p v-else>V</p>
+                    <p><i :class="showAddNewCourseCode ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i></p>
 				</b-col>
 			</b-row>
 			<b-row v-if="showAddNewCourseCode">
@@ -77,8 +76,7 @@
 					<h6>{{ getLocale.addNewSemester }}</h6>
 				</b-col>
 				<b-col cols="4" style="text-align: right;">
-					<p v-if="showAddNewCourseCode">^</p>
-					<p v-else>V</p>
+                    <p><i :class="showAddNewCourseCode ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i></p>
 				</b-col>
 			</b-row>
 			<b-row v-if="showAddNewSemester">
