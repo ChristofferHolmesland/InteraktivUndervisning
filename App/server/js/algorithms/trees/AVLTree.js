@@ -51,8 +51,6 @@ module.exports.createAVLTree = function (elements,add,existingTreeObject) {
 		if (existingTreeObject !== undefined) {
 			tree = existingTreeObject.createDuplicateTree();
 			//Balance any Tree given that is not an AVL Tree
-			console.log("Reached first checkbalance");
-			//console.log(tree);
 			while (checkBalance(tree.root) === false) {
 				let rootHeight = getNodeHeight(tree.root);
 				if (rootHeight > 0) {	//choose which side of the tree to start with.
@@ -183,8 +181,6 @@ module.exports.createAVLTreeSolution = function (elements, add, existingTreeObje
 			let stepInitial = GeneralTreeFunctions.createStepArray("Initial","AVL",[tree]);
 			steps.push(stepInitial);
 			//Balance any Tree given that is not an AVL Tree
-			console.log("Reach first checkBalance");
-			console.log(tree);
 			while (checkBalance(tree.root) === false) {
 				let rootHeight = getNodeHeight(tree.root);
 				if (rootHeight > 0) {	//choose which side of the tree to start with.
