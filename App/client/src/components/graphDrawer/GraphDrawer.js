@@ -79,7 +79,9 @@ export default class GraphDrawer {
 		return this.controllers[this.controlType].export();
 	}
 
-	constructor(canvas, locale, config) {
+	constructor(canvas, locale, config, window) {
+		// Reference to window so the size can be changed.
+		this.window = window;
 		// Radius of nodes.
 		this.R = 25;
 		// How often the canvas should be updated.
@@ -88,6 +90,9 @@ export default class GraphDrawer {
 		this.MS_PER_FRAME = 1000 / this.FPS;
 		// Device type, "Desktop" or "Mobile"
 		this.DEVICE = "Mobile";
+		// Relative size of the buffers compared to canvas size.
+		this.STATIC_BUFFER_FACTOR = 1;
+		this.DRAW_BUFFER_FACTOR = 5;
 		// Size of the font in px.
 		this.fontHeight = 10;
 		// Contains all the text
@@ -145,17 +150,11 @@ export default class GraphDrawer {
 
 		// Offscreen canvas used for drawing (mostly) static
 		// content like the UI. This draws in canvas space.
-		this.staticBuffer = document.createElement("CANVAS");
-		this.staticBuffer.width = canvas.width;
-		this.staticBuffer.height = canvas.height;
-		this.staticContext = this.staticBuffer.getContext("2d");
+		this.createStaticBuffer();
+		this.createDrawBuffer();
 
 		// Offscreen canvas used for drawing. This draws
 		// in world space and the camera converts it to canvas space.
-		this.drawBuffer = document.createElement("CANVAS");
-		this.drawBuffer.width = canvas.width * 5;
-		this.drawBuffer.height = canvas.height * 5;
-		this.drawContext = this.drawBuffer.getContext("2d");
 
 		let down = function(e) {
 			e.preventDefault();
@@ -177,7 +176,6 @@ export default class GraphDrawer {
 		this.canvas.addEventListener("mousedown", down);
 		this.canvas.addEventListener("touchstart", down);
 		this.canvas.addEventListener("wheel", this.detectZoomWheel.bind(this));
-
 
 		// Updates the GraphDrawer every <MS_PER_FRAME> milliseconds.
 		this.intervalId = setInterval((function() {
@@ -262,6 +260,23 @@ export default class GraphDrawer {
 
 		this.staticContext.fillStyle = "white";
 		this.staticContext.strokeStyle = "black";
+	}
+
+	createStaticBuffer() {
+		this.staticBuffer = document.createElement("CANVAS")
+		this.setBufferDimension(this.staticBuffer, this.STATIC_BUFFER_FACTOR);
+		this.staticContext = this.staticBuffer.getContext("2d");
+	}
+
+	createDrawBuffer() {
+		this.drawBuffer = document.createElement("CANVAS");
+		this.setBufferDimension(this.drawBuffer, this.DRAW_BUFFER_FACTOR);
+		this.drawContext = this.drawBuffer.getContext("2d");
+	}
+
+	setBufferDimension(buffer, factor) {
+		buffer.width = this.canvas.width * factor;
+		buffer.height = this.canvas.height * factor;
 	}
 
 	/*
@@ -548,6 +563,25 @@ export default class GraphDrawer {
 		Updates the GraphDrawer state.
 	*/
 	update() {
+		if (this.canvas.width !== this.canvas.clientWidth) {
+			this.canvas.width = this.canvas.clientWidth;
+			let ratio = this.window.innerHeight / this.window.innerWidth;
+			this.canvas.height = this.canvas.width * ratio;
+			
+			this.setBufferDimension(this.staticBuffer, this.STATIC_BUFFER_FACTOR);
+			this.setBufferDimension(this.drawBuffer, this.DRAW_BUFFER_FACTOR);
+			this.camera.updateToNewCanvasSize();
+			
+			if (this.operatingMode == "Presentation") {
+				this.addSteppingButtons();
+			}
+
+			if (this.controllers[this.controlType].onCanvasResize !== undefined)
+				this.controllers[this.controlType].onCanvasResize();
+
+			this.dirty = true;
+		}
+
 		if (this.dirty) {
 			// Controllers can implement the dirtyUpdate function to be notified
 			// before a draw happens.

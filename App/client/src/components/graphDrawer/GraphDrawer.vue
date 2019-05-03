@@ -1,10 +1,8 @@
 <template>
-    <div>
-        <canvas id="canvas"
-                :width="width"
-                :height="height"
-                style="background-color: #fff; margin-left: auto; margin-right: auto; display: block; border: 2px solid black;"
-                />
+    <div id="canvasWrapper" ref="canvasWrapper" style="width: 100%; height: 100%;">
+        <canvas id="canvas">
+            Your browser does not support the HTML5 Canvas element.
+        </canvas>
     </div>
 </template>
 
@@ -39,11 +37,9 @@
             // The graph to perform dijkstra on
             graph: Object,
             width: {
-                default: 600,
                 type: Number
             },
             height: {
-                default: 600,
                 type: Number
             },
 			displayEdgeValues: {
@@ -146,7 +142,7 @@
                     python: {
                         steps: this.steps
                     }
-                });
+                }, window);
             }
         }
     }
@@ -154,4 +150,14 @@
 </script>
 
 <style scoped>
+#canvas {
+    width: 100%; 
+    height: 100%; 
+    overflow: hidden; 
+    background-color: #fff; 
+    margin-left: auto;
+    margin-right: auto; 
+    display: inline-block;
+    border: 2px solid black;
+}            
 </style>
