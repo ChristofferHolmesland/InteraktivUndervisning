@@ -17,8 +17,6 @@ const check = function (solutionInfo) {
 	let startTree = [];
 	let treeArray = [];
 
-	console.log("startTree");
-    console.log(givenStartTree);
     if (treeAction === "Add") {
         //givenStartTree === undefined || givenStartTree.roots === undefined || givenStartTree.roots.length === 0) &&
         if (treeElements === undefined || treeElements === "") {
@@ -125,6 +123,10 @@ const check = function (solutionInfo) {
                 result.passed = false;
                 result.errors.push("BSTAVLRemoveMissingElementError");
             }
+            if(startTree[0].nodes.length <= treeArray.length) {
+                result.passed = false;
+                result.errors.push("BSTAVLRemoveMoreNodesThanPossibleError");
+            }
             if(questionType === 7 && result.passed) {
                 let treeObject = BinarySearchTreeFunctions.createBinarySearchTree(treeArray,false,startTree[0]);
                 for(let i=0;i<treeObject.length;i++) {
@@ -138,7 +140,6 @@ const check = function (solutionInfo) {
             if(questionType === 8 && result.passed) {
                 let treeObject = AVLTreeFunctions.createAVLTree(treeArray,false,startTree[0]);
                 for(let i=0;i<treeObject.length;i++) {
-                	console.log(treeObject);
                     if(!BinarySearchTreeFunctions.checkBinarySearchTreeCriteria(treeObject[i]) || !AVLTreeFunctions.checkBalance(treeObject[i].root)) {
                         result.passed = false;
                         result.errors.push("BSTAVLRemoveInvalidResultAVLTreeError");

@@ -54,6 +54,7 @@
         "BSTAVLRemoveMissingElementError": "Elementet som skal fjernes finnes ikke i treet!",
         "BSTAVLRemoveInvalidResultBinarySearchTreeError": "Et av resultatene er ikke et godkjent Binært Søketre!",
         "BSTAVLRemoveInvalidResultAVLTreeError": "Et av resultatene er ikke et godkjent AVL tre!",
+        "BSTAVLRemoveMoreNodesThanPossibleError": "Du kan ikke slette alle nodene i treet!",
         "BSTAVLRootCountError": "Treet gitt har mer en en rot!",
         "BSTAVLInvalidBinaryTreeError": "Det gitte treet er ikke et godkjent Binærtre!",
         "BSTAVLInvalidBinarySearchTreeError": "Det gitte treet er ikke et godkjent Binært Søketre!",
