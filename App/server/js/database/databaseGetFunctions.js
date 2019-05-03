@@ -167,8 +167,11 @@ const get = {
 		return new Promise((resolve, reject) => {
 			let statement = `SELECT S.id, S.name
 							 FROM Session AS S
-							 INNER JOIN Course AS C ON S.courseId = C.id 
-							 WHERE C.id = ${courseId} 
+							 INNER JOIN Course AS C ON S.courseId = C.id
+							 WHERE C.id = ${courseId} AND S.id IN (
+								 SELECT sessionId
+								 FROM SessionHasQuestion
+							 )
 							 GROUP BY S.id;`;
 			db.all(statement, (err,rows) => {
 				if (err) reject(customReject(err, "allSessionWithinCourseForSessionOverview"));
