@@ -14,7 +14,7 @@ module.exports = function(question) {
 		arrayOfElements = elements.split(",");
 	}
 	
-	if (startCanvasTree !== undefined && startCanvasTree.roots.length !== 0) {
+	if (startCanvasTree !== undefined && startCanvasTree.roots !== undefined && startCanvasTree.roots.length !== 0) {
 		startTree =
 			GeneralTreeFunctions.createTreeObjectFromCanvasObjectver1(startCanvasTree);
 	}

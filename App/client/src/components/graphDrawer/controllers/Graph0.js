@@ -558,6 +558,7 @@ export default class Graph0 {
 
 		let parseStep = (step) => {
 			let tree = getTree(step);
+			if (tree === undefined  || tree.root === undefined) return;
 			fixTree(tree);
 
 			// If there are more than one tree, there should be
