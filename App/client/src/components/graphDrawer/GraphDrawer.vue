@@ -73,8 +73,10 @@
 
                 // Recreate the canvas to remove the event listeners
                 let el = document.getElementById("canvas");
-                let elClone = el.cloneNode(true);
-                el.parentNode.replaceChild(elClone, el);
+                if (el !== undefined && el !== null) {
+                    let elClone = el.cloneNode(true);
+                    el.parentNode.replaceChild(elClone, el);
+                }
 
                 // Remove top level references from the GraphDrawer object
                 for (let prop in this.graphDrawer) {
@@ -87,7 +89,7 @@
             createDrawer: function() {
                 // A locale is needed to create the drawer.
                 if (this.locale == undefined) {
-                    console.log("Locale is undefined");
+                    console.error("Locale is undefined");
                     return;
                 }
 

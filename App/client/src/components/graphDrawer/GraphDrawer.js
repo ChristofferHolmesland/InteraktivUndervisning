@@ -301,6 +301,7 @@ export default class GraphDrawer {
 				btn.position.width,
 				btn.position.height
 			);
+
 			this.staticContext.fill();
 			this.staticContext.stroke();
 
@@ -590,13 +591,21 @@ export default class GraphDrawer {
 		// Use this code to see if more than one GraphDrawer instance
 		// is running at the same time.
 		//if (this.runningId == undefined) this.runningId = 10000 * Math.random();
-		//	console.log(this.runningId);
+		//	console.error(this.runningId);
 
 		if (this.canvas.width !== this.canvas.clientWidth) {
 			// When the page is loading, the width is sometimes 0.
 			if (this.canvas.clientWidth > 0) {
 				this.fixCanvasSize();
 			}
+		}
+
+		// If the GraphDrawer is paused, then a frame took more
+		// time than it was allocated, and we should wait a bit
+		// to be sure the browser isn't overloaded.
+		if (this.paused > 0) {
+			this.paused--;
+			return;
 		}
 
 		if (this.dirty) {
@@ -607,8 +616,34 @@ export default class GraphDrawer {
 			}
 
 			//this.moveGraphInsideWorld();
-			this.draw();
-			this.switchBuffers();
+
+			let drawTime = this.timeAndExecute(this.draw.bind(this));
+			let switchTime = this.timeAndExecute(this.switchBuffers.bind(this));
+
+			let totalTime = drawTime + switchTime;
+			// This frame took more than it's allocated time.
+			if (totalTime > this.MS_PER_FRAME) {
+				this.pause = 1;
+				if (this.pauseCount == undefined) this.pauseCount = 1;
+				else this.pauseCount++;
+
+				// If this happens a lot, the FPS should probably be lowered
+				// because the GraphDrawer is being run on a slow machine.
+				if (this.pauseCount > 10) {
+					let newFps = Math.ceil(0.75 * this.FPS);
+					console.error("GraphDrawer FPS was lowered from: " + this.FPS + ", to: " + newFps);
+					this.FPS = Math.ceil(0.75 * this.FPS);
+					this.MS_PER_FRAME = 1000 / this.FPS;
+
+					clearInterval(this.intervalId);
+
+					this.intervalId = setInterval((function() {
+						this.update.call(this);
+					}).bind(this), this.MS_PER_FRAME);
+
+					this.pauseCount = 0;
+				}
+			}
 
 			if (this.stillDirty) this.stillDirty = false;
 			else this.dirty = false;
@@ -968,8 +1003,17 @@ export default class GraphDrawer {
 	checkSteppingButtons(e) {
 		if (this.steppingButtons == undefined) return false;
 
+		console.log("Click");
+		console.log(e.offsetX + "  " + e.offsetY);
+		console.log(this.canvas);
+		console.log(this.canvas.clientHeight);
+
 		for (let i = 0; i < this.steppingButtons.length; i++) {
 			let btn = this.steppingButtons[i];
+
+			console.log("Check");
+			console.log(btn.position);
+
 			let inside = this.isPointInRectangle(
 				e.offsetX,
 				e.offsetY,
@@ -1274,5 +1318,13 @@ export default class GraphDrawer {
 		}
 
 		return undefined; // No collision
+	}
+
+	timeAndExecute(func) {
+		let before = new Date().getTime();
+		func();
+		let after = new Date().getTime();
+
+		return after - before;
 	}
 }
