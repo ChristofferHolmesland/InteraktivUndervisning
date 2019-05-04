@@ -57,6 +57,12 @@ const update = {
 							WHERE U.feideId = ${feideId}
 						);`;
 		return createPromise(db, statement, "answerUserToAnonymous")
+	},
+	markAnswerAsCorrect: function(db, answerId) {
+		let statement = `UPDATE Answer
+						SET result = 1
+						WHERE id = ${answerId}`;
+		return createPromise(db, statement, "MarkAnswerAsCorrect");
 	}
 };
 

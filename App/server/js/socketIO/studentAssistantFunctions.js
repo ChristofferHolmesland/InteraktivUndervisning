@@ -113,7 +113,8 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 
 					if(a.result === 0){
 						answers.push({
-							answerObject: a.object
+							answerObject: a.object,
+							id: a.id
 						});
 					}
 				});
@@ -699,6 +700,14 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 			}
 		}
 		socket.emit("deleteQuestionToCourseResponse");
+	});
+
+	socket.on("markAsCorrectRequest", function(answerId) {
+		dbFunctions.update.markAnswerAsCorrect(db, answerId).then(() => {
+			socket.emit("markAnswerAsCorrectResponse", answerId);
+		}).catch((err) => {
+			console.error(err);
+		})
 	});
 
 }

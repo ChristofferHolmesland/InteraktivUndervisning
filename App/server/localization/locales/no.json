@@ -143,7 +143,9 @@
         "bstavlNodesDesc": "Noder: ",
         "pythonCodeDesc": "Kode: ",
         "Add": "Legg til",
-        "Remove": "Slett"
+        "Remove": "Slett",
+        "markAsCorrectBtn": "Mark as correct",
+        "shelsortKValue": "K verdi"
     },
     "Navbar": {
         "lang": "Språk",
