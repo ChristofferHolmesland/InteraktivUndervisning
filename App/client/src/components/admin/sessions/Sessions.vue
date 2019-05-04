@@ -144,11 +144,7 @@ export default {
 		},
 		removeAnswer: function(data) {
 			let answerList = this.session.questions[data.selectedQuestion].answerList;
-			let index = answerList.findIndex(answer => {
-				console.log(answer)
-				console.log(data)
-				return answer.id == data.answerId
-			});
+			let index = answerList.findIndex(answer => answer.id == data.answerId);
 			if (index > -1) answerList.splice(index, 1);
 		}
 	},
