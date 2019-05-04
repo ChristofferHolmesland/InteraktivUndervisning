@@ -51,7 +51,7 @@
 				</b-container>
 			</b-col>
 			<b-col lg="8">
-				<Session :session="session" v-if="showSession"/>
+				<Session :session="session" v-if="showSession" @MarkAnswerAsCorrectResponse="removeAnswer"/>
 			</b-col>
 		</b-row>
 	</b-container>
@@ -141,6 +141,15 @@ export default {
 					this.$refs.newSessionModal.$refs.innerModal.show();
 				});
 			});
+		},
+		removeAnswer: function(data) {
+			let answerList = this.session.questions[data.selectedQuestion].answerList;
+			let index = answerList.findIndex(answer => {
+				console.log(answer)
+				console.log(data)
+				return answer.id == data.answerId
+			});
+			if (index > -1) answerList.splice(index, 1);
 		}
 	},
 	computed: {

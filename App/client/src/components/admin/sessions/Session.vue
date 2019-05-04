@@ -20,7 +20,7 @@
 				</b-container>
 			</b-col>
 		</b-row>
-		<b-row>
+		<b-row v-if="getQuestionListSize">
 			<b-col lg="4">
 				<b-list-group style="overflow-y: scroll; min-height: 400px; max-height: 500px;">
 					<b-list-group-item  v-for="(question, index) in getSession.questions" 
@@ -42,6 +42,7 @@
 				<DisplayQuestion
 								:selectedAnswer="selectedAnswer"
 								:resultInfo="getSession.questions[selectedQuestion]"
+								:admin="true"
 								ref="displayQuestion"
 								/>
 			</b-col>
@@ -86,19 +87,19 @@ export default {
 		};
 	},
 	computed: {
-		getSession() {
+		getSession: function() {
 			if (this.session === undefined)
 				return {
 					questions: []
 				};
 			return this.session;
 		},
-		getLocale() {
+		getLocale: function() {
 			let locale = this.$store.getters.getLocale("Session");
 			if (locale) return locale;
 			else return {};
 		},
-		getIncorrectAnswers() {
+		getIncorrectAnswers: function() {
 			if (this.session == undefined) return [];
 
 			this.incorrectAnswers = [];
@@ -109,11 +110,11 @@ export default {
 
 			return this.incorrectAnswers;
 		},
-		getAnswer() {
+		getAnswer: function() {
 			if (this.incorrectAnswers.length === 0) return "";
 			return this.incorrectAnswers[this.selectedAnswer].answer;
 		},
-		getAnswerListSize() {
+		getAnswerListSize: function() {
 			if (!this.getSession) 
 				return false;
 			if (!this.getSession.questions) 
@@ -126,13 +127,18 @@ export default {
 				return true;
 			return false;
 		},
-		getQuestionslength() {
+		getQuestionListSize: function(){
+			let questionList = this.getSession.questions;
+			if (questionList === undefined || questionList.length < 1) return false;
+			return true;
+		},
+		getQuestionslength: function() {
 			if (!this.session.questions) return 0;
 			return this.session.questions.length;
 		}
 	},
 	methods: {
-		changeAnswer(event) {
+		changeAnswer: function(event) {
 			this.selectedAnswer = Number(event.target.id);
 
 			// This is used to change the content of the graphdrawer.
@@ -143,7 +149,7 @@ export default {
 				});
 			}
 		},
-		changeQuestion(event) {
+		changeQuestion: function(event) {
 			this.selectedQuestion = Number(event.target.id);
 		}
 	},
@@ -166,6 +172,14 @@ export default {
 				});
 			}
 		},
+	},
+	sockets: {
+		markAnswerAsCorrectResponse: function(answerId) {
+			this.$emit("MarkAnswerAsCorrectResponse", {
+				answerId: answerId,
+				selectedQuestion: this.selectedQuestion
+			})
+		}
 	},
 	components: {
 		DisplayQuestion

@@ -143,7 +143,9 @@
         "bstavlNodesDesc": "Nodes: ",
         "pythonCodeDesc": "Code: ",
         "Add": "Add",
-        "Remove": "Remove"
+        "Remove": "Remove",
+        "markAsCorrectBtn": "Mark as correct",
+        "shellsortKValue": "K value"
     },
     "Navbar": {
         "lang": "Language",

@@ -136,6 +136,7 @@
 							</div>
 						</b-tab>
 					</b-tabs>
+					<b-button variant="success" @click="markAsCorrect" v-if="tabIndex === 2">{{ getLocale.markAsCorrectBtn }}</b-button>
 				</b-card>
 			</b-col>
 		</b-row>
@@ -171,7 +172,11 @@ export default {
 	name: "DisplayQuestion",
 	props: {
 		resultInfo: Object,
-		selectedAnswer: Number
+		selectedAnswer: Number,
+		admin: {
+			default: false,
+			type: Boolean
+		}
 	},
 	data() {
 		return {
@@ -259,6 +264,14 @@ export default {
 				});
 			});
 		},
+		markAsCorrect: function() {
+			if (this.admin) {
+				this.$socket.emit(
+					"markAsCorrectRequest", 
+					this.resultInfo.answerList[this.selectedAnswer].id
+				);
+			}
+		}
 	},
 	components: {
 		TreeAnswer,
