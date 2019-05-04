@@ -23,26 +23,27 @@
 \usepackage[backend=biber, style=ieee]{biblatex}
 \bibliography{referencelist.bib}
 \usepackage{setspace}
+\usepackage{csquotes}
+\usepackage[titletoc]{appendix}
 
 % Makro definisjoner
 \newcommand{\code}[1]{\texttt{#1}}
 
 \begin{document}
 
-	% Forside
+	% Front page
 	\include{sections/frontpage/frontpage}
 
 	\begin{spacing}{1.25}
-		% Innholdsfortegnelse
+		% Table of contents
 		\include{sections/tableOfContents/tableOfContents}
 	
-		% Innledning
+		% Introduction
 		\include{sections/introduction/introduction}
 		
-		% Teori
+		% Background
 		\include{sections/background/backgroundMain}
-	
-		% Hoveddel
+
 		% Construction
 		\include{sections/construction/constructionMain}
 		
@@ -55,10 +56,13 @@
 		% Conclusion
 		\include{sections/conclusion/conclusion}
 	
-		% Referanser
+		% References
 		\include{sections/references/references}
+
+		% List of figures
+		\include{sections/listOfFigures/listOfFigures}
 	
-		% Vedlegg
-		\include{sections/appendix/appendix}
+		% Appendix
+		\include{sections/appendix/appendixMain}
 	\end{spacing}
 \end{document}

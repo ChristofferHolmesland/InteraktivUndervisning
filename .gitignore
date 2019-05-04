@@ -116,6 +116,7 @@ Rapport/*.blg
 Rapport/*.run.tex
 Rapport/*-blx.bib
 Rapport/*.run.xml
+Rapport/*.lof
 
 # PyCharm
 .idea

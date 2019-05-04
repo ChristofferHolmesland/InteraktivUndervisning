@@ -1,7 +1,7 @@
 \subsection{Login}
 When a user visits the website they need to decide between logging in using their Feide account, or continue as an anonymous user. At this stage their user-rights level is set to 0, and they can only access the login page. Anonymous users have a user-rights level of 1, and are able to participate in sessions. If the users authenticates with their Feide account, they are assigned a user-rights level depending on their admin status. A normal user with no special rights will get their level set to 2. Level 3 is used for student assistants. Admins (lecturers, professors, ...) are assigned level 4. Users with a user-rights level above 1 are able to see statistics about sessions they have participated in. Student assistants (level 3) currently not implemented. The ability for a admin to add student assistants is added, but at the moment they will not the ability to create, edit and host sessions with questions. Admins will have the highest rights on the website. They will be able to create, edit and delete courses. They will also be able to add other admins or student assistants to a course. Admins will also be able to see and remove other admins and student assistants from a course. Admins will not be able to see other courses that they are not admins for, but will get an error if they try to create a new course with the same information.
 \subsubsection{Implementation}
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \begin{subfigure}{0.45\linewidth}
         \includegraphics[width=\linewidth]{loginPageAnonymously}
