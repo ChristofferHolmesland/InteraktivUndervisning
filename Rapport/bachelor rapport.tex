@@ -21,8 +21,7 @@
 \usepackage[margin=2.54cm]{geometry}
 \usepackage[english]{babel}
 \usepackage[backend=biber, style=ieee]{biblatex}
-\bibliography{referencelist.bib}
-\usepackage{setspace}
+\bibliography{referencelist.bib} 
 
 % Makro definisjoner
 \newcommand{\code}[1]{\texttt{#1}}
@@ -32,33 +31,32 @@
 	% Forside
 	\include{sections/frontpage/frontpage}
 
-	\begin{spacing}{1.25}
-		% Innholdsfortegnelse
-		\include{sections/tableOfContents/tableOfContents}
+	% Innholdsfortegnelse
+	\include{sections/tableOfContents/tableOfContents}
+
+	% Innledning
+	\include{sections/introduction/introduction}
 	
-		% Innledning
-		\include{sections/introduction/introduction}
-		
-		% Teori
-		\include{sections/background/backgroundMain}
+	% Teori
+	\include{sections/background/backgroundMain}
+
+	% Hoveddel
+	% Construction
+	\include{sections/construction/constructionMain}
 	
-		% Hoveddel
-		% Construction
-		\include{sections/construction/constructionMain}
-		
-		% Evaluation
-		\include{sections/evaluation/evaluation}
+	% FutureDevelopment
+	\include{sections/futureDevelopment/futureDevelopment}
 	
-		% FutureDevelopment
-		\include{sections/futureDevelopment/futureDevelopment}
-	
-		% Conclusion
-		\include{sections/conclusion/conclusion}
-	
-		% Referanser
-		\include{sections/references/references}
-	
-		% Vedlegg
-		\include{sections/appendix/appendix}
-	\end{spacing}
+	% Evaluation
+	\include{sections/evaluation/evaluation}
+
+	% Conclusion
+	\include{sections/conclusion/conclusion}
+
+	% Referanser
+	\include{sections/references/references}
+
+	% Vedlegg
+	\include{sections/appendix/appendix}
+
 \end{document}
