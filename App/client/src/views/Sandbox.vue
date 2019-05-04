@@ -513,19 +513,17 @@ export default {
 	left: 10%;
 }
 .shellsortInput {
-	width: 60px;
-	text-align: center;
-}
-.shellsortCol {
-	width: 130px;
+	width: 80px;
 	text-align: center;
 }
 .shellsortColKValue {
-	width: 140px;
+	min-width: 100px;
+	max-width: 100px;
 	text-align: center;
 }
 .shellsortColArrayElement {
-	width: 130px;
+	min-width: 90px;
+	max-width: 90px;
 	text-align: center;
 }
 .shellsortTableRow {
