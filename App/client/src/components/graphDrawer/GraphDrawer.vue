@@ -61,6 +61,9 @@
             this.locale = this.$store.getters.getLocale("GraphDrawer");
             this.createDrawer();
         },
+        beforeDestroy() {
+            this.destroyDrawer();
+        },
         methods: {
             destroyDrawer: function() {
                 // Stop the update loop

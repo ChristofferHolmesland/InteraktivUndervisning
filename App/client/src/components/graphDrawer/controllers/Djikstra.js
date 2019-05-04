@@ -42,22 +42,8 @@ export default class Djikstra {
 			}
 		}
 
-		if (this.gd.operatingMode == "Interactive") {
-			this.buttons.push({
-				text: "<-- " + this.locale.undo,
-				position: {},
-				handler: this.undoButtonClicked.bind(this),
-				disabled: true
-			});
-			this.buttons.push({
-				text: this.locale.redo + " -->",
-				position: {},
-				handler: this.redoButtonClicked.bind(this),
-				disabled: true
-			});
-			this.positionButtons();
-			this.drawStatic();
-		}
+		if (this.gd.operatingMode == "Interactive")
+			this.addUndoRedoButtons();
 	}
 
 	constructor(graphDrawer, config) {
@@ -83,6 +69,32 @@ export default class Djikstra {
 
 	configure() {
 		this._config(this.config);
+	}
+
+	onCanvasResize() {
+		if (this.gd.operatingMode == "Interactive") 
+			this.addUndoRedoButtons();
+
+		this.gd.centerCameraOnGraph();
+	}
+
+	addUndoRedoButtons() {
+		this.buttons = [];
+
+		this.buttons.push({
+			text: "<-- " + this.locale.undo,
+			position: {},
+			handler: this.undoButtonClicked.bind(this),
+			disabled: true
+		});
+		this.buttons.push({
+			text: this.locale.redo + " -->",
+			position: {},
+			handler: this.redoButtonClicked.bind(this),
+			disabled: true
+		});
+		this.positionButtons();
+		this.drawStatic();
 	}
 
 	export() {

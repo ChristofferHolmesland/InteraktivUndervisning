@@ -475,6 +475,9 @@ export default {
 	},
 	watch: {
 		"questionType": function () {
+			if (this.$refs.graphdrawer !== undefined)
+				this.$refs.graphdrawer.destroyDrawer();
+
 			this.$nextTick(function () {
 				if (this.$refs.graphdrawer !== undefined) {
 					this.$refs.graphdrawer.createDrawer();

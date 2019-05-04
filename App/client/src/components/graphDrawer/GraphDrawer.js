@@ -92,7 +92,7 @@ export default class GraphDrawer {
 		this.DEVICE = "Mobile";
 		// Relative size of the buffers compared to canvas size.
 		this.STATIC_BUFFER_FACTOR = 1;
-		this.DRAW_BUFFER_FACTOR = 5;
+		this.DRAW_BUFFER_FACTOR = 10;
 		// Size of the font in px.
 		this.fontHeight = 10;
 		// Contains all the text
@@ -275,6 +275,10 @@ export default class GraphDrawer {
 	}
 
 	setBufferDimension(buffer, factor) {
+		if (this.canvas.width == 0 || this.canvas.height == 0) {
+			return;
+		}
+
 		buffer.width = this.canvas.width * factor;
 		buffer.height = this.canvas.height * factor;
 	}
@@ -403,7 +407,7 @@ export default class GraphDrawer {
 					this.drawContext.stroke();
 					this.drawContext.strokeStyle = "black";
 				} else {
-					console.error("No intersection");
+					// This can sometimes happens if two nodes are overlapping.
 				}
 			}
 
@@ -413,6 +417,7 @@ export default class GraphDrawer {
 				this.drawContext.fillText(this.edges[i].v, tx, ty);
 			}
 		}
+
 		// Nodes.
 		for (let i = 0; i < this.nodes.length; i++) {
 			if (this.camera.cull(this.nodes[i], true)) continue;
@@ -559,27 +564,39 @@ export default class GraphDrawer {
 		return undefined;
 	}
 
+	fixCanvasSize() {
+		this.canvas.width = this.canvas.clientWidth;
+		let ratio = this.window.innerHeight / this.window.innerWidth;
+		this.canvas.height = this.canvas.width * ratio;
+		
+		this.setBufferDimension(this.staticBuffer, this.STATIC_BUFFER_FACTOR);
+		this.setBufferDimension(this.drawBuffer, this.DRAW_BUFFER_FACTOR);
+		this.camera.updateToNewCanvasSize();
+		
+		if (this.operatingMode == "Presentation") {
+			this.addSteppingButtons();
+		}
+
+		if (this.controllers[this.controlType].onCanvasResize !== undefined)
+			this.controllers[this.controlType].onCanvasResize();
+
+		this.dirty = true;
+	}
+
 	/*
 		Updates the GraphDrawer state.
 	*/
 	update() {
+		// Use this code to see if more than one GraphDrawer instance
+		// is running at the same time.
+		//if (this.runningId == undefined) this.runningId = 10000 * Math.random();
+		//	console.log(this.runningId);
+
 		if (this.canvas.width !== this.canvas.clientWidth) {
-			this.canvas.width = this.canvas.clientWidth;
-			let ratio = this.window.innerHeight / this.window.innerWidth;
-			this.canvas.height = this.canvas.width * ratio;
-			
-			this.setBufferDimension(this.staticBuffer, this.STATIC_BUFFER_FACTOR);
-			this.setBufferDimension(this.drawBuffer, this.DRAW_BUFFER_FACTOR);
-			this.camera.updateToNewCanvasSize();
-			
-			if (this.operatingMode == "Presentation") {
-				this.addSteppingButtons();
+			// When the page is loading, the width is sometimes 0.
+			if (this.canvas.clientWidth > 0) {
+				this.fixCanvasSize();
 			}
-
-			if (this.controllers[this.controlType].onCanvasResize !== undefined)
-				this.controllers[this.controlType].onCanvasResize();
-
-			this.dirty = true;
 		}
 
 		if (this.dirty) {
@@ -743,6 +760,8 @@ export default class GraphDrawer {
 			let dX = velocityFactor * (newPosition.x - currentPosition.x);
 			let dY = velocityFactor * (newPosition.y - currentPosition.y);
 
+			// Detect the start of a panning gesture)
+
 			if (dX > threshold || dX < -threshold) {
 				dX -= Math.sign(dX) * threshold;
 				// The camera won't put it's center close enough to the world edge,
@@ -754,6 +773,7 @@ export default class GraphDrawer {
 				);
 				hasMoved = true;
 			}
+
 			if (dY > threshold || dY < -threshold) {
 				dY -= Math.sign(dY) * threshold;
 				this.camera.translateY(
@@ -765,9 +785,11 @@ export default class GraphDrawer {
 			}
 
 			this.dirty = true;
-			currentPosition.x = newPosition.x;
-			currentPosition.y = newPosition.y;
-			if (hasMoved) threshold = 0;
+			if (hasMoved) {
+				threshold = 0;
+				currentPosition.x = newPosition.x;
+				currentPosition.y = newPosition.y;
+			}
 		}.bind(this);
 
 		let panUpHandler = function(newE) {
