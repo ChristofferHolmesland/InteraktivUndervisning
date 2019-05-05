@@ -239,7 +239,11 @@
         "Add": "Add",
         "Remove": "Remove",
         "timeLeft": "Time left:",
-        "sessionCode": "Session code:"
+        "sessionCode": "Session code:",
+        "tabImage": "Images",
+        "tabTable": "Tables",
+        "previousBtn": "Previous",
+        "nextBtn": "Next"
     },
     "DeleteUserInfo": {
         "deleteInfoList": [

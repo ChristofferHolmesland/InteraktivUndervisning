@@ -239,7 +239,11 @@
         "Add": "Legg til",
         "Remove": "Slett",
         "timeLeft": "Tid igjen:",
-        "sessionCode": "Økt kode:"
+        "sessionCode": "Økt kode:",
+        "tabImage": "Bilder",
+        "tabTable": "Tabeller",
+        "previousBtn": "Forrige",
+        "nextBtn": "Neste"
     },
     "DeleteUserInfo": {
         "deleteInfoList": [
