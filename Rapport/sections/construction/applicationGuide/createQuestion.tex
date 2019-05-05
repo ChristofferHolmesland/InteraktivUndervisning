@@ -14,10 +14,15 @@ The solution type part focuses on setting the type of question the new question 
 %TODO merge all the EditQuestion opened images into a single image, and then display it together with the unopened one. Update the caption and labels accordingly.
 \begin{figure}[H]
 	\centering
-	\begin{subfigure}{0.30\linewidth}
-		\includegraphics[width=\linewidth]{/createQuestion/editQuestionUnOpenedEnglish}
-		\caption{This figure displays an image of the editquestion component when all the 3 parts Basic Information, Media and Solution type are hidden. Click on the labels would reveal the content of chosen part.}
-		\label{fig:editquestionUnOpened}
+	\begin{subfigure}{0.80\linewidth}
+		\includegraphics[width=\linewidth]{/createQuestion/editQuestionUnopenedEnglish}
+		\caption{This figure displays an image of the editquestion component when all the 3 parts Basic Information, Media and Solution type are hidden. Clicking on the labels would reveal the content of chosen part.}
+		\label{fig:editquestionUnopened}
+	\end{subfigure}
+	\begin{subfigure}{0.80\linewidth}
+		\includegraphics[width=\linewidth]{/createQuestion/editQuestionCombined}
+		\caption{This figure displays an image of the editquestion component when all the 3 parts Basic Information, Media and Solution type are displayed. Clicking on the labels would hide the content of chosen part.}
+		\label{fig:editquestionOpened}
 	\end{subfigure}
 \end{figure}
 Once the question is finished the user only needs to click the button labelled ok to send the information to the server. The data sent to the server is the newQuestion object found in the function initializeState() in the EditQuestion component. Since all the variables in the newQuestion object are linked to the vue component, the server should have all the information needed to create the solution and store it in the database together with the question information. However, to avoid any problems regarding storing faulty questions on the server, the question information will first need to be validated by the server's validation checker. The question information sent to the sever will first be validated on the basic information in the question, then another validation test that is determined by the given questions type.  If validation checker returns false, then the question failed the validation criteria and the error given by the validation checker will be returned on the EditQuestion component as an alert box. If the validation succeeds, then the information is sent to the solution generator that generates the appropriate solution in accordance to the questions type. Once this is done, the question information and solution are inserted into the question table in the database. In parallel to this the EditQuestion component will be closed and the user will return to the Question component. The Question component will then update its question list to accommodate for the changes just done on the database.
