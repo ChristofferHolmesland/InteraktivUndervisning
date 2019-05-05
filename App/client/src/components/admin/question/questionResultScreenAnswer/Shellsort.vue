@@ -3,7 +3,7 @@
 		<b-row class="shellsortRow">
 			<div 	class="shellsortColKvalue"
 					>
-				{{ getLocale.shelsortKValue }}
+				{{ getLocale.shellsortKValue }}
 			</div>
 			<div 	v-for="(value, index) in answer[0].List"
 					:key="index"

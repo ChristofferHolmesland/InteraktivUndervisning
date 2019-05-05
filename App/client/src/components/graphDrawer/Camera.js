@@ -15,6 +15,11 @@ export default class Camera {
 		this.viewportHeight = this.canvas.height;
 	}
 
+	updateToNewCanvasSize() {
+		this.viewportWidth = this.canvas.width;
+		this.viewportHeight = this.canvas.height;
+	}
+
 	changeZoom(dZ, canvasX, canvasY) {
 		let oldWorld = this.project(canvasX, canvasY);
 

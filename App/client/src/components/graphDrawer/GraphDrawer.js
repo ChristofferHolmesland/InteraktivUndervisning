@@ -79,7 +79,9 @@ export default class GraphDrawer {
 		return this.controllers[this.controlType].export();
 	}
 
-	constructor(canvas, locale, config) {
+	constructor(canvas, locale, config, window) {
+		// Reference to window so the size can be changed.
+		this.window = window;
 		// Radius of nodes.
 		this.R = 25;
 		// How often the canvas should be updated.
@@ -88,6 +90,13 @@ export default class GraphDrawer {
 		this.MS_PER_FRAME = 1000 / this.FPS;
 		// Device type, "Desktop" or "Mobile"
 		this.DEVICE = "Mobile";
+		// Relative size of the buffers compared to canvas size.
+		this.STATIC_BUFFER_FACTOR = 1;
+		this.DRAW_BUFFER_FACTOR = 5;
+		// The maximum canvas size should be 16k x 16k in Chrome,
+		// but the performance is not good enough when the
+		// width / height is larger than ~7k.
+		this.MAX_BUFFER_SIZE = 7000;
 		// Size of the font in px.
 		this.fontHeight = 10;
 		// Contains all the text
@@ -145,17 +154,11 @@ export default class GraphDrawer {
 
 		// Offscreen canvas used for drawing (mostly) static
 		// content like the UI. This draws in canvas space.
-		this.staticBuffer = document.createElement("CANVAS");
-		this.staticBuffer.width = canvas.width;
-		this.staticBuffer.height = canvas.height;
-		this.staticContext = this.staticBuffer.getContext("2d");
+		this.createStaticBuffer();
+		this.createDrawBuffer();
 
 		// Offscreen canvas used for drawing. This draws
 		// in world space and the camera converts it to canvas space.
-		this.drawBuffer = document.createElement("CANVAS");
-		this.drawBuffer.width = canvas.width * 5;
-		this.drawBuffer.height = canvas.height * 5;
-		this.drawContext = this.drawBuffer.getContext("2d");
 
 		let down = function(e) {
 			e.preventDefault();
@@ -177,7 +180,6 @@ export default class GraphDrawer {
 		this.canvas.addEventListener("mousedown", down);
 		this.canvas.addEventListener("touchstart", down);
 		this.canvas.addEventListener("wheel", this.detectZoomWheel.bind(this));
-
 
 		// Updates the GraphDrawer every <MS_PER_FRAME> milliseconds.
 		this.intervalId = setInterval((function() {
@@ -264,6 +266,30 @@ export default class GraphDrawer {
 		this.staticContext.strokeStyle = "black";
 	}
 
+	createStaticBuffer() {
+		this.staticBuffer = document.createElement("CANVAS")
+		this.setBufferDimension(this.staticBuffer, this.STATIC_BUFFER_FACTOR);
+		this.staticContext = this.staticBuffer.getContext("2d");
+	}
+
+	createDrawBuffer() {
+		this.drawBuffer = document.createElement("CANVAS");
+		this.setBufferDimension(this.drawBuffer, this.DRAW_BUFFER_FACTOR);
+		this.drawContext = this.drawBuffer.getContext("2d");
+	}
+
+	setBufferDimension(buffer, factor) {
+		if (this.canvas.width == 0 || this.canvas.height == 0) {
+			return;
+		}
+
+		buffer.width = this.canvas.width * factor;
+		buffer.height = this.canvas.height * factor;
+
+		if (buffer.width > this.MAX_BUFFER_SIZE) buffer.width = this.MAX_BUFFER_SIZE;
+		if (buffer.height > this.MAX_BUFFER_SIZE) buffer.height = this.MAX_BUFFER_SIZE;
+	}
+
 	/*
 		Draws the stepping buttons to the buffer.
 		Must be called by a controller.
@@ -282,6 +308,7 @@ export default class GraphDrawer {
 				btn.position.width,
 				btn.position.height
 			);
+
 			this.staticContext.fill();
 			this.staticContext.stroke();
 
@@ -388,7 +415,7 @@ export default class GraphDrawer {
 					this.drawContext.stroke();
 					this.drawContext.strokeStyle = "black";
 				} else {
-					console.error("No intersection");
+					// This can sometimes happens if two nodes are overlapping.
 				}
 			}
 
@@ -398,6 +425,7 @@ export default class GraphDrawer {
 				this.drawContext.fillText(this.edges[i].v, tx, ty);
 			}
 		}
+
 		// Nodes.
 		for (let i = 0; i < this.nodes.length; i++) {
 			if (this.camera.cull(this.nodes[i], true)) continue;
@@ -544,10 +572,49 @@ export default class GraphDrawer {
 		return undefined;
 	}
 
+	fixCanvasSize() {
+		this.canvas.width = this.canvas.clientWidth;
+		let ratio = this.window.innerHeight / this.window.innerWidth;
+		this.canvas.height = this.canvas.width * ratio;
+		
+		this.setBufferDimension(this.staticBuffer, this.STATIC_BUFFER_FACTOR);
+		this.setBufferDimension(this.drawBuffer, this.DRAW_BUFFER_FACTOR);
+		this.camera.updateToNewCanvasSize();
+		
+		if (this.operatingMode == "Presentation") {
+			this.addSteppingButtons();
+		}
+
+		if (this.controllers[this.controlType].onCanvasResize !== undefined)
+			this.controllers[this.controlType].onCanvasResize();
+
+		this.dirty = true;
+	}
+
 	/*
 		Updates the GraphDrawer state.
 	*/
 	update() {
+		// Use this code to see if more than one GraphDrawer instance
+		// is running at the same time.
+		//if (this.runningId == undefined) this.runningId = 10000 * Math.random();
+		//	console.error(this.runningId);
+
+		if (this.canvas.width !== this.canvas.clientWidth) {
+			// When the page is loading, the width is sometimes 0.
+			if (this.canvas.clientWidth > 0) {
+				this.fixCanvasSize();
+			}
+		}
+
+		// If the GraphDrawer is paused, then a frame took more
+		// time than it was allocated, and we should wait a bit
+		// to be sure the browser isn't overloaded.
+		if (this.paused > 0) {
+			this.paused--;
+			return;
+		}
+
 		if (this.dirty) {
 			// Controllers can implement the dirtyUpdate function to be notified
 			// before a draw happens.
@@ -556,8 +623,34 @@ export default class GraphDrawer {
 			}
 
 			//this.moveGraphInsideWorld();
-			this.draw();
-			this.switchBuffers();
+
+			let drawTime = this.timeAndExecute(this.draw.bind(this));
+			let switchTime = this.timeAndExecute(this.switchBuffers.bind(this));
+
+			let totalTime = drawTime + switchTime;
+			// This frame took more than it's allocated time.
+			if (totalTime > this.MS_PER_FRAME) {
+				this.pause = 1;
+				if (this.pauseCount == undefined) this.pauseCount = 1;
+				else this.pauseCount++;
+
+				// If this happens a lot, the FPS should probably be lowered
+				// because the GraphDrawer is being run on a slow machine.
+				if (this.pauseCount > 10) {
+					let newFps = Math.ceil(0.75 * this.FPS);
+					console.error("GraphDrawer FPS was lowered from: " + this.FPS + ", to: " + newFps);
+					this.FPS = Math.ceil(0.75 * this.FPS);
+					this.MS_PER_FRAME = 1000 / this.FPS;
+
+					clearInterval(this.intervalId);
+
+					this.intervalId = setInterval((function() {
+						this.update.call(this);
+					}).bind(this), this.MS_PER_FRAME);
+
+					this.pauseCount = 0;
+				}
+			}
 
 			if (this.stillDirty) this.stillDirty = false;
 			else this.dirty = false;
@@ -709,6 +802,8 @@ export default class GraphDrawer {
 			let dX = velocityFactor * (newPosition.x - currentPosition.x);
 			let dY = velocityFactor * (newPosition.y - currentPosition.y);
 
+			// Detect the start of a panning gesture)
+
 			if (dX > threshold || dX < -threshold) {
 				dX -= Math.sign(dX) * threshold;
 				// The camera won't put it's center close enough to the world edge,
@@ -720,6 +815,7 @@ export default class GraphDrawer {
 				);
 				hasMoved = true;
 			}
+
 			if (dY > threshold || dY < -threshold) {
 				dY -= Math.sign(dY) * threshold;
 				this.camera.translateY(
@@ -731,9 +827,11 @@ export default class GraphDrawer {
 			}
 
 			this.dirty = true;
-			currentPosition.x = newPosition.x;
-			currentPosition.y = newPosition.y;
-			if (hasMoved) threshold = 0;
+			if (hasMoved) {
+				threshold = 0;
+				currentPosition.x = newPosition.x;
+				currentPosition.y = newPosition.y;
+			}
 		}.bind(this);
 
 		let panUpHandler = function(newE) {
@@ -914,6 +1012,7 @@ export default class GraphDrawer {
 
 		for (let i = 0; i < this.steppingButtons.length; i++) {
 			let btn = this.steppingButtons[i];
+
 			let inside = this.isPointInRectangle(
 				e.offsetX,
 				e.offsetY,
@@ -1218,5 +1317,13 @@ export default class GraphDrawer {
 		}
 
 		return undefined; // No collision
+	}
+
+	timeAndExecute(func) {
+		let before = new Date().getTime();
+		func();
+		let after = new Date().getTime();
+
+		return after - before;
 	}
 }

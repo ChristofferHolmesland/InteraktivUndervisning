@@ -302,6 +302,16 @@ export default class Graph0 {
 		return false;
 	}
 
+	onCanvasResize() {
+		if (this.gd.operatingMode == "Interactive") {
+			this.drawStatic();
+		} else {
+			if (this.steppingButtons.length > 0) {
+				this.addTreeSteppingButtons();
+				this.gd.drawStatic();
+			}
+		}
+	}
 
 	/*
 		Checks if the event (click) happened on one of the buttons.
