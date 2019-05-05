@@ -102,11 +102,15 @@
         "removeEditTableRowBtn": "Remove row",
         "removeEditTableColumnBtn": "Remove column",
         "addTableBtn": "Add table",
+        "addTableSaveBtn": "Save table",
         "addTableRowError": "Table needs at least one row!",
         "addTableColumnError": "Table needs at least one column!",
         "addTableValueSizeZeroError": "missing value",
         "addTableValueSizeToLargeError": "value size to large",
-        "addTableValueCellError": "These cells have an error: "
+        "addTableValueCellError": "These cells have an error: ",
+        "tableViewTitle": "Table",
+        "viewBtn": "View",
+        "editBtn": "Edit"
     },
     "AdminSessions": {
         "newSession": "New session",
@@ -155,7 +159,11 @@
         "Add": "Add",
         "Remove": "Remove",
         "markAsCorrectBtn": "Mark as correct",
-        "shellsortKValue": "K value"
+        "shellsortKValue": "K value",
+        "tabImage": "Images",
+        "tabTable": "Tables",
+        "previousBtn": "Previous",
+        "nextBtn": "Next"
     },
     "Navbar": {
         "lang": "Language",

@@ -5,55 +5,101 @@
 				<b-card no-body>
 					<b-tabs card @input="setTab($event)">
 						<b-tab :title="getLocale.question">
-							<b-container>
+							<b-container class="px-0">
 								<b-row>
-									<b-col>
-										<h1>{{ resultInfo.question.text }}</h1>
-									</b-col>
-								</b-row>
-								<b-row>
-									<b-col>
-										<h4>{{getLocale.showQuestionType}} {{getQuestionType}}</h4>
-									</b-col>
-								</b-row>
-								<b-row>
-									<b-col>
-										<p 	v-for="(line, index) in getDescription"
-											:key="index"
-											>
-											{{ line }}
-										</p>
-									</b-col>
-								</b-row>
-								<b-row>
-									<b-col>
-										<div class="displayInline" v-for="(info,index) in getExtraDesc" :key="index">
-											<pre v-if="info.code">{{info.value}}</pre>
-											<p class="displayInline" v-else>{{info.value}}</p>
-											<br v-if="info.linebreak"/>
-										</div>
-									</b-col>
-								</b-row>
-								<b-row v-if="getImagesLength > 0">
-									<b-col cols="12">
-										<b-row>
-											<b-col class="text-center">
-												<img    :src="getImgSrc" width="500" height="500"
-														style="border: 3px solid black;"
-												/>
-											</b-col>
-										</b-row>
-										<b-row style="text-align: center;" v-if="getImagesLength > 1">
-											<b-col cols="4">
-												<b-button variant="primary" @click="changeSelectedImage(-1)">previous</b-button>
-											</b-col>
-											<b-col cols="4">
-												{{selectedImageIndex + 1}} / {{getImagesLength}}
-											</b-col>
-											<b-col cols="4">
-												<b-button variant="primary" @click="changeSelectedImage(1)">next</b-button>
-											</b-col>
-										</b-row>
+									<b-col class="px-0">
+										<b-container>
+											<b-row>
+												<b-col>
+													<h1>{{ resultInfo.question.text }}</h1>
+												</b-col>
+											</b-row>
+											<b-row>
+												<b-col>
+													<h4>{{getLocale.showQuestionType}} {{getQuestionType}}</h4>
+												</b-col>
+											</b-row>
+											<b-row>
+												<b-col>
+													<p 	v-for="(line, index) in getDescription"
+														:key="index"
+														>
+														{{ line }}
+													</p>
+												</b-col>
+											</b-row>
+											<b-row>
+												<b-col>
+													<div class="displayInline" v-for="(info,index) in getExtraDesc" :key="index">
+														<pre v-if="info.code">{{info.value}}</pre>
+														<p class="displayInline" v-else>{{info.value}}</p>
+														<br v-if="info.linebreak"/>
+													</div>
+												</b-col>
+											</b-row>
+										</b-container>
+										<b-container class="px-0" v-if="showMedia">
+											<b-row>
+												<b-col>
+													<b-card no-body>
+														<b-tabs card @input="setMediaTab($event)">
+															<b-tab :title="getLocale.tabImage" v-if="getImagesLength > 0">
+																<b-container v-if="mediaTab === 0">
+																	<b-row>
+																		<b-col cols="12">
+																			<b-row>
+																				<b-col class="text-center">
+																					<img    :src="getImgSrc" width="500" height="500"
+																							style="border: 3px solid black;"
+																					/>
+																				</b-col>
+																			</b-row>
+																			<b-row style="text-align: center;" v-if="getImagesLength > 1">
+																				<b-col cols="4">
+																					<b-button variant="primary" @click="changeSelectedImage(-1)">{{ getLocale.previousBtn }}</b-button>
+																				</b-col>
+																				<b-col cols="4">
+																					{{selectedImageIndex + 1}} / {{getImagesLength}}
+																				</b-col>
+																				<b-col cols="4">
+																					<b-button variant="primary" @click="changeSelectedImage(1)">{{ getLocale.nextBtn }}</b-button>
+																				</b-col>
+																			</b-row>
+																		</b-col>
+																	</b-row>
+																</b-container>
+															</b-tab>
+															<b-tab :title="getLocale.tabTable" v-if="getTablesLength > 0">
+																<b-container v-if="mediaTab === 1">
+																	<b-row>
+																		<b-col>
+																			<b-container class="viewTableContainer">
+																				<b-row v-for="(row, rowIndex) in getTableRow" :key="rowIndex" class="editTableRow">
+																					<div v-for="(column, columnIndex) in getTableColumn" :key="columnIndex" class="editTableColumn">
+																						<b-form-input :value="getTable[rowIndex][columnIndex]" maxlength="6" disabled></b-form-input>
+																					</div>
+																				</b-row>
+																			</b-container>
+																		</b-col>
+																	</b-row>
+																	<b-row style="text-align: center;" v-if="getTablesLength > 1">
+																		<b-col cols="4">
+																			<b-button variant="primary" @click="changeSelectedTable(-1)">{{ getLocale.previousBtn }}</b-button>
+																		</b-col>
+																		<b-col cols="4">
+																			{{selectedTableIndex + 1}} / {{getTablesLength}}
+																		</b-col>
+																		<b-col cols="4">
+																			<b-button variant="primary" @click="changeSelectedTable(1)">{{ getLocale.nextBtn }}</b-button>
+																		</b-col>
+																	</b-row>
+																</b-container>
+															</b-tab>
+														</b-tabs>
+													</b-card>
+												</b-col>
+											</b-row>
+										</b-container>
 									</b-col>
 								</b-row>
 							</b-container>
@@ -181,8 +227,10 @@ export default {
 	data() {
 		return {
 			tabIndex: Number,
+			mediaTab: Number,
 			didntAnswerString: "You answered: I don't know!",
 			selectedImageIndex: 0,
+			selectedTableIndex: 0,
 			reload: false,
 			linebreak: false
 		};
@@ -191,32 +239,35 @@ export default {
         getDescription: function() {
             return this.resultInfo.question.description.split("\n");
         },
-		getLocale() {
+		getLocale: function() {
 			let locale = this.$store.getters.getLocale("DisplayQuestion");
 			if (locale) return locale;
 			else return {};
 		},
-		getResult() {
+		getResult: function() {
 			let answer = this.resultInfo.answerList[this.selectedAnswer];
 			if (answer.result !== undefined) return answer.result;
 			return 1;
 		},
-		getImgSrc() {
+		getImgSrc: function() {
 			let file = this.resultInfo.question.object.files[
 				this.selectedImageIndex
 			];
 			return "data:" + file.type + ";base64," + file.buffer;
 		},
-		getImagesLength() {
+		getImagesLength: function() {
 			return this.resultInfo.question.object.files.length;
 		},
-		getQuestionType() {
+		getTablesLength: function() {
+			return this.resultInfo.question.object.tables.length;
+		},
+		getQuestionType: function() {
 			//indexes are 0-9, but question types are 1-10 :(
 			return this.$store.getters.getQuestionTypes[
 				this.resultInfo.question.type - 1
 			].name;
 		},
-		getExtraDesc() {
+		getExtraDesc: function() {
 			let order = [];
 			let extraDescLocales = this.resultInfo.question.object
 				.questionTypeDesc.locale;
@@ -243,17 +294,46 @@ export default {
 			}
 			return order;
 		},
+		showMedia: function() {
+			if (
+				this.getImagesLength > 0 ||
+				this.getTablesLength > 0
+			){
+				return true;
+			}
+			return false;
+		},
+		getTableRow: function() {
+			return this.resultInfo.question.object.tables[this.selectedTableIndex].length;
+		},
+		getTableColumn: function() {
+			return this.resultInfo.question.object.tables[this.selectedTableIndex][0].length;
+		},
+		getTable: function() {
+			return this.resultInfo.question.object.tables[this.selectedTableIndex];
+		}
 	},
 	methods: {
-		setTab(event) {
+		setTab: function(event) {
 			this.tabIndex = event;
 		},
-		changeSelectedImage(step) {
+		setMediaTab: function(event) {
+			this.mediaTab = event;
+		},
+		changeSelectedImage: function(step) {
 			if (
 				this.selectedImageIndex + step >= 0 &&
 				this.selectedImageIndex + step < this.getImagesLength
 			) {
 				this.selectedImageIndex += step;
+			}
+		},
+		changeSelectedTable: function(step) {
+			if (
+				this.selectedTableIndex + step >= 0 &&
+				this.selectedTableIndex + step < this.getTablesLength
+			) {
+				this.selectedTableIndex += step;
 			}
 		},
 		reloads: function() {
@@ -317,5 +397,30 @@ pre {
 }
 .displayInline {
 	display: inline;
+}
+.editTableRow {
+	flex-wrap: nowrap;
+}
+.editTableColumn {
+	min-width: 90px;
+	max-width: 90px;
+	text-align: center;
+	float: left;
+	margin: 0;
+}
+.editTableColumn input {
+	width: 80px;
+	text-align: center;
+	margin: 0;
+	
+}
+.viewTableContainer {
+	overflow-x: scroll;
+	overflow-y: scroll;
+	min-height: 200px;
+	max-height: 200px;
+	text-align: center;
+	border: 1px solid black;
+	border-right-width: 2px;
 }
 </style>

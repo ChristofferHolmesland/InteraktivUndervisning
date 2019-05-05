@@ -142,8 +142,8 @@
 							</div>
 							<div v-if="selectedMediaType === 2">
 								<b-container class="editTableContainer">
-									<b-row v-for="(row, index) in editTableRows" :key="index" class="editTableRow">
-										<div v-for="(column, index) in editTableColumns" :key="index" class="editTableColumn">
+									<b-row v-for="(row, rowIndex) in editTableRows" :key="rowIndex" class="editTableRow">
+										<div v-for="(column, columnIndex) in editTableColumns" :key="columnIndex" class="editTableColumn">
 											<b-form-input v-model="editTableValues[row - 1][column - 1]" maxlength="6"></b-form-input>
 										</div>
 									</b-row>
@@ -167,7 +167,7 @@
 									</b-row>
 									<b-row class="text-align-center mt-3" align-h="around">
 										<b-col cols="9">
-											<b-button block variant="primary" @click="addTable">{{ getLocale.addTableBtn }}</b-button>
+											<b-button block variant="primary" @click="addTable">{{ editExistingTable ? getLocale.addTableSaveBtn : getLocale.addTableBtn }}</b-button>
 										</b-col>
 									</b-row>
 								</b-container>
@@ -219,39 +219,50 @@
 					<b-row v-if="getQuestionObjects.tables.length > 0">
 						<b-col>
 							<label>Tables:</label>
-							<b-container>
-								<b-row v-for="(table, index) in getQuestionObjects.tables" :key="index">
-									<b-col>
+							<b-container	v-for="(table, index) in getQuestionObjects.tables"
+											:key="index"
+											class="mb-2 border py-2"
+											>
+								<b-row align-h="around">
+									<b-col cols="8">
 										<b-container>
-											<b-row>
+											<b-row class="mb-2">
 												<b-col>
-													{{ `Table ${index + 1}` }}
+													{{ `${ getLocale.tableViewTitle } ${ index + 1 }` }}
 												</b-col>
 											</b-row>
 											<b-row>
 												<b-col>
-													<b-button>View</b-button>
+													<b-button variant="warning" v-b-toggle="'tableCollapse' + index">{{ getLocale.viewBtn }}</b-button>
 												</b-col>
 											</b-row>
 										</b-container>
 									</b-col>
-									<b-col>
+									<b-col cols="4">
 										<b-container>
-											<b-row>
-												<b-col>
-													<b-button>Delete</b-button>
+											<b-row class="mb-2 text-center">
+												<b-col align-self="center">
+													<b-button variant="danger" @click="deleteTable(index)">{{ getLocale.deleteBtn }}</b-button>
 												</b-col>
 											</b-row>
-											<b-row>
-												<b-col>
-													<b-button>Edit</b-button>
+											<b-row class="text-center">
+												<b-col align-self="center">
+													<b-button variant="primary" @click="editTable(index)">{{ getLocale.editBtn }}</b-button>
 												</b-col>
 											</b-row>
 										</b-container>
 									</b-col>
 								</b-row>
 								<b-row>
-
+									<b-collapse :id="'tableCollapse' + index" class="tableCollapse">
+										<b-container class="viewTableContainer">
+											<b-row v-for="(row, rowIndex) in getTableRow(index)" :key="rowIndex" class="editTableRow">
+												<div v-for="(column, columnIndex) in getTableColumn(index)" :key="columnIndex" class="editTableColumn">
+													<b-form-input :value="getTable(index)[rowIndex][columnIndex]" maxlength="6" disabled></b-form-input>
+												</div>
+											</b-row>
+										</b-container>
+									</b-collapse>
 								</b-row>
 							</b-container>
 						</b-col>
@@ -459,13 +470,15 @@ function initializeState() {
 
 		time: 0,
 
-		showBasicInfo: false, // TODO change to true
-		showMedia: true, // TODO change to false
+		showBasicInfo: true,
+		showMedia: false,
 		showSolution: false,
 
 		editTableRows: 0,
 		editTableColumns: 0,
 		editTableValues: [],
+		editExistingTable: false,
+		editExistingTableIndex: 0,
 
 		mediaWarningText: "",
 		showMediaWarning: false,
@@ -496,7 +509,7 @@ export default {
 			this.assignState();
 			this.$socket.emit("getQuestionTypes");
 			this.mediaTypes = this.getLocale.mediaTypes;
-			this.selectedMediaType = this.mediaTypes[2].value; // TODO change index back to 0
+			this.selectedMediaType = this.mediaTypes[0].value;
 			if (this.question !== undefined) this.newQuestion = this.question;
 
 			if (this.$refs.graphdrawer !== undefined) {
@@ -813,10 +826,35 @@ export default {
 				return;
 			}
 
-			this.newQuestion.objects.tables.push(this.editTableValues);
+			if (this.editExistingTable){
+				this.getQuestionObjects.tables[
+					this.editExistingTableIndex
+				] = this.editTableValues;
+			}else {
+				this.newQuestion.objects.tables.push(this.editTableValues);
+			}
+			
 			this.editTableRows = 0;
 			this.editTableColumns = 0;
 			this.editTableValues = [];
+			this.editExistingTable = false;
+			this.editExistingTableIndex = 0;
+		},
+		deleteTable(index) {
+			this.getQuestionObjects.tables.splice(index, 1);
+			
+			if (index === this.editExistingTableIndex) {
+				this.editExistingTable = false;
+				this.editExistingTableIndex = 0;
+			}
+		},
+		editTable(index) {
+			let table = this.getQuestionObjects.tables[index];
+			this.editTableRows = table.length;
+			this.editTableColumns = table[0].length;
+			this.editTableValues = table;
+			this.editExistingTable = true;
+			this.editExistingTableIndex = index;
 		}
 	},
 	computed: {
@@ -898,6 +936,15 @@ export default {
 
 				this.time = h * 60 + s;
 			}
+		},
+		getTableRow: function() {
+			return (index) => this.getQuestionObjects.tables[index].length;
+		},
+		getTableColumn: function() {
+			return (index) => this.getQuestionObjects.tables[index][0].length;
+		},
+		getTable: function() {
+			return (index) => this.getQuestionObjects.tables[index];
 		}
 	},
 	sockets: {
@@ -980,5 +1027,19 @@ export default {
 	max-height: 200px;
 	border: 1px solid black;
 	text-align: center;
+}
+.viewTableContainer {
+	overflow-x: scroll;
+	overflow-y: scroll;
+	min-height: 200px;
+	max-height: 200px;
+	text-align: center;
+	border: 1px solid black;
+	border-right-width: 2px;
+}
+.tableCollapse {
+	padding: 5% 5% 0 5%;
+	width: 100%;
+	height: 100%;
 }
 </style>

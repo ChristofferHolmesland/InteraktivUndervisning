@@ -102,11 +102,15 @@
         "removeEditTableRowBtn": "Fjern rad",
         "removeEditTableColumnBtn": "Fjern kolonne",
         "addTableBtn": "Legg til tabell",
+        "addTableSaveBtn": "Lagre tabell",
         "addTableRowError": "Tabellen trenger minst en rad!",
         "addTableColumnError": "Tabellen trenger minst en kolonne!",
         "addTableValueSizeZeroError": "mangler verdi",
         "addTableValueSizeToLargeError": "verdien er for stor",
-        "addTableValueCellError": "Disse cellene har en feil: "
+        "addTableValueCellError": "Disse cellene har en feil: ",
+        "tableViewTitle": "Tabell",
+        "viewBtn": "Vis",
+        "editBtn": "Endre"
     },
     "AdminSessions": {
         "newSession": "Ny økt",
@@ -155,7 +159,11 @@
         "Add": "Legg til",
         "Remove": "Slett",
         "markAsCorrectBtn": "Mark as correct",
-        "shelsortKValue": "K verdi"
+        "shelsortKValue": "K verdi",
+        "tabImage": "Bilder",
+        "tabTable": "Tabeller",
+        "previousBtn": "Forrige",
+        "nextBtn": "Neste"
     },
     "Navbar": {
         "lang": "Språk",

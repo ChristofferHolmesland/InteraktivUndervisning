@@ -66,6 +66,43 @@
                     </b-container>
                 </b-col>
             </b-row>
+            <b-row v-if="question.objects.tables.length > 0 && showMedia">
+                <b-col>
+                    <label>Tables:</label>
+                    <b-container	v-for="(table, index) in question.objects.tables"
+                                    :key="index"
+                                    class="mb-2 border py-2"
+                                    >
+                        <b-row align-h="around">
+                            <b-col>
+                                <b-container>
+                                    <b-row class="mb-2">
+                                        <b-col>
+                                            {{ `${ getLocale.tableViewTitle } ${ index + 1 }` }}
+                                        </b-col>
+                                    </b-row>
+                                    <b-row>
+                                        <b-col>
+                                            <b-button variant="warning" v-b-toggle="'tableCollapse' + index">{{ getLocale.viewBtn }}</b-button>
+                                        </b-col>
+                                    </b-row>
+                                </b-container>
+                            </b-col>
+                        </b-row>
+                        <b-row>
+                            <b-collapse :id="'tableCollapse' + index" class="tableCollapse">
+                                <b-container class="viewTableContainer">
+                                    <b-row v-for="(row, rowIndex) in getTableRow(index)" :key="rowIndex" class="editTableRow">
+                                        <div v-for="(column, columnIndex) in getTableColumn(index)" :key="columnIndex" class="editTableColumn">
+                                            <b-form-input :value="getTable(index)[rowIndex][columnIndex]" maxlength="6" disabled></b-form-input>
+                                        </div>
+                                    </b-row>
+                                </b-container>
+                            </b-collapse>
+                        </b-row>
+                    </b-container>
+                </b-col>
+            </b-row>
         </b-container>
         <b-container class="px-0">
             <b-row @click="changeShowSolution" class="cursor">
@@ -234,7 +271,16 @@ export default {
         },
         getDescription: function() {
             return this.question.description.split("\n");
-        }
+        },
+		getTableRow: function() {
+			return (index) => this.question.objects.tables[index].length;
+		},
+		getTableColumn: function() {
+			return (index) => this.question.objects.tables[index][0].length;
+		},
+		getTable: function() {
+			return (index) => this.question.objects.tables[index];
+		}
     },
     methods: {
         changeShowBasicInfo: function() {
@@ -267,5 +313,35 @@ export default {
 <style scoped>
 .cursor {
     cursor: pointer;    
+}
+.editTableRow {
+	flex-wrap: nowrap;
+}
+.editTableColumn {
+	min-width: 90px;
+	max-width: 90px;
+	text-align: center;
+	float: left;
+	margin: 0;
+}
+.editTableColumn input {
+	width: 80px;
+	text-align: center;
+	margin: 0;
+	
+}
+.viewTableContainer {
+	overflow-x: scroll;
+	overflow-y: scroll;
+	min-height: 200px;
+	max-height: 200px;
+	text-align: center;
+	border: 1px solid black;
+	border-right-width: 2px;
+}
+.tableCollapse {
+	padding: 5% 5% 0 5%;
+	width: 100%;
+	height: 100%;
 }
 </style>
