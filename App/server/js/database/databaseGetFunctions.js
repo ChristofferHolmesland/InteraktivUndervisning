@@ -430,7 +430,7 @@ const get = {
 				resolve(row);
       		});
 		});
-  	},
+  },
 	courseInfoById(db, courseId) {
 		return new Promise(async (resolve, reject) => {
 			let statement = `SELECT CC.code, S.season, Y.year
@@ -444,7 +444,7 @@ const get = {
 				if (err) reject(customReject(err, "courseInfoById"));
 				resolve(rows[0]);
 			});
-    	});
+    });
 	},
 	sessionStatusById: function(db, sessionId) {
 		return new Promise(async (resolve, reject) => {
@@ -489,7 +489,7 @@ const get = {
 				if (err) reject(customReject(err, "allQuestionsInCourseForEditSession"));
 				resolve(rows);
 			});
-    	});
+    });
 	}
 };
 

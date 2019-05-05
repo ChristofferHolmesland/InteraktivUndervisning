@@ -200,9 +200,11 @@ export default {
 		},
 		removeAnswer: function(data) {
 			let answerList = this.session.questions[data.selectedQuestion].answerList;
+      
 			let index = answerList.findIndex(answer => {
 				return answer.id == data.answerId
 			});
+      
 			if (index > -1) answerList.splice(index, 1);
 		},
 		editSession: function(sessionId) {
