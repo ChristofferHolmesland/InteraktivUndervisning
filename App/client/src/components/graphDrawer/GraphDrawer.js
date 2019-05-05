@@ -1003,16 +1003,8 @@ export default class GraphDrawer {
 	checkSteppingButtons(e) {
 		if (this.steppingButtons == undefined) return false;
 
-		console.log("Click");
-		console.log(e.offsetX + "  " + e.offsetY);
-		console.log(this.canvas);
-		console.log(this.canvas.clientHeight);
-
 		for (let i = 0; i < this.steppingButtons.length; i++) {
 			let btn = this.steppingButtons[i];
-
-			console.log("Check");
-			console.log(btn.position);
 
 			let inside = this.isPointInRectangle(
 				e.offsetX,
