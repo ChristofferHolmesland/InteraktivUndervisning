@@ -182,7 +182,7 @@
 							</div>
 						</b-tab>
 					</b-tabs>
-					<b-button variant="success" @click="markAsCorrect" v-if="tabIndex === 2">{{ getLocale.markAsCorrectBtn }}</b-button>
+					<b-button variant="success" @click="markAsCorrect" v-if="tabIndex === 2 && admin">{{ getLocale.markAsCorrectBtn }}</b-button>
 				</b-card>
 			</b-col>
 		</b-row>
