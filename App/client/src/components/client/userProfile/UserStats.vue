@@ -104,7 +104,7 @@ export default {
 		courseSelected() {
 			let list = [];
 			for (let i = 0; i < this.sessionList.length; i++) {
-				if (this.sessionList[i].id === this.courseSelected) {
+				if (this.sessionList[i].courseId === this.courseSelected) {
 					list.push(this.sessionList[i]);
 				}
 			}

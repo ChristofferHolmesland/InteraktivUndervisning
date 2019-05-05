@@ -96,9 +96,12 @@ const get = {
 			});
 		});
 	},
-	sessionHasUserByUserId: function(db, userId) {
+	sessionHasUserByUserId: function(db, userId, sessionId) {
 		return new Promise((resolve, reject) => {
-			let statement = `SELECT * FROM UserHasSession WHERE userId = '${userId}'`;
+			let statement = `SELECT *
+							FROM UserHasSession
+							WHERE userId = '${userId}' AND sessionId = ${sessionId}
+							`;
 			db.get(statement, (err, row) => {
 				if (err) reject(customReject(err, "sessionHasUserByUserId"));
 				resolve(row);
@@ -110,7 +113,7 @@ const get = {
 			let userId = await this.userId(db, userInfo).catch((err) => {
 				reject(customReject(err), "sessionsToUser");
 			});
-			let statement = `SELECT S.name, S.id, C.id
+			let statement = `SELECT S.name, S.id, C.id AS courseId
 							FROM Session AS S
 							INNER JOIN UserHasSession AS US ON US.sessionId = S.id
 							INNER JOIN Course AS C ON S.courseId = C.id 
@@ -425,9 +428,9 @@ const get = {
 			db.get(statement, (err, row) => {
 				if (err) reject(customReject(err, "userLastSession"));
 				resolve(row);
-      });
+      		});
 		});
-  },
+  	},
 	courseInfoById(db, courseId) {
 		return new Promise(async (resolve, reject) => {
 			let statement = `SELECT CC.code, S.season, Y.year
@@ -441,7 +444,7 @@ const get = {
 				if (err) reject(customReject(err, "courseInfoById"));
 				resolve(rows[0]);
 			});
-    });
+    	});
 	}
 };
 

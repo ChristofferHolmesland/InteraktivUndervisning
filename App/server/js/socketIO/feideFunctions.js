@@ -7,13 +7,15 @@ module.exports.feide = function(socket, db, user){
 		/* 
 		response should follow this format: 
 		{
-			totalCorrectAnswers: float,
-			totalsessions: Integer,
-			totalIncorrectAnswers: float,
+			totalCorrectAnswers: Integer,
+			totalDidntKnowAnswers: Integer,
+			totalIncorrectAnswers: Integer,
+			totalSessions: Integer
 			sessionList: [
 				{
-					sessionName = String,
-					courseCode = String
+					course: String, // Course name
+					id: Integer,
+					name: String
 				}, ...
 			] 	// Should be a list of all sessions that the user has participated in.
 				// Should be sorted where the last session is first
@@ -27,7 +29,7 @@ module.exports.feide = function(socket, db, user){
 			if (sessions !== undefined){
 
 				for (let i = 0; i < sessions.length; i++) {
-					let courseInfo = await dbFunctions.get.courseInfoById(db, sessions[i].id).catch(err => {
+					let courseInfo = await dbFunctions.get.courseInfoById(db, sessions[i].courseId).catch(err => {
 						console.error(err)
 					});
 					sessions[i].course = courseInfo.code + " " + courseInfo.season + " " + courseInfo.year;
