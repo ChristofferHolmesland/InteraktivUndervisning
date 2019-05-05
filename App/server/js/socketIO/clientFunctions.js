@@ -163,9 +163,10 @@ module.exports.client = function(socket, db, user, sessions, currentClientSessio
 			}).catch((err) => {
 				console.error(err);
 			});
+			
+			let session = sessions.get(sessionCode).session;
 
-			await dbFunctions.get.sessionHasUserByUserId(db, userId.id).then((row) => {
-				let session = sessions.get(sessionCode).session;
+			await dbFunctions.get.sessionHasUserByUserId(db, userId.id, session.id).then((row) => {
 				if (!row) dbFunctions.insert.addUserToSession(db, userId.id, session.id);
 				
 				let question = session.questionList[session.currentQuestion];
