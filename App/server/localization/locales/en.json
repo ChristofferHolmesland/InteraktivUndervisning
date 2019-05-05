@@ -240,10 +240,12 @@
         "Remove": "Remove",
         "timeLeft": "Time left:",
         "sessionCode": "Session code:",
+        "tabExtraInfo": "Extra information",
         "tabImage": "Images",
         "tabTable": "Tables",
         "previousBtn": "Previous",
-        "nextBtn": "Next"
+        "nextBtn": "Next",
+        "nextquestionBtn": "Next question"
     },
     "DeleteUserInfo": {
         "deleteInfoList": [
@@ -305,7 +307,12 @@
         "bstavlNodesDesc": "Nodes: ",
         "pythonCodeDesc": "Code: ",
         "Add": "Add",
-        "Remove": "Remove"
+        "Remove": "Remove",
+        "tabExtraInfo": "Extra information",
+        "tabImage": "Images",
+        "tabTable": "Tables",
+        "previousBtn": "Previous",
+        "nextBtn": "Next"
     },
     "ClientSessionWaitingArea": {
         "title": "Waiting Area",
