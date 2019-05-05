@@ -108,16 +108,29 @@
 				<b-container v-show="showMedia" class="px-0">
 					<b-row>
 						<b-col>
-							<b-form-select  :options="mediaTypes"
-											v-model="selectedMediaType">
+							<b-form-select  v-model="selectedMediaType"
+											:options="mediaTypes"
+											>
 							</b-form-select>
 						</b-col>
 					</b-row>
 					<b-row style="text-align: center;" class="mt-4">
 						<b-col>
+							<b-alert	:show="showMediaWarning"
+										variant="warning"
+										dismissible
+										@dismissed="showMediaWarning = false"
+										>
+								{{mediaWarningText}}
+							</b-alert>
+							<b-alert	:show="showMediaError"
+										variant="danger"
+										dismissible
+										@dismissed="showMediaError = false"
+										>
+								{{mediaErrorText}}
+							</b-alert>
 							<div v-if="selectedMediaType === 0">
-								<b-alert :show="showMediaWarning" variant="warning">{{mediaWarningText}}</b-alert>
-								<b-alert :show="showMediaError" variant="danger">{{mediaErrorText}}</b-alert>
 								<input  type="file" @change="newFile" accept="image/*" 
 										multiple name="imageInput" class="imageInput"
 										id="imageInput"
@@ -128,7 +141,36 @@
 								<!-- TODO add graph objects -->
 							</div>
 							<div v-if="selectedMediaType === 2">
-								<!-- TODO add table objects -->
+								<b-container class="editTableContainer">
+									<b-row v-for="(row, index) in editTableRows" :key="index" class="editTableRow">
+										<div v-for="(column, index) in editTableColumns" :key="index" class="editTableColumn">
+											<b-form-input v-model="editTableValues[row - 1][column - 1]" maxlength="6"></b-form-input>
+										</div>
+									</b-row>
+								</b-container>
+								<b-container>
+									<b-row class="text-align-center mt-2" align-h="around">
+										<b-col cols="5">
+											<b-button block variant="success" @click="addTableRow">{{ getLocale.addEditTableRowBtn }}</b-button>
+										</b-col>
+										<b-col cols="5">
+											<b-button block variant="success" @click="addTableColumn">{{ getLocale.addEditTableColumnBtn }}</b-button>
+										</b-col>
+									</b-row>
+									<b-row class="text-align-center mt-2" align-h="around">
+										<b-col cols="5">
+											<b-button block variant="danger" @click="removeTableRow">{{ getLocale.removeEditTableRowBtn }}</b-button>
+										</b-col>
+										<b-col cols="5">
+											<b-button block variant="danger" @click="removeTableColumn">{{ getLocale.removeEditTableColumnBtn }}</b-button>
+										</b-col>
+									</b-row>
+									<b-row class="text-align-center mt-3" align-h="around">
+										<b-col cols="9">
+											<b-button block variant="primary" @click="addTable">{{ getLocale.addTableBtn }}</b-button>
+										</b-col>
+									</b-row>
+								</b-container>
 							</div>
 						</b-col>
 					</b-row>
@@ -170,15 +212,48 @@
 					<b-row>
 						<b-col>
 							<div>
-
+								<!-- TODO add graph objects -->
 							</div>
 						</b-col>
 					</b-row>
-					<b-row>
+					<b-row v-if="getQuestionObjects.tables.length > 0">
 						<b-col>
-							<div>
+							<label>Tables:</label>
+							<b-container>
+								<b-row v-for="(table, index) in getQuestionObjects.tables" :key="index">
+									<b-col>
+										<b-container>
+											<b-row>
+												<b-col>
+													{{ `Table ${index + 1}` }}
+												</b-col>
+											</b-row>
+											<b-row>
+												<b-col>
+													<b-button>View</b-button>
+												</b-col>
+											</b-row>
+										</b-container>
+									</b-col>
+									<b-col>
+										<b-container>
+											<b-row>
+												<b-col>
+													<b-button>Delete</b-button>
+												</b-col>
+											</b-row>
+											<b-row>
+												<b-col>
+													<b-button>Edit</b-button>
+												</b-col>
+											</b-row>
+										</b-container>
+									</b-col>
+								</b-row>
+								<b-row>
 
-							</div>
+								</b-row>
+							</b-container>
 						</b-col>
 					</b-row>
 				</b-container>
@@ -287,60 +362,60 @@
                                 v-model="newQuestion.objects.treeElements"
                                 >
                 </b-form-input>
-            </b-form-group>
-            <b-form-group
-                    id="BinarySearchTrees"
-                    label="Draw the tree, or give an array to build the solution tree"
-                    v-if="newQuestion.solutionType === 7 || newQuestion.solutionType === 8"
-                    > 	
-                <label for="Add">Add</label><input type="radio" id="Add" v-model="newQuestion.objects.solutionTreeType" value="Add" /><br/>
-                <label for="Remove">Remove</label><input type="radio" id="Remove" v-model="newQuestion.objects.solutionTreeType" value="Remove"/>
-                <label v-if="newQuestion.objects.solutionTreeType === 'Add'" for="solutionListElements">Input elements to be added to the tree. The elements are seperated by ,</label>
-                <label v-else-if="newQuestion.objects.solutionTreeType === 'Remove'" for="solutionListElements">Input elements to be removed from the tree. The elements are seperated by ,</label>
-                <b-form-input 	id="solutionListElements"
-                                 type="text"
-                                 v-model="newQuestion.objects.treeElements">
-                </b-form-input>
-                <GraphDrawer
-                    ref="graphdrawer"
-                    @getValueResponse="gotTreeDrawerObject"
-                    :requestAnswer="requestGraphDrawerObject"
-                    controlType="Graph0"
-                    exportType="Both"
-                    operatingMode="Interactive"
-                    importType="Graph"
-                    :steps="this.newQuestion.objects._graphdrawerGraph"
-                />
-            </b-form-group>
-            <b-form-group 	
-                    id="dijkstraSolution"
-                    label="Draw the graph, and mark start (green) and end (red) nodes"
-                    v-if="newQuestion.solutionType === 9">
-                <GraphDrawer
-                    ref="graphdrawer"
-                    @getValueResponse="gotGraphDrawerObject" 
-                    :requestAnswer="requestGraphDrawerObject" 
-                    controlType="Graph0"
-                    importType="Graph"
-                    subType="Dijkstra"
-                    exportType="Graph"
-                    :displayEdgeValues="true"
-                    operatingMode="Interactive"
-                    :steps="this.newQuestion.objects._graphdrawerGraph"
-                    />
-            </b-form-group>
-            <b-form-group 	id="pythonSolution"
-                            :label="getLocale.newQuestionSolution"
-                            label-for="solutionInput"
-                            v-if="newQuestion.solutionType === 10">
-                <div v-show="checkRef">klar</div>
-                    <b-form-textarea 	id="pythonCodeInput"
-                                        placeholder="Write Python code here..."
-                                        v-model="newQuestion.objects.code"
-                                        ref="codeInput"
-                                        @keydown.native.tab="keyDownInTextarea">
-                    </b-form-textarea>
-            </b-form-group>
+				</b-form-group>
+				<b-form-group
+						id="BinarySearchTrees"
+						label="Draw the tree, or give an array to build the solution tree"
+						v-if="newQuestion.solutionType === 7 || newQuestion.solutionType === 8"
+						> 	
+					<label for="Add">Add</label><input type="radio" id="Add" v-model="newQuestion.objects.solutionTreeType" value="Add" /><br/>
+					<label for="Remove">Remove</label><input type="radio" id="Remove" v-model="newQuestion.objects.solutionTreeType" value="Remove"/>
+					<label v-if="newQuestion.objects.solutionTreeType === 'Add'" for="solutionListElements">Input elements to be added to the tree. The elements are seperated by ,</label>
+					<label v-else-if="newQuestion.objects.solutionTreeType === 'Remove'" for="solutionListElements">Input elements to be removed from the tree. The elements are seperated by ,</label>
+					<b-form-input 	id="solutionListElements"
+									type="text"
+									v-model="newQuestion.objects.treeElements">
+					</b-form-input>
+					<GraphDrawer
+						ref="graphdrawer"
+						@getValueResponse="gotTreeDrawerObject"
+						:requestAnswer="requestGraphDrawerObject"
+						controlType="Graph0"
+						exportType="Both"
+						operatingMode="Interactive"
+						importType="Graph"
+						:steps="this.newQuestion.objects._graphdrawerGraph"
+					/>
+				</b-form-group>
+				<b-form-group 	
+						id="dijkstraSolution"
+						label="Draw the graph, and mark start (green) and end (red) nodes"
+						v-if="newQuestion.solutionType === 9">
+					<GraphDrawer
+						ref="graphdrawer"
+						@getValueResponse="gotGraphDrawerObject" 
+						:requestAnswer="requestGraphDrawerObject" 
+						controlType="Graph0"
+						importType="Graph"
+						subType="Dijkstra"
+						exportType="Graph"
+						:displayEdgeValues="true"
+						operatingMode="Interactive"
+						:steps="this.newQuestion.objects._graphdrawerGraph"
+						/>
+				</b-form-group>
+				<b-form-group 	id="pythonSolution"
+								:label="getLocale.newQuestionSolution"
+								label-for="solutionInput"
+								v-if="newQuestion.solutionType === 10">
+					<div v-show="checkRef">klar</div>
+						<b-form-textarea 	id="pythonCodeInput"
+											placeholder="Write Python code here..."
+											v-model="newQuestion.objects.code"
+											ref="codeInput"
+											@keydown.native.tab="keyDownInTextarea">
+						</b-form-textarea>
+				</b-form-group>
             </div>
         </b-form>
     </b-modal>
@@ -384,9 +459,13 @@ function initializeState() {
 
 		time: 0,
 
-		showBasicInfo: true,
-		showMedia: false,
+		showBasicInfo: false, // TODO change to true
+		showMedia: true, // TODO change to false
 		showSolution: false,
+
+		editTableRows: 0,
+		editTableColumns: 0,
+		editTableValues: [],
 
 		mediaWarningText: "",
 		showMediaWarning: false,
@@ -417,7 +496,7 @@ export default {
 			this.assignState();
 			this.$socket.emit("getQuestionTypes");
 			this.mediaTypes = this.getLocale.mediaTypes;
-			this.selectedMediaType = this.mediaTypes[0].value;
+			this.selectedMediaType = this.mediaTypes[2].value; // TODO change index back to 0
 			if (this.question !== undefined) this.newQuestion = this.question;
 
 			if (this.$refs.graphdrawer !== undefined) {
@@ -664,6 +743,80 @@ export default {
 			}
 
 			this.newQuestion.objects.multipleChoices.splice(index, 1);
+		},
+		addTableRow: function() {
+			this.editTableRows++;
+			this.editTableValues.push(new Array(this.editTableColumns));
+			for (let i = 0; i < this.editTableColumns; i++) {
+				this.editTableValues[this.editTableRows - 1][i] = "0";
+			}
+			if (this.editTableColumns === 0) this.addTableColumn();
+		},
+		addTableColumn: function() {
+			this.editTableColumns++;
+			for (let i = 0; i < this.editTableRows; i++) {
+				this.editTableValues[i].push("0");
+			}
+			if (this.editTableRows === 0) this.addTableRow();
+		},
+		removeTableRow: function() {
+			if (this.editTableRows === 0) return;
+			this.editTableRows--;
+			this.editTableValues.pop();
+			if (this.editTableRows === 0) {
+				this.editTableRows = 0;
+				this.editTableColumns = 0;
+				this.editTableValues = [];
+			}
+		},
+		removeTableColumn: function() {
+			if (this.editTableColumns === 0) return;
+			this.editTableColumns--;
+			for (let i = 0; i < this.editTableRows; i++) {
+				this.editTableValues[i].pop();
+			}
+			if (this.editTableColumns === 0) {
+				this.editTableRows = 0;
+				this.editTableColumns = 0;
+				this.editTableValues = [];
+			}
+		},
+		addTable: function() {
+			if (this.editTableRows === 0) {
+				this.mediaErrorText = this.getLocale.addTableRowError;
+				this.showMediaError = true;
+				return;
+			}
+			if (this.editTableColumns === 0) {
+				this.mediaErrorText = this.getLocale.addTableColumnError;
+				this.showMediaError = true;
+				return;
+			}
+			let wrongValue = [];
+			for (let row = 0; row < this.editTableRows; row++) {
+				for (let column = 0; column < this.editTableColumns; column++) {
+					if (this.editTableValues[row][column].length === 0) {
+						wrongValue.push(`[${row}, ${column}] ${this.getLocale.addTableValueSizeZeroError}`);
+					}
+					if (this.editTableValues[row][column].length > 6) {
+						wrongValue.push(`[${row}, ${column}] ${this.getLocale.addTableValueSizeToLargeError}`);
+					}
+				}
+			}
+			if (wrongValue.length > 0) {
+				this.mediaErrorText = `${this.getLocale.addTableValueCellError}`;
+				for (let i = 0; i < wrongValue.length; i++) {
+					this.mediaErrorText += wrongValue[i];
+					if (i < wrongValue.length - 1) this.mediaErrorText += ", ";
+				}
+				this.showMediaError = true;
+				return;
+			}
+
+			this.newQuestion.objects.tables.push(this.editTableValues);
+			this.editTableRows = 0;
+			this.editTableColumns = 0;
+			this.editTableValues = [];
 		}
 	},
 	computed: {
@@ -802,5 +955,30 @@ export default {
 .imageInput:focus + label,
 .imageInput:hover + label {
 	width: 450px;
+}
+
+.editTableRow {
+	flex-wrap: nowrap;
+}
+.editTableColumn {
+	min-width: 90px;
+	max-width: 90px;
+	text-align: center;
+	float: left;
+	margin: 0;
+}
+.editTableColumn input {
+	width: 80px;
+	text-align: center;
+	margin: 0;
+	
+}
+.editTableContainer {
+	overflow-x: scroll;
+	overflow-y: scroll;
+	min-height: 200px;
+	max-height: 200px;
+	border: 1px solid black;
+	text-align: center;
 }
 </style>

@@ -16,8 +16,8 @@
         "description": "Description:",
         "mediaTypes": [
             {"text":"Images", "value": 0},
-            {"text":"Graphs", "value": 0},
-            {"text":"Tables", "value": 0}
+            {"text":"Graphs", "value": 1},
+            {"text":"Tables", "value": 2}
         ],
         "multipleChoiceHeader": "Choices:",
         "addNewMultipleChoice": "Add new choice",
@@ -96,7 +96,17 @@
         "binaryTreeSolutionText": "The answer would be correct if the drawn tree fulfilled the requirements of a binary tree and consisted of the following nodes:",
         "cancelBtn": "Cancel",
         "okBtn": "Add",
-        "noSessionText": "No sessions. Add new session"
+        "noSessionText": "No sessions. Add new session",
+        "addEditTableRowBtn": "Add row",
+        "addEditTableColumnBtn": "Add column",
+        "removeEditTableRowBtn": "Remove row",
+        "removeEditTableColumnBtn": "Remove column",
+        "addTableBtn": "Add table",
+        "addTableRowError": "Table needs at least one row!",
+        "addTableColumnError": "Table needs at least one column!",
+        "addTableValueSizeZeroError": "missing value",
+        "addTableValueSizeToLargeError": "value size to large",
+        "addTableValueCellError": "These cells have an error: "
     },
     "AdminSessions": {
         "newSession": "New session",

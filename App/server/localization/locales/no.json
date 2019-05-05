@@ -16,8 +16,8 @@
         "description": "Beskrivelse:",
         "mediaTypes": [
             {"text":"Bilder", "value": 0},
-            {"text":"Grafer", "value": 0},
-            {"text":"Tabeller", "value": 0}
+            {"text":"Grafer", "value": 1},
+            {"text":"Tabeller", "value": 2}
         ],
         "multipleChoiceHeader": "Alternativer:",
         "addNewMultipleChoice": "Legg til nytt alternativ",
@@ -96,7 +96,17 @@
         "binaryTreeSolutionText": "Det ville blitt regnet som riktig svar hvis treet som ble gitt følger alle reglene til et Binear Tree og treet besto av følgende noder:",
         "cancelBtn": "Avbryt",
         "okBtn": "Legg til",
-        "noSessionText": "Ingen økter. Legg til ny økt"
+        "noSessionText": "Ingen økter. Legg til ny økt",
+        "addEditTableRowBtn": "Legg til rad",
+        "addEditTableColumnBtn": "Legg til kolonne",
+        "removeEditTableRowBtn": "Fjern rad",
+        "removeEditTableColumnBtn": "Fjern kolonne",
+        "addTableBtn": "Legg til tabell",
+        "addTableRowError": "Tabellen trenger minst en rad!",
+        "addTableColumnError": "Tabellen trenger minst en kolonne!",
+        "addTableValueSizeZeroError": "mangler verdi",
+        "addTableValueSizeToLargeError": "verdien er for stor",
+        "addTableValueCellError": "Disse cellene har en feil: "
     },
     "AdminSessions": {
         "newSession": "Ny økt",
