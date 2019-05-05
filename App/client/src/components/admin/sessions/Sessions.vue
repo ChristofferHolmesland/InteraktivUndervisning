@@ -5,7 +5,7 @@
 				<b-container>
 					<b-row class="mb-3">
 						<b-col lg="6" class="pr-0">
-							<b-form-input v-model="searchText" type="text" placeholder="Search"/>
+							<b-form-input v-model="searchText" type="text" :placeholder="getLocale.searchPlaceholder"/>
 						</b-col>
 						<b-col lg="4" class="px-0">
 							<SelectCourse :changeHandler="courseChanged"/>
@@ -42,7 +42,7 @@
 											<b-col 	cols="2"
 													:disabled="session.status === 0 ? true : false"
 													v-b-tooltip.hover
-													title="Only inactive sessions can be edited"
+													:title="getLocale.editTooltip"
 													>
 												<b-button	:variant="session.status === 0 ? 'primary' : ''"
 															@click="editSession(session.id)"
@@ -54,7 +54,7 @@
 											<b-col 	cols="2"
 													:disabled="session.status === 0 ? true : false"
 													v-b-tooltip.hover
-													title="Only inactive sessions can be deleted"
+													:title="getLocale.deleteTooltip"
 													>
 												<b-button	:variant="session.status === 0 ? 'danger' : ''"
 															@click="removeSession(session.id)"
@@ -67,7 +67,7 @@
 									</b-container>
 								</b-list-group-item>
 								<b-list-group-item class="border-0" v-show="showNoSessions">
-									No sessions
+									{{ getLocale.noSessions }}
 								</b-list-group-item>
 								<div v-if="sessionsListLength < 10">
 									<b-list-group-item v-for="index in (10 - sessionsListLength)" :key="index + sessionsListLength">
@@ -239,7 +239,7 @@ export default {
 			return this.selectedSession.id;
 		},
 		getLocale() {
-			let locale = this.$store.getters.getLocale("AdminQuestions");
+			let locale = this.$store.getters.getLocale("AdminSessions");
 			if(locale) return locale;
 			else return {};
 		}

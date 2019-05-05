@@ -120,7 +120,11 @@
         "selectedQuestions": "Question added:",
         "removeBtn": "Remove",
         "cancelBtn": "Cancel",
-        "okBtn": "Add"
+        "okBtn": "Add",
+        "searchPlaceholder": "Search",
+        "editTooltip": "Only inactive sessions can be edited",
+        "deleteTooltip": "Only inactive sessions can be deleted",
+        "noSessions": "No sessions"
     },
     "AdminDashboard": {
         "courseAdministrator": "Course administrators",
