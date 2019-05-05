@@ -10,8 +10,8 @@
 					</template>
 				</b-form-select>
 			</b-col>
-			<b-col cols="4" class="pl-0">
-				<b-button @click="initializeSession(selectedSession)" variant="primary">
+			<b-col cols="3">
+				<b-button block @click="initializeSession(selectedSession)" variant="primary">
 					{{ getLocale.startBtn }}
 				</b-button>
 			</b-col>

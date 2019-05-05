@@ -155,7 +155,7 @@ const get = {
 	},
 	allSessionWithinCourse: function(db, courseId) {
 		return new Promise((resolve, reject) => {
-			let statement = `SELECT S.id, S.name
+			let statement = `SELECT S.id, S.name, S.status
 							FROM Session AS S
 							INNER JOIN Course AS C ON S.courseId = C.id 
 							WHERE C.id = ${courseId}
@@ -443,6 +443,51 @@ const get = {
 			db.all(statement, (err, rows) => {
 				if (err) reject(customReject(err, "courseInfoById"));
 				resolve(rows[0]);
+			});
+    	});
+	},
+	sessionStatusById: function(db, sessionId) {
+		return new Promise(async (resolve, reject) => {
+			let statement = `SELECT status
+							FROM Session
+							WHERE id = ${sessionId}`;
+			db.all(statement, (err, rows) => {
+				if (err) reject(customReject(err, "sessionStatusById"));
+				resolve(rows[0]);
+			});
+    	});
+	},
+	sessionForEditSession: function(db, sessionId) {
+		return new Promise(async (resolve, reject) => {
+			let statement = `SELECT id, name, status, courseId
+							FROM Session
+							WHERE id = ${sessionId}`;
+			db.get(statement, (err, row) => {
+				if (err) reject(customReject(err, "sessionForEditSession"));
+				resolve(row);
+			});
+    	});
+	},
+	sessionQuestion: function(db, sessionId) {
+		return new Promise(async (resolve, reject) => {
+			let statement = `SELECT Q.id, Q.text
+							FROM Question AS Q
+							INNER JOIN SessionHasQuestion AS SHQ ON SHQ.questionId = Q.id
+							WHERE SHQ.sessionId = ${sessionId}`;
+			db.all(statement, (err, rows) => {
+				if (err) reject(customReject(err, "sessionQuestion"));
+				resolve(rows);
+			});
+    	});
+	},
+	allQuestionsInCourseForEditSession: function(db, courseId) {
+		return new Promise(async (resolve, reject) => {
+			let statement = `SELECT id, text
+							FROM Question
+							WHERE courseId = ${courseId}`;
+			db.all(statement, (err, rows) => {
+				if (err) reject(customReject(err, "allQuestionsInCourseForEditSession"));
+				resolve(rows);
 			});
     	});
 	}

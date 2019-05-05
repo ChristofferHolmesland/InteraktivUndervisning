@@ -2,7 +2,7 @@
 	<b-container fluid>
 		<b-row class="border-bottom mb-3">
 			<b-col cols="4">
-				<p>{{getLocale.status}} {{getLocale.inactive}} | {{getLocale.active}} | {{getLocale.finished}}</p>
+				<p>{{getLocale.status}} <span :class="getSession.status === 0 ? 'underline' : null">{{getLocale.inactive}}</span> | <span :class="getSession.status === 1 ? 'underline' : null">{{getLocale.active}}</span> | <span :class="getSession.status === 2 ? 'underline' : null">{{getLocale.finished}}</span></p>
 			</b-col>
 			<b-col cols="8">
 				<b-container class="px-0">
@@ -190,5 +190,8 @@ export default {
 <style scoped>
 .selected {
 	background-color: darkgray;
+}
+.underline {
+	text-decoration: underline;
 }
 </style>

@@ -87,8 +87,10 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 
 	socket.on("getSession", function(sessionId) {
 		dbFunctions.get.sessionById(db, sessionId).then(async function(session) {
+			if (!session) return;
 			let result = {};
 			result.questions = [];
+			result.status = session.status;
 
 			let numberOfFeideUsers = await dbFunctions.get.feideUsersInSession(db, sessionId);
 			numberOfFeideUsers = numberOfFeideUsers.length;
@@ -144,7 +146,13 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 	});
 
 	socket.on("initializeSession", function(sessionId){
-		if (currentSession != undefined) socket.emit("initializeSessionErrorResponse", "You are already running a session with the code: " + currentSession.session.id);
+		if (currentSession != undefined) {
+			socket.emit("initializeSessionErrorResponse", "You are already running a session with the code: " + currentSession.session.id);
+			return;
+		}
+		dbFunctions.update.sessionStatus(db, sessionId, 1).catch((err) => {
+			console.error(err);
+		});
 		dbFunctions.get.sessionById(db, sessionId).then(async (sessionInformation) => {
 			let sessionCode = generalFunctions.calculateSessionCode(sessions);
 			socket.join(sessionCode);
@@ -379,6 +387,9 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 
 			io.to(session.sessionCode).emit("nextQuestion", safeQuestion)
 		} else {
+			dbFunctions.update.sessionStatus(db, session.id, 2).catch((err) => {
+				console.error(err);
+			});
 			socket.to(session.sessionCode).emit("answerResponse", "sessionFinished");
 			socket.emit("endSessionScreen");
 
@@ -708,6 +719,81 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 		}).catch((err) => {
 			console.error(err);
 		})
+	});
+
+	socket.on("editSessionRequest", function(sessionId) {
+		dbFunctions.get.sessionForEditSession(db, sessionId).then((session) => {
+			if (session && session.status === 0) {
+				let result = {
+					id: session.id,
+					name: session.name,
+					questionOptions: [],
+					selectedQuestions: []
+				};
+				dbFunctions.get.sessionQuestion(db, sessionId).then((selectedQuestions) => {
+					for (let i = 0; i < selectedQuestions.length; i++) {
+						let selectedQuestion = selectedQuestions[i];
+						result.selectedQuestions.push({
+							id: selectedQuestion.id,
+							text: selectedQuestion.text
+						})
+					}
+
+					dbFunctions.get.allQuestionsInCourseForEditSession(db, session.courseId).then((questions) => {
+						for (let i = 0; i < questions.length; i++) {
+							let question = questions[i];
+							result.questionOptions.push({
+								value: question.id,
+								text: question.text
+							});
+						}
+
+						socket.emit("editSessionResponse", result);
+					}).catch((err) => {
+						console.error(err);
+					})
+				}).catch((err) => {
+					console.error(err);
+				});
+			}
+		}).catch((err) => {
+			console.error(err);
+		});
+	});
+
+	socket.on("deleteSessionRequest", function(sessionId) {
+		dbFunctions.get.sessionStatusById(db, sessionId).then(async (session) => {
+			if(session && session.status === 0) {
+				await dbFunctions.del.sHQById(db, sessionId).catch((err) => {
+					console.error(err);
+				})
+				await dbFunctions.del.sessionById(db, sessionId).catch((err) => {
+					console.error(err);
+				})
+				socket.emit("deleteSessionResponse");
+			}
+		}).catch((err) => {
+			console.error(err);
+		})
+	});
+
+	socket.on("editSession", async function(session) {
+		dbFunctions.update.sessionText(db, {
+			sessionId: session.id,
+			text: session.title
+		}).then(async () => {
+			dbFunctions.del.sHQById(db, session.id).then(async () => {
+				for (let i = 0; i < session.questions.length; i++) {
+					await dbFunctions.insert.addQuestionToSession(db, session.id, session.questions[i].id).catch(err => console.error(err));
+					await dbFunctions.update.questionStatusToActive(db, session.questions[i].id).catch(err => console.error(err));
+				}
+				socket.emit("addNewSessionDone");
+			}).catch((err) => {
+				console.error(err);
+			})
+		}).catch((err) => {
+			console.error(err);
+		});
 	});
 
 }
