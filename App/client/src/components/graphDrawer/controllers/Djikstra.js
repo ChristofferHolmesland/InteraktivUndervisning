@@ -201,7 +201,6 @@ export default class Djikstra {
 		let edge = this.gd.edges.pop();
 		this.redoLog.push(edge);
 
-		console.log("Calling from undo");
 		this.determineButtonStates();
 		this.gd.dirty = true;
 	}
@@ -210,7 +209,6 @@ export default class Djikstra {
 		let edge = this.redoLog.pop();
 		this.gd.edges.push(edge);
 
-		console.log("Calling from redo");
 		this.determineButtonStates();
 		this.gd.dirty = true;
 	}
@@ -275,7 +273,6 @@ export default class Djikstra {
 			}
 
 			this.redoLog = [];
-			console.log("Calling from join");
 			this.determineButtonStates();
 
 			this.gd.canvas.removeEventListener("mouseup", handler);

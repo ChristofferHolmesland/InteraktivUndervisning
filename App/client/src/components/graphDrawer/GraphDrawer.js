@@ -92,7 +92,11 @@ export default class GraphDrawer {
 		this.DEVICE = "Mobile";
 		// Relative size of the buffers compared to canvas size.
 		this.STATIC_BUFFER_FACTOR = 1;
-		this.DRAW_BUFFER_FACTOR = 10;
+		this.DRAW_BUFFER_FACTOR = 5;
+		// The maximum canvas size should be 16k x 16k in Chrome,
+		// but the performance is not good enough when the
+		// width / height is larger than ~7k.
+		this.MAX_BUFFER_SIZE = 7000;
 		// Size of the font in px.
 		this.fontHeight = 10;
 		// Contains all the text
@@ -281,6 +285,9 @@ export default class GraphDrawer {
 
 		buffer.width = this.canvas.width * factor;
 		buffer.height = this.canvas.height * factor;
+
+		if (buffer.width > this.MAX_BUFFER_SIZE) buffer.width = this.MAX_BUFFER_SIZE;
+		if (buffer.height > this.MAX_BUFFER_SIZE) buffer.height = this.MAX_BUFFER_SIZE;
 	}
 
 	/*
