@@ -5,21 +5,19 @@
 				<h1>{{ questionInfo.text }}</h1>
 			</b-col>
 		</b-row>
-		<b-row class="text-center">
-			<b-col></b-col>
+		<b-row class="text-center" align-h="around">
 			<b-col cols="2" v-if="timeLeft > 0">
 				<p v-if="timeLeft !== undefined" style="line-height: 100%">{{ getLocale.timeLeft }} {{ getTimeUpdate }}</p>
+			</b-col>
+			<b-col cols="2">
+				<p>{{ getLocale.sessionCode }} {{ sessionId }}</p>
 			</b-col>
 			<b-col cols="2">
 				<p>{{ getNumberOfAnswers }}</p>
 			</b-col>
 			<b-col cols="2">
-				<p>{{ getLocale.sessionCode }} {{ sessionId }}</p>
+				<b-button @click="btnNextClick" variant="primary">{{ getLocale.nextquestionBtn }}</b-button>
 			</b-col>
-			<b-col cols="1">
-				<b-button @click="btnNextClick" variant="primary">Next</b-button>
-			</b-col>
-			<b-col></b-col>
 		</b-row>
 		<b-row>
 			<b-col>
@@ -31,28 +29,26 @@
 				<p v-for="(line, index) in getDescription" :key="index">{{ line }}</p>
 			</b-col>
 		</b-row>
-		<b-row>
-			<b-col>
-				<div class="displayInline" v-for="(info,index) in getExtraDesc" :key="index">
-					<pre v-if="info.code">{{info.value}}</pre>
-					<p class="displayInline" v-else>{{info.value}}</p>
-					<br v-if="info.linebreak"/>
-				</div>
-			</b-col>
-		</b-row>
 		<b-container class="px-0" v-if="showMedia">
 			<b-row>
 				<b-col>
 					<b-card no-body>
 						<b-tabs card @input="setMediaTab($event)">
-							<b-tab :title="getLocale.tabImage" v-if="getImagesLength > 0">
-								<b-container v-if="mediaTab === 0">
+							<b-tab :title="getLocale.tabExtraInfo" :disabled="getExtraDesc.length > 0 ? false : true">
+								<div class="displayInline" v-for="(info,index) in getExtraDesc" :key="index">
+									<pre v-if="info.code">{{info.value}}</pre>
+									<p class="displayInline" v-else>{{info.value}}</p>
+									<br v-if="info.linebreak"/>
+								</div>
+							</b-tab>
+							<b-tab :title="getLocale.tabImage" :disabled="getImagesLength > 0 ? false : true">
+								<b-container v-if="mediaTab === 1">
 									<b-row>
 										<b-col cols="12">
 											<b-row>
 												<b-col class="text-center">
-													<img    :src="getImgSrc" width="500" height="500"
-															style="border: 3px solid black;"
+													<img    :src="getImgSrc"
+															style="border: 3px solid black; max-width: 100%;"
 													/>
 												</b-col>
 											</b-row>
@@ -71,8 +67,8 @@
 									</b-row>
 								</b-container>
 							</b-tab>
-							<b-tab :title="getLocale.tabTable" v-if="getTablesLength > 0">
-								<b-container v-if="mediaTab === 1">
+							<b-tab :title="getLocale.tabTable" :disabled="getTablesLength > 0 ? false : true">
+								<b-container v-if="mediaTab === 2">
 									<b-row>
 										<b-col>
 											<b-container class="viewTableContainer">
@@ -208,7 +204,8 @@ export default {
 		showMedia: function() {
 			if (
 				this.getImagesLength > 0 ||
-				this.getTablesLength > 0
+				this.getTablesLength > 0 ||
+				this.getExtraDesc.length > 0
 			){
 				return true;
 			}
@@ -248,12 +245,37 @@ export default {
 };
 </script>
 <style scoped>
-	pre {
-		border-style: solid;
-		border-width: 1px;
-		padding: 3px;
-	}
-	.displayInline {
-		display: inline;
-	}
+pre {
+	border-style: solid;
+	border-width: 1px;
+	padding: 3px;
+}
+.displayInline {
+	display: inline;
+}
+.editTableRow {
+flex-wrap: nowrap;
+}
+.editTableColumn {
+	min-width: 90px;
+	max-width: 90px;
+	text-align: center;
+	float: left;
+	margin: 0;
+}
+.editTableColumn input {
+	width: 80px;
+	text-align: center;
+	margin: 0;
+	
+}
+.viewTableContainer {
+	overflow-x: scroll;
+	overflow-y: scroll;
+	min-height: 200px;
+	max-height: 200px;
+	text-align: center;
+	border: 1px solid black;
+	border-right-width: 2px;
+}
 </style>

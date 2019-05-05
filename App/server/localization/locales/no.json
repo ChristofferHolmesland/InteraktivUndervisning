@@ -240,10 +240,12 @@
         "Remove": "Slett",
         "timeLeft": "Tid igjen:",
         "sessionCode": "Økt kode:",
+        "tabExtraInfo": "Ekstra informasjon",
         "tabImage": "Bilder",
         "tabTable": "Tabeller",
         "previousBtn": "Forrige",
-        "nextBtn": "Neste"
+        "nextBtn": "Neste",
+        "nextquestionBtn": "Neste spørsmål"
     },
     "DeleteUserInfo": {
         "deleteInfoList": [
@@ -305,7 +307,12 @@
         "bstavlNodesDesc": "Noder: ",
         "pythonCodeDesc": "Kode: ",
         "Add": "Legg til",
-        "Remove": "Slett"
+        "Remove": "Slett",
+        "tabExtraInfo": "Ekstra informasjon",
+        "tabImage": "Bilder",
+        "tabTable": "Tabeller",
+        "previousBtn": "Forrige",
+        "nextBtn": "Neste"
     },
     "ClientSessionWaitingArea": {
         "title": "Venteområde",

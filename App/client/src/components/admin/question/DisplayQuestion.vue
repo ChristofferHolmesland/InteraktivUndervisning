@@ -49,8 +49,8 @@
 																		<b-col cols="12">
 																			<b-row>
 																				<b-col class="text-center">
-																					<img    :src="getImgSrc" width="500" height="500"
-																							style="border: 3px solid black;"
+																					<img    :src="getImgSrc"
+																							style="border: 3px solid black; max-width: 100%;"
 																					/>
 																				</b-col>
 																			</b-row>
