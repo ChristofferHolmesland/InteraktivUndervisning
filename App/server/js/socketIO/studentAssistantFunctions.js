@@ -38,6 +38,11 @@ let courseListRequestHandler = function(socket, db, user) {
 
 module.exports.studentAssistant = function(socket, db, user, sessions) {
 	let currentSession = undefined;
+	sessions.forEach((val, key, m) => {
+		if (val.adminId == user.feide.idNumber) {
+			currentSession = val;
+		}
+	});
 
 	socket.on("courseListRequest", function() {
 		courseListRequestHandler(socket, db, user);
