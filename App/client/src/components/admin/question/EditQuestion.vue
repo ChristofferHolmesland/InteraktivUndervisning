@@ -312,11 +312,11 @@
                                 v-if="newQuestion.solutionType === 2">
                     <b-col cols="12">
                         <b-row>
-                            <b-col cols="6" class="px-0">
+                            <b-col cols="8" class="px-0">
                                 <label>{{getLocale.multipleChoiceHeader}}</label>
                             </b-col>
-                            <b-col cols="6" class="px-0">
-                                <b-button @click="addNewMultipleChoice" id="addNewMultipleChoice" class="float-right">
+                            <b-col cols="4" class="px-0">
+                                <b-button @click="addNewMultipleChoice" id="addNewMultipleChoice" class="float-right" variant="success" block>
                                     {{getLocale.addNewMultipleChoice}}
                                 </b-button>
                             </b-col>
@@ -337,7 +337,7 @@
                                             <b-form-checkbox :value="index.toString()"/>
                                         </b-col>
                                         <b-col cols="2">
-                                            <b-button @click="deleteMultiChoice(index)">{{getLocale.multipleChoiceDeleteBtn}}</b-button>
+                                            <b-button @click="deleteMultiChoice(index)" variant="danger" block>{{getLocale.multipleChoiceDeleteBtn}}</b-button>
                                         </b-col>
                                     </b-row>
                                 </b-form-checkbox-group>
