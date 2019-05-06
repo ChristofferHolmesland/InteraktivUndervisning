@@ -5,8 +5,12 @@ const check = function(answer, solution) {
 			i--;
 		}
 	}
-	
-	answer.splice(0, 1);
+	for (let i = 0; i < answer.length; i++) {
+		if (answer[i].type !== "Split"){
+			answer.splice(i, 1);
+			i--;
+		}
+	}
 
 	if (answer.length !== solution.length) return false;
 
