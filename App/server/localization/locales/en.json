@@ -20,6 +20,7 @@
             {"text":"Tables", "value": 2}
         ],
         "multipleChoiceHeader": "Choices:",
+        "multipleChoiceCorrect": "Correct:",
         "addNewMultipleChoice": "Add new choice",
         "multipleChoiceDeleteBtn": "Delete",
         "basicInfo": "Basic Information",
@@ -110,7 +111,21 @@
         "addTableValueCellError": "These cells have an error: ",
         "tableViewTitle": "Table",
         "viewBtn": "View",
-        "editBtn": "Edit"
+        "editBtn": "Edit",
+        "tableLabel": "Tables:",
+        "filesLabel": "Files:",
+        "shellsortStartArray": "Starting array (elements seperated by ,)",
+        "shellsortStartKValue": "K start value",
+        "binaryTreeArray": "List the nodes that are going to be used in the binary tree. Elements are divided by , and [] are not required)",
+        "bstInfo": "Draw the tree, or give an array to build the solution tree",
+        "removeText": "Remove",
+        "addLabel": "Input elements to be added to the tree. The elements are seperated by ,",
+        "removeLabel": "Input elements to be removed from the tree. The elements are seperated by ,",
+        "dijkstraLabel": "Draw the graph, and mark start (green) and end (red) nodes",
+        "pythonPlaceholder": "Write Python code here...",
+        "ready": "Ready",
+        "yes": "Yes",
+        "no": "No"
     },
     "AdminSessions": {
         "newSession": "New session",

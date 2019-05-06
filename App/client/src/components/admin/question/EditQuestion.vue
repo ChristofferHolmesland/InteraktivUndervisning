@@ -176,7 +176,7 @@
 					</b-row>
 					<b-row v-if="newQuestion.objects.files.length > 0">
 						<b-col>
-							<label>Files:</label>
+							<label>{{ getLocale.filesLabel }}</label>
 							<b-container>
 								<b-row v-for="(image, index) in newQuestion.objects.files" :key="index" class="mt-2">
 									<b-col>
@@ -218,7 +218,7 @@
 					</b-row>
 					<b-row v-if="getQuestionObjects.tables.length > 0">
 						<b-col>
-							<label>Tables:</label>
+							<label>{{ getLocale.tableLabel }}</label>
 							<b-container	v-for="(table, index) in getQuestionObjects.tables"
 											:key="index"
 											class="mb-2 border py-2"
@@ -346,7 +346,7 @@
                     </b-col>
                 </b-form-group>
                 <b-form-group 	id="sortingSolution"
-                                label="Starting array (elements seperated by ,)"
+                                :label="getLocale.shellsortStartArray"
                                 label-for="solutionInput"
                                 v-if="newQuestion.solutionType < 6 && newQuestion.solutionType > 2">
                     <b-form-input 	id="solutionInput"
@@ -354,7 +354,7 @@
                                     v-model="newQuestion.objects.startingArray">
                     </b-form-input>
                     <b-form-group   id="kValue"
-                                    label="K start value"
+                                    :label="getLocale.shellsortStartKValue"
                                     label-for="kValueInput"
                                     v-if="newQuestion.solutionType === 3">
                         <b-form-input   id="kValueInput"
@@ -365,7 +365,7 @@
                 </b-form-group>
                 <b-form-group
                     id="BinaryTree"
-                    label="List the nodes that are going to be used in the binary tree. Elements are divided by , and [] are not required)"
+                    :label="getLocale.binaryTreeArray"
                     v-if="newQuestion.solutionType === 6"
                     >
                 <b-form-input   id="nodeElements"
@@ -376,13 +376,13 @@
 				</b-form-group>
 				<b-form-group
 						id="BinarySearchTrees"
-						label="Draw the tree, or give an array to build the solution tree"
+						:label="getLocale.bstInfo"
 						v-if="newQuestion.solutionType === 7 || newQuestion.solutionType === 8"
 						> 	
-					<label for="Add">Add</label><input type="radio" id="Add" v-model="newQuestion.objects.solutionTreeType" value="Add" /><br/>
-					<label for="Remove">Remove</label><input type="radio" id="Remove" v-model="newQuestion.objects.solutionTreeType" value="Remove"/>
-					<label v-if="newQuestion.objects.solutionTreeType === 'Add'" for="solutionListElements">Input elements to be added to the tree. The elements are seperated by ,</label>
-					<label v-else-if="newQuestion.objects.solutionTreeType === 'Remove'" for="solutionListElements">Input elements to be removed from the tree. The elements are seperated by ,</label>
+					<label for="Add">{{getLocale.okBtn}}</label><input type="radio" id="Add" v-model="newQuestion.objects.solutionTreeType" value="Add" /><br/>
+					<label for="Remove">{{getLocale.removeText}}</label><input type="radio" id="Remove" v-model="newQuestion.objects.solutionTreeType" value="Remove"/>
+					<label v-if="newQuestion.objects.solutionTreeType === 'Add'" for="solutionListElements">{{ getLocale.addLabel }}</label>
+					<label v-else-if="newQuestion.objects.solutionTreeType === 'Remove'" for="solutionListElements">{{ getLocale.removeLabel }}</label>
 					<b-form-input 	id="solutionListElements"
 									type="text"
 									v-model="newQuestion.objects.treeElements">
@@ -400,7 +400,7 @@
 				</b-form-group>
 				<b-form-group 	
 						id="dijkstraSolution"
-						label="Draw the graph, and mark start (green) and end (red) nodes"
+						:label="getLocale.dijkstraLabel"
 						v-if="newQuestion.solutionType === 9">
 					<GraphDrawer
 						ref="graphdrawer"
@@ -419,9 +419,9 @@
 								:label="getLocale.newQuestionSolution"
 								label-for="solutionInput"
 								v-if="newQuestion.solutionType === 10">
-					<div v-show="checkRef">klar</div>
+					<div v-show="checkRef">{{ getLocale.ready }}</div>
 						<b-form-textarea 	id="pythonCodeInput"
-											placeholder="Write Python code here..."
+											:placeholder="getLocale.pythonPlaceholder"
 											v-model="newQuestion.objects.code"
 											ref="codeInput"
 											@keydown.native.tab="keyDownInTextarea">

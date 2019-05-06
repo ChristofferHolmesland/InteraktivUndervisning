@@ -39,7 +39,7 @@
             </b-row>
             <b-row v-if="question.objects.files.length > 0 && showMedia">
                 <b-col>
-                    <label>Files:</label>
+                    <label>{{ getLocale.filesLabel }}</label>
                     <b-container>
                         <b-row v-for="(image, index) in question.objects.files" :key="index" class="mt-2">
                             <b-col>
@@ -68,7 +68,7 @@
             </b-row>
             <b-row v-if="question.objects.tables.length > 0 && showMedia">
                 <b-col>
-                    <label>Tables:</label>
+                    <label>{{ getLocale.tableLabel }}</label>
                     <b-container	v-for="(table, index) in question.objects.tables"
                                     :key="index"
                                     class="mb-2 border py-2"
@@ -120,10 +120,10 @@
                     <b-container v-if="question.solutionType === 2" class="px-0">
                         <b-row>
                             <b-col>
-                                <h6>Choice:</h6> 
+                                <h6>{{ getLocale.multipleChoiceHeader }}</h6> 
                             </b-col>
                             <b-col>
-                                <h6>Correct:</h6>
+                                <h6>{{ getLocale.multipleChoiceCorrect }}</h6>
                             </b-col>
                         </b-row>
                         <b-row v-for="(choice, index) in question.objects.multipleChoices" :key="index">
@@ -131,7 +131,7 @@
                                 <p>{{ choice }}</p>
                             </b-col>
                             <b-col>
-                                <p>{{ question.solution.findIndex(sol => sol == index) > -1 ? 'yes' : 'no' }}</p>
+                                <p>{{ question.solution.findIndex(sol => sol == index) > -1 ? getLocale.yes : getLocale.no }}</p>
                             </b-col>
                         </b-row>
                     </b-container>
