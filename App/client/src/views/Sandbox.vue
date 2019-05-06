@@ -3,8 +3,8 @@
 	<b-row>
 		<b-col cols="12" lg="8" class="mb-3">
 			<b-row class="mb-3">
-				<b-col>
-					<b-button @click="returnToClientDashboard" variant="primary">{{ getLocale.backBtn }}</b-button>
+				<b-col cols="4">
+					<b-button block @click="returnToClientDashboard" variant="primary">{{ getLocale.backBtn }}</b-button>
 				</b-col>
 				<b-col>
                     <b-form-select 	id="solutionTypeInput"

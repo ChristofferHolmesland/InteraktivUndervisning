@@ -1,6 +1,6 @@
 <template>
 	<b-container>
-		<b-row class="mb-5">
+		<b-row class="mb-5" align-h="around">
 			<!-- Select course-->
 			<b-col cols="5" class="jumbotron">
 					<b-row><h5>{{ getLocale.changeCourseTitle }}</h5></b-row>
@@ -10,15 +10,14 @@
 								<b-col cols="8">
 									<SelectCourse/>
 								</b-col>
-								<b-col cols="4">
-									<b-button @click="showAddNewCourseModal" data-cy="addCourseButton" v-if="getUser.userRights === 4 && getUser.loggedIn" variant="primary">{{ getLocale.newCourseBtnText }} </b-button>
+								<b-col cols="3">
+									<b-button block @click="showAddNewCourseModal" data-cy="addCourseButton" v-if="getUser.userRights === 4 && getUser.loggedIn" variant="primary">{{ getLocale.newCourseBtnText }} </b-button>
 									<AddNewCourse ref="AddNewCourseModal" elementRef="InnerAddNewCourseModal" v-if="getUser.userRights === 4 && getUser.loggedIn"/>
 								</b-col>
 							</b-row>
 						</b-container>
 					</b-row>
 			</b-col>
-			<b-col cols="2"></b-col>
 			<!-- Start session -->
 			<b-col cols="5" class="jumbotron">
 				<b-row>
@@ -29,7 +28,7 @@
 				</b-row>
 			</b-col>
 		</b-row>
-		<b-row>
+		<b-row align-h="around">
 			<!-- Add admin -->
 			<b-col cols="5" class="jumbotron">
 				<b-row><h5>{{ getLocale.courseAdministrator }}</h5></b-row>
@@ -42,8 +41,8 @@
 												placeholder="Feide id">
 								</b-form-input>
 							</b-col>
-							<b-col cols="4">
-								<b-button @click="addNewAdmin" variant="success"><i class="fas fa-user-plus"></i></b-button>
+							<b-col cols="3">
+								<b-button block @click="addNewAdmin" variant="success"><i class="fas fa-user-plus"></i></b-button>
 							</b-col>
 						</b-row>
 						<b-row>
@@ -62,7 +61,6 @@
 					</b-container>
 				</b-row>
 			</b-col>
-			<b-col cols="2"></b-col>
 			<!-- Add student assistant -->
 			<b-col cols="5" class="jumbotron">
 				<b-row><h5>{{getLocale.courseAssistants}}</h5></b-row>
@@ -75,8 +73,8 @@
 												placeholder="Feide id">
 								</b-form-input>
 							</b-col>
-							<b-col cols="4">
-								<b-button @click="addNewAssistant" variant="success"><i class="fas fa-user-plus"></i></b-button>
+							<b-col cols="3">
+								<b-button block @click="addNewAssistant" variant="success"><i class="fas fa-user-plus"></i></b-button>
 							</b-col>
 						</b-row>
 						<b-row>

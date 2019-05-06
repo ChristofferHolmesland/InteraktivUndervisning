@@ -120,7 +120,11 @@
         "selectedQuestions": "Spørsmål i økten:",
         "removeBtn": "Fjern",
         "cancelBtn": "Avbryt",
-        "okBtn": "Legg til"
+        "okBtn": "Legg til",
+        "searchPlaceholder": "Søk",
+        "editTooltip": "Bare inaktive økter kan endres",
+        "deleteTooltip": "Bare inaktive økter kan sletes",
+        "noSessions": "Ingen økter"
     },
     "AdminDashboard": {
         "courseAdministrator": "Fag adminstrator",

@@ -44,6 +44,16 @@ const del = {
 		let statement = `DELETE FROM User
 						WHERE feideId = ${feideId}`;
 		return createPromise(db, statement, "userByFeideId");
+	},
+	sHQById: function(db, sessionId) {
+		let statement = `DELETE FROM SessionHasQuestion
+						WHERE sessionId = ${sessionId};`;
+		return createPromise(db, statement, "sHQById");
+	},
+	sessionById: function(db, sessionId) {
+		let statement = `DELETE FROM Session
+						WHERE id = ${sessionId};`;
+		return createPromise(db, statement, "sessionById");
 	}
 };
 
