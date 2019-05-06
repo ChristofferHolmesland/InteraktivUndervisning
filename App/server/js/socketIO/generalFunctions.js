@@ -4,7 +4,6 @@ const User = (require("../user.js")).User;
 const anonymousNames = (require("../anonymousName.js")).Animals;
 const dbFunctions = require("../database/databaseFunctions").dbFunctions;
 var sessions = new Map();
-var currentClientSession = "";
 
 module.exports.listen = function(server, users, db) {
 	io = socketio.listen(server, {
@@ -17,6 +16,7 @@ module.exports.listen = function(server, users, db) {
 	}, 5000);
 
 	io.on("connection", async function(socket) {
+		var currentClientSession = {sessionCode: ""};
 
 		// On new connection, checks if user has a cookie with userId and verifies the user
 		let user = await User.getUser(db, users, socket);
@@ -50,11 +50,11 @@ module.exports.listen = function(server, users, db) {
 				});
 			}
 
-			if (currentClientSession !== "") {
-				if (!sessions.get(currentClientSession)) return;
-				let session = sessions.get(currentClientSession).session;
+			if (currentClientSession.sessionCode !== "") {
+				if (!sessions.get(currentClientSession.sessionCode)) return;
+				let session = sessions.get(currentClientSession.sessionCode).session;
 				let question = session.questionList[session.currentQuestion];
-				let adminSocket = sessions.get(currentClientSession).adminSocket;
+				let adminSocket = sessions.get(currentClientSession.sessionCode).adminSocket;
 
 				if (user.feide !== undefined) {
 					session.userLeaving(user.feide.idNumber);
