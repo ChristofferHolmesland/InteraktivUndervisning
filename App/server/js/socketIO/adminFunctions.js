@@ -1,8 +1,10 @@
 const dbFunctions = require("../database/databaseFunctions").dbFunctions;
 
-module.exports.admin = function(socket, db, user) {
+module.exports.admin = function(socket, db, user, users) {
 
 	socket.on("createCourseRequest", async function(newCourse) {
+		if (user.userRights < 4) return;
+
 		// Checks name
 		if (newCourse.name === "" || newCourse.name === undefined) {
 			socket.emit("createCourseError", "nameMissing");
@@ -68,6 +70,8 @@ module.exports.admin = function(socket, db, user) {
 	});
 
 	socket.on("setUserRightsLevel", function(data) {
+		if (user.userRights < 4) return;
+
 		let length = data.feideId.length;
 		if 
 		(
@@ -80,6 +84,14 @@ module.exports.admin = function(socket, db, user) {
 			feideId: data.feideId,
 			courseId: data.courseId
 		}).then((dbUser) => {
+			if (dbUser !== undefined) {
+				users.forEach((val, key, m) => {
+					if (val.feide.idNumber == data.feideId) {
+						val.userRights = data.level == -1 ? 2 : data.level;
+					}
+				});
+			}
+			
 			if (dbUser == undefined) {
 				dbFunctions.insert.userRightsLevelByFeideId(db, {
 					feideId: data.feideId,
@@ -109,6 +121,8 @@ module.exports.admin = function(socket, db, user) {
 	});
 
 	socket.on("semestersRequest", async function() {
+		if (user.userRights < 4) return;
+
 		await dbFunctions.get.semesters(db).then(rows => {
 			socket.emit("semestersResponse", rows);
 		}).catch(err => {
@@ -117,6 +131,8 @@ module.exports.admin = function(socket, db, user) {
 	});
 
 	socket.on("seasonsRequest", async function() {
+		if (user.userRights < 4) return;
+
 		await dbFunctions.get.seasons(db).then(rows => {
 			socket.emit("seasonsResponse", rows);
 		}).catch(err => {
@@ -125,6 +141,8 @@ module.exports.admin = function(socket, db, user) {
 	});
 
 	socket.on("yearsRequest", async function() {
+		if (user.userRights < 4) return;
+		
 		await dbFunctions.get.years(db).then(rows => {
 			socket.emit("yearsResponse", rows);
 		}).catch(err => {
@@ -133,6 +151,8 @@ module.exports.admin = function(socket, db, user) {
 	});
 
 	socket.on("courseCodesRequest", async function() {
+		if (user.userRights < 4) return;
+		
 		await dbFunctions.get.courseCodes(db).then(rows => {
 			socket.emit("courseCodesResponse", rows);
 		}).catch(err => {
@@ -141,6 +161,8 @@ module.exports.admin = function(socket, db, user) {
 	});
 
 	socket.on("addNewCourseCodeRequest", async function(newCourseCode) {
+		if (user.userRights < 4) return;
+		
 		let pattern = new RegExp("^[A-Z]{3}[0-9]{3}$");
 		if (newCourseCode === "" || newCourseCode === undefined) {
 			socket.emit("addNewCourseCodeError", "courseCodeMissing");
@@ -167,6 +189,8 @@ module.exports.admin = function(socket, db, user) {
 	});
 
 	socket.on("addNewSemesterRequest", async function(newSemester) {
+		if (user.userRights < 4) return;
+		
 		if (
 			!Number(newSemester.season) ||
 			!Number(newSemester.year)
