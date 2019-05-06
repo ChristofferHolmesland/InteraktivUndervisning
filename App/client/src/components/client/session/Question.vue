@@ -133,15 +133,15 @@
 					</b-tabs>
 				</b-col>
 			</b-row>
-			<b-row class="text-center">
+			<b-row class="text-center" align-h="around">
 				<b-col cols="12" lg="4" class="mt-3">
-					<b-btn variant="danger" @click="exitSession">{{ getLocale.exitSessionBtnText }}</b-btn> <!-- TODO add click event to leave seasion mid question -->
+					<b-btn block variant="danger" @click="exitSession" size="lg">{{ getLocale.exitSessionBtnText }}</b-btn>
 				</b-col>
 				<b-col cols="12" lg="4" class="mt-3">
-					<b-btn variant="warning" @click="questionNotAnswered">{{ getLocale.answerDontKnowBtnText }}</b-btn>
+					<b-btn block variant="warning" @click="questionNotAnswered" size="lg">{{ getLocale.answerDontKnowBtnText }}</b-btn>
 				</b-col>
-				<b-col cols="12" lg="4" class="mt-3">
-					<b-btn variant="success" @click="questionAnswered">{{ getLocale.answerBtnText }}</b-btn>
+				<b-col cols="12" lg="4" class="my-3">
+					<b-btn block variant="success" @click="questionAnswered" size="lg">{{ getLocale.answerBtnText }}</b-btn>
 				</b-col>
 			</b-row>
 		</b-container>
