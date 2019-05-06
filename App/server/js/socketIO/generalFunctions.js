@@ -115,11 +115,17 @@ module.exports.listen = function(server, users, db) {
 		});
 
 		socket.on("signOutRequest", function(){
-			if(user.feide != undefined){
-				socket.emit("deleteCookie", user.sessionId);
+			// If the user disconnects from the server, but the client
+			// doesn't disconnect, then the user will have an invalid 
+			// user object.
+			if (user !== undefined) {
+				if(user.feide != undefined){
+					socket.emit("deleteCookie", user.sessionId);
+				}
+
+				users.delete(user.sessionId);
 			}
 
-			users.delete(user.sessionId);
 			socket.emit("signOutResponse");
 		});
 
