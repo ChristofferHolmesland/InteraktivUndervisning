@@ -1233,6 +1233,54 @@ export default class Sort {
 		}
 
 		this._recalculateEdges();
+		if (!user) this.fixArrayPositions(0, xPadding, yPadding);
+	}
+
+	/*
+		Moves the arrays so that there is no overlapping.
+		The array at parentIndex is treated as the root of the tree.
+		It is assumed that all of the nodes have the same width.
+	*/
+	fixArrayPositions(parentIndex, xPadding, yPadding) {
+		let start = this.arrays[parentIndex];
+		let width = start.nodes[0].w;
+		let centerX = start.position.x + width * start.nodes.length / 2;
+		
+		this._fixYPadding(start, yPadding);
+
+		let leftest = undefined;
+		let rightest = undefined;
+
+		let linkCount = new Map();
+		for (let i = 0; i < this.arrays.length; i++) {
+			let arr = this.arrays[i];
+			for (let j = 0; j < arr.links.length; j++) {
+				let link = arr.links[j];
+
+				if (linkCount.has(link)) {
+					linkCount.set(link, linkCount.get(link) + 1);
+				} else {
+					linkCount.set(link, 1);
+				}
+			}
+		}
+
+		
+	}
+
+	_getSideXCoordinate(array, side) {
+		if (side == 0) return array.position.x;
+		return array.position.x + array.nodes[0].w * array.nodes.length;
+	}
+
+	_fixYPadding(startingArray, padding) {
+		for (let array in startingArray.links) {
+			if (array.position.y < startingArray + padding) {
+				array.position.y = startingArray + padding;
+			}
+
+			this._fixYPadding(array, padding);
+		}
 	}
 
 	/*
