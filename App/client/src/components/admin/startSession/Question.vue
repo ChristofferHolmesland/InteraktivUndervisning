@@ -7,13 +7,13 @@
 		</b-row>
 		<b-row class="text-center" align-h="around">
 			<b-col cols="2" v-if="timeLeft > 0">
-				<p v-if="timeLeft !== undefined" style="line-height: 100%">{{ getLocale.timeLeft }} {{ getTimeUpdate }}</p>
+				<b v-if="timeLeft !== undefined" style="line-height: 100%">{{ getLocale.timeLeft }} {{ getTimeUpdate }}</b>
 			</b-col>
 			<b-col cols="2">
-				<p>{{ getLocale.sessionCode }} {{ sessionId }}</p>
+				<b>{{ getLocale.sessionCode }} {{ sessionId }}</b>
 			</b-col>
 			<b-col cols="2">
-				<p>{{ getNumberOfAnswers }}</p>
+				<b>{{ getNumberOfAnswers }}</b>
 			</b-col>
 			<b-col cols="2">
 				<b-button @click="btnNextClick" variant="primary">{{ getLocale.nextquestionBtn }}</b-button>
