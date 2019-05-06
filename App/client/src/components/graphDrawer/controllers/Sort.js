@@ -896,6 +896,72 @@ export default class Sort {
 			arrays: arrs
 		});
 
+		// 1. The lower/higher order of array splitting shouldn't matter.
+		// 2. If the pivot is smaller than all the other nodes, then the 
+		// left array will contain the nodes, when they should be in the
+		// right array. This fixes both problems.
+		for (let i = 0; i < steps.length; i++) {
+			let step = steps[i];
+			if (step.type !== "Split") continue;
+			if (step.pivot === undefined) continue;
+			if (step.pivot.length != 1) continue;
+
+			let pivot = step.pivot[0];
+
+			// Move left to right if all the values are above the pivot.
+			if (step.left !== undefined && step.right == undefined) {
+				let minValue = step.left[0];
+				for (let j = 0; j < step.left.length; j++) {
+					if (step.left[j] < minValue) minValue = step.left[j];
+				}
+
+				if (minValue > pivot) {
+					step.right = step.left;
+					delete step.left;
+					step.left = [];
+				}
+			// Move right to left if all the values are below the pivot.
+			} else if (step.left == undefined && step.right !== undefined) {
+				let maxValue = step.right[0];
+				for (let j = 0; j < step.right.length; j++) {
+					if (step.right[j] > maxValue) maxValue = step.right[j];
+				}
+
+				if (maxValue < pivot) {
+					step.left = step.right;
+					delete step.right;
+					step.right = [];
+				}
+			// Switch left/right if left is above pivot and right is below pivot.
+			} else if (step.left !== undefined && step.right !== undefined) {
+				let allLeftAbove = true;
+				let allRightBelow = true;
+				
+				for (let j = 0; j < step.left.length; j++) {
+					if (step.left[j] < pivot) {
+						allLeftAbove = false;
+						break;
+					}
+				}
+
+				for (let j = 0; j < step.right.length; j++) {
+					if (step.right[j] > pivot) {
+						allRightBelow = false;
+						break;
+					}
+				}
+
+				if (allLeftAbove && allRightBelow) {
+					let newLeft = [];
+					let newRight = [];
+					step.left.forEach((v) => newRight.push(v));
+					step.right.forEach((v) => newLeft.push(v));
+					step.left = newLeft;
+					step.right = newRight;
+				}
+			}
+		}
+
 		return steps;
 	}
 
