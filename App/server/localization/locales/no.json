@@ -20,6 +20,7 @@
             {"text":"Tabeller", "value": 2}
         ],
         "multipleChoiceHeader": "Alternativer:",
+        "multipleChoiceCorrect": "Riktig:",
         "addNewMultipleChoice": "Legg til nytt alternativ",
         "multipleChoiceDeleteBtn": "Slett",
         "basicInfo": "Grunnleggende Informasjon",
@@ -110,7 +111,21 @@
         "addTableValueCellError": "Disse cellene har en feil: ",
         "tableViewTitle": "Tabell",
         "viewBtn": "Vis",
-        "editBtn": "Endre"
+        "editBtn": "Endre",
+        "tableLabel": "Tabeller:",
+        "filesLabel": "Filer:",
+        "shellsortStartArray": "Start liste (elementer sepereres med ,)",
+        "shellsortStartKValue": "K start verdi",
+        "binaryTreeArray": "Skriv inn listen av noder som skal bli brukt i binærtreet. Elementene skal sepereres med bruk av ,",
+        "bstInfo": "Tegn treet, eller gi en liste for å generere løsningen",
+        "removeText": "Fjern",
+        "addLabel": "Skriv inn elementer som skal legges til treet. Elementene skal sepereres med bruk av ,",
+        "removeLabel": "Skriv inn elementer som skal fjernes fra treet. Elementene skal sepereres med bruk av ,",
+        "dijkstraLabel": "Tegn grafen, og marker start (grønn) og slutten (rød) noder",
+        "pythonPlaceholder": "Skriv Python kode her...",
+        "ready": "Klar",
+        "yes": "Ja",
+        "no": "Nei"
     },
     "AdminSessions": {
         "newSession": "Ny økt",
@@ -123,7 +138,7 @@
         "okBtn": "Legg til",
         "searchPlaceholder": "Søk",
         "editTooltip": "Bare inaktive økter kan endres",
-        "deleteTooltip": "Bare inaktive økter kan sletes",
+        "deleteTooltip": "Bare inaktive økter kan slettes",
         "noSessions": "Ingen økter"
     },
     "AdminDashboard": {
@@ -162,7 +177,7 @@
         "pythonCodeDesc": "Kode: ",
         "Add": "Legg til",
         "Remove": "Slett",
-        "markAsCorrectBtn": "Mark as correct",
+        "markAsCorrectBtn": "Marker som riktig",
         "shelsortKValue": "K verdi",
         "tabImage": "Bilder",
         "tabTable": "Tabeller",
