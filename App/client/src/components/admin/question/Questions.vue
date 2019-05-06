@@ -148,9 +148,23 @@ export default {
 		);
 
 		this.$root.$on('bv::modal::hidden', (bvEvent, modalId) => {
+			// Sometimes this function is called with "this" set to
+			// undefined. If this happens there seems to always be
+			// another function call right before or after with the correct
+			// this value. Vue bug?
+			if (this == undefined) {
+				return;
+			}
+
 			let id = bvEvent.target.id;
-			let drawer = this.$refs[id].$refs.graphdrawer;
-			if (drawer !== undefined) drawer.destroyDrawer();
+			try {
+				let drawer = this.$refs[id].$refs.graphdrawer;
+				if (drawer !== undefined) drawer.destroyDrawer();
+			} catch (e) {
+				// Between the first if statement and here, "this" can be set
+				// to undefined. If it is a TypeError is catched here.
+				return;
+			}
 
 			if (id.includes("edit")){ 
 				this.renderEditQuestion = false;
