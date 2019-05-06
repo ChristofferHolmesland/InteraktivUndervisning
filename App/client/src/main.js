@@ -32,9 +32,20 @@ switch (process.env.NODE_ENV) {
 }
 
 Vue.use(BootstrapVue);
+
+let debugStatus = true;
+let debugOptions = {
+	"production": false,
+	"unix-production": false
+};
+
+if (debugOptions.hasOwnProperty(process.env.NODE_ENV)) {
+	debugStatus = debugOptions[process.env.NODE_ENV];
+}
+
 Vue.use(
 	new VueSocketIO({
-		debug: process.env.NODE_ENV === "production" ? false : true,
+		debug: debugStatus,
 		connection: connection,
 		vuex: {
 			store

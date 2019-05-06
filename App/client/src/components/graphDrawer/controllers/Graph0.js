@@ -428,6 +428,11 @@ export default class Graph0 {
 	}
 
 	addTreeSteppingButtons(treeCount) {
+		// OnCanvasResize doesn't know how many trees there are in the 
+		// step, so the value has to be stored.
+		if (treeCount !== undefined) this.prevTreeCount = treeCount;
+		else treeCount = this.prevTreeCount;
+
 		this.steppingButtons = [];
 		let numOfSteps = treeCount;
 
