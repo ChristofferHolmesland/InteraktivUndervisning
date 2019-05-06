@@ -315,7 +315,12 @@ export default {
 	},
 	methods: {
 		setTab: function(event) {
+			if (this.$refs.graphdrawerContainer !== undefined) {
+				this.$refs.graphdrawerContainer.$refs.graphdrawer.destroyDrawer();
+			}
+
 			this.tabIndex = event;
+			this.reloads();
 		},
 		setMediaTab: function(event) {
 			this.mediaTab = event;
