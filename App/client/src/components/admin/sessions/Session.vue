@@ -140,6 +140,7 @@ export default {
 	methods: {
 		changeAnswer: function(event) {
 			this.selectedAnswer = Number(event.target.id);
+			if (this.$refs.displayQuestion._data.tabIndex !== 2) return;
 
 			// This is used to change the content of the graphdrawer.
 			let displayQuestion = this.$refs.displayQuestion;

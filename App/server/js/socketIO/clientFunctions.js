@@ -31,7 +31,7 @@ module.exports.client = function(socket, db, user, sessions, currentClientSessio
 			}
 		}
 
-		currentClientSession = sessionCode;
+		currentClientSession.sessionCode = sessionCode;
 
 		// If user is a feide user
 		if (user.feide !== undefined) {
@@ -273,7 +273,7 @@ module.exports.client = function(socket, db, user, sessions, currentClientSessio
 			}
 		}
 
-		currentClientSession = "";
+		currentClientSession.sessionCode = "";
 	});
 
 	socket.on("questionAnswered", async function (answerObject, sessionCode) {

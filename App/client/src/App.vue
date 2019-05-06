@@ -57,3 +57,33 @@ export default {
 	}
 };
 </script>
+
+<style>
+/* Custom Scrollbars */
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  opacity: 0; 
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
+
+/* Corner */
+::-webkit-scrollbar-corner {
+	opacity: 0;
+}
+</style>
