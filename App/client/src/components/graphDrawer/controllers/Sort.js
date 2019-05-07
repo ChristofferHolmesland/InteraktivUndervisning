@@ -1243,8 +1243,8 @@ export default class Sort {
 	*/
 	fixArrayPositions(parentIndex, xPadding, yPadding) {
 		let start = this.arrays[parentIndex];
-		let width = start.nodes[0].w;
-		let centerX = start.position.x + width * start.nodes.length / 2;
+
+		if (start.links.length == 0) return;
 
 		this._fixYPadding(start, yPadding);
 		
@@ -1260,21 +1260,7 @@ export default class Sort {
 			}
 		};
 
-		let notValidIndex = -1;
-		if (start.links.length == 3) {
-			let f = start.links[0];
-			let m = start.links[1];
-			let l = start.links[2];
-			if (f.position.y > m.position.y && f.position.y > l.position.y)
-				notValidIndex = 0;
-			else if (m.position.y > f.position.y && m.position.y > l.position.y)
-				notValidIndex = 1;
-			else notValidIndex = 2;
-		}
-
-		let indexes = [0, 1, 2];
-		indexes.splice(notValidIndex, 1);
-
+		let indexes = this._getLinkIndexesOnSameY(start);
 		let firstLink = start.links[indexes[0]];
 		let secondLink = start.links[indexes[1]];
 		if (firstLink.position.x < secondLink.position.x) {
@@ -1287,7 +1273,6 @@ export default class Sort {
 
 		let leftest = undefined;
 		let rightest = undefined;
-		let linkCount = this._countLinks();
 		
 		for (let i = 0; i < this.arrays.length; i++) {
 			let arr = this.arrays[i];
@@ -1309,6 +1294,76 @@ export default class Sort {
 				}
 			}
 		}
+
+		let linkCount = this._countLinks();
+		let visisted = [];
+		let moveArray = function(arr, relativeArray) {
+			if (arr == undefined) return;
+
+			// First array
+			if (linkCount.get(arr) == 0) return;
+			// Last array
+			if (arr.links == undefined || arr.links.length == 0) return;
+
+			if (visisted.includes(arr)) return;
+			visisted.push(arr);
+
+			let nodeWidth = relativeArray.nodes[0].w;
+			let centerX = 
+				relativeArray.position.x + 
+				relativeArray.nodes.length * nodeWidth / 2;
+
+			// Find left/right children
+			let indexes = this._getLinkIndexesOnSameY(arr);
+			let left = arr.links[indexes[0]];
+			let right = arr.links[indexes[1]];
+			if (left !== undefined && 
+				right !== undefined && 
+				left.position.x > right.position.x) {
+				left = arr.links[indexes[1]];
+				right = arr.links[indexes[0]];
+			}
+
+			// Move array
+			let sign = arr.side == 0 ? -1 : 1;
+			let newX = centerX + sign * (xPadding + arr.nodes.length * nodeWidth);
+			arr.position.x = newX;
+
+			// Call function to move children and parents
+			if (left !== undefined) moveArray(left, arr);
+			if (right !== undefined) moveArray(right, arr);
+
+			for (let i = 0; i < this.arrays.length; i++) {
+				if (this.arrays[i].links.includes(arr)) {
+					moveArray(this.arrays[i], arr);
+				}
+			}
+
+		}.bind(this);
+
+		moveArray(rightest, start);
+		moveArray(leftest, start);
+
+		for (let i = 0; i < this.arrays.length; i++)
+			this._repositionNodes(i);
+	}
+
+	_getLinkIndexesOnSameY(array) {
+		let notValidIndex = -1;
+		if (array.links.length == 3) {
+			let f = start.links[0];
+			let m = start.links[1];
+			let l = start.links[2];
+			if (f.position.y > m.position.y && f.position.y > l.position.y)
+				notValidIndex = 0;
+			else if (m.position.y > f.position.y && m.position.y > l.position.y)
+				notValidIndex = 1;
+			else notValidIndex = 2;
+		}
+
+		let indexes = [0, 1, 2];
+		indexes.splice(notValidIndex, 1);
+		return indexes;
 	}
 
 	_countLinks() {
