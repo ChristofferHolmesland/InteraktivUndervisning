@@ -1245,12 +1245,73 @@ export default class Sort {
 		let start = this.arrays[parentIndex];
 		let width = start.nodes[0].w;
 		let centerX = start.position.x + width * start.nodes.length / 2;
-		
+
 		this._fixYPadding(start, yPadding);
+		
+		let assignSide = function(arr, side) {
+			if (arr.links.length == 0) {
+				arr.side = -1;
+				return;
+			}
+
+			arr.side = side;
+			for (let i = 0; i < arr.links.length; i++) {
+				assignSide(arr.links[i], side);
+			}
+		};
+
+		let notValidIndex = -1;
+		if (start.links.length == 3) {
+			let f = start.links[0];
+			let m = start.links[1];
+			let l = start.links[2];
+			if (f.position.y > m.position.y && f.position.y > l.position.y)
+				notValidIndex = 0;
+			else if (m.position.y > f.position.y && m.position.y > l.position.y)
+				notValidIndex = 1;
+			else notValidIndex = 2;
+		}
+
+		let indexes = [0, 1, 2];
+		indexes.splice(notValidIndex, 1);
+
+		let firstLink = start.links[indexes[0]];
+		let secondLink = start.links[indexes[1]];
+		if (firstLink.position.x < secondLink.position.x) {
+			assignSide(firstLink, 0);
+			assignSide(secondLink, 1);
+		} else {
+			assignSide(firstLink, 1);
+			assignSide(secondLink, 0);
+		}
 
 		let leftest = undefined;
 		let rightest = undefined;
+		let linkCount = this._countLinks();
+		
+		for (let i = 0; i < this.arrays.length; i++) {
+			let arr = this.arrays[i];
+			if (arr.side == 0) {
+				if (rightest == undefined) {
+					rightest = arr;
+				} else {
+					let pos = this._getSideXCoordinate(arr, 1);
+					let currentPos = this._getSideXCoordinate(rightest, 1);
+					if (pos > currentPos) rightest = arr;
+				}
+			} else if (arr.side == 1) {
+				if (leftest == undefined) {
+					leftest = arr;
+				} else {
+					let pos = this._getSideXCoordinate(arr, 0);
+					let currentPos = this._getSideXCoordinate(leftest, 0);
+					if (pos < currentPos) leftest = arr;
+				}
+			}
+		}
+	}
 
+	_countLinks() {
 		let linkCount = new Map();
 		for (let i = 0; i < this.arrays.length; i++) {
 			let arr = this.arrays[i];
@@ -1265,7 +1326,7 @@ export default class Sort {
 			}
 		}
 
-		
+		return linkCount;
 	}
 
 	_getSideXCoordinate(array, side) {
@@ -1274,7 +1335,9 @@ export default class Sort {
 	}
 
 	_fixYPadding(startingArray, padding) {
-		for (let array in startingArray.links) {
+		for (let i = 0; i < startingArray.links.length; i++) {
+			let array = startingArray.links[i];
+			
 			if (array.position.y < startingArray + padding) {
 				array.position.y = startingArray + padding;
 			}
