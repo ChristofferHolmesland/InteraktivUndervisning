@@ -213,14 +213,11 @@ const get = {
 	},
 	allQuestionsWithinCourse: function(db, courseId) {
 		return new Promise((resolve, reject) => {
-			let statement = `SELECT Q.id, Q.text, Q.description, Q.object, Q.solution, T.type, Q.courseId, Q.time
-							 FROM Question AS Q
-							 INNER JOIN Type AS T ON Q.questionType = T.type
-							 WHERE Q.courseId = "${courseId}";`;
+			let statement = `SELECT id, text, status
+							 FROM Question
+							 WHERE courseId = ${courseId};`;
 			db.all(statement, (err,rows) => {
 				if (err) reject(customReject(err, "allQuestionsWithinCourse"));
-				jsonParser(rows);
-				imageGetter(rows);
 				resolve(rows);
 			});
 		});
@@ -430,7 +427,7 @@ const get = {
 				resolve(row);
       		});
 		});
-  },
+  	},
 	courseInfoById(db, courseId) {
 		return new Promise(async (resolve, reject) => {
 			let statement = `SELECT CC.code, S.season, Y.year
@@ -489,7 +486,18 @@ const get = {
 				if (err) reject(customReject(err, "allQuestionsInCourseForEditSession"));
 				resolve(rows);
 			});
-    });
+    	});
+	},
+	questionStatusById: function(db, questionId) {
+		return new Promise(async (resolve, reject) => {
+			let statement = `SELECT status
+							FROM Question
+							WHERE id = ${questionId}`;
+			db.get(statement, (err, rows) => {
+				if (err) reject(customReject(err, "questionStatusById"));
+				resolve(rows);
+			});
+    	});
 	}
 };
 

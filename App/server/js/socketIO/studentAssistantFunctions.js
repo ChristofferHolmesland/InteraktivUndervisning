@@ -441,7 +441,8 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 				let q = questions[i];
 				result.push({
 					id: q.id,
-					text: q.text
+					text: q.text,
+					status: q.status
 				});
 			}
 			socket.emit("sendAllQuestionsWithinCourse", result);
@@ -450,6 +451,7 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 
 	socket.on("questionInfoByIdRequest", async function(questionId) {
 		await dbFunctions.get.questionsByQuestionId(db, [{id: questionId}]).then((rows) => {
+			if (row[0].status === 1) return;
 			socket.emit("questionInfoByIdResponse", rows[0]);
 		}).catch((err) => {
 			console.error(err);
@@ -507,52 +509,57 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 	});
 
 	socket.on("updateQuestion", async function(question) {
-		let valid = validateChecker.checkQuestion(question);
-		socket.emit("confirmQuestionRequirements", valid);
-		if (!valid.passed) return;
-		generalFunctions.createSpecialDescription(question);
-		question = generateSolution(question);
-
-		let filePath = path.join("../../images/questionImages/", question.id.toString(), "/");
-		let completeFilePath = path.join(__dirname, filePath, "**");
-		try {
-			del.sync(completeFilePath);
-		} catch (error) {
-			console.error(error);
-		}
-
-		if (question.objects.files.length > 0) {
-			let files = [];
-			for (let i = 0; i < question.objects.files.length; i++) {
-				files.push(JSON.parse(JSON.stringify(question.objects.files[i])));
-			}
-			let filePaths = [];
+		dbFunctions.get.questionStatusById(db, question.id).then(async (q) => {
+			if (q.status === 1) return;
+			let valid = validateChecker.checkQuestion(question);
+			socket.emit("confirmQuestionRequirements", valid);
+			if (!valid.passed) return;
+			generalFunctions.createSpecialDescription(question);
+			question = generateSolution(question);
 	
+			let filePath = path.join("../../images/questionImages/", question.id.toString(), "/");
+			let completeFilePath = path.join(__dirname, filePath, "**");
 			try {
-				mkdirp.sync(path.join(__dirname, filePath));
-				for (let i = 0; i < files.length; i++) {
-					let type = files[i].type.split("/")[1];
-					filePaths.push(filePath + (i + 1).toString() + "." + type);
-					question.objects.files[i].filePath = filePaths[i];
-					delete question.objects.files[i].buffer;
-					
-					await fs.open(path.join(__dirname, filePaths[i]), "a", function(error, fd) {
-						if (error) {
-							console.error("error writing image: \n\n" + error);
-							return;
-						}
-						fs.writeSync(fd, files[i].buffer, null, "base64");
-						fs.closeSync(fd);
-					});
-				}
-			} 
-			catch (error) {
-				console.error("Error making dirs!\n\n" + error);
-				return;
+				del.sync(completeFilePath);
+			} catch (error) {
+				console.error(error);
 			}
-		}
-
-		await dbFunctions.update.question(db, question.id, question.text, question.description, question.objects, question.solution, question.solutionType, question.time);
+	
+			if (question.objects.files.length > 0) {
+				let files = [];
+				for (let i = 0; i < question.objects.files.length; i++) {
+					files.push(JSON.parse(JSON.stringify(question.objects.files[i])));
+				}
+				let filePaths = [];
+		
+				try {
+					mkdirp.sync(path.join(__dirname, filePath));
+					for (let i = 0; i < files.length; i++) {
+						let type = files[i].type.split("/")[1];
+						filePaths.push(filePath + (i + 1).toString() + "." + type);
+						question.objects.files[i].filePath = filePaths[i];
+						delete question.objects.files[i].buffer;
+						
+						await fs.open(path.join(__dirname, filePaths[i]), "a", function(error, fd) {
+							if (error) {
+								console.error("error writing image: \n\n" + error);
+								return;
+							}
+							fs.writeSync(fd, files[i].buffer, null, "base64");
+							fs.closeSync(fd);
+						});
+					}
+				} 
+				catch (error) {
+					console.error("Error making dirs!\n\n" + error);
+					return;
+				}
+			}
+	
+			await dbFunctions.update.question(db, question.id, question.text, question.description, question.objects, question.solution, question.solutionType, question.time);
+		}).catch((err) => {
+			console.error(err);
+		})
 	});
 
 	socket.on("getQuestionTypes", function() {
@@ -784,19 +791,24 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 	});
 
 	socket.on("editSession", async function(session) {
-		dbFunctions.update.sessionText(db, {
-			sessionId: session.id,
-			text: session.title
-		}).then(async () => {
-			dbFunctions.del.sHQById(db, session.id).then(async () => {
-				for (let i = 0; i < session.questions.length; i++) {
-					await dbFunctions.insert.addQuestionToSession(db, session.id, session.questions[i].id).catch(err => console.error(err));
-					await dbFunctions.update.questionStatusToActive(db, session.questions[i].id).catch(err => console.error(err));
-				}
-				socket.emit("addNewSessionDone");
+		dbFunctions.get.sessionById(db, session.id).then((session) => {
+			if(session.status > 0) return;
+			dbFunctions.update.sessionText(db, {
+				sessionId: session.id,
+				text: session.title
+			}).then(async () => {
+				dbFunctions.del.sHQById(db, session.id).then(async () => {
+					for (let i = 0; i < session.questions.length; i++) {
+						await dbFunctions.insert.addQuestionToSession(db, session.id, session.questions[i].id).catch(err => console.error(err));
+						await dbFunctions.update.questionStatusToActive(db, session.questions[i].id).catch(err => console.error(err));
+					}
+					socket.emit("addNewSessionDone");
+				}).catch((err) => {
+					console.error(err);
+				})
 			}).catch((err) => {
 				console.error(err);
-			})
+			});
 		}).catch((err) => {
 			console.error(err);
 		});
