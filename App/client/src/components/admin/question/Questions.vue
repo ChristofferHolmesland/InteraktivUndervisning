@@ -49,13 +49,19 @@
 			<b-button block @click="openCopyQuestion" variant="success">
 				{{ getLocale.copySelectedBtn }}
 			</b-button>
-			<CopyQuestions ref="copyQuestionModal" :selectedQuestions="getSelectedQuestions"/>
+			<CopyQuestions	ref="copyQuestionModal"
+							:selectedQuestions="getSelectedQuestions"
+							v-if="showCopyQuestions"
+							/>
 		</b-col>
 		<b-col cols="4" style="text-align: center;">
 			<b-button block @click="openDeleteQuestion" variant="danger">
 				{{ getLocale.deleteSelectedBtn }}
 			</b-button>
-			<DeleteQuestions ref="deleteQuestionModal" :selectedQuestions="getSelectedQuestions"/>
+			<DeleteQuestions	ref="deleteQuestionModal"
+								:selectedQuestions="getSelectedQuestions"
+								v-if="showDeleteQuestions"
+								/>
 		</b-col>
 	</b-row>
 	<b-row v-if="showError" style="text-align: center;" align-h="around">
@@ -82,12 +88,23 @@
 									{{item.text}}
 								</b-col>
 								<b-col cols="1">
-									<b-button block @click="showShowQuestionModal(item)" variant="warning">
+									<b-button 	block
+												@click="showShowQuestionModal(item)"
+												variant="warning"
+												>
 										<i class="fas fa-eye"></i>
 									</b-button>
 								</b-col>
-								<b-col cols="1">
-									<b-button block @click="showEditQuestionModal(item)" variant="primary">
+								<b-col 	cols="1"
+										:disabled="item.status === 1 ? false : true"
+										v-b-tooltip.hover
+										:title="getLocale.questionStatusTooltip"
+										>
+									<b-button 	block
+												@click="showEditQuestionModal(item)"
+												:variant="item.status === 1 ? '' : 'primary'"
+												:disabled="item.status === 1 ? true : false"
+												>
 										<i class="fas fa-edit"></i>
 									</b-button>
 								</b-col>	
@@ -130,7 +147,10 @@ export default {
 			selectedQuestions: [],
 			renderEditQuestion: false,
 			renderShowQuestion: false,
-			renderAddQuestionToSession: false
+			renderAddQuestionToSession: false,
+			selectAction: 0,
+			showCopyQuestions: false,
+			showDeleteQuestions: false
 		};
 	},
 	components: {
@@ -163,7 +183,7 @@ export default {
 			} catch (e) {
 				// Between the first if statement and here, "this" can be set
 				// to undefined. If it is a TypeError is catched here.
-				return;
+				if (this == undefined) return;
 			}
 
 			if (id.includes("edit")){ 
@@ -172,6 +192,10 @@ export default {
 			}
 			else if (id.includes("show")) this.renderShowQuestion = false;
 			else if (id.includes("session")) this.renderAddQuestionToSession = false;
+			else if (id.includes("copy")) this.showCopyQuestions = false;
+			else if (id.includes("delete")) this.showDeleteQuestions = false;
+
+			this.selectPressed = false;
 		});
 	},
 	computed: {
@@ -197,11 +221,17 @@ export default {
 		},
 		getSelectedQuestions: function() {
 			let list = [];
+
 			for (let i = 0; i < this.selectedQuestions.length; i++) {
 				let selectedId = this.selectedQuestions[i];
 				let index = this.questionList.findIndex(question => question.id === selectedId);
 				if (index === -1) continue;
 				let question = this.questionList[index];
+				if(question.status === 1 && this.selectAction === 1) {
+					this.selectedQuestions.splice(i, 1);
+					i--;
+					continue;
+				}
 				list.push({
 					id: question.id,
 					text: question.text
@@ -310,7 +340,13 @@ export default {
 		},
 		openCopyQuestion: function() {
 			if (this.selectedQuestions.length > 0) {
-				this.$refs.copyQuestionModal.$refs.copyQuestionInnerModal.show();
+				this.selectAction = 0;
+				this.$nextTick(function() {
+					this.showCopyQuestions = true;
+					this.$nextTick(function() {
+						this.$refs.copyQuestionModal.$refs.copyQuestionInnerModal.show();
+					});
+				});
 			} else {
 				this.errorText = "noQuestionsSelectedError";
 				this.showError = true;
@@ -318,7 +354,13 @@ export default {
 		},
 		openDeleteQuestion: function() {
 			if (this.selectedQuestions.length > 0) {
-				this.$refs.deleteQuestionModal.$refs.deleteQuestionInnerModal.show();
+				this.selectAction = 1;
+				this.$nextTick(function() {
+					this.showDeleteQuestions = true;
+					this.$nextTick(function() {
+						this.$refs.deleteQuestionModal.$refs.deleteQuestionInnerModal.show();
+					});
+				});
 			} else {
 				this.errorText = "noQuestionsSelectedError";
 				this.showError = true;
