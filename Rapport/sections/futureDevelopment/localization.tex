@@ -1,2 +1,2 @@
-\subsection{Localization}
+\subsubsection{Localization}
 When creating the locale files we used a design based on each vue component having their own locale object. This has been a design that worked great, but during development a design flaw was noticed. Some vue components use the same text. This can be seen on buttons, error messages, etc. This could be solved by not just storing locales divided into vue components, but byb also storing comon locale by in it's own object. Even though the file size for each locale file is relatively small, it could reduced more. Another way to expand localization would be to add more locales.
