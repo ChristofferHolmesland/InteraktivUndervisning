@@ -211,7 +211,11 @@ export default {
 			this.$socket.emit("editSessionRequest", sessionId);
 		},
 		removeSession: function(sessionId) {
-			this.$socket.emit("deleteSessionRequest", sessionId);
+			if (
+				confirm(
+					this.getLocale.delSessionBody
+				)
+			) this.$socket.emit("deleteSessionRequest", sessionId);
 		}
 	},
 	computed: {

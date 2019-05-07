@@ -140,7 +140,8 @@
         "searchPlaceholder": "Søk",
         "editTooltip": "Bare inaktive økter kan endres",
         "deleteTooltip": "Bare inaktive økter kan slettes",
-        "noSessions": "Ingen økter"
+        "noSessions": "Ingen økter",
+        "delSessionBody": "Vil du slette denne økten? Dette kan ikke reverseres!"
     },
     "AdminDashboard": {
         "courseAdministrator": "Fag adminstrator",
