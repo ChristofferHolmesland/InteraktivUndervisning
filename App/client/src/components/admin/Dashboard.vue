@@ -29,69 +29,110 @@
 			</b-col>
 		</b-row>
 		<b-row align-h="around">
-			<!-- Add admin -->
+			<!-- Add admin and student assistant -->
 			<b-col cols="5" class="jumbotron">
-				<b-row><h5>{{ getLocale.courseAdministrator }}</h5></b-row>
-				<b-row>
-					<b-container class="px-0">
-						<b-row v-if="getUser.userRights === 4 && getUser.loggedIn">
-							<b-col cols="8">
-								<b-form-input	v-model="newAdminFeideId" 
-												type="text"
-												placeholder="Feide id">
-								</b-form-input>
-							</b-col>
-							<b-col cols="3">
-								<b-button block @click="addNewAdmin" variant="success"><i class="fas fa-user-plus"></i></b-button>
-							</b-col>
-						</b-row>
-						<b-row>
-							<b-col>
-								<ul style="list-style-type: none;">
-									<li :key="admin.feideId" v-for="admin in courseAdmins"
-										class="mt-1">
-										{{ admin.feideId }} -  {{ admin.name }}
-										<b-button size="sm" variant="danger" :id="admin.feideId" @click="removeAdmin($event);" v-if="getUser.userRights === 4 && getUser.loggedIn">
-											<i class="fas fa-times-circle"></i>
-										</b-button>
-									</li>
-								</ul>
-							</b-col>
-						</b-row>
-					</b-container>
-				</b-row>
+				<b-card no-body>
+					<b-tabs v-model="tabIndex" card>
+						<b-tab	:title="getLocale.courseAdministrator"
+								>
+							<b-container class="px-0">
+								<b-row v-if="getUser.userRights === 4 && getUser.loggedIn">
+									<b-col cols="8">
+										<b-form-input	v-model="newAdminFeideId" 
+														type="text"
+														placeholder="Feide id">
+										</b-form-input>
+									</b-col>
+									<b-col cols="3">
+										<b-button block @click="addNewAdmin" variant="success"><i class="fas fa-user-plus"></i></b-button>
+									</b-col>
+								</b-row>
+								<b-row>
+									<b-col>
+										<ul style="list-style-type: none;">
+											<li :key="admin.feideId" v-for="admin in courseAdmins"
+												class="mt-1">
+												{{ admin.feideId }} -  {{ admin.name }}
+												<b-button size="sm" variant="danger" :id="admin.feideId" @click="removeAdmin($event);" v-if="getUser.userRights === 4 && getUser.loggedIn">
+													<i class="fas fa-times-circle"></i>
+												</b-button>
+											</li>
+											<li v-if="getAdminApplicants.length > 0">
+												<h6>{{ getLocale.applicantsLabel }}</h6>
+											</li>
+											<li v-for="applicant in getAdminApplicants" :key="applicant.id">
+												{{ applicant.feideId }} -  {{ applicant.name }}
+												<b-button	size="sm"
+															variant="danger"
+															@click="removeApplicant(applicant.applicationId);"
+															>
+													<i class="fas fa-times-circle"></i>
+												</b-button>
+												<b-button	size="sm"
+															variant="success"
+															@click="approveApplicant(applicant.applicationId);"
+															>
+													<i class="fas fa-check-circle"></i>
+												</b-button>
+											</li>
+										</ul>
+									</b-col>
+								</b-row>
+							</b-container>
+						</b-tab>
+						<b-tab 	:title="getLocale.courseAssistants"
+								>
+							<b-container class="px-0">
+								<b-row v-if="getUser.userRights === 4 && getUser.loggedIn">
+									<b-col cols="8">
+										<b-form-input	v-model="newAssistantFeideId" 
+														type="text"
+														placeholder="Feide id">
+										</b-form-input>
+									</b-col>
+									<b-col cols="3">
+										<b-button block @click="addNewAssistant" variant="success"><i class="fas fa-user-plus"></i></b-button>
+									</b-col>
+								</b-row>
+								<b-row>
+									<b-col>
+										<ul style="list-style-type: none;">
+											<li :key="assistant.feideId" v-for="assistant in courseAssistants"
+												class="mt-1">
+												{{ assistant.feideId }} -  {{ assistant.name }}
+												<b-button variant="danger" size="sm" :id="assistant.feideId" @click="removeAdmin($event);" v-if="getUser.userRights === 4 && getUser.loggedIn">
+													<i class="fas fa-times-circle"></i>
+												</b-button>
+											</li>
+											<li v-if="getStudAssApplicants.length > 0">
+												<h6>{{ getLocale.applicantsLabel }}</h6>
+											</li>
+											<li v-for="applicant in getStudAssApplicants" :key="applicant.id">
+												{{ applicant.feideId }} -  {{ applicant.name }}
+												<b-button	size="sm"
+															variant="danger"
+															@click="removeApplicant(applicant.applicationId);"
+															>
+													<i class="fas fa-times-circle"></i>
+												</b-button>
+												<b-button	size="sm"
+															variant="success"
+															@click="approveApplicant(applicant.applicationId);"
+															>
+													<i class="fas fa-check-circle"></i>
+												</b-button>
+											</li>
+										</ul>
+									</b-col>
+								</b-row>
+							</b-container>
+						</b-tab>
+					</b-tabs>
+				</b-card>
 			</b-col>
-			<!-- Add student assistant -->
+
 			<b-col cols="5" class="jumbotron">
-				<b-row><h5>{{getLocale.courseAssistants}}</h5></b-row>
-				<b-row>
-					<b-container class="px-0">
-						<b-row v-if="getUser.userRights === 4 && getUser.loggedIn">
-							<b-col cols="8">
-								<b-form-input	v-model="newAssistantFeideId" 
-												type="text"
-												placeholder="Feide id">
-								</b-form-input>
-							</b-col>
-							<b-col cols="3">
-								<b-button block @click="addNewAssistant" variant="success"><i class="fas fa-user-plus"></i></b-button>
-							</b-col>
-						</b-row>
-						<b-row>
-							<b-col>
-								<ul style="list-style-type: none;">
-									<li :key="assistant.feideId" v-for="assistant in courseAssistants"
-										class="mt-1">
-										{{ assistant.feideId }} -  {{ assistant.name }}
-										<b-button variant="danger" size="sm" :id="assistant.feideId" @click="removeAdmin($event);" v-if="getUser.userRights === 4 && getUser.loggedIn">
-											<i class="fas fa-times-circle"></i>
-										</b-button>
-									</li>
-								</ul>
-							</b-col>
-						</b-row>
-					</b-container>
-				</b-row>
+				<RequestAdmin/>
 			</b-col>
 		</b-row>
 	</b-container>
@@ -101,6 +142,7 @@
 import SelectCourse from "./SelectCourse.vue";
 import SessionsOverview from "./startSession/SessionsOverview.vue";
 import AddNewCourse from "./AddNewCourse.vue";
+import RequestAdmin from "./RequestAdmin.vue";
 
 export default {
 	name: "Dashboard",
@@ -109,33 +151,67 @@ export default {
 			newAdminFeideId: "",
 			newAssistantFeideId: "",
 			courseAdmins: [],
-			courseAssistants: []
+			courseAssistants: [],
+			tabIndex: 0,
+			applicants: []
 		};
 	},
 	computed: {
-		selectedCourse() {
+		selectedCourse: function() {
 			return this.$store.getters.getSelectedCourse;
 		},
-		getLocale() {
+		getLocale: function() {
 			let locale = this.$store.getters.getLocale("AdminDashboard");
 			if (locale) return locale;
 			else return {};
 		},
-		getUser() {
+		getUser: function() {
 			let user = this.$store.getters.getUser({
 				userRights: true,
 				loggedIn: true
 			});
 			return user;
+		},
+		getAdminApplicants: function() {
+			let response = [];
+
+			for (let i = 0; i < this.applicants.length; i++) {
+				if (this.applicants[i].userRight === 4){
+					response.push(this.applicants[i]);
+				}
+			}
+
+			return response;
+		},
+		getStudAssApplicants: function() {
+			let response = [];
+
+			for (let i = 0; i < this.applicants.length; i++) {
+				if (this.applicants[i].userRight === 3){
+					response.push(this.applicants[i]);
+				}
+			}
+
+			return response;
 		}
 	},
 	watch: {
 		selectedCourse: function() {
 			this.getUserRightsFromDatabase();
+		},
+		tabIndex: function() {
+			this.getUserRightsFromDatabase();
+			if (this.$store.getters.getUser({userRights: true}).userRights === 4) {
+				this.getApplicants();
+			}
 		}
 	},
 	created() {
 		this.getUserRightsFromDatabase();
+		let user = this.$store.getters.getUser({userRights: true})
+		if (this.$store.getters.getUser({userRights: true}).userRights === 4) {
+			this.getApplicants();
+		}
 	},
 	sockets: {
 		getUsersByUserRightsLevelResponse: function(data) {
@@ -147,9 +223,22 @@ export default {
 		},
 		setUserRightsLevelDone: function() {
 			this.getUserRightsFromDatabase();
+		},
+		applicantChangeResponse: function() {
+			this.getUserRightsFromDatabase();
+			if (this.$store.getters.getUser({userRights: true}).userRights === 4) {
+				this.getApplicants();
+			}
+		},
+		applicationsByCourseIdResponse: function(applicants) {
+			this.applicants = applicants;
 		}
 	},
 	methods: {
+		getApplicants: function() {
+			let courseId = this.$store.getters.getSelectedCourse;
+			this.$socket.emit("applicationsByCourseIdRequest", courseId);
+		},
 		newQuestionClicked: function() {
 			// TODO: Write the function
 		},
@@ -198,20 +287,29 @@ export default {
 				level: -1
 			});
 		},
-		getUserRightsFromDatabase() {
+		getUserRightsFromDatabase: function() {
 			this.$socket.emit("getUsersByUserRightsLevelsRequest", {
 				levels: [3, 4],
 				courseId: this.$store.getters.getSelectedCourse
 			});
 		},
-		showAddNewCourseModal() {
+		showAddNewCourseModal: function() {
 			this.$refs.AddNewCourseModal.$refs.InnerAddNewCourseModal.show();
+		},
+		removeApplicant: function(applicationId) {
+			let courseId = this.$store.getters.getSelectedCourse;
+			this.$socket.emit("removeApplicant", applicationId, courseId);
+		},
+		approveApplicant: function(applicationId) {
+			let courseId = this.$store.getters.getSelectedCourse;
+			this.$socket.emit("approveApplicant", applicationId, courseId);
 		}
 	},
 	components: {
 		SelectCourse,
 		SessionsOverview,
-		AddNewCourse
+		AddNewCourse,
+		RequestAdmin
 	}
 };
 </script>

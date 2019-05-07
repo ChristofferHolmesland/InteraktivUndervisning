@@ -65,7 +65,6 @@
         sockets: {
             sendSessionWithinCourse: function(sessions) {
                 this.sessionOptions = sessions;
-                console.log(sessions)
                 if (sessions.length > 0) this.selectedSession = sessions[0].value;
             }
         }

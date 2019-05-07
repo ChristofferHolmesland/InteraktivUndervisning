@@ -814,4 +814,64 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 		});
 	});
 
+	socket.on("requestAdminInfoRequest", function() {
+		let response = {
+			noUserRightCoursList: [],
+			appliedList: []
+		};
+
+		dbFunctions.get.noUserRightCoursesByFeideId(db, user.feide.idNumber).then((courses) => {
+			for (let i = 0; i < courses.length; i++) {
+				let course = courses[i];
+				response.noUserRightCoursList.push({
+					id: course.id,
+					code: course.code,
+					season: course.season,
+					year: course.year
+				});
+			}
+
+			dbFunctions.get.appliedListByFeideId(db, user.feide.idNumber).then((applications) => {
+				for (let i = 0; i < applications.length; i++) {
+					let application = applications[i];
+					response.appliedList.push({
+						id: application.id,
+						code: application.code,
+						season: application.season,
+						year: application.year,
+						userRight: application.userRight
+					});
+				}
+
+				socket.emit("requestAdminInfoResponse", response);
+			}).catch((err) => {
+				console.error(err);
+				return;
+			});
+		}).catch((err) => {
+			console.error(err);
+			return;
+		})
+	});
+
+	socket.on("applyUserRightRequest", function(courseId, userRight) {
+		dbFunctions.insert.userRightRequest(db, {
+			feideId: user.feide.idNumber,
+			courseId: courseId,
+			userRight: userRight
+		}).then(() => {
+			socket.emit("applyResponse");
+		}).catch((err) => {
+			console.error(err);
+		});
+	});
+
+	socket.on("removeApplicationRequest", function(applicationId) {
+		dbFunctions.del.applicationById(db, applicationId).then(() => {
+			socket.emit("removeApplicationResponse");
+		}).catch((err) => {
+			console.error(err);
+		})
+	});
+
 }
