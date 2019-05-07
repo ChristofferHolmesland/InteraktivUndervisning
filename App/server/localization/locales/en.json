@@ -125,7 +125,8 @@
         "pythonPlaceholder": "Write Python code here...",
         "ready": "Ready",
         "yes": "Yes",
-        "no": "No"
+        "no": "No",
+        "questionStatusTooltip": "Question that have been added to a session can't be edited or deleted!"
     },
     "AdminSessions": {
         "newSession": "New session",

@@ -125,7 +125,8 @@
         "pythonPlaceholder": "Skriv Python kode her...",
         "ready": "Klar",
         "yes": "Ja",
-        "no": "Nei"
+        "no": "Nei",
+        "questionStatusTooltip": "Spørsmål som har blitt lagt til en økt kan ikke endres eller slettes!"
     },
     "AdminSessions": {
         "newSession": "Ny økt",
