@@ -59,6 +59,11 @@ const del = {
 		let statement = `DELETE FROM AdminRequest
 						WHERE id = ${applicationId};`;
 		return createPromise(db, statement, "sessionById");
+	},
+	applicationByFeideId: function(db, feideId) {
+		let statement = `DELETE FROM AdminRequest
+						WHERE feideId = ${feideId};`;
+		return createPromise(db, statement, "applicationByFeideId");
 	}
 };
 
