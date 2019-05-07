@@ -1,4 +1,4 @@
-\subsection{GraphDrawer}
+\subsubsection{GraphDrawer}
 If new question types are implemented which require the GraphDrawer to keep track of thousands of nodes at the same time, there might be performance issues on some systems. The nodes are currently stored in an array. Which means that if you want to find a node on the screen, all of the nodes need to be checked, even the those on the opposite side of the world. Many operations which start on one node, and then end at a node close by the original node (e.g. selecting nodes by dragging the mouse) would be more performant if a spatial data structure\cite{SpatialDatastructure} was used instead.
 \\[11pt]
 The current system is designed to work with both touch screens and cursors. Because of this, some choices were made to make the development simpler and less time consuming.

@@ -3,7 +3,14 @@
 % Legger inn pakker som skal brukes:	
 \usepackage[utf8]{inputenc}
 \usepackage{color}
+
 \usepackage{titlesec}
+\setcounter{secnumdepth}{4}
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
 \usepackage{amsmath}
 \usepackage{float}
 \usepackage[export]{adjustbox}
@@ -71,9 +78,6 @@
 		
 		% Evaluation
 		\include{sections/evaluation/evaluation}
-	
-		% FutureDevelopment
-		\include{sections/futureDevelopment/futureDevelopment}
 		
 		%Conclusion
 		\include{sections/conclusion/conclusion}
