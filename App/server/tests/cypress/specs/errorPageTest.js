@@ -41,8 +41,8 @@ describe('Test error pages', function () {
 		cy.url().should("equal","http://localhost:8082/401");
 		cy.get(':nth-child(2) > .nav-link').should("have.text","Logg inn");
 		cy.get("h1").should("have.text","Uautorisert!");
-		cy.get(".401 > p:nth-child(2)").should("have.text","Denne siden kan ikke bli autorisert for deg.");
-		cy.get(".401 > p:nth-child(3)").should("have.text","Venligst gå tilbake og logg inn før du prøve å laste inn denne siden.");
+		cy.get("p:nth-child(1)").should("have.text","Denne siden kan ikke bli autorisert for deg.");
+		cy.get("p:nth-child(2)").should("have.text","Venligst gå tilbake og logg inn før du prøve å laste inn denne siden.");
 		cy.get(".navbar-brand")
 			.should("have.text","Interaktiv Undervisning")
 			.click();
@@ -62,8 +62,8 @@ describe('Test error pages', function () {
 			.should("have.text","Language");
 		cy.get(':nth-child(2) > .nav-link').should("have.text","Sign in");
 		cy.get("h1").should("have.text","Unauthorized!");
-		cy.get(".401 > p:nth-child(2)").should("have.text","The page you have requested can't be authorized for you.");
-		cy.get(".401 > p:nth-child(3)").should("have.text","Please go back and log in before trying to enter this page.");
+		cy.get("p:nth-child(1)").should("have.text","The page you have requested can't be authorized for you.");
+		cy.get("p:nth-child(2)").should("have.text","Please go back and log in before trying to enter this page.");
 		cy.get(".btn")
 			.should("have.text","Go home")
 			.click();
