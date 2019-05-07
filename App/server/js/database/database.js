@@ -11,7 +11,7 @@ module.exports.getDB = function setupDatabase() {
 		}
 		
 		//set up connection with the database
-		let db = new sqlite3.Database(databasePath, (err) => { if (err) reject(err) });
+		let db = new sqlite3.Database(databasePath, (err) => { if (err) reject(err); });
 		//Creating database tables
 		await db.serialize(async function () {
 			db.run(
@@ -21,7 +21,7 @@ module.exports.getDB = function setupDatabase() {
 					name TEXT NOT NULL,
 					sessionId TEXT NOT NULL,
 					admin INTEGER NOT NULL
-				);`, (err) => { if (err) reject(err) }
+				);`, (err) => { if (err) reject(err); }
 			);
 
 			db.run(
@@ -29,21 +29,21 @@ module.exports.getDB = function setupDatabase() {
 					id TEXT PRIMARY KEY,
 					feideId TEXT,
 					FOREIGN KEY(feideId) REFERENCES Feide(id) ON UPDATE CASCADE
-				);`, (err) => { if (err) reject(err) }
+				);`, (err) => { if (err) reject(err); }
 			);
 
 			db.run(
 				`CREATE TABLE IF NOT EXISTS Season(
 					id INTEGER PRIMARY KEY AUTOINCREMENT,
 					season TEXT NOT NULL
-				);`, (err) => { if (err) reject(err) }
+				);`, (err) => { if (err) reject(err); }
 			);
 
 			db.run(
 				`CREATE TABLE IF NOT EXISTS Year(
 					id INTEGER PRIMARY KEY AUTOINCREMENT,
 					year INTEGER NOT NULL
-				);`, (err) => { if (err) reject(err) }
+				);`, (err) => { if (err) reject(err); }
 			);
 
 			db.run(
@@ -53,14 +53,14 @@ module.exports.getDB = function setupDatabase() {
 					yearId INTEGER NOT NULL,
 					FOREIGN KEY(seasonId) REFERENCES Season(id),
 					FOREIGN KEY(yearId) REFERENCES Year(id)
-				);`, (err) => { if (err) reject(err) }
+				);`, (err) => { if (err) reject(err); }
 			);
 
 			db.run(
 				`CREATE TABLE IF NOT EXISTS CourseCode(
 					id INTEGER PRIMARY KEY AUTOINCREMENT,
 					code TEXT NOT NULL
-				);`, (err) => { if (err) reject(err) }
+				);`, (err) => { if (err) reject(err); }
 			);
 
 			db.run(
@@ -71,7 +71,7 @@ module.exports.getDB = function setupDatabase() {
 					semesterId INTEGER NOT NULL,
 					FOREIGN KEY(codeId) REFERENCES CourseCode(id)
 					FOREIGN KEY(semesterId) REFERENCES Semester(id)
-				);`, (err) => { if (err) reject(err) }
+				);`, (err) => { if (err) reject(err); }
 			);
 
 			db.run(
@@ -82,7 +82,7 @@ module.exports.getDB = function setupDatabase() {
 					PRIMARY KEY(feideId, courseId),
 					FOREIGN KEY(feideId) REFERENCES Feide(id) ON DELETE CASCADE ON UPDATE CASCADE,
 					FOREIGN KEY(courseId) REFERENCES Course(id) ON DELETE CASCADE ON UPDATE CASCADE
-				);`, (err) => { if (err) reject(err) }
+				);`, (err) => { if (err) reject(err); }
 			);
 
 			db.run(
@@ -93,7 +93,7 @@ module.exports.getDB = function setupDatabase() {
 					participants INTEGER NOT NULL,
 					courseId INTEGER NOT NULL,
 					FOREIGN KEY(courseId) REFERENCES Course(id) ON DELETE CASCADE ON UPDATE CASCADE
-				);`, (err) => { if (err) reject(err) }
+				);`, (err) => { if (err) reject(err); }
 			);
 
 			db.run(
@@ -103,14 +103,14 @@ module.exports.getDB = function setupDatabase() {
 					PRIMARY KEY(userId, sessionId),
 					FOREIGN KEY(userId) REFERENCES User(id) ON DELETE CASCADE ON UPDATE CASCADE,
 					FOREIGN KEY(sessionId) REFERENCES Session(id) ON DELETE CASCADE ON UPDATE CASCADE
-				);`, (err) => { if (err) reject(err) }
+				);`, (err) => { if (err) reject(err); }
 			);
 
 			db.run(
 				`CREATE TABLE IF NOT EXISTS Type(
 					type INTEGER PRIMARY KEY AUTOINCREMENT,
 					name TEXT NOT NULL
-				);`, (err) => { if (err) reject(err) }
+				);`, (err) => { if (err) reject(err); }
 			);
 
 			db.run(
@@ -126,7 +126,7 @@ module.exports.getDB = function setupDatabase() {
 					status INTEGER,
 					FOREIGN KEY (questionType) REFERENCES Type(id) ON DELETE CASCADE ON UPDATE CASCADE
 					FOREIGN KEY (courseId) REFERENCES Course(id) ON UPDATE CASCADE
-				);`, (err) => { if (err) reject(err) }
+				);`, (err) => { if (err) reject(err); }
 			);
 
 			db.run(
@@ -136,7 +136,7 @@ module.exports.getDB = function setupDatabase() {
 					questionId INTEGER NOT NULL,
 					FOREIGN KEY(sessionId) REFERENCES Session(id) ON DELETE CASCADE ON UPDATE CASCADE,
 					FOREIGN KEY(questionId) REFERENCES Question(id) ON DELETE CASCADE ON UPDATE CASCADE
-				);`, (err) => { if (err) reject(err) }
+				);`, (err) => { if (err) reject(err); }
 			);
 
 			db.run(
@@ -148,8 +148,19 @@ module.exports.getDB = function setupDatabase() {
 					userId TEXT NOT NULL,
 					FOREIGN KEY (sessionHasQuestionId) REFERENCES SessionHasQuestion(id) ON UPDATE CASCADE,
 					FOREIGN KEY (userId) REFERENCES User(id) ON UPDATE CASCADE
-				);`, (err) => { if (err) reject(err) }
+				);`, (err) => { if (err) reject(err); }
 			);
+
+			db.run(
+				`CREATE TABLE IF NOT EXISTS AdminRequest(
+					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					feideId TEXT NOT NULL,
+					courseId INTEGER NOT NULL,
+					userRight INTEGER NOT NULL,
+					FOREIGN KEY (feideId) REFERENCES Feide(id) ON UPDATE CASCADE,
+					FOREIGN KEY (courseId) REFERENCES Course(id) ON UPDATE CASCADE
+				);`, (err) => { if (err) reject(err); }
+			)
 
 			await dbFunctions.get.userById(db, 1).then((row) => {
 				if (row === undefined) {
