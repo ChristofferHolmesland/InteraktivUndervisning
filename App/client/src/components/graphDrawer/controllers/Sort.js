@@ -1242,12 +1242,11 @@ export default class Sort {
 		It is assumed that all of the nodes have the same width.
 	*/
 	fixArrayPositions(parentIndex, xPadding, yPadding) {
-		console.log("New");
-
 		let start = this.arrays[parentIndex];
 		if (start.links.length == 0) return;
 
 		this._fixYPadding(start, yPadding);
+		let linkCount = this._countLinks();
 
 		let arraysWithNoLinks = 0;
 		for (let i = 0; i < this.arrays.length; i++) {
@@ -1258,7 +1257,8 @@ export default class Sort {
 		}
 		
 		let assignSide = function(arr, side) {
-			if (arr.links.length == 0) {
+			if (arr.links.length == 0 &&
+				linkCount.get(arr) !== 1) {
 				arr.side = -1;
 				return;
 			}
@@ -1304,13 +1304,12 @@ export default class Sort {
 			}
 		}
 
-		let linkCount = this._countLinks();
 		let visisted = [];
 		let moveArray = function(arr, relativeArray) {
 			if (arr == undefined) return;
-			
+
 			// First array
-			if (linkCount.get(arr) == 0) return;
+			if (linkCount.get(arr) == undefined) return;
 			// Last array
 			if (arraysWithNoLinks == 1 && 
 				(arr.links == undefined || arr.links.length == 0)
@@ -1320,9 +1319,6 @@ export default class Sort {
 
 			if (visisted.includes(arr)) return;
 			visisted.push(arr);
-
-			console.log("Fixing");
-			console.log(arr.nodes);
 
 			let nodeWidth = relativeArray.nodes[0].w;
 			let centerX = 
