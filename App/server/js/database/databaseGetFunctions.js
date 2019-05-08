@@ -441,7 +441,7 @@ const get = {
 				if (err) reject(customReject(err, "courseInfoById"));
 				resolve(rows[0]);
 			});
-    });
+    	});
 	},
 	sessionStatusById: function(db, sessionId) {
 		return new Promise(async (resolve, reject) => {
@@ -495,6 +495,73 @@ const get = {
 							WHERE id = ${questionId}`;
 			db.get(statement, (err, rows) => {
 				if (err) reject(customReject(err, "questionStatusById"));
+				resolve(rows);
+			});
+    	});
+	},
+	noUserRightCoursesByFeideId: function(db, feideId) {
+		return new Promise(async (resolve, reject) => {
+			let statement = `SELECT C.id, CC.code, SE.season, Y.year
+							FROM Course AS C
+							INNER JOIN CourseCode AS CC ON CC.id = C.codeId
+							INNER JOIN CourseSemester AS S ON S.id = C.semesterId
+							INNER JOIN Season AS SE ON SE.id = S.seasonId
+							INNER JOIN Year AS Y ON Y.id = S.yearId
+							LEFT OUTER JOIN UserRight AS UR ON UR.courseId = C.id
+							LEFT OUTER JOIN AdminRequest AS AR ON AR.courseId = C.id
+							WHERE UR.feideId IS NOT '${feideId}' AND AR.feideId IS NOT '${feideId}';`;
+			db.all(statement, (err, rows) => {
+				if (err) reject(customReject(err, "noUserRightCoursesByFeideId"));
+				resolve(rows);
+			});
+    	});
+	},
+	appliedListByFeideId: function(db, feideId) {
+		return new Promise(async (resolve, reject) => {
+			let statement = `SELECT AR.id, CC.code, SE.season, Y.year, AR.userRight
+							FROM AdminRequest AS AR
+							INNER JOIN Course AS C ON C.id = AR.courseId
+							INNER JOIN CourseCode AS CC ON CC.id = C.codeId
+							INNER JOIN CourseSemester AS S ON S.id = C.semesterId
+							INNER JOIN Season AS SE ON SE.id = S.seasonId
+							INNER JOIN Year AS Y ON Y.id = S.yearId
+							WHERE AR.feideId = ${feideId}`;
+			db.all(statement, (err, rows) => {
+				if (err) reject(customReject(err, "appliedListByFeideId"));
+				resolve(rows);
+			});
+    	});
+	},
+	getApplicationListByCourseId: function(db, courseId) {
+		return new Promise(async (resolve, reject) => {
+			let statement = `SELECT AR.id AS applicationId, F.id AS feideId, F.name, AR.userRight
+							FROM AdminRequest AS AR
+							INNER JOIN Feide AS F ON F.id = AR.feideId
+							WHERE AR.courseId = ${courseId}`;
+			db.all(statement, (err, rows) => {
+				if (err) reject(customReject(err, "appliedListByFeideId"));
+				resolve(rows);
+			});
+    	});
+	},
+	userRightInCourseById: function(db, data) {
+		return new Promise(async (resolve, reject) => {
+			let statement = `SELECT * 
+							FROM UserRight
+							WHERE feideId = '${data.feideId}' AND courseId = ${data.courseId};`;
+			db.all(statement, (err, rows) => {
+				if (err) reject(customReject(err, "userRightInCourseById"));
+				resolve(rows);
+			});
+    	});
+	},
+	applicationById: function(db, applicationId) {
+		return new Promise(async (resolve, reject) => {
+			let statement = `SELECT * 
+							FROM AdminRequest
+							WHERE id = ${applicationId};`;
+			db.get(statement, (err, rows) => {
+				if (err) reject(customReject(err, "userRightInCourseById"));
 				resolve(rows);
 			});
     	});

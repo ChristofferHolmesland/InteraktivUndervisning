@@ -247,4 +247,65 @@ module.exports.admin = function(socket, db, user, users) {
 		});
 	});
 
+	socket.on("applicationsByCourseIdRequest", function(courseId) {
+		dbFunctions.get.userRightInCourseById(db, {
+			courseId: courseId,
+			feideId: user.feide.idNumber
+		}).then((userRight) => {
+			if (userRight.length === 0) return;
+			dbFunctions.get.getApplicationListByCourseId(db, courseId).then((applications) => {
+				socket.emit("applicationsByCourseIdResponse", applications);
+			}).catch((err) => {
+				console.error(err);
+			})
+		}).catch((err) => {
+			console.error(err);
+		});
+	});
+	
+	socket.on("removeApplicant", function(applicationId, courseId) {
+		dbFunctions.get.userRightInCourseById(db, {
+			courseId: courseId,
+			feideId: user.feide.idNumber
+		}).then((userRight) => {
+			if (userRight.length === 0) return;
+			dbFunctions.del.applicationById(db, applicationId).then(() => {
+				socket.emit("applicantChangeResponse");
+			}).catch((err) => {
+				console.error(err);
+			})
+		}).catch((err) => {
+			console.error(err);
+		});
+	});
+	
+	socket.on("approveApplicant", function(applicationId, courseId) {
+		dbFunctions.get.userRightInCourseById(db, {
+			courseId: courseId,
+			feideId: user.feide.idNumber
+		}).then((userRight) => {
+			if (userRight.length === 0) return;
+			dbFunctions.get.applicationById(db, applicationId).then((application) => {
+				if (application === undefined) return;
+				dbFunctions.insert.userRightsLevelByFeideId(db, {
+					feideId: application.feideId,
+					courseId: application.courseId,
+					level: application.userRight
+				}).then(() => {
+					dbFunctions.del.applicationById(db, applicationId).then(() => {
+						socket.emit("applicantChangeResponse");
+					}).catch((err) => {
+						console.error(err);
+					})
+				}).catch((err) => {
+					console.error(err);
+				})
+			}).catch((err) => {
+				console.error(err);
+			})
+		}).catch((err) => {
+			console.error(err);
+		});
+	});
+
 }

@@ -140,19 +140,33 @@
         "searchPlaceholder": "Søk",
         "editTooltip": "Bare inaktive økter kan endres",
         "deleteTooltip": "Bare inaktive økter kan slettes",
-        "noSessions": "Ingen økter"
+        "noSessions": "Ingen økter",
+        "delSessionBody": "Vil du slette denne økten? Dette kan ikke reverseres!"
     },
     "AdminDashboard": {
         "courseAdministrator": "Fag adminstrator",
+        "administrator": "Administrator",
+        "studentAssistant": "Student assistent",
         "addBtnText": "Legg til",
         "courseAssistants": "Student assistenter",
         "startSession": "Start økt",
         "changeCourseTitle": "Endre fag",
         "newCourseBtnText": "Legg til",
         "addNewQuestionBtnText": "Legg til nytt spørsmål",
-        "newQuestion": "Nytt spørsmål",
+        "newQuestion": "Nytt    spørsmål",
         "viewLastSession": "Vis forrige økt",
-        "openLastSession": "Åpne"
+        "openLastSession": "Åpne",
+        "adminApplications": "Søknader",
+        "applyBtnText": "Søk",
+        "noList": "Ingen fag som du ikke har bruker rettigheter i eller som du har søkt til!",
+        "studAssLabel": "SA",
+        "adminLabel": "A",
+        "noAppliedList": "Du har ikke søkt etter bruker rettigheter i noen fag!",
+        "season": {
+            "spring": "Vår",
+            "autumn": "Høst"
+        },
+        "applicantsLabel": "Søkere: "
     },
     "DisplayQuestion": {
         "question": "Spørsmål",

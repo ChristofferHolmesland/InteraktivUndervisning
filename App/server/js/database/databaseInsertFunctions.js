@@ -105,6 +105,11 @@ const insert = {
 		let statement = `INSERT INTO CourseSemester(seasonId, yearId)
 						VALUES(${semester.season}, ${semester.year})`;
 		return createPromise(db, statement, "semester");
+	},
+	userRightRequest: function(db, data) {
+		let statement = `INSERT INTO AdminRequest(feideId, courseId, userRight)
+						VALUES('${data.feideId}', ${data.courseId}, ${data.userRight})`;
+		return createPromise(db, statement, "semester");
 	}
 };
 

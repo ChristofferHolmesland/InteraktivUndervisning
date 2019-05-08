@@ -245,7 +245,17 @@ module.exports.feide = function(socket, db, user){
 	});
 
 	socket.on("deleteUserData", async function() {
-		let err = await dbFunctions.update.answerUserToAnonymous(db, user.feide.idNumber).catch(err => {
+		let err = await dbFunctions.del.applicationByFeideId(db, user.feide.idNumber).catch(err => {
+			console.error(err);
+			socket.emit("deleteUserDataError", "dbError");
+			return;
+		});
+		if (err){
+			console.error(err)
+			return;
+		}
+
+		err = await dbFunctions.update.answerUserToAnonymous(db, user.feide.idNumber).catch(err => {
 			console.error(err);
 			socket.emit("deleteUserDataError", "dbError");
 			return;
