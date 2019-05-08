@@ -1,3 +1,12 @@
 \subsubsection{Vuex}
-The applications components had some common variables such as localization and user information. To make sure all components could read and write this information, the Vuex store was put into use.
-% TODO add picture with an example of vuex ussage
+The application's components had some shared variables such as localization and user information. To make sure that all the components accessed the same information, it was stored in a Vuex store. The store contains the following information:
+\begin{enumerate}
+	\item \code{user}. The \code{user} object stores the user's \code{username}, \code{feideId} and \code{userRights} level.
+	\item \code{adminSubjects}, which is a list of all the subjects the current user has rights for.
+	\item \code{loggedIn} is a boolean which stores whether or not he user is logged in.
+	\item \code{locale} is an object which stores information about the selected language in the \code{locale} property, and the available languages in the \code{localeList} property.
+	\item \code{courseList} stores all the courses the user has rights for.
+	\item \code{selectedCourse} stores the course id of the course the user is currently viewing.
+	\item \code{questionTypes} stores every available question type.
+\end{enumerate}
+% TODO add picture with an example of vuex usage
