@@ -1283,6 +1283,8 @@ export default class Sort {
 		let leftest = undefined;
 		let rightest = undefined;
 		
+		// Find the node on the left side of the root which is the furthest to the right,
+		// and the node on the right side of the root which is the furthest to the left.
 		for (let i = 0; i < this.arrays.length; i++) {
 			let arr = this.arrays[i];
 			if (arr.side == 0) {
@@ -1304,8 +1306,61 @@ export default class Sort {
 			}
 		}
 
+		console.log("Leftest: " + this.getNodeValuesAsString(leftest.nodes));
+		console.log("Rightest: " + this.getNodeValuesAsString(rightest.nodes));
+		
+
+		// It is no longer interesting to check which side of the root a node is on.
+		// Instead, the side property should represent whether the array is to
+		// the left or right of the parent array.
+		for (let i = 0; i < this.arrays.length; i++) {
+			let arr = this.arrays[i];
+			
+			// directChildren are the children which are 
+			// closest to the array
+			let directChildren = [];
+			let closestY = 1000000;
+			for (let j = 0; j < arr.links.length; j++) {
+				let l = arr.links[j];
+				let dy = l.position.y - arr.position.y;
+				if (dy < closestY) {
+					closestY = dy;
+					directChildren = [l];
+				} else if (dy == closestY) {
+					directChildren.push(l);
+				}
+			}
+
+			console.log("Arr: " + this.getNodeValuesAsString(arr.nodes));
+			console.log("Has direct children: ");
+			for (let j = 0; j < directChildren.length; j++)
+				console.log(this.getNodeValuesAsString(directChildren[j].nodes));
+
+			if (directChildren.length > 2) {
+				console.error("Array with more than 2 direct children!");
+				console.error(arr);
+				continue;
+			}
+
+			if (directChildren.length == 1) {
+				let child = directChildren[0];
+				child.side = child.position.x < arr.position.x ? 0 : 1;
+			} else if (directChildren.length == 2) {
+				let child1 = directChildren[0];
+				let child2 = directChildren[1];
+
+				if (child1.position.x < child2.position.x) {
+					child1.side = 0;
+					child2.side = 1;
+				} else {
+					child1.side = 1;
+					child2.side = 0;
+				}
+			}
+		}
+
 		let visisted = [];
-		let moveArray = function(arr, relativeArray) {
+		let moveArray = function(arr, relativeArray, overrideSide) {
 			if (arr == undefined) return;
 
 			// First array
@@ -1320,15 +1375,48 @@ export default class Sort {
 			if (visisted.includes(arr)) return;
 			visisted.push(arr);
 
+			// If an array is only linked from one other array
+			// then its position should be based on which side
+			// of the parent array it is on. If it has more,
+			// the center should be at the average center of the parents.
+			let newX;
 			let nodeWidth = relativeArray.nodes[0].w;
-			let centerX = 
-				relativeArray.position.x + 
-				relativeArray.nodes.length * nodeWidth / 2;
 
-			// Move array
-			let sign = arr.side == 0 ? -1 : 1;
-			let arrayWidth = sign * arr.nodes.length * nodeWidth;
-			let newX = centerX + arrayWidth + sign * xPadding;
+			if (linkCount.get(arr) == 1) {
+				let centerX = 
+					relativeArray.position.x + 
+					relativeArray.nodes.length * nodeWidth / 2;
+
+				// Move array
+				let side = overrideSide == undefined ? arr.side : overrideSide;
+				let sign = side == 0 ? -1 : 1;
+				newX = centerX + sign * xPadding;
+
+				// If the array is on the left, the width of the array means
+				// that it needs to be even further to the left
+				if (side == 0)
+					newX -= arr.nodes.length * nodeWidth;
+			} else {
+				let parentCount = 0;
+				let totalParentCenterX = 0;
+				for (let i = 0; i < this.arrays.length; i++) {
+					let parent = this.arrays[i];
+					if (parent.links.indexOf(arr) > -1) {
+						parentCount++;
+
+						let parentCenterX = 
+							parent.position.x +
+							parent.nodes.length * nodeWidth / 2;
+						
+						totalParentCenterX += parentCenterX;
+					}
+				}
+
+				let desiredCenterX = totalParentCenterX / parentCount;
+				let arrWidth = arr.nodes.length * nodeWidth;
+				newX = desiredCenterX - arrWidth / 2;
+			}
+
 			arr.position.x = newX;
 
 			// Call function to move children and parents
@@ -1339,15 +1427,17 @@ export default class Sort {
 			if (link1 !== undefined) moveArray(link1, arr);
 			if (link2 !== undefined) moveArray(link2, arr);
 
-			for (let i = 0; i < this.arrays.length; i++) {
-				if (this.arrays[i].links.includes(arr)) {
-					moveArray(this.arrays[i], arr);
+			if (linkCount.get(arr) == 1) {
+				for (let i = 0; i < this.arrays.length; i++) {
+					if (this.arrays[i].links.includes(arr)) {
+						moveArray(this.arrays[i], arr);
+					}
 				}
 			}
 		}.bind(this);
 
-		moveArray(rightest, start);
-		moveArray(leftest, start);
+		moveArray(rightest, start, 0);
+		moveArray(leftest, start, 1);
 
 		for (let i = 0; i < this.arrays.length; i++)
 			this._repositionNodes(i);
@@ -1451,5 +1541,12 @@ export default class Sort {
 				type: "Delete"
 			}
 		});
+	}
+
+	getNodeValuesAsString(nodes) {
+		let vals = [];
+		for (let i = 0; i < nodes.length; i++)
+			vals.push(nodes[i].v);
+		return vals.join(", ");
 	}
 }
