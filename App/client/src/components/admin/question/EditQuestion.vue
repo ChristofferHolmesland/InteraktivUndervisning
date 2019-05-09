@@ -138,7 +138,33 @@
 								<label for="imageInput">{{getLocale.imageInputLabel}}</label>
 							</div>
 							<div v-if="selectedMediaType === 1">
-								<!-- TODO add graph objects -->
+								<b-container>
+									<b-row>
+										<b-col>
+											
+										</b-col>
+									</b-row>
+									<b-row>
+										<b-col>
+											<GraphDrawer
+													controlType="Graph0"
+													operatingMode="Interactive"
+													ref="graphDrawerMedia"
+													v-if="!reload"
+											/>
+										</b-col>
+									</b-row>
+									<b-row align-h="center">
+										<b-col cols="6">
+											<b-button 	block
+														variant="primary"
+														@click="addCanvasAsImage"
+														>
+												Add canvas as an image
+											</b-button>
+										</b-col>
+									</b-row>
+								</b-container>
 							</div>
 							<div v-if="selectedMediaType === 2">
 								<b-container class="editTableContainer">
@@ -479,6 +505,8 @@ function initializeState() {
 		showMediaError: false,
 		validationFailure: false,
 		validationErrors: [],
+
+		reload: false
 	};
 }
 
@@ -848,6 +876,46 @@ export default {
 			this.editTableValues = table;
 			this.editExistingTable = true;
 			this.editExistingTableIndex = index;
+		},
+		addCanvasAsImage: function() {
+			let storedFiles = this.newQuestion.objects.files;
+			let img = this.$refs.graphDrawerMedia.$refs.canvasElement.toDataURL("image/png");
+			let arr = img.split(",");
+			let buffer = arr[1];
+			arr = arr[0].split(";");
+			arr = arr[0].split(":");
+			let type = arr[1];
+
+			let size = 4 * Math.ceil(buffer.length / 3);
+			
+			let totalFilesSize = 0;
+			let errorFileSize = 1500000;
+			let warningFileSize = 500000;
+			for(let i = 0; i < storedFiles.length; i++) totalFilesSize += storedFiles[i].size;
+
+			totalFilesSize += size;
+			if (totalFilesSize > errorFileSize) {
+				this.showMediaError = true;
+				if (fileTypeErr > 0) this.mediaErrorText += "\n\n" + this.getLocale.mediaErrorFileSize;
+				else this.mediaErrorText = this.getLocale.mediaErrorFileSize;
+			}
+			else if (totalFilesSize > warningFileSize) {
+				this.showMediaWarning = true;
+				this.mediaWarningText = this.getLocale.mediaWarningFileSize;
+			}
+			if (totalFilesSize < errorFileSize) {			
+				storedFiles.push({
+					name: `Graph ${storedFiles.length}`,
+					size: size,
+					type: type,
+					buffer: buffer
+				});
+
+				this.reload = true;
+				this.$nextTick(function() {
+					this.reload = false;
+				});
+			}
 		}
 	},
 	computed: {

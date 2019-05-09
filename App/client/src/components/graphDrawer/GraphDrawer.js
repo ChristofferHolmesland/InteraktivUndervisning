@@ -218,12 +218,16 @@ export default class GraphDrawer {
 	*/
 	switchBuffers() {
 		let camera = this.camera.getFrustumFront();
-		this.canvasContext.clearRect(
+		let oldFill = this.canvasContext.fillStyle;
+		this.canvasContext.fillStyle = "#fff";
+		this.canvasContext.fillRect(
 			0,
 			0,
 			this.canvas.width,
 			this.canvas.height
 		);
+
+		this.canvasContext.fillStyle = oldFill;
 
 		this.canvasContext.drawImage(
 			this.drawBuffer,

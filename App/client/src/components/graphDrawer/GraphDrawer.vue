@@ -1,6 +1,6 @@
 <template>
     <div id="canvasWrapper" ref="canvasWrapper" style="width: 100%; height: 100%;">
-        <canvas id="canvas">
+        <canvas id="canvas" ref="canvasElement">
             Your browser does not support the HTML5 Canvas element.
         </canvas>
     </div>
