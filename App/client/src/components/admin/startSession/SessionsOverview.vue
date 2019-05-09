@@ -81,10 +81,6 @@ export default {
 				this.sessionList = sessions;
 				this.selectedSession = sessions[0].value;
 			}
-		},
-		sessionOverviewErrorResponse: function(data) {
-			console.log(data);
-			// TODO add logic to error handling
 		}
 	},
 	methods: {

@@ -205,7 +205,7 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 			socket.emit("sessionOverviewResponse", response);
 		}).catch((err) => {
 			console.error(err);
-			socket.emit("sessionOverviewErrorResponse");
+			return;
 		});
 	});
 	
