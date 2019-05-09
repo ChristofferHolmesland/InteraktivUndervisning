@@ -209,13 +209,6 @@
 							</b-container>
 						</b-col>
 					</b-row>
-					<b-row>
-						<b-col>
-							<div>
-								<!-- TODO add graph objects -->
-							</div>
-						</b-col>
-					</b-row>
 					<b-row v-if="getQuestionObjects.tables.length > 0">
 						<b-col>
 							<label>{{ getLocale.tableLabel }}</label>

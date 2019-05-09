@@ -566,7 +566,8 @@
     },
     "AdminSessionOverview": {
         "startBtn": "Start",
-        "noSessionText": "No sessions. Add new session"
+        "noSessionText": "No sessions. Add new session",
+        "errorActiveSessionRunning": "You have a session running!\n Rejoin it or delete it."
     },
     "GraphDrawer": {
         "editNodePrompt": "Enter new value:",

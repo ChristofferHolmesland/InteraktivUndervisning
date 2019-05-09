@@ -567,7 +567,8 @@
     },
     "AdminSessionOverview": {
         "startBtn": "Start",
-        "noSessionText": "Ingen økter. Legg til ny økt"
+        "noSessionText": "Ingen økter. Legg til ny økt",
+        "errorActiveSessionRunning": "Du kjører en økt!\n Bli med eller slett den."
     },
     "GraphDrawer": {
         "editNodePrompt": "Skriv ny verdi:",

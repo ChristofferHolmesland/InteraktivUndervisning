@@ -273,9 +273,7 @@ export default {
 					this.okHandler = "edit";
 					if (question.time === -1) question.time = 0;
 					this.question = question;
-
-					// Database, server and client object properties
-					// doesn't have the same name because we are stupid.
+					
 					this.question.objects = this.question.object;
 					this.question.solutionType = this.question.type;
 
