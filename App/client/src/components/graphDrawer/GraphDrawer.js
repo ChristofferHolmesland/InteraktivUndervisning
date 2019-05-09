@@ -384,42 +384,76 @@ export default class GraphDrawer {
 				let wantedPos1 = { x: 0, y: 0 };
 				let wantedPos2 = { x: 0, y: 0 };
 
-				let n2TopInside = 
-					n2.y > n1.y &&
-					n2.y < n1.y + n1.h;
-				let n2BotInside = 
-					n2.y + n2.h > n1.y &&
-					n2.y + n2.h < n1.y + n1.h;
+				// The y coordinates are subtracted in the opposite direction,
+				// because the canvas uses the top left corner as (0,0)
+				let angleToN1 = Math.atan2(center2.y - center1.y, center1.x - center2.x);
+				let angleToN2 = Math.atan2(center1.y - center2.y, center2.x - center1.x);
+
+				// The area is in radians, but the areas are defined using area numbers.
+				let area1 = angleToN2 / Math.PI;
+				let area2 = angleToN1 / Math.PI;
+				if (area1 < 0) area1 += 2;
+				if (area2 < 0) area2 += 2;
 				
-				let n2Inside = n2TopInside || n2BotInside; 
+				let n1Area = -1;
+				let n2Area = -1;
 
-				if (!n2Inside) {
-					let n2Above = n2.y < n1.y;
-					let n2Below = n2.y > n1.y + n1.h;
+				// Area numbers go from 1-4, 1 starting at the right side, and the
+				// numbers increase counter clockwise.
+				let areas1 = [0.25, 0.75, 1.25, 1.75];
+				for (let i = 0; i < areas1.length; i++) {
+					if (area1 < areas1[i]) {
+						n1Area = i + 1;
+						break;
+					}
+				}
 
-					if (n2Above) {
-						wantedPos1.x = center1.x;
-						wantedPos1.y = n1.y;
-						wantedPos2.x = center2.x;
-						wantedPos2.y = n2.y + n2.h;
-					} else if (n2Below) {
-						wantedPos1.x = center1.x;
-						wantedPos1.y = n1.y + n1.h;
-						wantedPos2.x = center2.x;
-						wantedPos2.y = n2.y;
+				let areas2 = [
+					[0.25, 0.75, 2],
+					[0.75, 1.25, 3],
+					[1.25, 1.75, 4]
+				];
+				for (let i = 0; i < areas2.length; i++) {
+					let a = areas2[i];
+					let l = a[0];
+					let u = a[1];
+					let c = a[2];
+
+					if (area2 > l && area2 < u) {
+						n2Area = c;
+						break;
 					}
-				} else {
-					if (n2.x < n1.x) {
-						wantedPos1.x = n1.x;
-						wantedPos1.y = center1.y;
-						wantedPos2.x = n2.x + n2.w;
-						wantedPos2.y = center2.y;
-					} else {
-						wantedPos1.x = n1.x + n1.w;
-						wantedPos1.y = center1.y;
-						wantedPos2.x = n2.x;
-						wantedPos2.y = center2.y;
-					}
+				}
+
+				if (n1Area == -1) n1Area = 1;
+				if (n2Area == -1) n2Area = 1;
+
+				if (n1Area == 1) {
+					wantedPos1.x = n1.x + n1.w;
+					wantedPos1.y = center1.y;
+				} else if (n1Area == 2) {
+					wantedPos1.x = center1.x;
+					wantedPos1.y = n1.y;
+				} else if (n1Area == 3) {
+					wantedPos1.x = n1.x;
+					wantedPos1.y = center1.y;
+				} else if (n1Area == 4) {
+					wantedPos1.x = center1.x;
+					wantedPos1.y = n1.y + n1.h;
+				}
+				
+				if (n2Area == 1) {
+					wantedPos2.x = n2.x + n2.w;
+					wantedPos2.y = center2.y;
+				} else if (n2Area == 2) {
+					wantedPos2.x = center2.x;
+					wantedPos2.y = n2.y;
+				} else if (n2Area == 3) {
+					wantedPos2.x = n2.x;
+					wantedPos2.y = center2.y;
+				} else if (n2Area == 4) {
+					wantedPos2.x = center2.x;
+					wantedPos2.y = n2.y + n2.h;
 				}
 
 				if (n1.shape == "Rectangle")
@@ -428,47 +462,6 @@ export default class GraphDrawer {
 					linePoint2 = wantedPos2;
 			}
 
-			/*
-			if (drawArrow && n1.shape == "Rectangle") {
-				// Position on n1
-				if (n1.y > n2.y + n2.h) {
-					linePoint1.x = center1.x;
-					linePoint1.y = n1.y;
-				} else if (n1.y < n2.y) {
-					linePoint1.x = center1.x;
-					linePoint1.y = n1.y + n1.h;
-				} else if (n1.x < n2.x) {
-					linePoint1.x = n1.x + n1.w;
-					linePoint1.y = center1.y;
-				} else if (n1.x > n2.x + n2.w) {
-					linePoint1.x = n1.x;
-					linePoint1.y = center1.y;
-				} else {
-					// If the nodes are overlapping, there
-					// is no point in drawing anything.
-					linePoint1 = undefined;
-				}
-			}
-			if (drawArrow && n2.shape == "Rectangle") {
-				// Position on n2
-				if (n2.y > n1.y + n1.h) {
-					linePoint2.x = center2.x;
-					linePoint2.y = n2.y;
-				} else if (n2.y < n1.y) {
-					linePoint2.x = center2.x;
-					linePoint2.y = n2.y + n2.h;
-				} else if (n2.x < n1.x) {
-					linePoint2.x = n2.x + n2.w;
-					linePoint2.y = center2.y;
-				} else if (n2.x > n1.x + n1.w) {
-					linePoint2.x = n2.x;
-					linePoint2.y = center2.y;
-				} else {
-					linePoint2 = undefined;
-				}
-			}
-			*/
-			
 			if (linePoint1 && linePoint2) {
 				this.drawContext.beginPath();
 				this.drawContext.moveTo(linePoint1.x, linePoint1.y);
