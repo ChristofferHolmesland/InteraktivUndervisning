@@ -1,6 +1,6 @@
 {
     "AdminQuestions": {
-        "emptyQuestionList": "Ingen spørsmål.",
+        "emptyQuestionList": "Ingen spørsmål ble funnet for det valgte faget. Legg til et spørsmål med å klikke på '+' knappen.",
         "addTitle": "Nytt spørsmål",
         "editTitle": "Endre spørsmål",
         "searchQuestion": "Søk etter spørsmål",
