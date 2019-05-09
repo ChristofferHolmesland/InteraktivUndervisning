@@ -126,7 +126,8 @@
         "ready": "Ready",
         "yes": "Yes",
         "no": "No",
-        "questionStatusTooltip": "Question that have been added to a session can't be edited or deleted!"
+        "questionStatusTooltip": "Question that have been added to a session can't be edited or deleted!",
+        "testBtnLabel": "Test"
     },
     "AdminSessions": {
         "newSession": "New session",
@@ -608,5 +609,16 @@
                 "joinToArray": "Join to array"
             }
         }
+    },
+    "TestQuestion": {
+        "modalOkBtnText": "Check answer",
+        "modalCancelBtnText": "Close",
+        "timeLeftLabelText": "Time left",
+        "settingsStartTimerBtnText": "Start",
+        "settingsStartTimerLabelText": "Timer:",
+        "settingsLabelText": "Settings",
+        "settingsResumeTimerBtnText": "Resume",
+        "settingsPauseTimerBtnText": "Pause",
+        "settingsResetTimerBtnText": "Reset"
     }
 }
