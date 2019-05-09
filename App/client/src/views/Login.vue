@@ -3,13 +3,27 @@
 		<b-container id="LoginForm" class="vertical-center jumbotron">
 			<b-row align-h="center">
 				<b-col cols="5" lg="3" class="text-center mb-5">
-					<b-button block size="lg" variant="primary" id="anonymousButton" @click="displayAnonymousText">{{getLocale.anonymousButton}}</b-button>
+					<b-button	block
+								size="lg"
+								:variant="feideLogin ? '' : 'primary'"
+								id="anonymousButton"
+								@click="displayAnonymousText"
+								>
+						{{ getLocale.anonymousButton }}
+					</b-button>
 				</b-col>
-				<b-col cols="1" lg="1">
+				<b-col cols="1">
 
 				</b-col>
 				<b-col cols="5" lg="3" class="text-center mb-5">
-					<b-button block size="lg" variant="primary" id="feideButton" @click="displayFeideText">Feide</b-button>
+					<b-button	block
+								size="lg"
+								:variant="feideLogin ? 'primary' : ''"
+								id="feideButton"
+								@click="displayFeideText"
+								>
+						Feide
+					</b-button>
 				</b-col>
 			</b-row>
 			<b-row align-h="center" class="mb-2">

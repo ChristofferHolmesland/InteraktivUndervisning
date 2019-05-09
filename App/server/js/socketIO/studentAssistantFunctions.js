@@ -9,6 +9,7 @@ const session = require("../session.js").Session;
 const question = require("../session.js").Question;
 const validateChecker = require("../ValidateChecker/validateChecker.js").validateChecker;
 const generateSolution = require("../SolutionGenerator/SolutionGenerator.js");
+const solutionChecker = require("../SolutionChecker/solutionChecker.js").solutionChecker;
 
 let courseListRequestHandler = function(socket, db, user) {
 	if (!user.feide) return;
@@ -421,7 +422,6 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 			}
 			socket.emit("sendSessionWithinCourse", result);
 		});
-		
 	});
 
 	socket.on("addQuestionToSession", function(data) {
@@ -890,4 +890,35 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 		});
 	});
 
+	socket.on("checkTestQuestionAnswerRequest", function(data) {
+		checkedResult = solutionChecker.checkAnswer(
+			JSON.parse(JSON.stringify(data.answerObject)),
+			JSON.parse(JSON.stringify(data.solutionObject)),
+			data.questionType
+		);
+
+		if (checkedResult){
+			socket.emit("checkTestQuestionAnswerResponse", 1);
+		} else {
+			socket.emit("checkTestQuestionAnswerResponse", 0);
+		}
+	});
+	
+	socket.on("getSessionWithinCourseForAddingQuestion", function(courseId) {	
+		if (courseId === undefined || courseId === "") {
+			socket.emit("courseMissing");
+			return;
+		}
+		dbFunctions.get.allSessionWithinCourse(db, courseId).then((sessions) => {
+			let result = [];
+			for (let i = 0; i < sessions.length; i++) {
+				if (sessions[i].status > 0) continue;
+				result.push({
+					value: sessions[i].id,
+					text: sessions[i].name
+				});
+			}
+			socket.emit("sendSessionWithinCourse", result);
+		});
+	});
 }

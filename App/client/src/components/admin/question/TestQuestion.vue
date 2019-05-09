@@ -2,7 +2,7 @@
 <div>
     <b-modal    id="TestQuestion"
                 ref="testQuestionInnerModal"
-                :title="question.text"
+                :title="getLocale.modalTitle"
                 title-tag="h3"
                 style="text-align: left;"
                 size="xl"
@@ -12,6 +12,7 @@
                 cancel-variant="primary"
 			    :hide-header-close="true"
 				:no-close-on-backdrop="true"
+                @ok="checkAnswer"
                 >
         <b-container>
             <b-row  @click="changeShowSettings"
@@ -74,17 +75,32 @@
                     </b-container>
                 </b-col>
             </b-row>
+            <b-row  v-if="showResult"
+                    class="mt-3"
+                    >
+                <b-col cols="12">
+                    <b-alert    show
+                                dismissible
+                                :variant="result === 1 ? 'success' : 'danger'"
+                                @dismissed="showResult = false"
+                                >
+                        {{ result === 1 ? getLocale.resultCorrect : getLocale.resultIncorrect }}
+                    </b-alert>
+                </b-col>
+            </b-row>
             <b-row class="mt-3">
                 <b-col>
                     <b-card no-body>
                         <b-tabs card v-model="mainTabIndex">
-                            <b-tab title="Test question">
+                            <b-tab  :title="getLocale.mainTabQuestion"
+                                    title-item-class="w-50"
+                                    >
                                 <b-container class="px-0">
                                     <b-row>
                                         <b-col>
                                             <b-card no-body>
                                                 <b-tabs card>
-                                                    <b-tab title="Question">
+                                                    <b-tab  :title="getLocale.subTabQuestion">
                                                         <b-container class="px-0">
                                                             <b-row>
                                                                 <b-col>
@@ -171,11 +187,52 @@
                                                             </b-row>
                                                         </b-container>
                                                     </b-tab>
-                                                    <b-tab title="Answer">
+                                                    <b-tab  :title="getLocale.subTabAnswer">
                                                         <b-container>
                                                             <b-row>
                                                                 <b-col>
-
+                                                                    <TextInput :requestAnswer="requestAnswer"
+                                                                            @getTextResponse="getTextValue"
+                                                                            v-if="getQuestionType === 1"
+                                                                            />
+                                                                    <MultipleChoice :requestAnswer="requestAnswer"
+                                                                                    @getTextResponse="getTextValue"
+                                                                                    :choices="question.object.multipleChoices"
+                                                                                    v-if="getQuestionType === 2"
+                                                                                    />
+                                                                                    <!--getQuestionInfo.object.choices-->
+                                                                    <Shellsort v-if="getQuestionType === 3" 
+                                                                                :requestAnswer="requestAnswer"
+                                                                                @getTextResponse="getTextValue"
+                                                                                :initialList="getStartArray(question.object.startingArray)"
+                                                                                :initialKValue="question.object.kValue"
+                                                                                />
+                                                                    <Mergesort  v-if="getQuestionType === 4"
+                                                                                :requestAnswer="requestAnswer"
+                                                                                @getTextResponse="getTextValue"
+                                                                                :steps="question.object.steps"
+                                                                                />
+                                                                    <Quicksort v-if="getQuestionType === 5"
+                                                                        :requestAnswer="requestAnswer"
+                                                                        @getTextResponse="getTextValue"
+                                                                        :steps="question.object.steps"
+                                                                        />
+                                                                    <Tree v-if="getQuestionType === 6 || getQuestionType === 7 || getQuestionType === 8"
+                                                                        :requestAnswer="requestAnswer"
+                                                                        @getTextResponse="getTextValue"
+                                                                        :steps="question.object.steps"
+                                                                        />
+                                                                    <!--:type = "questionInfo.object.type"-->
+                                                                    <Dijkstra v-if="getQuestionType === 9"
+                                                                        :requestAnswer="requestAnswer"
+                                                                        @getTextResponse="getTextValue"
+                                                                        :steps="question.object.steps"
+                                                                        />
+                                                                    <Python v-if="getQuestionType === 10"
+                                                                        :requestAnswer="requestAnswer"
+                                                                        @getTextResponse="getTextValue"
+                                                                        :steps="question.object.steps"
+                                                                        />
                                                                 </b-col>
                                                             </b-row>
                                                         </b-container>
@@ -190,7 +247,9 @@
                                     </b-row>
                                 </b-container>
                             </b-tab>
-                            <b-tab title="View solution">
+                            <b-tab  :title="getLocale.mainTabSolution"
+                                    title-item-class="w-50"
+                                    >
                                 <b-container class="px-0">
                                     <b-row>
                                         <b-col>
@@ -213,23 +272,48 @@
 <script>
 import DisplayQuestion from "./DisplayQuestion.vue";
 
+import TextInput from "../../client/session/questionTypes/TextInput.vue";
+import MultipleChoice from "../../client/session/questionTypes/MultipleChoice.vue";
+import Shellsort from "../../client/session/questionTypes/sorting/Shellsort.vue";
+import Mergesort from "../../client/session/questionTypes/sorting/Mergesort.vue";
+import Quicksort from "../../client/session/questionTypes/sorting/Quicksort.vue";
+import Tree from "../../client/session/questionTypes/trees/Tree.vue";
+import Dijkstra from "../../client/session/questionTypes/Dijkstra.vue";
+import Python from "../../client/session/questionTypes/Python.vue";
+
+function initializeState() {
+	return {
+        mainTabIndex: 0,
+        mediaTab: 0,
+
+        showSettings: true,
+
+        timeLeft: 5,
+        timer: undefined,
+        timerPaused: false,
+        timerStarted: false,
+
+        selectedImageIndex: 0,
+        selectedTableIndex: 0,
+
+        requestAnswer: false,
+        answerObject: undefined,
+
+        result: 0,
+        showResult: false
+	};
+}
+
 export default {
     name: "TestQuestion",
     props: ["question"],
     data() {
-        return {
-            mainTabIndex: 0,
-            mediaTab: 0,
-
-            showSettings: true,
-            showMedia: false,
-
-            timeLeft: 0,
-            timer: undefined,
-            timerPaused: false,
-            timerStarted: false,
-
-        }
+        return initializeState();
+    },
+    mounted() {
+        this.$root.$on("bv::modal::show", () => {
+			this.assignState();
+		});
     },
     methods: {
         changeShowSettings: function() {
@@ -244,6 +328,7 @@ export default {
         },
         timerOver: function() {
             this.timerStarted = false;
+            this.checkAnswer();
         },
         pauseTimer: function() {
             clearInterval(this.timer);
@@ -267,6 +352,48 @@ export default {
                 clearInterval(this.timer);
                 this.timerOver();
             }
+        },
+		changeSelectedImage: function(step) {
+			if (
+				this.selectedImageIndex + step >= 0 && 
+				this.selectedImageIndex + step < this.getImagesLength
+			) {
+				this.selectedImageIndex += step;
+			}
+		},
+		changeSelectedTable: function(step) {
+			if (
+				this.selectedTableIndex + step >= 0 &&
+				this.selectedTableIndex + step < this.getTablesLength
+			) {
+				this.selectedTableIndex += step;
+			}
+        },		
+        getTextValue: function(inputText) {
+            this.answerObject = inputText;
+			this.$socket.emit("checkTestQuestionAnswerRequest", {
+                answerObject: inputText,
+                solutionObject: this.question.solution,
+                questionType: this.question.type
+            });
+        },
+        checkAnswer: function(e) {
+            if (e) e.preventDefault();
+            this.requestAnswer = !this.requestAnswer;
+        },
+		assignState() {
+			let n = initializeState();
+			for (let p in n) {
+				if (n.hasOwnProperty(p)) {
+					if (p === "newQuestion") {
+						if (this.okHandler === "add") {
+							this.$data[p] = n[p];
+						}
+					} else {
+						this.$data[p] = n[p];
+					}
+				}
+            }
         }
     },
     computed: {
@@ -284,8 +411,9 @@ export default {
                     type: this.question.type
                 },
                 solution: this.question.solution,
-                answerList: [{answerObject: "filteredAnswerList"}]
+                answerList: []
             };
+            if (this.answerObject !== undefined) response.answerList.push({answerObject: this.answerObject});
             return response;
         },
         getTimeLeft: function() {
@@ -296,17 +424,142 @@ export default {
 			return `${this.getLocale.timeLeftLabelText}: ${min.padStart(2, "0")}:${sec.padStart(2, "0")}`;
         },
         getQuestionInfo: function() {
-            return {};
+            return this.question;
         },
         getExtraDesc: function() {
-
+			let order = [];
+			let extraDescLocales = this.question.object
+				.questionTypeDesc.locale;
+			let extraDescText = this.question.object
+				.questionTypeDesc.text;
+			for (let key in extraDescLocales) {
+				if (extraDescLocales.hasOwnProperty(key)) {
+					let loc = this.getLocale[extraDescLocales[key]];
+					if (loc[loc.length - 1] !== " ")
+						order.push({"value": loc, "linebreak": true, "code":false});
+					else
+						order.push({"value": loc, "linebreak": false, "code":false});
+				}
+			}
+			for (let key in extraDescText) {
+				if (extraDescText.hasOwnProperty(key)) {
+					let text = extraDescText[key];
+					let arr = text.split("\n");
+					if (arr.length > 1)
+						order.push({"value": text, "linebreak": true, "code":true});
+					else
+						order.push({"value": text, "linebreak": true, "code":false});
+				}
+			}
+			return order;
+        },
+        getDescription: function() {
+			return this.question.description.split("\n");
+		},
+		getQuestionType: function() {
+			return this.question.type;
+		},
+		getQuestionTypeName: function() {
+			//indexes are 0-9, but question types are 1-10 :(
+			return this.$store.getters.getQuestionTypes[
+			this.question.type - 1
+				].name;
+		},
+        getImagesLength: function() {
+            return this.question.object.files.length;
+        },
+        getTablesLength: function() {
+            return this.question.object.tables.length;
+        },
+		showMedia: function() {
+			if (
+				this.getImagesLength > 0 ||
+				this.getTablesLength > 0 ||
+				this.getExtraDesc.length > 0
+			){
+				return true;
+			}
+			return false;
+        },
+		getImgSrc() {
+			let file = this.question.object.files[
+				this.selectedImageIndex
+            ];
+			return "data:" + file.type + ";base64," + file.buffer;
+		},
+		getTableRow: function() {
+			return this.question.object.tables[this.selectedTableIndex].length;
+		},
+		getTableColumn: function() {
+			return this.question.object.tables[this.selectedTableIndex][0].length;
+		},
+		getTable: function() {
+			return this.question.object.tables[this.selectedTableIndex];
+        },
+		getStartArray() {
+            return (array) => {
+                let elements = array.split(",");
+                let result = [];
+                for (let i = 0; i < elements.length; i++) {
+                    result.push(elements[i]);
+                }
+                return result;
+            };
+		}
+    },
+    sockets: {
+        checkTestQuestionAnswerResponse: function(result) {
+            this.result = result;
+            this.showResult = true;
+            this.mainTabIndex = 1;
         }
     },
-    watch: {
-        
-    },
     components: {
-        DisplayQuestion
+        DisplayQuestion,
+		TextInput,
+		MultipleChoice,
+		Shellsort,
+		Mergesort,
+		Quicksort,
+		Tree,
+		Dijkstra,
+		Python
     }
 }
 </script>
+
+<style scoped>
+pre {
+	border-style: solid;
+	border-width: 1px;
+	padding: 3px;
+}
+.displayInline {
+	display: inline;
+}
+.editTableRow {
+    flex-wrap: nowrap;
+}
+.editTableColumn {
+	min-width: 90px;
+	max-width: 90px;
+	text-align: center;
+	float: left;
+	margin: 0;
+}
+.editTableColumn input {
+	width: 80px;
+	text-align: center;
+	margin: 0;
+	
+}
+.viewTableContainer {
+	overflow-x: scroll;
+	overflow-y: scroll;
+	min-height: 200px;
+	max-height: 200px;
+	text-align: center;
+	border: 1px solid black;
+	border-right-width: 2px;
+}
+</style>
