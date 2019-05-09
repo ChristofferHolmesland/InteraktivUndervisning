@@ -1,8 +1,8 @@
 {
     "AdminQuestions": {
-        "emptyQuestionList": "No questions.",
+        "emptyQuestionList": "No questions found for the selected course. Please add a new question by clicking the '+' button.",
         "addTitle": "New question",
-        "editTitle": "Change question",
+        "editTitle": "Edit question",
         "searchQuestion": "Search for a question",
         "newQuestionTitle": "Question title:",
         "newQuestionText": "Question text:",
@@ -69,7 +69,7 @@
         "MissingStartOrEndNodeError": "Either start node or end node is not given!",
         "InvalidDijkstraGraphError": "The given graph is not qualified as a djikstra question object.\nMissing either nodes or edges!",
         "questionTypeError": "No question type was selected!",
-        "imageInputLabel": "Choose a file upload...",
+        "imageInputLabel": "Choose a file to upload...",
         "filename": "Filename",
         "filesize": "Filesize",
         "filetype": "filetype",
