@@ -16,6 +16,8 @@ export default class Sort {
 		this.extractType = config.extractType || "xSorter";
 		this.joinType = config.joinType || "vSorter";
 
+		this.gd.fixNodeSize = false;
+
 		// If there are some starting steps, they are parsed
 		// and put into the world.
 		if (config.steps) {
@@ -543,20 +545,47 @@ export default class Sort {
 		this.gd.dirty = true;
 
 		for (let ai = 0; ai < this.arrays.length; ai++) {
-			for (let li = 0; li < this.arrays[ai].links.length; li++) {
-				let link = this.arrays[ai].links[li];
+			let arr = this.arrays[ai];
+
+			for (let li = 0; li < arr.links.length; li++) {
+				let link = arr.links[li];
 				// Checks if the array the being linked to has been removed
 				if (link == undefined || link.nodes.length == 0) {
-					this.arrays[ai].links.splice(li, 1);
+					arr.links.splice(li, 1);
 					li--;
 					continue;
 				}
 
-				// Sets the edge to be between the center nodes.
-				this.gd.edges.push({
-					n1: this.arrays[ai].nodes[Math.floor(this.arrays[ai].nodes.length / 2)],
-					n2: link.nodes[Math.floor(link.nodes.length / 2)]
-				});
+				// If the link is above or under, then the 
+				// link should be between the center nodes.
+				let topUnder = link.position.y > arr.position.y + arr.nodes[0].h;
+				let topAbove = link.position.y < arr.position.y;
+				let topNotInside = topUnder || topAbove;
+				let botUnder = 
+					link.position.y + link.nodes[0].h > arr.position.y + arr.nodes[0].h;
+				let botAbove = link.position.y + link.nodes[0].h < arr.position.y;
+				let botNotInside = botUnder || botAbove;
+
+				if (topNotInside && botNotInside) {
+					this.gd.edges.push({
+						n1: arr.nodes[Math.floor(arr.nodes.length / 2)],
+						n2: link.nodes[Math.floor(link.nodes.length / 2)]
+					});
+				} else {
+					// If it is not above/under then it has to be
+					// on one of the sides.
+					let arrNode = arr.nodes[arr.nodes.length - 1];
+					let linkNode = link.nodes[0];
+					if (arr.position.x > link.position.x) {
+						arrNode = arr.nodes[0];
+						linkNode = link.nodes[link.nodes.length - 1];
+					}
+					
+					this.gd.edges.push({
+						n1: arrNode,
+						n2: linkNode
+					});
+				}
 			}
 		}
 	}
