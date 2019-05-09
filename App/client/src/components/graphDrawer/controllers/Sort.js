@@ -1306,10 +1306,6 @@ export default class Sort {
 			}
 		}
 
-		console.log("Leftest: " + this.getNodeValuesAsString(leftest.nodes));
-		console.log("Rightest: " + this.getNodeValuesAsString(rightest.nodes));
-		
-
 		// It is no longer interesting to check which side of the root a node is on.
 		// Instead, the side property should represent whether the array is to
 		// the left or right of the parent array.
@@ -1330,11 +1326,6 @@ export default class Sort {
 					directChildren.push(l);
 				}
 			}
-
-			console.log("Arr: " + this.getNodeValuesAsString(arr.nodes));
-			console.log("Has direct children: ");
-			for (let j = 0; j < directChildren.length; j++)
-				console.log(this.getNodeValuesAsString(directChildren[j].nodes));
 
 			if (directChildren.length > 2) {
 				console.error("Array with more than 2 direct children!");
