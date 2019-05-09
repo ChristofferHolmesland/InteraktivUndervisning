@@ -141,11 +141,6 @@
 								<b-container>
 									<b-row>
 										<b-col>
-											
-										</b-col>
-									</b-row>
-									<b-row>
-										<b-col>
 											<GraphDrawer
 													controlType="Graph0"
 													operatingMode="Interactive"
@@ -160,7 +155,7 @@
 														variant="primary"
 														@click="addCanvasAsImage"
 														>
-												Add canvas as an image
+												{{ getLocale.addCanvasAsImage }}
 											</b-button>
 										</b-col>
 									</b-row>
