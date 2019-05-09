@@ -1,5 +1,5 @@
 <template>
-    <!-- Check watchers when fixing bugs!11!!1! -->
+    <!-- Check watchers when fixing bugs -->
 	
 	<b-modal 	:id="elementId"
 				:ref="elementRef"
@@ -513,7 +513,7 @@ export default {
 		});
 	},
 	methods: {
-		solutionTypeChanged() {
+		solutionTypeChanged: function() {
 			// If the old type used a graphdrawer, it should be destroyed.
 			if (this.$refs.graphdrawer !== undefined) {
 				this.$refs.graphdrawer.destroyDrawer();
@@ -552,7 +552,7 @@ export default {
 				});
 			});
 		},
-		keyDownInTextarea(e) {
+		keyDownInTextarea: function(e) {
 			// Only accept the Tab key
 			if (e.key !== "Tab" && e.which !== "9") return;
 
@@ -573,7 +573,7 @@ export default {
 			codeInput.selectionStart = tabPosition + tabSize;
 			codeInput.selectionEnd = tabPosition + tabSize;
 		},
-		deleteImage(index) {
+		deleteImage: function(index) {
 			let files = this.newQuestion.objects.files;
 			files.splice(index, 1);
 
@@ -584,7 +584,7 @@ export default {
 			}
 			if (filesSize < 500000) this.showMediaWarning = false;
 		},
-		assignState() {
+		assignState: function() {
 			let n = initializeState();
 			for (let p in n) {
 				if (n.hasOwnProperty(p)) {
@@ -603,7 +603,7 @@ export default {
 				this.time = this.question.time;
 			}
 		},
-		newFile(event) {
+		newFile: function(event) {
 			let files = [];
 			Array.prototype.push.apply(files, event.target.files);
 			let storedFiles = this.newQuestion.objects.files;
@@ -658,13 +658,13 @@ export default {
 			}
 			event.target.value = "";
 		},
-		changeShowMedia() {
+		changeShowMedia: function() {
 			this.showMedia = !this.showMedia;
 		},
-		changeShowSolution() {
+		changeShowSolution: function() {
 			this.showSolution = !this.showSolution;
 		},
-		changeShowBasicInfo() {
+		changeShowBasicInfo: function() {
 			this.showBasicInfo = !this.showBasicInfo;
 		},
 		assignTime: function() {
@@ -691,7 +691,7 @@ export default {
 			if (this.okHandler == "add") this.addNewQuestionHandler();
 			else if (this.okHandler == "edit") this.editQuestionHandler();
 		},
-		gotTreeDrawerObject(result) {
+		gotTreeDrawerObject: function(result) {
 			this.newQuestion.objects.startTree = result.tree;
 			this.newQuestion.objects._graphdrawerGraph = [
 				Object.assign(
@@ -703,7 +703,7 @@ export default {
 			];
 			this.returnToOkHandler();
 		},
-		gotGraphDrawerObject(result) {
+		gotGraphDrawerObject: function(result) {
 			this.newQuestion.objects.graph = result;
 			this.newQuestion.objects._graphdrawerGraph = [
 				Object.assign(
@@ -726,10 +726,10 @@ export default {
 				this.returnToOkHandler();
 			}
 		},
-		addNewMultipleChoice() {
+		addNewMultipleChoice: function() {
 			this.newQuestion.objects.multipleChoices.push("");
 		},
-		deleteMultiChoice(index) {
+		deleteMultiChoice: function(index) {
 			let solutionIndex = this.newQuestion.solution.indexOf(
 				index.toString()
 			);
@@ -833,7 +833,7 @@ export default {
 			this.editExistingTable = false;
 			this.editExistingTableIndex = 0;
 		},
-		deleteTable(index) {
+		deleteTable: function(index) {
 			this.getQuestionObjects.tables.splice(index, 1);
 			
 			if (index === this.editExistingTableIndex) {
@@ -841,8 +841,8 @@ export default {
 				this.editExistingTableIndex = 0;
 			}
 		},
-		editTable(index) {
-			let table = this.getQuestionObjects.tables[index];
+		editTable: function(index) {
+			let table = JSON.parse(JSON.stringify(this.getQuestionObjects.tables[index]));
 			this.editTableRows = table.length;
 			this.editTableColumns = table[0].length;
 			this.editTableValues = table;
@@ -851,13 +851,13 @@ export default {
 		}
 	},
 	computed: {
-		getTitle() {
+		getTitle: function() {
 			return this.getLocale[this.okHandler + "Title"];
 		},
-		getSolutionType() {
+		getSolutionType: function() {
 			return this.newQuestion.solutionType;
 		},
-		checkRef() {
+		checkRef: function() {
 			if (this.$refs["codeInput"] !== undefined) {
 				this.$refs["codeInput"].onkeydown = this.keyDownInTextarea;
 				return true;
@@ -865,13 +865,13 @@ export default {
 
 			return false;
 		},
-		getImageSrc() {
+		getImageSrc: function() {
 			return (index) => {
 				let file = this.newQuestion.objects.files[index];
 				return "data:" + file.type + ";base64," + file.buffer;
 			};
 		},
-		getLocale() {
+		getLocale: function() {
 			let locale = this.$store.getters.getLocale("AdminQuestions");
 			if (locale) return locale;
 			else return {};
