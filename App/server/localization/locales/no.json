@@ -126,7 +126,8 @@
         "ready": "Klar",
         "yes": "Ja",
         "no": "Nei",
-        "questionStatusTooltip": "Spørsmål som har blitt lagt til en økt kan ikke endres eller slettes!"
+        "questionStatusTooltip": "Spørsmål som har blitt lagt til en økt kan ikke endres eller slettes!",
+        "testBtnLabel": "Test"
     },
     "AdminSessions": {
         "newSession": "Ny økt",
@@ -609,5 +610,16 @@
                 "joinToArray": "Koble til array"
             }
         }
+    },
+    "TestQuestion": {
+        "modalOkBtnText": "Sjekk svar",
+        "modalCancelBtnText": "Lukk",
+        "timeLeftLabelText": "Tid igjen",
+        "settingsStartTimerBtnText": "Start",
+        "settingsStartTimerLabelText": "Tid:",
+        "settingsLabelText": "Innstillinger",
+        "settingsResumeTimerBtnText": "Fortsett",
+        "settingsPauseTimerBtnText": "Pause",
+        "settingsResetTimerBtnText": "Reset"
     }
 }

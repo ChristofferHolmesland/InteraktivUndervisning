@@ -451,7 +451,7 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 
 	socket.on("questionInfoByIdRequest", async function(questionId) {
 		await dbFunctions.get.questionsByQuestionId(db, [{id: questionId}]).then((rows) => {
-			if (row[0].status === 1) return;
+			if (rows[0].status === 1) return;
 			socket.emit("questionInfoByIdResponse", rows[0]);
 		}).catch((err) => {
 			console.error(err);
@@ -872,6 +872,22 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 		}).catch((err) => {
 			console.error(err);
 		})
+	});
+
+	socket.on("testQuestionRequest", function(questionId) {
+		let response = {};
+
+		dbFunctions.get.questionsByQuestionId(db, [{id: questionId}]).then((questions) => {
+			if (questions.length === 0) return;
+
+			response = questions[0];
+			delete response.status;
+
+			socket.emit("testQuestionResponse", response);
+		}).catch((err) => {
+			console.error(err);
+			return;
+		});
 	});
 
 }
