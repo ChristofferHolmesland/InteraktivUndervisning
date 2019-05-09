@@ -316,7 +316,6 @@ export default {
 			this.$nextTick(function() {
 				this.showTestQuestion = true;
 				this.$nextTick(function() {
-					console.log(this.$refs.testQuestionModal)
 					this.$refs.testQuestionModal.$refs.testQuestionInnerModal.show();
 				})
 			})
