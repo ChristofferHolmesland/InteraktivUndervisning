@@ -464,7 +464,7 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 
 	socket.on("addNewQuestion", async function(question) {
 		let valid = validateChecker.checkQuestion(question);
-		socket.emit("confirmQuestionRequirements", valid);
+		if (!valid.passed) socket.emit("confirmQuestionRequirements", valid);
 		if (!valid.passed) return;
 		generalFunctions.createSpecialDescription(question);
 		question = generateSolution(question);
@@ -501,7 +501,8 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 					});
 				}
 				
-				await dbFunctions.update.question(db, questionIndex, question.text, question.description, question.objects, question.solution, question.solutionType, question.time);		
+				await dbFunctions.update.question(db, questionIndex, question.text, question.description, question.objects, question.solution, question.solutionType, question.time);
+				socket.emit("confirmQuestionRequirements", valid);
 			} 
 			catch (error) {
 				console.error("Error making dirs!\n\n" + error);
@@ -512,10 +513,10 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 	});
 
 	socket.on("updateQuestion", async function(question) {
-		dbFunctions.get.questionStatusById(db, question.id).then(async (q) => {
+		await dbFunctions.get.questionStatusById(db, question.id).then(async (q) => {
 			if (q.status === 1) return;
 			let valid = validateChecker.checkQuestion(question);
-			socket.emit("confirmQuestionRequirements", valid);
+			if (!valid.passed) socket.emit("confirmQuestionRequirements", valid);
 			if (!valid.passed) return;
 			generalFunctions.createSpecialDescription(question);
 			question = generateSolution(question);
@@ -560,6 +561,7 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 			}
 	
 			await dbFunctions.update.question(db, question.id, question.text, question.description, question.objects, question.solution, question.solutionType, question.time);
+			socket.emit("confirmQuestionRequirements", valid);
 		}).catch((err) => {
 			console.error(err);
 		})
