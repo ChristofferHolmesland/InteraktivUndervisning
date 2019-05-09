@@ -4,7 +4,7 @@ const check = function (solutionInfo) {
 		errors: []
 	}
 
-	// TODO validate text solution
+	// TODO validate media
 
 	return result;
 };

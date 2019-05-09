@@ -152,7 +152,6 @@ module.exports.listen = function(server, users, db) {
 
 		socket.on("loginAnonymouslyRequest", function(){
 			tempKey = socket.id;
-			// TODO change userrights to 1 on the line under
 			tempUser = new User(1, "Anonymous " + anonymousNames.getRandomAnimal(), tempKey, undefined);
 			users.set(tempKey, tempUser);
 			socket.emit("loginAnonymouslyResponse");
