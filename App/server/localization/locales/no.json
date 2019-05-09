@@ -127,7 +127,8 @@
         "yes": "Ja",
         "no": "Nei",
         "questionStatusTooltip": "Spørsmål som har blitt lagt til en økt kan ikke endres eller slettes!",
-        "testBtnLabel": "Test"
+        "testBtnLabel": "Test",
+        "addCanvasAsImage": "Legg til lerretet som et bilde"
     },
     "AdminSessions": {
         "newSession": "Ny økt",
