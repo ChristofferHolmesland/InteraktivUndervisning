@@ -619,6 +619,25 @@
         "settingsLabelText": "Settings",
         "settingsResumeTimerBtnText": "Resume",
         "settingsPauseTimerBtnText": "Pause",
-        "settingsResetTimerBtnText": "Reset"
+        "settingsResetTimerBtnText": "Reset",
+        "showQuestionType": "Question type:",
+        "binaryTreeDesc": "Draw a BinaryTree with the following nodes: ",
+        "bstavlOperationDesc": "Operation: ",
+        "bstavlNodesDesc": "Nodes: ",
+        "pythonCodeDesc": "Code: ",
+        "Add": "Add",
+        "Remove": "Remove",
+        "tabExtraInfo": "Extra information",
+        "tabImage": "Images",
+        "tabTable": "Tables",
+        "previousBtn": "Previous",
+        "nextBtn": "Next",
+        "modalTitle": "Test your question!",
+        "resultCorrect": "Your answer has been checked agaist the solution and is correct!",
+        "resultIncorrect": "Your answer has been checked agaist the solution and is incorrect! You will be able to check your answer against the solution under the 'view solution' tab.",
+        "mainTabQuestion": "View question",
+        "mainTabSolution": "View solution",
+        "subTabQuestion": "Question",
+        "subTabAnswer": "Answer"
     }
 }

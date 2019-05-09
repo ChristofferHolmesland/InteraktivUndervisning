@@ -213,7 +213,7 @@ export default {
 			else if (id.includes("session")) this.renderAddQuestionToSession = false;
 			else if (id.includes("copy")) this.showCopyQuestions = false;
 			else if (id.includes("delete")) this.showDeleteQuestions = false;
-			else if (id.includes("test")) this.showTestQuestion = false;
+			else if (id.includes("Test")) this.showTestQuestion = false;
 
 			this.selectPressed = false;
 		});

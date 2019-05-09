@@ -620,6 +620,25 @@
         "settingsLabelText": "Innstillinger",
         "settingsResumeTimerBtnText": "Fortsett",
         "settingsPauseTimerBtnText": "Pause",
-        "settingsResetTimerBtnText": "Reset"
+        "settingsResetTimerBtnText": "Reset",
+        "showQuestionType": "Spørsmål type:",
+        "binaryTreeDesc": "Tegn et binaer tree med følgende noder: ",
+        "bstavlOperationDesc": "Operasjon: ",
+        "bstavlNodesDesc": "Noder: ",
+        "pythonCodeDesc": "Kode: ",
+        "Add": "Legg til",
+        "Remove": "Slett",
+        "tabExtraInfo": "Ekstra informasjon",
+        "tabImage": "Bilder",
+        "tabTable": "Tabeller",
+        "previousBtn": "Forrige",
+        "nextBtn": "Neste",
+        "modalTitle": "Test ditt spørsmål!",
+        "resultCorrect": "Svaret ditt er nå rettet mot fasiten og svaret ditt er riktig!",
+        "resultIncorrect": "Svaret ditt er nå rettet mot fasiten og svaret ditt er ikke riktig! Du vil ha muligheten til å sammenligne svaret ditt mot fasiten under 'vis fasit'.",
+        "mainTabQuestion": "Vis spørsmål",
+        "mainTabSolution": "Vis fasit",
+        "subTabQuestion": "Spørsmål",
+        "subTabAnswer": "Svar"
     }
 }
