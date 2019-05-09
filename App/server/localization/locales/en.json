@@ -216,7 +216,7 @@
         "acceptCheckbox": "I accept these terms and conditions",
         "loginButton": "Sign in",
         "feideList": [
-            "This website will use cookies to be able to store your questions.",
+            "This website will use cookies to be able to store your questions and remember site language preference.",
             "The quizmaster will not be able to see who answered what, but will be able to see incorrect answers.",
             "This website will store date linked to your user for you to be able to see previous sessions.",
             "You will be able to delete all data stored about you by going in to profile and pressing \"Delete data\".",

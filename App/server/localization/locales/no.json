@@ -216,7 +216,7 @@
         "acceptCheckbox": "Jeg aksepterer disse betingelsene",
         "loginButton": "Logg inn",
         "feideList": [
-            "Denne nettsiden bruker cookies for å kunne lagre spørsmålene dine.",
+            "Denne nettsiden bruker cookies for å kunne lagre spørsmålene dine og språk preferansen din.",
             "Quizmaster vil ikke kunne se hvem som har svart hva, men vil kunne se feil svar.",
             "Denne nettsiden lagrer data linket til din bruker for at du skal kunne se på tidligere økter",
             "En kan slette all data som er lagret om deg ved å gå inn på profil og trykke på \"Slett data\"",
