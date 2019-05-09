@@ -152,7 +152,10 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 
 	socket.on("initializeSession", function(sessionId){
 		if (currentSession != undefined) {
-			socket.emit("initializeSessionErrorResponse", "You are already running a session with the code: " + currentSession.session.id);
+			socket.emit("initializeSessionErrorResponse", {
+				error: 1,
+				sessionCode: currentSession.session.sessionCode
+			});
 			return;
 		}
 		dbFunctions.update.sessionStatus(db, sessionId, 1).catch((err) => {
