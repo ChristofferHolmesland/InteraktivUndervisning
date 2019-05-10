@@ -34,6 +34,13 @@ When the size of the canvas is changed, the size of the \code{drawBuffer} and \c
 \\[11pt]
 After resizing the canvas, the \code{drawBuffer} can be too large, if the user has a screen with a very large resolution, e.g., above 4K. Browsers have different limits, but based on numbers from Mozilla \cite{CanvasMaxSize} and Chromium \cite{CanvasMaxSizeChromeium}, modern browsers have a width and height limit of 32767 pixels for the canvas element. If this limit is exceeded then depending on the browser, the canvas can stop working, the site can stop working, or the browser can crash. The actual limit seems to be much lower than 32767 pixels. The canvas slowed down significantly when the width was larger than 7000 pixels, and completely stopped working when the width was larger than 8500 pixels. The website was viewed on a modern version (v73.0.3683.103) of the Chrome browser. To be sure that the size of the canvas won't prevent the GraphDrawer from working, a limit of 7000 pixels has been implemented.
 \\[11pt]
+The position of an arrow from one node to another node depends on the shape of the node it is pointing at. If the node is a circle, then the arrow is drawn at the circumference. This is done by creating a line between the two nodes and checking where it intersects the circle. Rectangle nodes have four defined positions for the arrow, one at the center of every edge. To figure out which point to use, the angle (in degrees) between the nodes is used. The angle is calculated from the x-axis and increases counterclockwise. The edge is picked based on the following criteria:
+\begin{enumerate}
+    \item If the angle is between 45 and 135 degrees, the point at the top edge is picked.
+    \item If the angle is between 135 and 225 degrees, the point at the left edge is picked.
+    \item If the angle is between 225 and 315 degrees, the point at the bottom edge is picked.
+    \item If no edge has been picked, the point at the right edge is picked.
+\end{enumerate}
 Developers can add or remove features from the GraphDrawer by creating controller objects. Controller objects are used to modify the user interaction and the world presentation. They can interrupt the GraphDrawer at pre-determined states. It is also possible to create custom interrupts by creating timers (\code{setTimeout}, \code{setInterval}) or by adding event handlers to the canvas object. The controller interface is simple by design and only requires two methods. There are also some optional methods which can be implemented to add more functionality.
 \begin{figure}[H]
     \centering

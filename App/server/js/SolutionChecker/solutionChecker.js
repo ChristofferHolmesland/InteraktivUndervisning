@@ -14,7 +14,15 @@ let checkers = {
 const solutionChecker = {
 	checkAnswer: function(answer, solution, type) {
 		if (checkers[type] !== undefined) {
-			return checkers[type].check(answer, solution, type);
+			let result = false;
+			
+			try {
+				result = checkers[type].check(answer, solution, type);
+			} catch (e) {
+				// If the checker has an error, the result should be false.
+			}
+
+			return result;
 		}
 		else return false;
 	}

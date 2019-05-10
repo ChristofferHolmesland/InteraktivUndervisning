@@ -5,8 +5,12 @@ const check = function(answer, solution) {
 			i--;
 		}
 	}
-	
-	answer.splice(0, 1);
+	for (let i = 0; i < answer.length; i++) {
+		if (answer[i].type !== "Split"){
+			answer.splice(i, 1);
+			i--;
+		}
+	}
 
 	if (answer.length !== solution.length) return false;
 
@@ -16,6 +20,7 @@ const check = function(answer, solution) {
 	do {
 		let solutionStep = solution[solutionIndex];
 		let answerStep = answer[answerIndex];
+
 		if (!compareTwoLists(solutionStep.list, answerStep.list)) return false;
 		if (!compareTwoLists(solutionStep.left, answerStep.left)) return false;
 		if (!compareTwoLists(solutionStep.right, answerStep.right)) return false;
@@ -33,6 +38,10 @@ const check = function(answer, solution) {
 module.exports.check = check;
 
 function compareTwoLists(list1, list2) {
+	// The Graphdrawer can export an empty list as undefined.
+	if (list2 == undefined)
+		list2 = [];
+
 	if (list1.length !== list2.length) return false;
 
 	let returnValue = true;
