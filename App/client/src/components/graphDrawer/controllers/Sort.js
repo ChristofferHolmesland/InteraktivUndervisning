@@ -572,6 +572,9 @@ export default class Sort {
 				if (topNotInside && botNotInside) {
 						arrNode = arr.nodes[Math.floor(arr.nodes.length / 2)];
 						linkNode = link.nodes[Math.floor(link.nodes.length / 2)];
+
+						if (link.nodes.length % 2 == 0)
+							linkNode.doNotCenterX = true;
 				} else {
 					// If it is not above/under then it has to be
 					// on one of the sides.
@@ -1013,8 +1016,8 @@ export default class Sort {
 		// should match what the user made. If not the arrays should be placed in 
 		// a nice way.
 		let user = this.steps[0].position != undefined;
-		let yPadding = 75;
-		let xPadding = 25;
+		let yPadding = 95;
+		let xPadding = 30;
 		let r = this.gd.nodeShape == "Circle" ? this.gd.R : this.gd.R * 2;
 
 		let nodesFromValueList = (list, array) => {

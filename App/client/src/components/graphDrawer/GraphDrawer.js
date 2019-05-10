@@ -400,14 +400,14 @@ export default class GraphDrawer {
 					let n2Below = n2.y > n1.y + n1.h;
 
 					if (n2Above) {
-						wantedPos1.x = center1.x;
+						wantedPos1.x = n1.doNotCenterX ? n1.x : center1.x;
 						wantedPos1.y = n1.y;
-						wantedPos2.x = center2.x;
+						wantedPos2.x = n2.doNotCenterX ? n2.x : center2.x;
 						wantedPos2.y = n2.y + n2.h;
 					} else if (n2Below) {
-						wantedPos1.x = center1.x;
+						wantedPos1.x = n1.doNotCenterX ? n1.x : center1.x;
 						wantedPos1.y = n1.y + n1.h;
-						wantedPos2.x = center2.x;
+						wantedPos2.x = n2.doNotCenterX ? n2.x : center2.x;
 						wantedPos2.y = n2.y;
 					}
 				} else {
