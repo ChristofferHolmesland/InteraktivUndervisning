@@ -469,7 +469,7 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 
 	socket.on("addNewQuestion", async function(question) {
 		let valid = validateChecker.checkQuestion(question);
-		if (!valid.passed) socket.emit("confirmQuestionRequirements", valid);
+		socket.emit("confirmQuestionRequirements", valid);
 		if (!valid.passed) return;
 		generalFunctions.createSpecialDescription(question);
 		question = generateSolution(question);
@@ -509,7 +509,6 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 				}
 				
 				await dbFunctions.update.question(db, questionIndex, question.text, question.description, question.objects, question.solution, question.solutionType, question.time);
-				socket.emit("confirmQuestionRequirements", valid);
 			} 
 			catch (error) {
 				console.error("Error making dirs!\n\n" + error);
@@ -520,12 +519,10 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 	});
 
 	socket.on("updateQuestion", async function(question) {
-		console.log("update start")
-		let valid = {passed: false};
 		await dbFunctions.get.questionStatusById(db, question.id).then(async (q) => {
 			if (q.status === 1) return;
-			valid = validateChecker.checkQuestion(question);
-			if (!valid.passed) socket.emit("confirmQuestionRequirements", valid);
+			let valid = validateChecker.checkQuestion(question);
+			socket.emit("confirmQuestionRequirements", valid);
 			if (!valid.passed) return;
 			generalFunctions.createSpecialDescription(question);
 			question = generateSolution(question);
@@ -575,10 +572,9 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 			await dbFunctions.update.question(db, question.id, question.text, question.description, question.objects, question.solution, question.solutionType, question.time);
 		}).catch((err) => {
 			console.error(err);
-		})
-		
-		if (valid.passed) socket.emit("confirmQuestionRequirements", valid);
-		console.log("Update end")
+		});
+
+		socket.emit("questionChangeComplete");
 	});
 
 	socket.on("getQuestionTypes", function() {
