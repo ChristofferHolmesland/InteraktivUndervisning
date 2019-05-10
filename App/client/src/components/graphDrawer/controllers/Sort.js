@@ -16,6 +16,8 @@ export default class Sort {
 		this.extractType = config.extractType || "xSorter";
 		this.joinType = config.joinType || "vSorter";
 
+		this.gd.fixNodeSize = false;
+
 		// If there are some starting steps, they are parsed
 		// and put into the world.
 		if (config.steps) {
@@ -543,19 +545,53 @@ export default class Sort {
 		this.gd.dirty = true;
 
 		for (let ai = 0; ai < this.arrays.length; ai++) {
-			for (let li = 0; li < this.arrays[ai].links.length; li++) {
-				let link = this.arrays[ai].links[li];
+			let arr = this.arrays[ai];
+
+			for (let li = 0; li < arr.links.length; li++) {
+				let link = arr.links[li];
 				// Checks if the array the being linked to has been removed
 				if (link == undefined || link.nodes.length == 0) {
-					this.arrays[ai].links.splice(li, 1);
+					arr.links.splice(li, 1);
 					li--;
 					continue;
 				}
 
-				// Sets the edge to be between the center nodes.
+				// If the link is above or under, then the 
+				// link should be between the center nodes.
+				let topUnder = link.position.y > arr.position.y + arr.nodes[0].h;
+				let topAbove = link.position.y < arr.position.y;
+				let topNotInside = topUnder || topAbove;
+				let botUnder = 
+					link.position.y + link.nodes[0].h > arr.position.y + arr.nodes[0].h;
+				let botAbove = link.position.y + link.nodes[0].h < arr.position.y;
+				let botNotInside = botUnder || botAbove;
+
+				let arrNode;
+				let linkNode;
+
+				if (topNotInside && botNotInside) {
+						arrNode = arr.nodes[Math.floor(arr.nodes.length / 2)];
+						linkNode = link.nodes[Math.floor(link.nodes.length / 2)];
+
+						if (link.nodes.length % 2 == 0)
+							linkNode.doNotCenterX = true;
+				} else {
+					// If it is not above/under then it has to be
+					// on one of the sides.
+					arrNode = arr.nodes[arr.nodes.length - 1];
+					linkNode = link.nodes[0];
+					if (arr.position.x > link.position.x) {
+						arrNode = arr.nodes[0];
+						linkNode = link.nodes[link.nodes.length - 1];
+					}
+				}
+
+				arrNode.arrowMode = "Sort";
+				linkNode.arrowMode = "Sort";
+
 				this.gd.edges.push({
-					n1: this.arrays[ai].nodes[Math.floor(this.arrays[ai].nodes.length / 2)],
-					n2: link.nodes[Math.floor(link.nodes.length / 2)]
+					n1: arrNode,
+					n2: linkNode
 				});
 			}
 		}
@@ -896,6 +932,72 @@ export default class Sort {
 			arrays: arrs
 		});
 
+		// 1. The lower/higher order of array splitting shouldn't matter.
+		// 2. If the pivot is smaller than all the other nodes, then the 
+		// left array will contain the nodes, when they should be in the
+		// right array. This fixes both problems.
+		for (let i = 0; i < steps.length; i++) {
+			let step = steps[i];
+			if (step.type !== "Split") continue;
+			if (step.pivot === undefined) continue;
+			if (step.pivot.length != 1) continue;
+
+			let pivot = step.pivot[0];
+
+			// Move left to right if all the values are above the pivot.
+			if (step.left !== undefined && step.right == undefined) {
+				let minValue = step.left[0];
+				for (let j = 0; j < step.left.length; j++) {
+					if (step.left[j] < minValue) minValue = step.left[j];
+				}
+
+				if (minValue > pivot) {
+					step.right = step.left;
+					delete step.left;
+					step.left = [];
+				}
+			// Move right to left if all the values are below the pivot.
+			} else if (step.left == undefined && step.right !== undefined) {
+				let maxValue = step.right[0];
+				for (let j = 0; j < step.right.length; j++) {
+					if (step.right[j] > maxValue) maxValue = step.right[j];
+				}
+
+				if (maxValue < pivot) {
+					step.left = step.right;
+					delete step.right;
+					step.right = [];
+				}
+			// Switch left/right if left is above pivot and right is below pivot.
+			} else if (step.left !== undefined && step.right !== undefined) {
+				let allLeftAbove = true;
+				let allRightBelow = true;
+				
+				for (let j = 0; j < step.left.length; j++) {
+					if (step.left[j] < pivot) {
+						allLeftAbove = false;
+						break;
+					}
+				}
+
+				for (let j = 0; j < step.right.length; j++) {
+					if (step.right[j] > pivot) {
+						allRightBelow = false;
+						break;
+					}
+				}
+
+				if (allLeftAbove && allRightBelow) {
+					let newLeft = [];
+					let newRight = [];
+					step.left.forEach((v) => newRight.push(v));
+					step.right.forEach((v) => newLeft.push(v));
+					step.left = newLeft;
+					step.right = newRight;
+				}
+			}
+		}
+
 		return steps;
 	}
 
@@ -914,8 +1016,8 @@ export default class Sort {
 		// should match what the user made. If not the arrays should be placed in 
 		// a nice way.
 		let user = this.steps[0].position != undefined;
-		let yPadding = 75;
-		let xPadding = 25;
+		let yPadding = 95;
+		let xPadding = 30;
 		let r = this.gd.nodeShape == "Circle" ? this.gd.R : this.gd.R * 2;
 
 		let nodesFromValueList = (list, array) => {
@@ -1167,6 +1269,258 @@ export default class Sort {
 		}
 
 		this._recalculateEdges();
+		if (!user) this.fixArrayPositions(0, xPadding, yPadding);
+	}
+
+	/*
+		Moves the arrays so that there is no overlapping.
+		The array at parentIndex is treated as the root of the tree.
+		It is assumed that all of the nodes have the same width.
+	*/
+	fixArrayPositions(parentIndex, xPadding, yPadding) {
+		let start = this.arrays[parentIndex];
+		if (start.links.length == 0) return;
+
+		this._fixYPadding(start, yPadding);
+		let linkCount = this._countLinks();
+
+		let arraysWithNoLinks = 0;
+		for (let i = 0; i < this.arrays.length; i++) {
+			let arr = this.arrays[i];
+			if (arr.links == undefined || arr.links.length == 0) {
+				arraysWithNoLinks++;
+			}
+		}
+		
+		let assignSide = function(arr, side) {
+			if (arr.links.length == 0 &&
+				linkCount.get(arr) !== 1) {
+				arr.side = -1;
+				return;
+			}
+
+			arr.side = side;
+			for (let i = 0; i < arr.links.length; i++) {
+				assignSide(arr.links[i], side);
+			}
+		};
+
+		let indexes = this._getLinkIndexesOnSameY(start);
+		let firstLink = start.links[indexes[0]];
+		let secondLink = start.links[indexes[1]];
+		if (firstLink.position.x < secondLink.position.x) {
+			assignSide(firstLink, 0);
+			assignSide(secondLink, 1);
+		} else {
+			assignSide(firstLink, 1);
+			assignSide(secondLink, 0);
+		}
+
+		let leftest = undefined;
+		let rightest = undefined;
+		
+		// Find the node on the left side of the root which is the furthest to the right,
+		// and the node on the right side of the root which is the furthest to the left.
+		for (let i = 0; i < this.arrays.length; i++) {
+			let arr = this.arrays[i];
+			if (arr.side == 0) {
+				if (rightest == undefined) {
+					rightest = arr;
+				} else {
+					let pos = this._getSideXCoordinate(arr, 1);
+					let currentPos = this._getSideXCoordinate(rightest, 1);
+					if (pos > currentPos) rightest = arr;
+				}
+			} else if (arr.side == 1) {
+				if (leftest == undefined) {
+					leftest = arr;
+				} else {
+					let pos = this._getSideXCoordinate(arr, 0);
+					let currentPos = this._getSideXCoordinate(leftest, 0);
+					if (pos < currentPos) leftest = arr;
+				}
+			}
+		}
+
+		// It is no longer interesting to check which side of the root a node is on.
+		// Instead, the side property should represent whether the array is to
+		// the left or right of the parent array.
+		for (let i = 0; i < this.arrays.length; i++) {
+			let arr = this.arrays[i];
+			
+			// directChildren are the children which are 
+			// closest to the array
+			let directChildren = [];
+			let closestY = 1000000;
+			for (let j = 0; j < arr.links.length; j++) {
+				let l = arr.links[j];
+				let dy = l.position.y - arr.position.y;
+				if (dy < closestY) {
+					closestY = dy;
+					directChildren = [l];
+				} else if (dy == closestY) {
+					directChildren.push(l);
+				}
+			}
+
+			if (directChildren.length > 2) {
+				console.error("Array with more than 2 direct children!");
+				console.error(arr);
+				continue;
+			}
+
+			if (directChildren.length == 1) {
+				let child = directChildren[0];
+				child.side = child.position.x < arr.position.x ? 0 : 1;
+			} else if (directChildren.length == 2) {
+				let child1 = directChildren[0];
+				let child2 = directChildren[1];
+
+				if (child1.position.x < child2.position.x) {
+					child1.side = 0;
+					child2.side = 1;
+				} else {
+					child1.side = 1;
+					child2.side = 0;
+				}
+			}
+		}
+
+		let visisted = [];
+		let moveArray = function(arr, relativeArray, overrideSide) {
+			if (arr == undefined) return;
+
+			// First array
+			if (linkCount.get(arr) == undefined) return;
+			// Last array
+			if (arraysWithNoLinks == 1 && 
+				(arr.links == undefined || arr.links.length == 0)
+				) {
+				return;
+			}
+
+			if (visisted.includes(arr)) return;
+			visisted.push(arr);
+
+			// If an array is only linked from one other array
+			// then its position should be based on which side
+			// of the parent array it is on. If it has more,
+			// the center should be at the average center of the parents.
+			let newX;
+			let nodeWidth = relativeArray.nodes[0].w;
+
+			if (linkCount.get(arr) == 1) {
+				let centerX = 
+					relativeArray.position.x + 
+					relativeArray.nodes.length * nodeWidth / 2;
+
+				// Move array
+				let side = overrideSide == undefined ? arr.side : overrideSide;
+				let sign = side == 0 ? -1 : 1;
+				newX = centerX + sign * xPadding;
+
+				// If the array is on the left, the width of the array means
+				// that it needs to be even further to the left
+				if (side == 0)
+					newX -= arr.nodes.length * nodeWidth;
+			} else {
+				let parentCount = 0;
+				let totalParentCenterX = 0;
+				for (let i = 0; i < this.arrays.length; i++) {
+					let parent = this.arrays[i];
+					if (parent.links.indexOf(arr) > -1) {
+						parentCount++;
+
+						let parentCenterX = 
+							parent.position.x +
+							parent.nodes.length * nodeWidth / 2;
+						
+						totalParentCenterX += parentCenterX;
+					}
+				}
+
+				let desiredCenterX = totalParentCenterX / parentCount;
+				let arrWidth = arr.nodes.length * nodeWidth;
+				newX = desiredCenterX - arrWidth / 2;
+			}
+
+			arr.position.x = newX;
+
+			// Call function to move children and parents
+			// Find left/right children
+			let indexes = this._getLinkIndexesOnSameY(arr);
+			let link1 = arr.links[indexes[0]];
+			let link2 = arr.links[indexes[1]];
+			if (link1 !== undefined) moveArray(link1, arr);
+			if (link2 !== undefined) moveArray(link2, arr);
+
+			if (linkCount.get(arr) == 1) {
+				for (let i = 0; i < this.arrays.length; i++) {
+					if (this.arrays[i].links.includes(arr)) {
+						moveArray(this.arrays[i], arr);
+					}
+				}
+			}
+		}.bind(this);
+
+		moveArray(rightest, start, 0);
+		moveArray(leftest, start, 1);
+
+		for (let i = 0; i < this.arrays.length; i++)
+			this._repositionNodes(i);
+	}
+
+	_getLinkIndexesOnSameY(array) {
+		let notValidIndex = 2;
+		if (array.links.length == 3) {
+			let f = array.links[0];
+			let m = array.links[1];
+			let l = array.links[2];
+			if (f.position.y > m.position.y && f.position.y > l.position.y)
+				notValidIndex = 0;
+			else if (m.position.y > f.position.y && m.position.y > l.position.y)
+				notValidIndex = 1;
+			else notValidIndex = 2;
+		}
+
+		let indexes = [0, 1, 2];
+		indexes.splice(notValidIndex, 1);
+		return indexes;
+	}
+
+	_countLinks() {
+		let linkCount = new Map();
+		for (let i = 0; i < this.arrays.length; i++) {
+			let arr = this.arrays[i];
+			for (let j = 0; j < arr.links.length; j++) {
+				let link = arr.links[j];
+
+				if (linkCount.has(link)) {
+					linkCount.set(link, linkCount.get(link) + 1);
+				} else {
+					linkCount.set(link, 1);
+				}
+			}
+		}
+
+		return linkCount;
+	}
+
+	_getSideXCoordinate(array, side) {
+		if (side == 0) return array.position.x;
+		return array.position.x + array.nodes[0].w * array.nodes.length;
+	}
+
+	_fixYPadding(startingArray, padding) {
+		for (let i = 0; i < startingArray.links.length; i++) {
+			let array = startingArray.links[i];
+			
+			if (array.position.y < startingArray + padding) {
+				array.position.y = startingArray + padding;
+			}
+
+			this._fixYPadding(array, padding);
+		}
 	}
 
 	/*
@@ -1214,5 +1568,12 @@ export default class Sort {
 				type: "Delete"
 			}
 		});
+	}
+
+	getNodeValuesAsString(nodes) {
+		let vals = [];
+		for (let i = 0; i < nodes.length; i++)
+			vals.push(nodes[i].v);
+		return vals.join(", ");
 	}
 }

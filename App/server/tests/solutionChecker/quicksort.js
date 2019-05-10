@@ -125,7 +125,7 @@ const testSolution = [true, false, false, false, false];
 
 describe("Checking quicksort solution checker", function() {
 	for (let i = 0; i < answers.length; i++) {
-		let result = quicksortSC(answer[i], solution, 4 /* TODO fix type number */); 
+		let result = quicksortSC(answer[i], solution); 
 
 		it(`Checking case ${i + 1}`, function () {
 			assert.Equal(result, testSolution[i]);
