@@ -15,6 +15,7 @@ const jsonParser = function (rows) {
 };
 
 const imageGetter = async function (rows) {
+	console.log("Parsing Image")
 	if (rows === undefined) return;
 	for (let i = 0; i < rows.length; i++) {
 		let row = rows[i];
@@ -31,6 +32,7 @@ const imageGetter = async function (rows) {
 			}
 		}
 	}
+	console.log("parsing ended")
 }
 
 const get = {
