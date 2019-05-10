@@ -41,6 +41,11 @@ class Session {
 	}
 
 	userLeaving(id) {
+		if (this.currentQuestion < 0) {
+			this.currentUsers--;
+			return;
+		}
+
 		let question = this.questionList[this.currentQuestion];
 
 		if (!question.socketsAnswered[id]) {

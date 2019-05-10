@@ -248,6 +248,7 @@ module.exports.admin = function(socket, db, user, users) {
 	});
 
 	socket.on("applicationsByCourseIdRequest", function(courseId) {
+		if (courseId === undefined) return;
 		dbFunctions.get.userRightInCourseById(db, {
 			courseId: courseId,
 			feideId: user.feide.idNumber
