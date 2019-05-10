@@ -66,6 +66,9 @@ export default {
 	methods: {
 		localeChange(event) {
 			this.$socket.emit("getLocaleRequest", event.target.id);
+			if (this.$store.getters.getUser({userRights: true}).userRights > 1) {
+				document.cookie = `localization=${event.target.id}; Max-Age=1576800000;`;
+			}
 		},
 		signInRedirect() {
 			this.$router.push("/login");

@@ -53,7 +53,7 @@
         methods: {
             onShown: function() {
                 let courseId = this.$store.getters.getSelectedCourse;
-                this.$socket.emit("getSessionWithinCourse", courseId);
+                this.$socket.emit("getSessionWithinCourseForAddingQuestion", courseId);
             },
             okHandler: function() {
                 this.$socket.emit("addQuestionToSession", {

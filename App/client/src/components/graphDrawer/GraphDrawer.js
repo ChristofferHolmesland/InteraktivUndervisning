@@ -231,6 +231,8 @@ export default class GraphDrawer {
 		);
 		this.canvasContext.fillStyle = oldFill;
 
+		this.canvasContext.fillStyle = oldFill;
+
 		this.canvasContext.drawImage(
 			this.drawBuffer,
 			camera.left,

@@ -9,6 +9,7 @@ const session = require("../session.js").Session;
 const question = require("../session.js").Question;
 const validateChecker = require("../ValidateChecker/validateChecker.js").validateChecker;
 const generateSolution = require("../SolutionGenerator/SolutionGenerator.js");
+const solutionChecker = require("../SolutionChecker/solutionChecker.js").solutionChecker;
 
 let courseListRequestHandler = function(socket, db, user) {
 	if (!user.feide) return;
@@ -151,7 +152,10 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 
 	socket.on("initializeSession", function(sessionId){
 		if (currentSession != undefined) {
-			socket.emit("initializeSessionErrorResponse", "You are already running a session with the code: " + currentSession.session.id);
+			socket.emit("initializeSessionErrorResponse", {
+				error: 1,
+				sessionCode: currentSession.session.sessionCode
+			});
 			return;
 		}
 		dbFunctions.update.sessionStatus(db, sessionId, 1).catch((err) => {
@@ -201,7 +205,7 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 			socket.emit("sessionOverviewResponse", response);
 		}).catch((err) => {
 			console.error(err);
-			socket.emit("sessionOverviewErrorResponse");
+			return;
 		});
 	});
 	
@@ -421,7 +425,6 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 			}
 			socket.emit("sendSessionWithinCourse", result);
 		});
-		
 	});
 
 	socket.on("addQuestionToSession", function(data) {
@@ -461,7 +464,7 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 
 	socket.on("addNewQuestion", async function(question) {
 		let valid = validateChecker.checkQuestion(question);
-		socket.emit("confirmQuestionRequirements", valid);
+		if (!valid.passed) socket.emit("confirmQuestionRequirements", valid);
 		if (!valid.passed) return;
 		generalFunctions.createSpecialDescription(question);
 		question = generateSolution(question);
@@ -498,7 +501,8 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 					});
 				}
 				
-				await dbFunctions.update.question(db, questionIndex, question.text, question.description, question.objects, question.solution, question.solutionType, question.time);		
+				await dbFunctions.update.question(db, questionIndex, question.text, question.description, question.objects, question.solution, question.solutionType, question.time);
+				socket.emit("confirmQuestionRequirements", valid);
 			} 
 			catch (error) {
 				console.error("Error making dirs!\n\n" + error);
@@ -509,10 +513,10 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 	});
 
 	socket.on("updateQuestion", async function(question) {
-		dbFunctions.get.questionStatusById(db, question.id).then(async (q) => {
+		await dbFunctions.get.questionStatusById(db, question.id).then(async (q) => {
 			if (q.status === 1) return;
 			let valid = validateChecker.checkQuestion(question);
-			socket.emit("confirmQuestionRequirements", valid);
+			if (!valid.passed) socket.emit("confirmQuestionRequirements", valid);
 			if (!valid.passed) return;
 			generalFunctions.createSpecialDescription(question);
 			question = generateSolution(question);
@@ -557,6 +561,7 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 			}
 	
 			await dbFunctions.update.question(db, question.id, question.text, question.description, question.objects, question.solution, question.solutionType, question.time);
+			socket.emit("confirmQuestionRequirements", valid);
 		}).catch((err) => {
 			console.error(err);
 		})
@@ -874,4 +879,51 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 		})
 	});
 
+	socket.on("testQuestionRequest", function(questionId) {
+		let response = {};
+
+		dbFunctions.get.questionsByQuestionId(db, [{id: questionId}]).then((questions) => {
+			if (questions.length === 0) return;
+
+			response = questions[0];
+			delete response.status;
+
+			socket.emit("testQuestionResponse", response);
+		}).catch((err) => {
+			console.error(err);
+			return;
+		});
+	});
+
+	socket.on("checkTestQuestionAnswerRequest", function(data) {
+		checkedResult = solutionChecker.checkAnswer(
+			JSON.parse(JSON.stringify(data.answerObject)),
+			JSON.parse(JSON.stringify(data.solutionObject)),
+			data.questionType
+		);
+
+		if (checkedResult){
+			socket.emit("checkTestQuestionAnswerResponse", 1);
+		} else {
+			socket.emit("checkTestQuestionAnswerResponse", 0);
+		}
+	});
+	
+	socket.on("getSessionWithinCourseForAddingQuestion", function(courseId) {	
+		if (courseId === undefined || courseId === "") {
+			socket.emit("courseMissing");
+			return;
+		}
+		dbFunctions.get.allSessionWithinCourse(db, courseId).then((sessions) => {
+			let result = [];
+			for (let i = 0; i < sessions.length; i++) {
+				if (sessions[i].status > 0) continue;
+				result.push({
+					value: sessions[i].id,
+					text: sessions[i].name
+				});
+			}
+			socket.emit("sendSessionWithinCourse", result);
+		});
+	});
 }

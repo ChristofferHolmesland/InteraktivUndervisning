@@ -239,12 +239,6 @@ export default {
 			let courseId = this.$store.getters.getSelectedCourse;
 			this.$socket.emit("applicationsByCourseIdRequest", courseId);
 		},
-		newQuestionClicked: function() {
-			// TODO: Write the function
-		},
-		viewLastSession: function() {
-			// TODO: Write the function
-		},
 		addNewAdmin: function() {
 			let length = this.newAdminFeideId.length;
 			if 

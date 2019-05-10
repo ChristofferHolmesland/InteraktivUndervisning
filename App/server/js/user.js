@@ -48,7 +48,6 @@ class User {
 			if(user){
 				return user;
 			}else{
-				// TODO: Try and reverify the user and either accept and add to active users or redirect to 401
 				await dbFunctions.get.userInformationBySessionToken(db, sessionId).then(async (row) => {
 					if (row === undefined) {
 						user = undefined;
