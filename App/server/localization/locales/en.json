@@ -1,8 +1,8 @@
 {
     "AdminQuestions": {
-        "emptyQuestionList": "No questions.",
+        "emptyQuestionList": "No questions found for the selected course. Please add a new question by clicking the '+' button.",
         "addTitle": "New question",
-        "editTitle": "Change question",
+        "editTitle": "Edit question",
         "searchQuestion": "Search for a question",
         "newQuestionTitle": "Question title:",
         "newQuestionText": "Question text:",
@@ -69,7 +69,7 @@
         "MissingStartOrEndNodeError": "Either start node or end node is not given!",
         "InvalidDijkstraGraphError": "The given graph is not qualified as a djikstra question object.\nMissing either nodes or edges!",
         "questionTypeError": "No question type was selected!",
-        "imageInputLabel": "Choose a file upload...",
+        "imageInputLabel": "Choose a file to upload...",
         "filename": "Filename",
         "filesize": "Filesize",
         "filetype": "filetype",
@@ -126,7 +126,9 @@
         "ready": "Ready",
         "yes": "Yes",
         "no": "No",
-        "questionStatusTooltip": "Question that have been added to a session can't be edited or deleted!"
+        "questionStatusTooltip": "Question that have been added to a session can't be edited or deleted!",
+        "testBtnLabel": "Test",
+        "addCanvasAsImage": "Add canvas as an image"
     },
     "AdminSessions": {
         "newSession": "New session",
@@ -140,10 +142,13 @@
         "searchPlaceholder": "Search",
         "editTooltip": "Only inactive sessions can be edited",
         "deleteTooltip": "Only inactive sessions can be deleted",
-        "noSessions": "No sessions"
+        "noSessions": "No sessions",
+        "delSessionBody": "Do you want to delete this session? This can't be undone!"
     },
     "AdminDashboard": {
         "courseAdministrator": "Course administrators",
+        "administrator": "Administrator",
+        "studentAssistant": "Student assistant",
         "addBtnText": "Add",
         "courseAssistants": "Course assistants",
         "startSession": "Start session",
@@ -152,7 +157,18 @@
         "addNewQuestionBtnText": "Add new question",
         "newQuestion": "New question",
         "viewLastSession": "View last session",
-        "openLastSession": "Open"
+        "openLastSession": "Open",
+        "adminApplications": "Applications",
+        "applyBtnText": "Apply",
+        "noList": "No courses that you don't have user rights in or have applied for!",
+        "studAssLabel": "SA",
+        "adminLabel": "A",
+        "noAppliedList": "You haven't applied for user rights in any courses!",
+        "season": {
+            "spring": "Spring",
+            "autumn": "Autumn"
+        },
+        "applicantsLabel": "Applicants: "
     },
     "DisplayQuestion": {
         "question": "Question",
@@ -201,7 +217,7 @@
         "acceptCheckbox": "I accept these terms and conditions",
         "loginButton": "Sign in",
         "feideList": [
-            "This website will use cookies to be able to store your questions.",
+            "This website will use cookies to be able to store your questions and remember site language preference.",
             "The quizmaster will not be able to see who answered what, but will be able to see incorrect answers.",
             "This website will store date linked to your user for you to be able to see previous sessions.",
             "You will be able to delete all data stored about you by going in to profile and pressing \"Delete data\".",
@@ -551,7 +567,8 @@
     },
     "AdminSessionOverview": {
         "startBtn": "Start",
-        "noSessionText": "No sessions. Add new session"
+        "noSessionText": "No sessions. Add new session",
+        "errorActiveSessionRunning": "You have a session running!\n Rejoin it or delete it."
     },
     "GraphDrawer": {
         "editNodePrompt": "Enter new value:",
@@ -594,5 +611,35 @@
                 "joinToArray": "Join to array"
             }
         }
+    },
+    "TestQuestion": {
+        "modalOkBtnText": "Check answer",
+        "modalCancelBtnText": "Close",
+        "timeLeftLabelText": "Time left",
+        "settingsStartTimerBtnText": "Start",
+        "settingsStartTimerLabelText": "Timer:",
+        "settingsLabelText": "Settings",
+        "settingsResumeTimerBtnText": "Resume",
+        "settingsPauseTimerBtnText": "Pause",
+        "settingsResetTimerBtnText": "Reset",
+        "showQuestionType": "Question type:",
+        "binaryTreeDesc": "Draw a BinaryTree with the following nodes: ",
+        "bstavlOperationDesc": "Operation: ",
+        "bstavlNodesDesc": "Nodes: ",
+        "pythonCodeDesc": "Code: ",
+        "Add": "Add",
+        "Remove": "Remove",
+        "tabExtraInfo": "Extra information",
+        "tabImage": "Images",
+        "tabTable": "Tables",
+        "previousBtn": "Previous",
+        "nextBtn": "Next",
+        "modalTitle": "Test your question!",
+        "resultCorrect": "Your answer has been checked agaist the solution and is correct!",
+        "resultIncorrect": "Your answer has been checked agaist the solution and is incorrect! You will be able to check your answer against the solution under the 'view solution' tab.",
+        "mainTabQuestion": "View question",
+        "mainTabSolution": "View solution",
+        "subTabQuestion": "Question",
+        "subTabAnswer": "Answer"
     }
 }

@@ -1,5 +1,5 @@
 <template>
-    <!-- Check watchers when fixing bugs!11!!1! -->
+    <!-- Check watchers when fixing bugs -->
 	
 	<b-modal 	:id="elementId"
 				:ref="elementRef"
@@ -138,7 +138,28 @@
 								<label for="imageInput">{{getLocale.imageInputLabel}}</label>
 							</div>
 							<div v-if="selectedMediaType === 1">
-								<!-- TODO add graph objects -->
+								<b-container>
+									<b-row>
+										<b-col>
+											<GraphDrawer
+													controlType="Graph0"
+													operatingMode="Interactive"
+													ref="graphDrawerMedia"
+													v-if="!reload"
+											/>
+										</b-col>
+									</b-row>
+									<b-row align-h="center">
+										<b-col cols="6">
+											<b-button 	block
+														variant="primary"
+														@click="addCanvasAsImage"
+														>
+												{{ getLocale.addCanvasAsImage }}
+											</b-button>
+										</b-col>
+									</b-row>
+								</b-container>
 							</div>
 							<div v-if="selectedMediaType === 2">
 								<b-container class="editTableContainer">
@@ -207,13 +228,6 @@
 									</b-col>
 								</b-row>
 							</b-container>
-						</b-col>
-					</b-row>
-					<b-row>
-						<b-col>
-							<div>
-								<!-- TODO add graph objects -->
-							</div>
 						</b-col>
 					</b-row>
 					<b-row v-if="getQuestionObjects.tables.length > 0">
@@ -486,6 +500,8 @@ function initializeState() {
 		showMediaError: false,
 		validationFailure: false,
 		validationErrors: [],
+
+		reload: false
 	};
 }
 
@@ -520,7 +536,7 @@ export default {
 		});
 	},
 	methods: {
-		solutionTypeChanged() {
+		solutionTypeChanged: function() {
 			// If the old type used a graphdrawer, it should be destroyed.
 			if (this.$refs.graphdrawer !== undefined) {
 				this.$refs.graphdrawer.destroyDrawer();
@@ -559,7 +575,7 @@ export default {
 				});
 			});
 		},
-		keyDownInTextarea(e) {
+		keyDownInTextarea: function(e) {
 			// Only accept the Tab key
 			if (e.key !== "Tab" && e.which !== "9") return;
 
@@ -580,7 +596,7 @@ export default {
 			codeInput.selectionStart = tabPosition + tabSize;
 			codeInput.selectionEnd = tabPosition + tabSize;
 		},
-		deleteImage(index) {
+		deleteImage: function(index) {
 			let files = this.newQuestion.objects.files;
 			files.splice(index, 1);
 
@@ -591,7 +607,7 @@ export default {
 			}
 			if (filesSize < 500000) this.showMediaWarning = false;
 		},
-		assignState() {
+		assignState: function() {
 			let n = initializeState();
 			for (let p in n) {
 				if (n.hasOwnProperty(p)) {
@@ -610,7 +626,7 @@ export default {
 				this.time = this.question.time;
 			}
 		},
-		newFile(event) {
+		newFile: function(event) {
 			let files = [];
 			Array.prototype.push.apply(files, event.target.files);
 			let storedFiles = this.newQuestion.objects.files;
@@ -665,13 +681,13 @@ export default {
 			}
 			event.target.value = "";
 		},
-		changeShowMedia() {
+		changeShowMedia: function() {
 			this.showMedia = !this.showMedia;
 		},
-		changeShowSolution() {
+		changeShowSolution: function() {
 			this.showSolution = !this.showSolution;
 		},
-		changeShowBasicInfo() {
+		changeShowBasicInfo: function() {
 			this.showBasicInfo = !this.showBasicInfo;
 		},
 		assignTime: function() {
@@ -698,7 +714,7 @@ export default {
 			if (this.okHandler == "add") this.addNewQuestionHandler();
 			else if (this.okHandler == "edit") this.editQuestionHandler();
 		},
-		gotTreeDrawerObject(result) {
+		gotTreeDrawerObject: function(result) {
 			this.newQuestion.objects.startTree = result.tree;
 			this.newQuestion.objects._graphdrawerGraph = [
 				Object.assign(
@@ -710,7 +726,7 @@ export default {
 			];
 			this.returnToOkHandler();
 		},
-		gotGraphDrawerObject(result) {
+		gotGraphDrawerObject: function(result) {
 			this.newQuestion.objects.graph = result;
 			this.newQuestion.objects._graphdrawerGraph = [
 				Object.assign(
@@ -733,10 +749,10 @@ export default {
 				this.returnToOkHandler();
 			}
 		},
-		addNewMultipleChoice() {
+		addNewMultipleChoice: function() {
 			this.newQuestion.objects.multipleChoices.push("");
 		},
-		deleteMultiChoice(index) {
+		deleteMultiChoice: function(index) {
 			let solutionIndex = this.newQuestion.solution.indexOf(
 				index.toString()
 			);
@@ -840,7 +856,7 @@ export default {
 			this.editExistingTable = false;
 			this.editExistingTableIndex = 0;
 		},
-		deleteTable(index) {
+		deleteTable: function(index) {
 			this.getQuestionObjects.tables.splice(index, 1);
 			
 			if (index === this.editExistingTableIndex) {
@@ -848,23 +864,63 @@ export default {
 				this.editExistingTableIndex = 0;
 			}
 		},
-		editTable(index) {
-			let table = this.getQuestionObjects.tables[index];
+		editTable: function(index) {
+			let table = JSON.parse(JSON.stringify(this.getQuestionObjects.tables[index]));
 			this.editTableRows = table.length;
 			this.editTableColumns = table[0].length;
 			this.editTableValues = table;
 			this.editExistingTable = true;
 			this.editExistingTableIndex = index;
+		},
+		addCanvasAsImage: function() {
+			let storedFiles = this.newQuestion.objects.files;
+			let img = this.$refs.graphDrawerMedia.$refs.canvasElement.toDataURL("image/png");
+			let arr = img.split(",");
+			let buffer = arr[1];
+			arr = arr[0].split(";");
+			arr = arr[0].split(":");
+			let type = arr[1];
+
+			let size = 4 * Math.ceil(buffer.length / 3);
+			
+			let totalFilesSize = 0;
+			let errorFileSize = 1500000;
+			let warningFileSize = 500000;
+			for(let i = 0; i < storedFiles.length; i++) totalFilesSize += storedFiles[i].size;
+
+			totalFilesSize += size;
+			if (totalFilesSize > errorFileSize) {
+				this.showMediaError = true;
+				if (fileTypeErr > 0) this.mediaErrorText += "\n\n" + this.getLocale.mediaErrorFileSize;
+				else this.mediaErrorText = this.getLocale.mediaErrorFileSize;
+			}
+			else if (totalFilesSize > warningFileSize) {
+				this.showMediaWarning = true;
+				this.mediaWarningText = this.getLocale.mediaWarningFileSize;
+			}
+			if (totalFilesSize < errorFileSize) {			
+				storedFiles.push({
+					name: `Graph ${storedFiles.length}`,
+					size: size,
+					type: type,
+					buffer: buffer
+				});
+
+				this.reload = true;
+				this.$nextTick(function() {
+					this.reload = false;
+				});
+			}
 		}
 	},
 	computed: {
-		getTitle() {
+		getTitle: function() {
 			return this.getLocale[this.okHandler + "Title"];
 		},
-		getSolutionType() {
+		getSolutionType: function() {
 			return this.newQuestion.solutionType;
 		},
-		checkRef() {
+		checkRef: function() {
 			if (this.$refs["codeInput"] !== undefined) {
 				this.$refs["codeInput"].onkeydown = this.keyDownInTextarea;
 				return true;
@@ -872,13 +928,13 @@ export default {
 
 			return false;
 		},
-		getImageSrc() {
+		getImageSrc: function() {
 			return (index) => {
 				let file = this.newQuestion.objects.files[index];
 				return "data:" + file.type + ";base64," + file.buffer;
 			};
 		},
-		getLocale() {
+		getLocale: function() {
 			let locale = this.$store.getters.getLocale("AdminQuestions");
 			if (locale) return locale;
 			else return {};

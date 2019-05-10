@@ -67,6 +67,7 @@ export default {
     },
     sockets: {
         userLastSessionResponse: function(data) {
+			if (data === null) return;
 			this.lastSessionBasicInfo = data;
 			this.showError = false;
 		},

@@ -8,18 +8,17 @@ const files = fs.readdirSync(langPath)
 
 // Check if there are 0 files
 if(files.length == 0){
-    // TODO add info to logger
-    return;
+	return;
 }
 
 // Goes through every file
 files.forEach(function(file) {
-    const data = fs.readFileSync(langPath + "/" + file);
-    const lang = file.split(".")[0];
+	const data = fs.readFileSync(langPath + "/" + file);
+	const lang = file.split(".")[0];
 
-    const fileData = JSON.parse(data);
-    locales[lang] = fileData;
-    locales.localeList.push(lang);
+	const fileData = JSON.parse(data);
+	locales[lang] = fileData;
+	locales.localeList.push(lang);
 });
 
 // Exports locales

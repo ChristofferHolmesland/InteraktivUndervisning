@@ -53,7 +53,7 @@
         methods: {
             onShown: function() {
                 let courseId = this.$store.getters.getSelectedCourse;
-                this.$socket.emit("getSessionWithinCourse", courseId);
+                this.$socket.emit("getSessionWithinCourseForAddingQuestion", courseId);
             },
             okHandler: function() {
                 this.$socket.emit("addQuestionToSession", {
@@ -65,7 +65,6 @@
         sockets: {
             sendSessionWithinCourse: function(sessions) {
                 this.sessionOptions = sessions;
-                console.log(sessions)
                 if (sessions.length > 0) this.selectedSession = sessions[0].value;
             }
         }

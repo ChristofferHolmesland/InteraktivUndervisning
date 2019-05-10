@@ -258,10 +258,12 @@ export default {
             return `${min.padStart(2, "0")}:${sec.padStart(2, "0")}`;
         },
         haveMedia: function() {
-            if (this.question.objects.files === undefined) return false
-            if (this.question.objects.files.length > 0) return true;
-            // TODO add checks for graphs and table
-            return false;
+            let show = false;
+            if (this.question.objects.files !== undefined)
+                if (this.question.objects.files.length > 0) show = true;
+            if (this.question.objects.tables !== undefined)
+                if (this.question.objects.tables.length > 0) show = true;
+            return show;
         },
 		getImageSrc: function() {
 			return (index) => {

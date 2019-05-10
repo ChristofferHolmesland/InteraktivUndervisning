@@ -189,22 +189,22 @@ export default {
 		}
 	},
 	methods: {
-		questionAnswered() {
+		questionAnswered: function() {
 			this.requestAnswer = !this.requestAnswer;
 		},
-		questionNotAnswered() {
+		questionNotAnswered: function() {
 			this.$socket.emit("questionAnswered", undefined, this.sessionCode);
 		},
 		//This is the function that sends the answerobject to the server
-		getTextValue(inputText) {
+		getTextValue: function(inputText) {
 			this.$socket.emit("questionAnswered", inputText, this.sessionCode);
 		},
-		exitSession() {
+		exitSession: function() {
 			if (confirm(this.getLeaveConfirmBody())) {
 				this.$router.push("/client");
 			}	
 		},
-		getStartArray(array) {
+		getStartArray: function(array) {
 			let elements = array.split(",");
 			let result = [];
 			for (let i = 0; i < elements.length; i++) {
@@ -212,7 +212,7 @@ export default {
 			}
 			return result;
 		},
-		changeSelectedImage(step) {
+		changeSelectedImage: function(step) {
 			if (
 				this.selectedImageIndex + step >= 0 && 
 				this.selectedImageIndex + step < this.getImagesLength
@@ -220,7 +220,7 @@ export default {
 				this.selectedImageIndex += step;
 			}
 		},
-		getLeaveConfirmBody() {
+		getLeaveConfirmBody: function() {
 			let locale = this.$store.getters.getLocale("ClientSessionQuestion")
 					.leaveSessionBody;
 			if (locale) return locale;
@@ -242,39 +242,39 @@ export default {
 		getDescription: function() {
 			return this.getQuestionInfo.description.split("\n");
 		},
-		updateTimer() {
+		updateTimer: function() {
 			let min = Math.floor(this.timeLeft / 60).toString();
 			let sec = Math.floor(this.timeLeft % 60).toString();
 
 			return `${min.padStart(2, "0")}:${sec.padStart(2, "0")}`;
 		},
-		getQuestionInfo() {
+		getQuestionInfo: function() {
 			return this.questionInfo;
 		},
-		getLocale() {
+		getLocale: function() {
 			let locale = this.$store.getters.getLocale("ClientSessionQuestion");
 			if (locale) return locale;
 			return {};
 		},
-		getQuestionType() {
+		getQuestionType: function() {
 			return this.questionInfo.type;
 		},
-		getQuestionTypeName() {
+		getQuestionTypeName: function() {
 			//indexes are 0-9, but question types are 1-10 :(
 			return this.$store.getters.getQuestionTypes[
 			this.questionInfo.type - 1
 				].name;
 		},
-		getImagesLength() {
+		getImagesLength: function() {
 			return this.getQuestionInfo.object.files.length;
 		},
-		getImgSrc() {
+		getImgSrc: function() {
 			let file = this.getQuestionInfo.object.files[
 				this.selectedImageIndex
 			];
 			return "data:" + file.type + ";base64," + file.buffer;
 		},
-		getExtraDesc() {
+		getExtraDesc: function() {
 			let order = [];
 			let extraDescLocales = this.questionInfo.object
 				.questionTypeDesc.locale;
@@ -325,7 +325,7 @@ export default {
 		}
 	},
 	sockets: {
-		adminForceNext() {
+		adminForceNext: function() {
 			this.questionNotAnswered();
 		}
 	},

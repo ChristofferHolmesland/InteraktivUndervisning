@@ -16,6 +16,32 @@
 				</b-button>
 			</b-col>
 		</b-row>
+		<b-row v-if="showError" class="mt-3">
+			<b-col cols="6">
+				<b-alert	show
+							variant="danger"
+
+							>
+					{{ getLocale[showErrorText] }}
+				</b-alert>
+			</b-col>
+			<b-col cols="3">
+				<b-button	block
+							variant="success"
+							@click="rejoin"
+							>
+					rejoin
+				</b-button>
+			</b-col>
+			<b-col cols="3">
+				<b-button 	block
+							variant="danger"
+							@click="clearActiveSession"
+							>
+					clear
+				</b-button>
+			</b-col>
+		</b-row>
 	</b-container>
 </template>
 
@@ -26,7 +52,12 @@ export default {
 		return {
 			sessionList: [],
 			selectedSession: "",
-			selectedCourse: ""
+			selectedCourse: "",
+
+			showError: false,
+			showErrorText: "",
+
+			activeSessionCode: undefined
 		};
 	},
 	created() {
@@ -34,32 +65,44 @@ export default {
 		this.$socket.emit("sessionOverviewRequest", courseId);
 	},
 	sockets: {
-		initializeSessionResponse(sessionId) {
+		initializeSessionResponse: function(sessionId) {
 			this.$router.push(`/admin/session/${sessionId}`);
 		},
-		initializeSessionErrorResponse() {
-			// TODO add logic to error handling
+		initializeSessionErrorResponse: function(data) {
+			if (data.error === 1) {
+				// This error is given if you have a session running
+				this.activeSessionCode = data.sessionCode;
+				this.showErrorText = "errorActiveSessionRunning"
+				this.showError = true;
+			}
 		},
-		sessionOverviewResponse(sessions) {
+		sessionOverviewResponse: function(sessions) {
 			if (sessions.length !== 0) {
 				this.sessionList = sessions;
 				this.selectedSession = sessions[0].value;
 			}
-		},
-		sessionOverviewErrorResponse() {
-			// TODO add logic to error handling
 		}
 	},
 	methods: {
-		initializeSession(sessionId) {
+		initializeSession: function(sessionId) {
 			this.$socket.emit("initializeSession", sessionId);
 		},
-		courseChanged(newCourse) {
+		courseChanged: function(newCourse) {
 			this.$socket.emit("sessionOverviewRequest", newCourse);
+		},
+		rejoin: function() {
+			if (this.activeSessionCode === undefined) return;
+			this.$router.push(`/admin/session/${this.activeSessionCode}`)
+		},
+		clearActiveSession: function() {
+			this.$socket.emit("adminEndSession");
+			this.showError = false;
+			this.showErrorText = "";
+			this.activeSessionCode = undefined;
 		}
 	},
 	computed: {
-		getSessions() {
+		getSessions: function() {
 			if (this.sessionList === undefined) return [];
 			return this.sessionList;
 		},

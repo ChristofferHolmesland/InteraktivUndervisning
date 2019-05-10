@@ -1,6 +1,6 @@
 {
     "AdminQuestions": {
-        "emptyQuestionList": "Ingen spørsmål.",
+        "emptyQuestionList": "Ingen spørsmål ble funnet for det valgte faget. Legg til et spørsmål med å klikke på '+' knappen.",
         "addTitle": "Nytt spørsmål",
         "editTitle": "Endre spørsmål",
         "searchQuestion": "Søk etter spørsmål",
@@ -126,7 +126,9 @@
         "ready": "Klar",
         "yes": "Ja",
         "no": "Nei",
-        "questionStatusTooltip": "Spørsmål som har blitt lagt til en økt kan ikke endres eller slettes!"
+        "questionStatusTooltip": "Spørsmål som har blitt lagt til en økt kan ikke endres eller slettes!",
+        "testBtnLabel": "Test",
+        "addCanvasAsImage": "Legg til lerretet som et bilde"
     },
     "AdminSessions": {
         "newSession": "Ny økt",
@@ -140,19 +142,33 @@
         "searchPlaceholder": "Søk",
         "editTooltip": "Bare inaktive økter kan endres",
         "deleteTooltip": "Bare inaktive økter kan slettes",
-        "noSessions": "Ingen økter"
+        "noSessions": "Ingen økter",
+        "delSessionBody": "Vil du slette denne økten? Dette kan ikke reverseres!"
     },
     "AdminDashboard": {
         "courseAdministrator": "Fag adminstrator",
+        "administrator": "Administrator",
+        "studentAssistant": "Student assistent",
         "addBtnText": "Legg til",
         "courseAssistants": "Student assistenter",
         "startSession": "Start økt",
         "changeCourseTitle": "Endre fag",
         "newCourseBtnText": "Legg til",
         "addNewQuestionBtnText": "Legg til nytt spørsmål",
-        "newQuestion": "Nytt spørsmål",
+        "newQuestion": "Nytt    spørsmål",
         "viewLastSession": "Vis forrige økt",
-        "openLastSession": "Åpne"
+        "openLastSession": "Åpne",
+        "adminApplications": "Søknader",
+        "applyBtnText": "Søk",
+        "noList": "Ingen fag som du ikke har bruker rettigheter i eller som du har søkt til!",
+        "studAssLabel": "SA",
+        "adminLabel": "A",
+        "noAppliedList": "Du har ikke søkt etter bruker rettigheter i noen fag!",
+        "season": {
+            "spring": "Vår",
+            "autumn": "Høst"
+        },
+        "applicantsLabel": "Søkere: "
     },
     "DisplayQuestion": {
         "question": "Spørsmål",
@@ -201,7 +217,7 @@
         "acceptCheckbox": "Jeg aksepterer disse betingelsene",
         "loginButton": "Logg inn",
         "feideList": [
-            "Denne nettsiden bruker cookies for å kunne lagre spørsmålene dine.",
+            "Denne nettsiden bruker cookies for å kunne lagre spørsmålene dine og språk preferansen din.",
             "Quizmaster vil ikke kunne se hvem som har svart hva, men vil kunne se feil svar.",
             "Denne nettsiden lagrer data linket til din bruker for at du skal kunne se på tidligere økter",
             "En kan slette all data som er lagret om deg ved å gå inn på profil og trykke på \"Slett data\"",
@@ -552,7 +568,8 @@
     },
     "AdminSessionOverview": {
         "startBtn": "Start",
-        "noSessionText": "Ingen økter. Legg til ny økt"
+        "noSessionText": "Ingen økter. Legg til ny økt",
+        "errorActiveSessionRunning": "Du kjører en økt!\n Bli med eller slett den."
     },
     "GraphDrawer": {
         "editNodePrompt": "Skriv ny verdi:",
@@ -595,5 +612,35 @@
                 "joinToArray": "Koble til array"
             }
         }
+    },
+    "TestQuestion": {
+        "modalOkBtnText": "Sjekk svar",
+        "modalCancelBtnText": "Lukk",
+        "timeLeftLabelText": "Tid igjen",
+        "settingsStartTimerBtnText": "Start",
+        "settingsStartTimerLabelText": "Tid:",
+        "settingsLabelText": "Innstillinger",
+        "settingsResumeTimerBtnText": "Fortsett",
+        "settingsPauseTimerBtnText": "Pause",
+        "settingsResetTimerBtnText": "Reset",
+        "showQuestionType": "Spørsmål type:",
+        "binaryTreeDesc": "Tegn et binaer tree med følgende noder: ",
+        "bstavlOperationDesc": "Operasjon: ",
+        "bstavlNodesDesc": "Noder: ",
+        "pythonCodeDesc": "Kode: ",
+        "Add": "Legg til",
+        "Remove": "Slett",
+        "tabExtraInfo": "Ekstra informasjon",
+        "tabImage": "Bilder",
+        "tabTable": "Tabeller",
+        "previousBtn": "Forrige",
+        "nextBtn": "Neste",
+        "modalTitle": "Test ditt spørsmål!",
+        "resultCorrect": "Svaret ditt er nå rettet mot fasiten og svaret ditt er riktig!",
+        "resultIncorrect": "Svaret ditt er nå rettet mot fasiten og svaret ditt er ikke riktig! Du vil ha muligheten til å sammenligne svaret ditt mot fasiten under 'vis fasit'.",
+        "mainTabQuestion": "Vis spørsmål",
+        "mainTabSolution": "Vis fasit",
+        "subTabQuestion": "Spørsmål",
+        "subTabAnswer": "Svar"
     }
 }
