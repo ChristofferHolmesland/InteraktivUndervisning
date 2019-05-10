@@ -3,7 +3,14 @@
 % Legger inn pakker som skal brukes:	
 \usepackage[utf8]{inputenc}
 \usepackage{color}
+
 \usepackage{titlesec}
+\setcounter{secnumdepth}{4}
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
 \usepackage{amsmath}
 \usepackage{float}
 \usepackage[export]{adjustbox}
@@ -11,33 +18,77 @@
 \numberwithin{figure}{section}
 \numberwithin{table}{section}	
 \usepackage{graphicx}
+\usepackage{subcaption}
 \usepackage{verbatim}
+\usepackage{float}
 \graphicspath{{bilder/}}
 \usepackage{verbatim}
 \usepackage{etoolbox}
 \usepackage{tabularx}
 \usepackage[margin=2.54cm]{geometry}
+\usepackage[british]{babel}
+\usepackage[backend=biber, style=ieee, dashed=false]{biblatex}
+\bibliography{referencelist.bib}
+\usepackage{setspace}
+\usepackage{csquotes}
+\usepackage[titletoc]{appendix}
+\usepackage{listings}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Python,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
+% Makro definisjoner
+\newcommand{\code}[1]{\texttt{#1}}
 
 \begin{document}
 
-	% Forside
+	% Front page
 	\include{sections/frontpage/frontpage}
 
-	% Innholdsfortegnelse
-	\include{sections/tableOfContents/tableOfContents}
+	\begin{spacing}{1.25}
+		% Table of contents
+		\include{sections/tableOfContents/tableOfContents}
+	
+		% Introduction
+		\include{sections/introduction/introduction}
+		
+		% Background
+		\include{sections/background/backgroundMain}
 
-	% Innledning
-	\include{sections/introduction/introduction}
+		% Construction
+		\include{sections/construction/constructionMain}
+		
+		% Evaluation
+		\include{sections/evaluation/evaluation}
+		
+		%Conclusion
+		\include{sections/conclusion/conclusion}
+	
+		% References
+		\include{sections/references/references}
 
-	% Teori
-	\include{sections/background/backgroundMain}
-
-	% Hoveddel
-
-	% Referanser
-	\include{sections/references/references}
-
-	% Vedlegg
-	\include{sections/appendix/appendix}
-
+		% List of figures
+		\include{sections/listOfFigures/listOfFigures}
+	
+		% Appendix
+		\include{sections/appendix/appendixMain}
+	\end{spacing}
 \end{document}
