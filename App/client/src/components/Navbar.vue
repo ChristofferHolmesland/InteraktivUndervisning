@@ -65,9 +65,13 @@ export default {
 	},
 	methods: {
 		localeChange(event) {
-			this.$socket.emit("getLocaleRequest", event.target.id);
+			let newLocale = event.target.id;
+			if (newLocale == undefined || newLocale == null || newLocale == "")
+				newLocale = event.target.innerHTML;
+
+			this.$socket.emit("getLocaleRequest", newLocale);
 			if (this.$store.getters.getUser({userRights: true}).userRights > 1) {
-				document.cookie = `localization=${event.target.id}; Max-Age=1576800000;`;
+				document.cookie = `localization=${newLocale}; Max-Age=1576800000;`;
 			}
 		},
 		signInRedirect() {
