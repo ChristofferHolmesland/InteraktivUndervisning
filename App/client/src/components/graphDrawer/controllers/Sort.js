@@ -566,26 +566,30 @@ export default class Sort {
 				let botAbove = link.position.y + link.nodes[0].h < arr.position.y;
 				let botNotInside = botUnder || botAbove;
 
+				let arrNode;
+				let linkNode;
+
 				if (topNotInside && botNotInside) {
-					this.gd.edges.push({
-						n1: arr.nodes[Math.floor(arr.nodes.length / 2)],
-						n2: link.nodes[Math.floor(link.nodes.length / 2)]
-					});
+						arrNode = arr.nodes[Math.floor(arr.nodes.length / 2)];
+						linkNode = link.nodes[Math.floor(link.nodes.length / 2)];
 				} else {
 					// If it is not above/under then it has to be
 					// on one of the sides.
-					let arrNode = arr.nodes[arr.nodes.length - 1];
-					let linkNode = link.nodes[0];
+					arrNode = arr.nodes[arr.nodes.length - 1];
+					linkNode = link.nodes[0];
 					if (arr.position.x > link.position.x) {
 						arrNode = arr.nodes[0];
 						linkNode = link.nodes[link.nodes.length - 1];
 					}
-					
-					this.gd.edges.push({
-						n1: arrNode,
-						n2: linkNode
-					});
 				}
+
+				arrNode.arrowMode = "Sort";
+				linkNode.arrowMode = "Sort";
+
+				this.gd.edges.push({
+					n1: arrNode,
+					n2: linkNode
+				});
 			}
 		}
 	}

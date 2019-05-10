@@ -382,7 +382,53 @@ export default class GraphDrawer {
 				y: center2.y
 			};
 
-			if (drawArrow) {
+			if (drawArrow && n1.arrowMode == "Sort") {
+				let wantedPos1 = { x: 0, y: 0 };
+				let wantedPos2 = { x: 0, y: 0 };
+
+				let n2TopInside = 
+					n2.y > n1.y &&
+					n2.y < n1.y + n1.h;
+				let n2BotInside = 
+					n2.y + n2.h > n1.y &&
+					n2.y + n2.h < n1.y + n1.h;
+
+				let n2Inside = n2TopInside || n2BotInside; 
+
+				if (!n2Inside) {
+					let n2Above = n2.y < n1.y;
+					let n2Below = n2.y > n1.y + n1.h;
+
+					if (n2Above) {
+						wantedPos1.x = center1.x;
+						wantedPos1.y = n1.y;
+						wantedPos2.x = center2.x;
+						wantedPos2.y = n2.y + n2.h;
+					} else if (n2Below) {
+						wantedPos1.x = center1.x;
+						wantedPos1.y = n1.y + n1.h;
+						wantedPos2.x = center2.x;
+						wantedPos2.y = n2.y;
+					}
+				} else {
+					if (n2.x < n1.x) {
+						wantedPos1.x = n1.x;
+						wantedPos1.y = center1.y;
+						wantedPos2.x = n2.x + n2.w;
+						wantedPos2.y = center2.y;
+					} else {
+						wantedPos1.x = n1.x + n1.w;
+						wantedPos1.y = center1.y;
+						wantedPos2.x = n2.x;
+						wantedPos2.y = center2.y;
+					}
+				}
+
+				if (n1.shape == "Rectangle")
+					linePoint1 = wantedPos1;
+				if (n2.shape == "Rectangle")
+					linePoint2 = wantedPos2;
+			} else if (drawArrow) {
 				let wantedPos1 = { x: 0, y: 0 };
 				let wantedPos2 = { x: 0, y: 0 };
 
