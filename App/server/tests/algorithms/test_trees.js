@@ -1070,6 +1070,9 @@ describe('TestBinaryTrees', function () {
 			assert(GeneralTreeFunctions.checkStudentAnswer(resultingTrees[0], solutionTree));
 		});
 		it("Test with a not valid canvasobject",function () {
+			let canvas = { type: 'Complete', nodes: [], edges: [], directed: true };
+			let resulting = GeneralTreeFunctions.createTreeObjectFromCanvasObjectver1(canvas);
+			assert(resulting === undefined)
 		});
 	});
 
