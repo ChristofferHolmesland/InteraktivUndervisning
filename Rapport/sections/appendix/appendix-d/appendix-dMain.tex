@@ -1,0 +1,16 @@
+\section{Python}
+Python is a dynamically-typed object-oriented programming language developed by The Python Software Foundation. Dynamically-typed means that it is not necessary to specify the type of variables, because the type is determined at runtime. The syntax is very similar to JavaScript; however, Python uses indentation instead of curly brackets to separate code.
+\\[11pt]
+Classes are defined using the \code{class} keyword. Functions are defined using the \code{def} keyword. Methods (functions inside classes) are defined as functions inside a class with the first argument begin a reference to the instance of the class. A class constructor can be added by defining a method with the name \code{\_\_init\_\_}. Example of a class:
+\begin{lstlisting}
+# This is a comment
+class Person:
+    def __init__(self, first_name, last_name, age):
+        self.age = age
+        self.setName(first_name, last_name)
+
+    def setName(self, first, last):
+        self.name = first + " " + last
+
+p = Person("C", "H", 88)
+\end{lstlisting}

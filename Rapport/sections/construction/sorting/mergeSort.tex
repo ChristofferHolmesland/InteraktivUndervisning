@@ -1,0 +1,8 @@
+\subsubsection{Merge Sort}
+While performing the sort, every stage of the algorithm is saved in a list of steps. There are three stages which are stored as a step.
+\begin{itemize}
+    \item Initial. The initial step is stored before the sorting starts. It contains a copy of the unsorted array and a reference to the limit.
+    \item Split. The split step is added when an array is split into two arrays. It contains a copy of the array being split, and copies of the new arrays.
+    \item Merge. The merge step is added after two arrays have been merged to a new array containing the sorted version of all the elements. It contains a copy of the two arrays being merged and a copy of the resulting array.
+\end{itemize}
+When implementing the algorithm, performance and memory usage were not considered to be important. The algorithm runs only once per question to generate the steps so that each student's answer can be compared to the right way of performing a merge sort. For this reason, the intermediate arrays are allocated dynamically instead of being reused in later steps. This gives the algorithm worse performance, but its average case performance is still O(n * logn). Memory usage has not been considered because the algorithm has to store more information than normal to store the steps.

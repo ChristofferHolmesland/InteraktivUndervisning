@@ -1,1 +1,39 @@
 \section{Introduction}
+\subsection{Task}
+The task for the bachelor thesis consisted of developing a game-based application that was to be primarily used in the courses DAT110 and DAT200. The application allows students to play games consisting of questions relevant to the topics introduced in the course.
+\\[11pt]
+The application was to take inspiration from Kahoot's interactive game system\cite{Kahoot}, were the questions are displayed on a projector and students can answer the questions using their mobile devices. One key difference between the application and Kahoot's is that the application needs to support a variety of question types. One of the strugles when doing a quiz for computer science subjects is that there aren't any question types available to visually show how algorithms works. The application should give the students the ability to interact with datastructures. This includes drawing trees and graphs, and working with arrays. The former required a basic drawing tool to also be implemented for the application.
+\\[11pt] 
+The results of the game session was to be stored for the instructor. The instructor can then use the data in order to clear up common mistakes, and use it to improve upon future lectures.
+\\[11pt]
+The primary target for the application was mobile devices, however it was decided that the application would be more suited as a web application supporting use of both computer and mobile devices. 
+
+\subsection{Goals}
+The following is a list of the goals, where the main goals were part of the bachelor thesis description. The sub-goals are some of the goals we added to deliver a more complete application.
+\subsubsection{Main Goals}
+\begin{itemize}
+\item Allow students to answer questions about a datastructure using a drawing tool with automated solution checking.
+\item Allow users to participate in the sessions using a mobile phone or a computer.
+\item Allow lecturer to see incorrect answers after the session is over.
+\end{itemize}
+\subsubsection{Sub Goals}
+\begin{itemize}
+\item Allow students to store their data using their Feide user as an identifier.
+\item Include automated solution generator.
+\item Allow students to compare their answer against the solution after the session is over.
+\item Make the application scalable for new courses and question types.
+\item Support language localization.
+\item Support modern browsers.
+\end{itemize}
+
+\subsection{Motivation}
+The motivation for this application is to give students the opportunity to not only learn about algorithms and data structures through watching the instructor manually implement all the structures. Doing exercises will allow the students some time to think about what they learned during the lecture. This also allows the student to test themselves, and see whether or not they've actually learned anything from the lecture. The result after each session is given to the instructor, which in turn can be used for the instructor to amend future lectures. In a sense the application gives both the student and the instructor reliable feedback involving individual and class performance respectively.
+\\[11pt]
+Other game-based learning applications like Kahoot have seen a lot of use in schools and universities, and for good reason since it helps students interact more during the lecture. However, Kahoot has some flaws that were addressed early on during the planning of our project. This application is designed in a way to improve upon or prevent these flaws. For instance, Kahoot has too much of a focus on being a competition rather than self evaluation. This means a lot of students can get discouraged from participating or in general be afraid of making mistakes. Kahoot also encourage the players to answer quickly, this can lead to a lot of students answering the first thing that comes to mind, instead of taking their time to think about each question.
+
+\subsection{Workflow}
+When developing a web app, one crucial step is to make sure that the users will be able to use your application. To make sure that the tools we used where supported, we used caniuse.com\cite{canIUse:Info} with some of the HTML elements to make sure that a high enough percentage of browsers would be able to use this application. This website allows you to search up a feature, and see statistics about which version of a browser supports it. The website also gives information about known issues in the different browser versions, and also the same information about subfeatures. When developing this web application we had a goal to support at least 90\% of installed browsers. This goal was accomplished, and the features that are not supported are for browser versions that are outdated, and where the user should update to the newest version. All our features should work if the latest version of the largest browsers is used, e.g., Google Chrome, Firefox, Edge, Opera.
+\\[11pt]
+With previous experience using git and working with a combination of kanban and scrum, the choice was natural when we decided what version control management system we wanted to use. We started a project on GitHub using git as the version control manager. On GitHub, we split the project into sub-components as far as it was possible to make sure that we knew what had to be done at any moment. In combination with kanban on GitHub, we also wrote down sprints each week were we delegated work between each other. We were not very strict on finishing each sprint, but the task was usually the preferred amount of work to get done for a week. We also set up a long term plan for when larger blocks of the project should be finished.
+\\[11pt]
+When choosing languages for writing the application, we had a few languages to choose from. With previous experience with a full-stack application in JavaScript with Node.js the previous semester this ended up being our choice for the server side language. When choosing the language, we also made sure that a Node.js server would be able to serve all the features required for our application. For the client, we knew that we needed HTML, JS, and CSS, but we wanted to use frameworks to make the development easier. We choose Vue as a framework for making HTML and JS. For CSS we used Bootstrap in combination with standard CSS.
