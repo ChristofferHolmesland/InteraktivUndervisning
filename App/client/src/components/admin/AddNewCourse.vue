@@ -53,7 +53,7 @@
 					&nbsp;
 					<b-row>
 						<b-col cols="12" style="text-align: center;">
-							<b-button @click="addNewCourseCode" class="addSemesterBtn" variant="success">{{getLocale.addCourseCode}}</b-button>
+							<b-button @click="addNewCourseCode" class="addSemesterBtn" variant="success" data-cy="NewCourseCodeBtn">{{getLocale.addCourseCode}}</b-button>
 						</b-col>
 					</b-row>
 				</b-container>
@@ -112,7 +112,7 @@
 			&nbsp;
 			<b-row v-if="showAddNewSemester">
 				<b-col cols="12" style="text-align: center;">
-					<b-button @click="addNewSemester" class="addSemesterBtn" variant="success">{{getLocale.addSemester}}</b-button>
+					<b-button @click="addNewSemester" class="addSemesterBtn" variant="success" data-cy="NewSemesterBtn">{{getLocale.addSemester}}</b-button>
 				</b-col>
 			</b-row>
 		</b-container>
