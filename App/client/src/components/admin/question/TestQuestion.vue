@@ -91,7 +91,7 @@
             <b-row class="mt-3">
                 <b-col>
                     <b-card no-body>
-                        <b-tabs card v-model="mainTabIndex">
+                        <b-tabs @input="reloads" card v-model="mainTabIndex">
                             <b-tab  :title="getLocale.mainTabQuestion"
                                     title-item-class="w-50"
                                     >
@@ -99,7 +99,7 @@
                                     <b-row>
                                         <b-col>
                                             <b-card no-body>
-                                                <b-tabs card>
+                                                <b-tabs @input="reloads" card>
                                                     <b-tab  :title="getLocale.subTabQuestion">
                                                         <b-container class="px-0">
                                                             <b-row>
@@ -188,7 +188,7 @@
                                                         </b-container>
                                                     </b-tab>
                                                     <b-tab  :title="getLocale.subTabAnswer">
-                                                        <b-container>
+                                                        <b-container v-if="!reload">
                                                             <b-row>
                                                                 <b-col>
                                                                     <TextInput :requestAnswer="requestAnswer"
@@ -300,7 +300,8 @@ function initializeState() {
         answerObject: undefined,
 
         result: 0,
-        showResult: false
+        showResult: false,
+        reload: false
 	};
 }
 
@@ -394,6 +395,14 @@ export default {
 					}
 				}
             }
+        },
+        reloads() {
+            this.$nextTick(() => {
+				this.reload = true;
+				this.$nextTick(() => {
+					this.reload = false;
+				});
+			});
         }
     },
     computed: {

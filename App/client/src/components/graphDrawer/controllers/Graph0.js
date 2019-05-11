@@ -220,13 +220,24 @@ export default class Graph0 {
 
 			if (node2 != undefined) {
 				if (node != node2) {
-					this.gd.edges.push({
-						n1: node,
-						n2: node2,
-						v: 0
-					});
+					let alreadyExist = false;
+					for (let i = 0; i < this.gd.edges.length; i++) {
+						let e = this.gd.edges[i];
+						if (e.n1 == node && e.n2 == node2) {
+							alreadyExist = true;
+							break;
+						}
+					}
 
-					this.gd.dirty = true;
+					if (!alreadyExist) {
+						this.gd.edges.push({
+							n1: node,
+							n2: node2,
+							v: 0
+						});
+
+						this.gd.dirty = true;
+					}
 				}
 			}
 
