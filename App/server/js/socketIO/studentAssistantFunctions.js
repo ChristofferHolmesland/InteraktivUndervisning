@@ -308,6 +308,11 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 	socket.on("startSession", function(sessionCode) {
 		let session = currentSession.session;
 
+		if (session.currentUsers === 0) {
+			socket.emit("noUsersInSession");
+			return;
+		}
+
 		session.currentQuestion++;
 
 		let currentUsers = session.currentUsers;
@@ -464,7 +469,7 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 
 	socket.on("addNewQuestion", async function(question) {
 		let valid = validateChecker.checkQuestion(question);
-		if (!valid.passed) socket.emit("confirmQuestionRequirements", valid);
+		socket.emit("confirmQuestionRequirements", valid);
 		if (!valid.passed) return;
 		generalFunctions.createSpecialDescription(question);
 		question = generateSolution(question);
@@ -484,7 +489,9 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 			let filePaths = [];
 	
 			try {
-				mkdirp.sync(path.join(__dirname, filePath));
+				var oldmask = process.umask(0);
+				mkdirp.sync(path.join(__dirname, filePath), '0777');
+				process.umask(oldmask);
 				for (let i = 0; i < files.length; i++) {
 					let type = files[i].type.split("/")[1];
 					filePaths.push(filePath + (i + 1).toString() + "." + type);
@@ -502,7 +509,6 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 				}
 				
 				await dbFunctions.update.question(db, questionIndex, question.text, question.description, question.objects, question.solution, question.solutionType, question.time);
-				socket.emit("confirmQuestionRequirements", valid);
 			} 
 			catch (error) {
 				console.error("Error making dirs!\n\n" + error);
@@ -516,7 +522,7 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 		await dbFunctions.get.questionStatusById(db, question.id).then(async (q) => {
 			if (q.status === 1) return;
 			let valid = validateChecker.checkQuestion(question);
-			if (!valid.passed) socket.emit("confirmQuestionRequirements", valid);
+			socket.emit("confirmQuestionRequirements", valid);
 			if (!valid.passed) return;
 			generalFunctions.createSpecialDescription(question);
 			question = generateSolution(question);
@@ -537,7 +543,10 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 				let filePaths = [];
 		
 				try {
-					mkdirp.sync(path.join(__dirname, filePath));
+					var oldmask = process.umask(0);
+					console.log("mask: ", oldmask);
+					mkdirp.sync(path.join(__dirname, filePath), '0777');
+					process.umask(oldmask);
 					for (let i = 0; i < files.length; i++) {
 						let type = files[i].type.split("/")[1];
 						filePaths.push(filePath + (i + 1).toString() + "." + type);
@@ -561,10 +570,11 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 			}
 	
 			await dbFunctions.update.question(db, question.id, question.text, question.description, question.objects, question.solution, question.solutionType, question.time);
-			socket.emit("confirmQuestionRequirements", valid);
 		}).catch((err) => {
 			console.error(err);
-		})
+		});
+
+		socket.emit("questionChangeComplete");
 	});
 
 	socket.on("getQuestionTypes", function() {
@@ -669,7 +679,9 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 						let filePaths = [];
 				
 						try {
-							mkdirp.sync(path.join(__dirname, filePath));
+							var oldmask = process.umask(0);
+							mkdirp.sync(path.join(__dirname, filePath), '0777');
+							process.umask(oldmask);
 							for (let i = 0; i < files.length; i++) {
 								let type = files[i].type.split("/")[1];
 								filePaths.push(filePath + (i + 1).toString() + "." + type);
