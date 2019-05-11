@@ -23,7 +23,9 @@
 						<b-dropdown-item-button @click="localeChange($event)" :id="localeItem" :key="localeItem" v-for="localeItem in getLocaleList"  :value="localeItem">{{localeItem}}</b-dropdown-item-button>
 					</b-nav-item-dropdown>
 
-					<b-nav-item-dropdown right v-if="getUser.loggedIn" :text="getUser.username" data-cy="loginButton">
+					<b-nav-item-dropdown right v-if="getUser.loggedIn"
+										:text="getUser.userRights === 1 ? getAnonymousName : getUser.username"
+										data-cy="loginButton">
 						<b-dropdown-item v-if="getUser.userRights > 1" @click="userProfileRedirect">
 							{{getLocale.profile}}
 						</b-dropdown-item>
@@ -117,6 +119,9 @@ export default {
 				loggedIn: true
 			});
 			return user;
+		},
+		getAnonymousName: function() {
+			return `${this.getLocale.anonymous} ${this.getLocale.anonymousNames[this.getUser.username]}`;
 		}
 	}
 };
