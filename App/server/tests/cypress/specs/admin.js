@@ -94,7 +94,6 @@ describe("Test admin content",function () {
 			cy.get("#questionTextInput").type(info);
 			cy.get("#questionTimeInput").type("01:30");
 			cy.get("#solutionTypeInput").select("Text");
-			cy.wait(1000);
 			cy.get("#solutionInputText").type(solution);
 			cy.get('#editQuestionModal___BV_modal_footer_ > .btn-primary').click();
 
@@ -204,19 +203,11 @@ describe("Test admin content",function () {
 			//show current question information
 			cy.get(".list-group > :nth-child(1) > div:nth-child(2)").should("be.visible");
 			cy.get(".list-group > div > div:nth-child(2) > .container > .row > div").should("contain", title);
-			/*cy.get('.list-group > :nth-child(1) > div:nth-child(2)')
-				.find(".container")
-				.contains("V")
-				.click();
-			cy.get("[data-cy=showModal]").find(".modal-title").should("have.text", title);
-			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1)").should("have.text", info);
-			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(2)").should("have.text", "Tid: 02:00");*/
 			cy.get(".list-group > :nth-child(1) > div:nth-child(2)")
 				.find(".btn-warning")
 				.click();
 			cy.get("[data-cy=showModal]").find(".modal-title").should("have.text", title);
 			cy.get(".modal-body > :nth-child(1) > div:nth-child(1) > div:nth-child(1) > h4").should("have.text","Grunnleggende Informasjon");
-			//.modal-body > :nth-child(1) > div:nth-child(2) > div > :nth-child(1)
 			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1) > div:nth-child(2) > div > :nth-child(1)").should("have.text","Beskrivelse:");
 			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1) > div:nth-child(2) > div > :nth-child(2)").should("have.text", info);
 			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1) > div:nth-child(2) > div > :nth-child(3)").should("have.text", "Tid:");
@@ -255,8 +246,6 @@ describe("Test admin content",function () {
 				.clear()
 				.type(infoEdited);
 			cy.get("#questionTimeInput").type("00:00");
-			//cy.get(":nth-child(3) > .col-1 > .custom-control").should("have.attr","checked");
-			//cy.get(":nth-child(4) > .col-1 > .custom-control").should("have.attr","checked");
 			cy.get("#multipleChoiceChoices > div > div > div:nth-child(2) > div > div > :nth-child(4) > .col-2 > .btn").click();
 			cy.get("#multipleChoiceChoices > div > div > div:nth-child(2) > div > div > :nth-child(3) > .col-2 > .btn").click();
 			cy.get('#addNewMultipleChoice').click();
@@ -282,7 +271,6 @@ describe("Test admin content",function () {
 				.click();
 			cy.get("[data-cy=showModal]").find(".modal-title").should("have.text", titleEdited);
 			cy.get(".modal-body > :nth-child(1) > div:nth-child(1) > div:nth-child(1) > h4").should("have.text","Grunnleggende Informasjon");
-			//.modal-body > :nth-child(1) > div:nth-child(2) > div > :nth-child(1)
 			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1) > div:nth-child(2) > div > :nth-child(1)").should("have.text","Beskrivelse:");
 			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1) > div:nth-child(2) > div > :nth-child(2)").should("have.text", infoEdited);
 			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1) > div:nth-child(2) > div > :nth-child(3)").should("have.text", "Tid:");
@@ -306,27 +294,12 @@ describe("Test admin content",function () {
 			}
 			cy.wait(1000);
 			cy.get("[data-cy=showModal]").find(".modal-footer > .btn-primary").click();
-			/*cy.get('.list-group > :nth-child(1) > div:nth-child(2)')
-				.find(".container")
-				.contains("V")
-				.click();
-			cy.get("[data-cy=showModal]").find(".modal-title").should("have.text", titleEdited);
-			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1)").should("have.text", infoEdited);
-			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(2)").should("have.text", "Tid: 00:00");
-			for (let j = 1; j <= 3; j++) {
-				if (j === 1) cy.get("[data-cy=showModal]").find(".container > :nth-child(" + j + ")").should("contain", choice1Edited);
-				else if (j === 2) cy.get("[data-cy=showModal]").find(".container > :nth-child(" + j + ")").should("contain", choice2Edited);
-				else if (j === 3) cy.get("[data-cy=showModal]").find(".container > :nth-child(" + j + ")").should("contain", solutionEdited);
-			}
-			cy.wait(1000);
-			cy.get("[data-cy=showModal]").find(".modal-footer > .btn-primary").click();*/
 		});
-		/*
 		it("Create and Edit ShellSort question", function () {
 			let title = "Title ShellSort Test";
 			let info = "Info ShellSort Test";
-			let titleEdited = "Title Edited ShellSort Test";
-			let infoEdited = "Info Edited ShellSort Test";
+			//let titleEdited = "Title Edited ShellSort Test";
+			//let infoEdited = "Info Edited ShellSort Test";
 			let time = "03:00";
 			let arrayValues = "2,88,11,36,66,37,29,15,62,10";
 			let k = '5';
@@ -342,22 +315,29 @@ describe("Test admin content",function () {
 				.should("contain", "Løsnings type")
 				.click();
 			cy.get("#solutionTypeInput").select("Shellsort");
-			cy.get('#sortingSolution__BV_label_').should("has.text", "Starting array (elements seperated by ,)");
-			cy.get('#kValue__BV_label_').should("has.text", "K start value");
+			cy.get('#sortingSolution__BV_label_').should("has.text", "Start liste (elementer sepereres med ,)");
+			cy.get('#kValue__BV_label_').should("has.text", "K start verdi");
 			cy.get('#sortingSolution > :nth-child(2) > #solutionInput').type(arrayValues);
 			cy.get('#kValueInput').type(k);
 			cy.get("#editQuestionModal___BV_modal_footer_ > .btn-primary").click();
 
 			//show current question information
 			cy.get(".list-group > :nth-child(1) > div:nth-child(3)").should("be.visible");
-			cy.get(":nth-child(3) > .container > .row > .col-8").should("contain", title);
+			cy.get(".list-group > div > div:nth-child(3) > .container > .row > div").should("contain", title);
 			cy.get(".list-group > :nth-child(1) > div:nth-child(3)")
-				.find(".container")
-				.contains("V")
+				.find(".btn-warning")
 				.click();
 			cy.get("[data-cy=showModal]").find(".modal-title").should("have.text", title);
-			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1)").should("have.text", info);
-			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(2)").should("have.text", "Tid: " + time);
+			cy.get(".modal-body > :nth-child(1) > div:nth-child(1) > div:nth-child(1) > h4").should("have.text","Grunnleggende Informasjon");
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1) > div:nth-child(2) > div > :nth-child(1)").should("have.text","Beskrivelse:");
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1) > div:nth-child(2) > div > :nth-child(2)").should("have.text", info);
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1) > div:nth-child(2) > div > :nth-child(3)").should("have.text", "Tid:");
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1) > div:nth-child(2) > div > :nth-child(4)").should("have.text", time);
+			cy.get(".modal-body > :nth-child(2) > div > div:nth-child(1) > h4")
+				.should("contain", "Løsning:")
+				.click();
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(2) > div:nth-child(2) > div > :nth-child(1)").should("have.text","Spørsmål type: Shellsortering");
+			cy.get("#ShellsortMainContainer").should("be.visible");
 			cy.wait(1000);
 			cy.get("[data-cy=showModal]").find(".modal-footer > .btn-primary").click();
 
@@ -366,8 +346,8 @@ describe("Test admin content",function () {
 		it("Create and Edit MergeSort question", function () {
 			let title = "Title MergeSort Test";
 			let info = "Info MergeSort Test";
-			let titleEdited = "Title Edited MergeSort Test";
-			let infoEdited = "Info Edited MergeSort Test";
+			//let titleEdited = "Title Edited MergeSort Test";
+			//let infoEdited = "Info Edited MergeSort Test";
 			let time = "03:30";
 			let arrayValues = "12,78,55,28,40,62,81,57,51,25";
 			cy.get("[data-cy=addQuestionButton]").click();
@@ -382,20 +362,27 @@ describe("Test admin content",function () {
 				.should("contain", "Løsnings type")
 				.click();
 			cy.get("#solutionTypeInput").select("MergeSort");
-			cy.get('#sortingSolution__BV_label_').should("have.text", "Starting array (elements seperated by ,)");
+			cy.get('#sortingSolution__BV_label_').should("have.text", "Start liste (elementer sepereres med ,)");
 			cy.get('#sortingSolution > div > #solutionInput').type(arrayValues);
 			cy.get("#editQuestionModal___BV_modal_footer_ > .btn-primary").click();
 
 			//show Mergesort
 			cy.get(".list-group > :nth-child(1) > div:nth-child(4)").should("be.visible");
-			cy.get(":nth-child(4) > .container > .row > .col-8").should("contain", title);
+			cy.get(".list-group > div > div:nth-child(4) > .container > .row > div").should("contain", title);
 			cy.get(".list-group > :nth-child(1) > div:nth-child(4)")
-				.find(".container")
-				.contains("V")
+				.find(".btn-warning")
 				.click();
 			cy.get("[data-cy=showModal]").find(".modal-title").should("have.text", title);
-			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1)").should("have.text", info);
-			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(2)").should("have.text", "Tid: " + time);
+			cy.get(".modal-body > :nth-child(1) > div:nth-child(1) > div:nth-child(1) > h4").should("have.text","Grunnleggende Informasjon");
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1) > div:nth-child(2) > div > :nth-child(1)").should("have.text","Beskrivelse:");
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1) > div:nth-child(2) > div > :nth-child(2)").should("have.text", info);
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1) > div:nth-child(2) > div > :nth-child(3)").should("have.text", "Tid:");
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1) > div:nth-child(2) > div > :nth-child(4)").should("have.text", time);
+			cy.wait(100);
+			cy.get(".modal-body > :nth-child(2) > div > div:nth-child(1) > h4")
+				.should("contain", "Løsning:")
+				.click();
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(2) > div:nth-child(2) > div > :nth-child(1)").should("have.text","Spørsmål type: Flette sortering");
 			cy.get("#canvas").should("visible");
 			cy.wait(1000);
 			cy.get("[data-cy=showModal]").find(".modal-footer > .btn-primary").click();
@@ -404,8 +391,8 @@ describe("Test admin content",function () {
 		it("Create and Edit QuickSort question",function () {
 			let title = "Title QuickSort Test";
 			let info = "Info QuickSort Test";
-			let titleEdited = "Title Edited QuickSort Test";
-			let infoEdited = "Info Edited QuickSort Test";
+			//let titleEdited = "Title Edited QuickSort Test";
+			//let infoEdited = "Info Edited QuickSort Test";
 			let time = "04:00";
 			let arrayValues = "14,98,91,21,14,68,18,25,47,88";
 			cy.get("[data-cy=addQuestionButton]").click();
@@ -420,21 +407,28 @@ describe("Test admin content",function () {
 				.should("contain", "Løsnings type")
 				.click();
 			cy.get("#solutionTypeInput").select("QuickSort");
-			cy.get('#sortingSolution__BV_label_').should("have.text", "Starting array (elements seperated by ,)");
+			cy.get('#sortingSolution__BV_label_').should("have.text", "Start liste (elementer sepereres med ,)");
 			cy.get('#sortingSolution > div > #solutionInput').type(arrayValues);
 			cy.get("#editQuestionModal___BV_modal_footer_ > .btn-primary").click();
 
 			//show Quicksort
 			cy.get('.list-group').scrollTo("bottom");
 			cy.get(".list-group > :nth-child(1) > div:nth-child(5)").should("be.visible");
-			cy.get(":nth-child(5) > .container > .row > .col-8").should("contain", title);
+			cy.get(".list-group > div > div:nth-child(5) > .container > .row > div").should("contain", title);
 			cy.get(".list-group > :nth-child(1) > div:nth-child(5)")
-				.find(".container")
-				.contains("V")
+				.find(".btn-warning")
 				.click();
 			cy.get("[data-cy=showModal]").find(".modal-title").should("have.text", title);
-			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1)").should("have.text", info);
-			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(2)").should("have.text", "Tid: " + time);
+			cy.get(".modal-body > :nth-child(1) > div:nth-child(1) > div:nth-child(1) > h4").should("have.text","Grunnleggende Informasjon");
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1) > div:nth-child(2) > div > :nth-child(1)").should("have.text","Beskrivelse:");
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1) > div:nth-child(2) > div > :nth-child(2)").should("have.text", info);
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1) > div:nth-child(2) > div > :nth-child(3)").should("have.text", "Tid:");
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1) > div:nth-child(2) > div > :nth-child(4)").should("have.text", time);
+			cy.wait(100);
+			cy.get(".modal-body > :nth-child(2) > div > div:nth-child(1) > h4")
+				.should("contain", "Løsning:")
+				.click();
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(2) > div:nth-child(2) > div > :nth-child(1)").should("have.text","Spørsmål type: Quicksort");
 			cy.get("#canvas").should("visible");
 			cy.wait(1000);
 			cy.get("[data-cy=showModal]").find(".modal-footer > .btn-primary").click();
@@ -444,10 +438,11 @@ describe("Test admin content",function () {
 		it("Create and Edit BinaryTree question",function () {
 			let title = "Title BinaryTree Test";
 			let info = "Info BinaryTree Test";
-			let titleEdited = "Title Edited BinaryTree Test";
-			let infoEdited = "Info Edited BinaryTree Test";
+			//let titleEdited = "Title Edited BinaryTree Test";
+			//let infoEdited = "Info Edited BinaryTree Test";
 			let time = "04:30";
 			let treeElements = "45,48,50,6,3";
+			let solution = "Det ville blitt regnet som riktig svar hvis treet som ble gitt følger alle reglene til et Binear Tree og treet besto av følgende noder:";
 			cy.get("[data-cy=addQuestionButton]").click();
 
 			//create Binary Tree
@@ -460,21 +455,29 @@ describe("Test admin content",function () {
 				.should("contain", "Løsnings type")
 				.click();
 			cy.get("#solutionTypeInput").select("BinaryTree");
-			cy.get('#BinaryTree__BV_label_').should("have.text","List the nodes that are going to be used in the binary tree. Elements are divided by , and [] are not required)");
+			cy.get('#BinaryTree__BV_label_').should("have.text","Skriv inn listen av noder som skal bli brukt i binærtreet. Elementene skal sepereres med bruk av ,");
 			cy.get('#nodeElements').type(treeElements);
 			cy.get("#editQuestionModal___BV_modal_footer_ > .btn-primary").click();
 
 			//show BinaryTree
 			cy.get('.list-group').scrollTo("bottom");
 			cy.get(".list-group > :nth-child(1) > div:nth-child(6)").should("be.visible");
-			cy.get(":nth-child(6) > .container > .row > .col-8").should("contain", title);
+			cy.get(".list-group > div > div:nth-child(6) > .container > .row > div").should("contain", title);
 			cy.get(".list-group > :nth-child(1) > div:nth-child(6)")
-				.find(".container")
-				.contains("V")
+				.find(".btn-warning")
 				.click();
 			cy.get("[data-cy=showModal]").find(".modal-title").should("have.text", title);
-			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1)").should("have.text", info);
-			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(2)").should("have.text", "Tid: " + time);
+			cy.get(".modal-body > :nth-child(1) > div:nth-child(1) > div:nth-child(1) > h4").should("have.text","Grunnleggende Informasjon");
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1) > div:nth-child(2) > div > :nth-child(1)").should("have.text","Beskrivelse:");
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1) > div:nth-child(2) > div > :nth-child(2)").should("have.text", info);
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1) > div:nth-child(2) > div > :nth-child(3)").should("have.text", "Tid:");
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1) > div:nth-child(2) > div > :nth-child(4)").should("have.text", time);
+			cy.wait(100);
+			cy.get(".modal-body > :nth-child(2) > div > div:nth-child(1) > h4")
+				.should("contain", "Løsning:")
+				.click();
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(2) > div:nth-child(2) > div > :nth-child(1)").should("have.text","Spørsmål type: Binærtre");
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(2) > div:nth-child(2) > div > :nth-child(2)").should("contain", solution);
 			cy.wait(1000);
 			cy.get("[data-cy=showModal]").find(".modal-footer > .btn-primary").click();
 			//TODO finish edit and show BinaryTree
@@ -482,8 +485,8 @@ describe("Test admin content",function () {
 		it("Create and Edit Binary Search Tree question",function () {
 			let title = "Title BinarySearchTree Test";
 			let info = "Info BinarySearchTree Test";
-			let titleEdited = "Title Edited BinarySearchTree Test";
-			let infoEdited = "Info Edited BinarySearchTree Test";
+			//let titleEdited = "Title Edited BinarySearchTree Test";
+			//let infoEdited = "Info Edited BinarySearchTree Test";
 			let time = "05:00";
 			let treeElements = "35,86,23,73,54";
 			cy.get("[data-cy=addQuestionButton]").click();
@@ -498,11 +501,11 @@ describe("Test admin content",function () {
 				.should("contain", "Løsnings type")
 				.click();
 			cy.get("#solutionTypeInput").select("BinarySearchTree");
-			cy.get('#BinarySearchTrees__BV_label_').should("have.text","Draw the tree, or give an array to build the solution tree");
+			cy.get('#BinarySearchTrees__BV_label_').should("have.text","Tegn treet, eller gi en liste for å generere løsningen");
 			cy.get("#Add").click();
-			cy.get("label[for=\"solutionListElements\"]").should("have.text","Input elements to be added to the tree. The elements are seperated by ,");
+			cy.get("label[for=\"solutionListElements\"]").should("have.text","Skriv inn elementer som skal legges til treet. Elementene skal sepereres med bruk av ,");
 			cy.get("#Remove").click();
-			cy.get("label[for=\"solutionListElements\"]").should("have.text","Input elements to be removed from the tree. The elements are seperated by ,");
+			cy.get("label[for=\"solutionListElements\"]").should("have.text","Skriv inn elementer som skal fjernes fra treet. Elementene skal sepereres med bruk av ,");
 			cy.get("#Add").click();
 			cy.get('#solutionListElements').type(treeElements);
 			cy.get("#canvas").should("visible");
@@ -529,19 +532,27 @@ describe("Test admin content",function () {
 			//show Binary Search Tree
 			cy.get('.list-group').scrollTo("bottom");
 			cy.get(".list-group > :nth-child(1) > div:nth-child(7)").should("be.visible");
-			cy.get(":nth-child(7) > .container > .row > .col-8").should("contain", title);
+			cy.get(".list-group > div > div:nth-child(7) > .container > .row > div").should("contain", title);
 			cy.get(".list-group > :nth-child(1) > div:nth-child(7)")
-				.find(".container")
-				.contains("V")
+				.find(".btn-warning")
 				.click();
 			cy.get("[data-cy=showModal]").find(".modal-title").should("have.text", title);
-			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1)").should("have.text", info);
-			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(2)").should("have.text", "Tid: " + time);
+			cy.get(".modal-body > :nth-child(1) > div:nth-child(1) > div:nth-child(1) > h4").should("have.text","Grunnleggende Informasjon");
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1) > div:nth-child(2) > div > :nth-child(1)").should("have.text","Beskrivelse:");
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1) > div:nth-child(2) > div > :nth-child(2)").should("have.text", info);
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1) > div:nth-child(2) > div > :nth-child(3)").should("have.text", "Tid:");
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(1) > div:nth-child(2) > div > :nth-child(4)").should("have.text", time);
+			cy.wait(100);
+			cy.get(".modal-body > :nth-child(2) > div > div:nth-child(1) > h4")
+				.should("contain", "Løsning:")
+				.click();
+			cy.get("[data-cy=showModal]").find(".modal-body > :nth-child(2) > div:nth-child(2) > div > :nth-child(1)").should("have.text","Spørsmål type: Binært søketre");
 			cy.get("#canvas").should("visible");
 			cy.wait(1000);
 			cy.get("[data-cy=showModal]").find(".modal-footer > .btn-primary").click();
 			//TODO edit and show BinarySearchTree
 		});
+		/*
 		it("Create and Edit AVL Tree question",function () {
 			let title = "Title AVLTree Test";
 			let info = "Info AVLTree Test";
