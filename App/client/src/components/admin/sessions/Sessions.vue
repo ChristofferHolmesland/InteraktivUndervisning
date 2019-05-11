@@ -11,7 +11,7 @@
 							<SelectCourse :changeHandler="courseChanged"/>
 						</b-col>
 						<b-col lg="2" class="pl-0">
-							<b-button block @click="AddNewSession" variant="primary">
+							<b-button block @click="AddNewSession" variant="primary" id="AddNewSession">
 								<i class="fas fa-plus-square"></i>
 							</b-button>
 							<EditSession ref="newSessionModal" :okHandler="addNewSessionHandler" elementId="newSessionModal" elementRef="innerModal" v-if="showNewSession"/>
@@ -29,7 +29,7 @@
 					</b-row>
 					<b-row>
 						<b-col>
-							<b-list-group style="overflow-y: scroll; max-height: 750px;">
+							<b-list-group style="overflow-y: scroll; max-height: 750px;" data-cy="sessionList">
 								<b-list-group-item v-for="session in getSessionsList" :key="session.id"
 								@click="changeSelected(session.id)"
 								style="cursor: pointer;"
