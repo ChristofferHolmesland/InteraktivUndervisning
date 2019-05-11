@@ -30,7 +30,7 @@
 							variant="success"
 							@click="rejoin"
 							>
-					rejoin
+					{{ getLocale.rejoinBtn }}
 				</b-button>
 			</b-col>
 			<b-col cols="3">
@@ -38,7 +38,7 @@
 							variant="danger"
 							@click="clearActiveSession"
 							>
-					clear
+					{{ getLocale.clearBtn }}
 				</b-button>
 			</b-col>
 		</b-row>

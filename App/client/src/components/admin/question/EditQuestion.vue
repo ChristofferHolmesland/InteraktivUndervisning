@@ -143,7 +143,9 @@
 										<b-col>
 											<GraphDrawer
 													controlType="Graph0"
+													subType="Dijkstra"
 													operatingMode="Interactive"
+													displayEdgeValues="true"
 													ref="graphDrawerMedia"
 													v-if="!reload"
 											/>

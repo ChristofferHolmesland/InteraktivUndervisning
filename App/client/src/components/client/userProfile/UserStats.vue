@@ -20,16 +20,18 @@
 						<b-col cols="8"><h6>{{getLocale.didntKnowAnswers}}</h6></b-col>
 						<b-col cols="4"><p>{{totalDidntKnowAnswers}}</p></b-col>
 					</b-row>
-					<b-row v-if="getFilteredSessionList.length !== 0">
+					<b-row>
 						<b-container>
 							<b-form-group	label="Course List:"
-											label-for="courseList">
+											label-for="courseList"
+											v-if="courseList.length > 0">
 								<b-form-select 	id="courseList"
 												:options="getCourses"
 												v-model="courseSelected">
 								</b-form-select>
 							</b-form-group>
-							<b-list-group style="overflow-y: scroll; max-height: 300px">
+							<b-list-group 	style="overflow-y: scroll; max-height: 300px"
+											v-if="getFilteredSessionList.length !== 0">
 								<b-list-group-item 	v-for="item in getFilteredSessionList" 
 													:key="item.id"
 													@click="showSession(item.id)"
@@ -103,6 +105,7 @@ export default {
 	watch: {
 		courseSelected() {
 			let list = [];
+
 			for (let i = 0; i < this.sessionList.length; i++) {
 				if (this.sessionList[i].courseId === this.courseSelected) {
 					list.push(this.sessionList[i]);

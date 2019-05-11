@@ -560,7 +560,8 @@
         "code": "Kode:",
         "usersConnected": "Antall brukere som er koblet til:",
         "waitingtext": "Venter på at brukere skal koble seg til",
-        "start": "Start"
+        "start": "Start",
+        "noUsersConnceted": "Ingen brukere er koblet til! Vent med å starte til noen har koblet til."
     },
     "AdminSessionOver": {
         "header": "Økten er nå over!",
@@ -569,7 +570,9 @@
     "AdminSessionOverview": {
         "startBtn": "Start",
         "noSessionText": "Ingen økter. Legg til ny økt",
-        "errorActiveSessionRunning": "Du kjører en økt!\n Bli med eller slett den."
+        "errorActiveSessionRunning": "Du kjører en økt!\n Bli med eller fjern den.",
+        "rejoinBtn": "Bli med",
+        "clearBtn": "Fjern"
     },
     "GraphDrawer": {
         "editNodePrompt": "Skriv ny verdi:",

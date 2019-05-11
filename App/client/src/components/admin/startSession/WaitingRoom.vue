@@ -16,9 +16,20 @@
 					<h1>{{ getLocale.waitingtext }}{{waitingForPlayersAnimation}}</h1>
 				</b-col>
 			</b-row>
-			<b-row align-h="center">
-				<b-col lg="8">
-					<b-button size="lg" @click="startSession" variant="success">{{ getLocale.start }}</b-button>
+			<b-row align-h="center" class="mt-5">
+				<b-col cols="4">
+					<b-button block size="lg" @click="startSession" variant="success">{{ getLocale.start }}</b-button>
+				</b-col>
+			</b-row>
+			<b-row v-if="showNoUserError" align-h="center" class="mt-3">
+				<b-col cols="4">
+					<b-alert	show
+								variant="danger"
+								dismissible
+								@dismissed="showNoUserError = false"
+								>
+						{{ getLocale.noUsersConnceted }}
+					</b-alert>
 				</b-col>
 			</b-row>
 		</b-container>
@@ -34,7 +45,9 @@ export default {
 			numberOfUsersConnected: 0,
 			interval: undefined,
 			intervalStep: 500,
-			waitingForPlayersAnimation: "."
+			waitingForPlayersAnimation: ".",
+
+			showNoUserError: false
 		};
 	},
 	mounted() {
@@ -49,6 +62,9 @@ export default {
 	sockets: {
 		updateParticipantCount: function(participantsCount) {
 			this.numberOfUsersConnected = participantsCount;
+		},
+		noUsersInSession: function() {
+			this.showNoUserError = true;
 		}
 	},
 	methods: {
