@@ -66,6 +66,19 @@ const insert = {
 						VALUES('${answer}', ${result}, ${sqId}, '${userId}')`;
 		return createPromise(db, statement, "storeAnswer");
 	},
+	storeAnswers: function(db, answerList, sqId) {
+		let statement = "BEGIN TRANSACTION;";
+		for (let i = 0; i < answerList.length; i++) {
+			let answer = answerList[i];
+			answer.answerObject = JSON.stringify(answer.answerObject);
+			answer.answerObject = answer.answerObject.replace("'", "\'\'");
+			statement += `INSERT INTO Answer(object, result, sessionHasQuestionId, userId)
+						Values('${answer.answerObject}', ${answer.result}, ${sqId}, '${answer.userId}');`;
+		}
+		statement += "COMMIT TRANSACTION;";
+		console.log(statement);
+		return createPromise(db, statement, "storeAnswers")
+	},
 	addUserToSession: function(db, userId, sessionId) {
 		let statement = `INSERT INTO UserHasSession(userId,sessionId)
 						VALUES('${userId}', ${sessionId})`;

@@ -355,54 +355,54 @@ module.exports.client = function(socket, db, user, sessions, currentClientSessio
 		
 		question.answerList.push(answer);
 
-		dbFunctions.insert.storeAnswer(db, information.answer, information.result, question.sqId, information.userId).then(() => {
-			let numAnswers = question.answerList.length;
-			let participants = question.connectedUsers;
+		let numAnswers = question.answerList.length;
+		let participants = question.connectedUsers;
 
-			adminSocket.emit("updateNumberOfAnswers", numAnswers, participants);
+		adminSocket.emit("updateNumberOfAnswers", numAnswers, participants);
+
+		if(numAnswers === participants) {
+			console.log(question.answerList[0]);
+			dbFunctions.insert.storeAnswers(db, question.answerList, question.sqId).catch((err) => {
+				console.error(err);
+			});
+			let answerList = [];
+			if (question.answerList) answerList = question.answerList;
+
+			question.resultScreen = true;
 	
-			if(numAnswers === participants) {
-				let answerList = [];
-				if (question.answerList) answerList = question.answerList;
-
-				question.resultScreen = true;
-		
-				let filteredAnswerList = [];
-				let correctAnswer = 0;
-				let incorrectAnswer = 0;
-				let didntKnow = 0;
-				
-				for (let i = 0; i < answerList.length; i++) {
-					let answer = answerList[i];
-					let filteredAnswer = {};
-					if (answer.result === 0) {
-						filteredAnswer.answerObject = answer.answerObject;
-						filteredAnswerList.push(filteredAnswer)
-						incorrectAnswer++;
-					};
-					if (answer.result === -1) didntKnow++; 
-					if (answer.result === 1) correctAnswer++;
-				}
-		
-				let response = {
-					question: {
-						text: question.text,
-						description: question.description,
-						object: question.object,
-						type: question.type
-					},
-					solution: question.solution,
-					answerList: filteredAnswerList,
-					correctAnswer: correctAnswer,
-					incorrectAnswer: incorrectAnswer,
-					didntKnow: didntKnow,
-					users: answerList.length
+			let filteredAnswerList = [];
+			let correctAnswer = 0;
+			let incorrectAnswer = 0;
+			let didntKnow = 0;
+			
+			for (let i = 0; i < answerList.length; i++) {
+				let answer = answerList[i];
+				let filteredAnswer = {};
+				if (answer.result === 0) {
+					filteredAnswer.answerObject = answer.answerObject;
+					filteredAnswerList.push(filteredAnswer)
+					incorrectAnswer++;
 				};
-
-				adminSocket.emit("goToQuestionResultScreen", response);
+				if (answer.result === -1) didntKnow++; 
+				if (answer.result === 1) correctAnswer++;
 			}
-		}).catch((err) => {
-			console.error(err);
-		});
+	
+			let response = {
+				question: {
+					text: question.text,
+					description: question.description,
+					object: question.object,
+					type: question.type
+				},
+				solution: question.solution,
+				answerList: filteredAnswerList,
+				correctAnswer: correctAnswer,
+				incorrectAnswer: incorrectAnswer,
+				didntKnow: didntKnow,
+				users: answerList.length
+			};
+
+			adminSocket.emit("goToQuestionResultScreen", response);
+		}
 	}
 }
