@@ -20,8 +20,6 @@ module.exports.listen = function(server, users, db) {
 
 		// On new connection, checks if user has a cookie with userId and verifies the user
 		let user = await User.getUser(db, users, socket);
-
-		console.log(user);
 		
 		if(user != undefined){
 			if (user.userRights > 0) require("./clientFunctions.js").client(socket, db, user, sessions, currentClientSession);
@@ -159,7 +157,6 @@ module.exports.listen = function(server, users, db) {
 			socket.emit("loginAnonymouslyResponse");
 	
 			user = users.get(socket.id);
-			console.log(user);
 			socket.emit("clientLoginInfoResponse", {
 				"username": user.userName,
 				"loggedIn": true,
