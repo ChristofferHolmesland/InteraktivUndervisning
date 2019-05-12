@@ -96,7 +96,7 @@
 						<b-col cols="10" style="text-align: left;">
 							<label  for="mediaSelector"
 									style="cursor: pointer;">
-								Media
+								{{ getLocale.mediaLabel }}
 							</label>
 						</b-col>
 						<b-col cols="2" style="text-align: right;">

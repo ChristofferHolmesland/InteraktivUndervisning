@@ -10,7 +10,8 @@ describe("Client Tests",function () {
 		cy.url().should("include","/client");
 		cy.get('[data-cy=loginButton]').click();
 		cy.get('[data-cy=loginButton] > a > span').should("contain","Anonym");
-		cy.get('[data-cy=loginButton] > .dropdown-menu > .dropdown-item')
+		cy.get('[data-cy=loginButton] > .dropdown-menu')
+			.find(".dropdown-item")
 			.should("be.visible")
 			.click();
 		cy.url().should("equal","http://localhost:8082/");
@@ -38,7 +39,7 @@ describe("Client Tests",function () {
 		cy.get("h1").should("have.text","Homepage");
 		cy.get('[data-cy=loginButton] > a > span').should("contain","Anonymous");
 		cy.get('[data-cy=loginButton] > a > span').click();
-		cy.get('[data-cy=loginButton] > .dropdown-menu > .dropdown-item').should("be.visible").click();
+		cy.get('[data-cy=loginButton] > .dropdown-menu').find(".dropdown-item").should("be.visible").click();
 		cy.get(':nth-child(2) > .nav-link').should("have.text","Sign in");
 		cy.get('[data-cy=Language]')
 			.find("a")

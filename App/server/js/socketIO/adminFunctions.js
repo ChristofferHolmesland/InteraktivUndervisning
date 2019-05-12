@@ -248,7 +248,13 @@ module.exports.admin = function(socket, db, user, users) {
 	});
 
 	socket.on("applicationsByCourseIdRequest", function(courseId) {
-		if (courseId === undefined) return;
+		if (
+			courseId === undefined ||
+			courseId === null ||
+			typeof courseId === "string" ||
+			courseId.length === 0
+		) return;
+
 		dbFunctions.get.userRightInCourseById(db, {
 			courseId: courseId,
 			feideId: user.feide.idNumber
@@ -265,6 +271,17 @@ module.exports.admin = function(socket, db, user, users) {
 	});
 	
 	socket.on("removeApplicant", function(applicationId, courseId) {
+		if (
+			courseId === undefined ||
+			courseId === null ||
+			typeof courseId === "string" ||
+			courseId.length === 0 ||
+			applicationId === undefined ||
+			applicationId === null ||
+			typeof applicationId === "number" ||
+			applicationId >= 0
+		) return;
+
 		dbFunctions.get.userRightInCourseById(db, {
 			courseId: courseId,
 			feideId: user.feide.idNumber
@@ -281,6 +298,17 @@ module.exports.admin = function(socket, db, user, users) {
 	});
 	
 	socket.on("approveApplicant", function(applicationId, courseId) {
+		if (
+			courseId === undefined ||
+			courseId === null ||
+			typeof courseId === "string" ||
+			courseId.length === 0 ||
+			applicationId === undefined ||
+			applicationId === null ||
+			typeof applicationId === "number" ||
+			applicationId >= 0
+		) return;
+
 		dbFunctions.get.userRightInCourseById(db, {
 			courseId: courseId,
 			feideId: user.feide.idNumber
