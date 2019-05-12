@@ -77,7 +77,6 @@ const insert = {
 							Values('${answer.answerObject}', ${answer.result}, ${sqId}, '${answer.userId}');`;
 			}
 			statement += "COMMIT TRANSACTION;";
-			console.log(statement);
 	
 			db.exec(statement, (err) => {
 				if (err) reject(new Error(`Error in insert function: ${"storeAnswers"} \n\n ${err}`)	);

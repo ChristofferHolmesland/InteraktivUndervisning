@@ -459,7 +459,6 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 
 	socket.on("questionInfoByIdRequest", async function(questionId) {
 		await dbFunctions.get.questionsByQuestionId(db, [{id: questionId}]).then((rows) => {
-			if (rows[0].status === 1) return;
 			socket.emit("questionInfoByIdResponse", rows[0]);
 		}).catch((err) => {
 			console.error(err);
@@ -544,7 +543,6 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 		
 				try {
 					var oldmask = process.umask(0);
-					console.log("mask: ", oldmask);
 					mkdirp.sync(path.join(__dirname, filePath), '0777');
 					process.umask(oldmask);
 					for (let i = 0; i < files.length; i++) {
