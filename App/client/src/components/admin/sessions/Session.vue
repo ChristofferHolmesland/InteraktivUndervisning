@@ -2,7 +2,7 @@
 	<b-container fluid>
 		<b-row class="border-bottom mb-3">
 			<b-col cols="4">
-				<p>{{getLocale.status}} {{getLocale.inactive}} | {{getLocale.active}} | {{getLocale.finished}}</p>
+				<p>{{getLocale.status}} <span :class="getSession.status === 0 ? 'underline' : null">{{getLocale.inactive}}</span> | <span :class="getSession.status === 1 ? 'underline' : null">{{getLocale.active}}</span> | <span :class="getSession.status === 2 ? 'underline' : null">{{getLocale.finished}}</span></p>
 			</b-col>
 			<b-col cols="8">
 				<b-container class="px-0">
@@ -20,7 +20,7 @@
 				</b-container>
 			</b-col>
 		</b-row>
-		<b-row>
+		<b-row v-if="getQuestionListSize">
 			<b-col lg="4">
 				<b-list-group style="overflow-y: scroll; min-height: 400px; max-height: 500px;">
 					<b-list-group-item  v-for="(question, index) in getSession.questions" 
@@ -42,6 +42,7 @@
 				<DisplayQuestion
 								:selectedAnswer="selectedAnswer"
 								:resultInfo="getSession.questions[selectedQuestion]"
+								:admin="true"
 								ref="displayQuestion"
 								/>
 			</b-col>
@@ -86,19 +87,19 @@ export default {
 		};
 	},
 	computed: {
-		getSession() {
+		getSession: function() {
 			if (this.session === undefined)
 				return {
 					questions: []
 				};
 			return this.session;
 		},
-		getLocale() {
+		getLocale: function() {
 			let locale = this.$store.getters.getLocale("Session");
 			if (locale) return locale;
 			else return {};
 		},
-		getIncorrectAnswers() {
+		getIncorrectAnswers: function() {
 			if (this.session == undefined) return [];
 
 			this.incorrectAnswers = [];
@@ -109,11 +110,11 @@ export default {
 
 			return this.incorrectAnswers;
 		},
-		getAnswer() {
+		getAnswer: function() {
 			if (this.incorrectAnswers.length === 0) return "";
 			return this.incorrectAnswers[this.selectedAnswer].answer;
 		},
-		getAnswerListSize() {
+		getAnswerListSize: function() {
 			if (!this.getSession) 
 				return false;
 			if (!this.getSession.questions) 
@@ -126,14 +127,20 @@ export default {
 				return true;
 			return false;
 		},
-		getQuestionslength() {
+		getQuestionListSize: function(){
+			let questionList = this.getSession.questions;
+			if (questionList === undefined || questionList.length < 1) return false;
+			return true;
+		},
+		getQuestionslength: function() {
 			if (!this.session.questions) return 0;
 			return this.session.questions.length;
 		}
 	},
 	methods: {
-		changeAnswer(event) {
+		changeAnswer: function(event) {
 			this.selectedAnswer = Number(event.target.id);
+			if (this.$refs.displayQuestion._data.tabIndex !== 2) return;
 
 			// This is used to change the content of the graphdrawer.
 			let displayQuestion = this.$refs.displayQuestion;
@@ -143,7 +150,7 @@ export default {
 				});
 			}
 		},
-		changeQuestion(event) {
+		changeQuestion: function(event) {
 			this.selectedQuestion = Number(event.target.id);
 		}
 	},
@@ -167,6 +174,14 @@ export default {
 			}
 		},
 	},
+	sockets: {
+		markAnswerAsCorrectResponse: function(answerId) {
+			this.$emit("MarkAnswerAsCorrectResponse", {
+				answerId: answerId,
+				selectedQuestion: this.selectedQuestion
+			})
+		}
+	},
 	components: {
 		DisplayQuestion
 	}
@@ -176,5 +191,8 @@ export default {
 <style scoped>
 .selected {
 	background-color: darkgray;
+}
+.underline {
+	text-decoration: underline;
 }
 </style>

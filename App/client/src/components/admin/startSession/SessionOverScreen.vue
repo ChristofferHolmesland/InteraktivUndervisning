@@ -8,7 +8,7 @@
 			</b-row>
 			<b-row class="mt-3">
 				<b-col class="text-center">
-					<b-button @click="closeSession">{{ getLocale.goBackBtn }}</b-button>
+					<b-button @click="closeSession" variant="primary">{{ getLocale.goBackBtn }}</b-button>
 				</b-col>
 			</b-row>
 		</b-container>

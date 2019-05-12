@@ -110,6 +110,11 @@ export default class Python {
 		}
 	}
 
+	onCanvasResize() {
+		if (this.gd.operatingMode == "Interactive")
+			this.drawStatic();	
+	}
+
 	mouseDownHandler(e) {
 		if (this.gd.operatingMode == "Presentation") return false;
 

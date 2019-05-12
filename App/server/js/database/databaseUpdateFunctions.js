@@ -57,6 +57,26 @@ const update = {
 							WHERE U.feideId = ${feideId}
 						);`;
 		return createPromise(db, statement, "answerUserToAnonymous")
+	},
+	markAnswerAsCorrect: function(db, answerId) {
+		let statement = `UPDATE Answer
+						SET result = 1
+						WHERE id = ${answerId}`;
+		return createPromise(db, statement, "MarkAnswerAsCorrect");
+	},
+	sessionStatus: function(db, sessionId, status) {
+		let statement = `UPDATE SESSION
+						SET status = ${status}
+						WHERE id = ${sessionId};
+						`;
+		return createPromise(db, statement, "sessionStatus");
+	},
+	sessionText: function(db, data) {
+		let statement = `UPDATE Session
+						SET name = '${data.text}'
+						WHERE id = ${data.sessionId};
+						`;
+		return createPromise(db, statement, "sessionText");
 	}
 };
 

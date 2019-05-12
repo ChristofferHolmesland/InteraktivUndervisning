@@ -231,10 +231,16 @@ function removeNodeFromBSTTree(node,tree,index) {
 				newTreeList.push(newSubTree);
 			}
 		} else {	//no children
-			if (parent.children[0] === newNode) parent.children[0] = undefined;
-			else parent.children[1] = undefined;
-			newTree.nodes.splice(index, 1);
-			newTreeList.push(newTree);
+			if (newTree.nodes.length === 1) {
+				newTree.nodes.splice(index, 1);
+				newTree.root = undefined;
+				newTreeList.push(newTree);
+			}else {
+				if (parent.children[0] === newNode) parent.children[0] = undefined;
+				else parent.children[1] = undefined;
+				newTree.nodes.splice(index, 1);
+				newTreeList.push(newTree);
+			}
 		}
 	}
 	return newTreeList

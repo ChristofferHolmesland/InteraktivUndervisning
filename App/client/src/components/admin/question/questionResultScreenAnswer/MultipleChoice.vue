@@ -6,7 +6,7 @@
                 :id="index"
                 cols="12" lg="6"
                 class="choice">
-            <div :class="getBackgroundColorAnswer(index)">
+            <div :class="getBackgroundColorAnswer(index) ? 'selectedContainer': ''">
                 <h3>{{ choice }}</h3>
             </div>
         </b-col>
@@ -24,8 +24,8 @@ export default {
     methods: {
 		getBackgroundColorAnswer(id) {
             let returnvalue = this.answers.indexOf(id) > -1
-                ? "selected"
-                : "";
+                ? true
+                : false;
 			return returnvalue
 		}
     },
@@ -43,8 +43,14 @@ export default {
 	padding: 1em;
 	text-align: center;
 }
-.selected {
+.selectedContainer {
+    position: relative;
     background-color: #1F85DE; 
     border: 3px solid black;
+}
+.selected {
+    position: absolute;
+    top: 10px;
+    left: 10px;
 }
 </style>

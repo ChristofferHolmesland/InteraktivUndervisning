@@ -9,7 +9,7 @@
 				<b-navbar-nav class="ml-auto" v-if="getUser.loggedIn" data-cy="adminOptions">
 					<b-nav-item center @click="clientRedirect">{{getLocale.dashboard}}</b-nav-item>
 
-					<b-nav-item center @click="adminRedirect" v-if="getUser.userRights == 4 && getUser.loggedIn">{{getLocale.admin}}</b-nav-item>
+					<b-nav-item center @click="adminRedirect" v-if="getUser.userRights >= 3 && getUser.loggedIn">{{getLocale.admin}}</b-nav-item>
 
 					<b-nav-item center @click="questionsRedirect" v-if="getUser.userRights >= 3 && getUser.loggedIn">{{getLocale.questions}}</b-nav-item>
 
@@ -23,7 +23,9 @@
 						<b-dropdown-item-button @click="localeChange($event)" :id="localeItem" :key="localeItem" v-for="localeItem in getLocaleList"  :value="localeItem">{{localeItem}}</b-dropdown-item-button>
 					</b-nav-item-dropdown>
 
-					<b-nav-item-dropdown right v-if="getUser.loggedIn" :text="getUser.username" data-cy="loginButton">
+					<b-nav-item-dropdown right v-if="getUser.loggedIn"
+										:text="getUser.userRights === 1 ? getAnonymousName : getUser.username"
+										data-cy="loginButton">
 						<b-dropdown-item v-if="getUser.userRights > 1" @click="userProfileRedirect">
 							{{getLocale.profile}}
 						</b-dropdown-item>
@@ -65,7 +67,14 @@ export default {
 	},
 	methods: {
 		localeChange(event) {
-			this.$socket.emit("getLocaleRequest", event.target.id);
+			let newLocale = event.target.id;
+			if (newLocale == undefined || newLocale == null || newLocale == "")
+				newLocale = event.target.innerHTML;
+
+			this.$socket.emit("getLocaleRequest", newLocale);
+			if (this.$store.getters.getUser({userRights: true}).userRights > 1) {
+				document.cookie = `localization=${newLocale}; Max-Age=1576800000;`;
+			}
 		},
 		signInRedirect() {
 			this.$router.push("/login");
@@ -110,6 +119,9 @@ export default {
 				loggedIn: true
 			});
 			return user;
+		},
+		getAnonymousName: function() {
+			return `${this.getLocale.anonymous} ${this.getLocale.anonymousNames[this.getUser.username]}`;
 		}
 	}
 };

@@ -1,6 +1,6 @@
 <template>
 	<b-container id="mainWrapper">
-		<b-row>
+		<b-row class="mb-3">
 			<b-col cols="4">
 				<b-row>
 					<b-col>
@@ -11,11 +11,11 @@
 						<p>{{ getLocale.wrong }} {{ resultInfo.incorrectAnswer }}</p>
 					</b-col>
 				</b-row>
-				<b-row>
-					<b-col>
+				<b-row align-h="around">
+					<b-col cols="6">
 						<b-button @click="endSession" block variant="danger">{{ getLocale.endSessionBtn }}</b-button>
 					</b-col>
-					<b-col >
+					<b-col cols="6">
 						<b-button @click="nextQuestion" block variant="primary">{{ getLocale.nextBtn }}</b-button>
 					</b-col>
 				</b-row>

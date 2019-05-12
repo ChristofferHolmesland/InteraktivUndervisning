@@ -3,8 +3,8 @@
 	<b-row>
 		<b-col cols="12" lg="8" class="mb-3">
 			<b-row class="mb-3">
-				<b-col>
-					<b-button @click="returnToClientDashboard" variant="primary">Go back</b-button>
+				<b-col cols="4">
+					<b-button block @click="returnToClientDashboard" variant="primary">{{ getLocale.backBtn }}</b-button>
 				</b-col>
 				<b-col>
                     <b-form-select 	id="solutionTypeInput"
@@ -12,7 +12,6 @@
                                     v-model="questionType"
 								  	@change="changeSelect"
 					>
-
                     </b-form-select>
 				</b-col>
 			</b-row>
@@ -33,9 +32,7 @@
 									@click="selectChoice(index)"
 									cols="12" lg="5">
 								<div class="selected">
-									<div v-if="choice.selected">
-										<p>X</p>
-									</div>
+                					<i :class="'far' + (choice.selected ? ' fa-check-square' : ' fa-square')"></i>
 								</div>
 								{{ choice.text }}
 							</b-col>
@@ -72,10 +69,10 @@
 						<b-container>
 							<b-row>
 								<b-col cols="6" style="text-align: center;">
-									<b-btn variant="primary" @click="shellsortAddNewLine">Add new row</b-btn>
+									<b-btn variant="primary" @click="shellsortAddNewLine">{{ getLocale.newRowBtn }}</b-btn>
 								</b-col>
 								<b-col cols="6" style="text-align: center;">
-									<b-btn variant="danger" @click="shellsortRemoveLastLine">Remove last row</b-btn>
+									<b-btn variant="danger" @click="shellsortRemoveLastLine">{{ getLocale.removeRowBtn }}</b-btn>
 								</b-col>
 							</b-row>
 						</b-container>
@@ -138,12 +135,11 @@
 			<b-row v-if="getShowSettings" id="SandBoxSettings">
 				<b-col>
 					<b-row @click="changeShowSettings" class="cursor">
-						<b-col>
-							<h3>Settings</h3>
+						<b-col cols="8">
+							<h3>{{ getLocale.settingsTitle }}</h3>
 						</b-col>
-						<b-col>
-							<p v-if="showSettings">^</p>
-							<p v-else>V</p>
+						<b-col cols="4" style="text-align: right;">
+                            <p><i :class="showSettings ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i></p>
 						</b-col>
 					</b-row>
 					<div v-show="showSettings">
@@ -186,10 +182,10 @@
 						<b-container class="jumbotron" v-if="questionType === 'Python'">
 							<b-row>
 								<b-col>
-										<b-button variant="primary" @click="parsePythonCode">Parse</b-button>
-										<b-form-textarea 	
+										<b-button variant="primary" @click="parsePythonCode">{{ getSettingObject.buttonLabel }}</b-button>
+										<b-form-textarea
 											id="pythonCodeInput"
-											placeholder="Write Python code here..."
+											:placeholder="getSettingObject.textareaPlaceholder"
 											ref="codeInput"
 											v-model="pythonCode"
 											@keydown.native.tab="keyDownInTextarea">
@@ -203,12 +199,11 @@
 			<b-row>
 				<b-col>
 					<b-row @click="changeShowGuide" class="cursor" id="SandBoxGuide">
-						<b-col>
-							<h3>Guide</h3>
+						<b-col cols="8">
+							<h3>{{ getLocale.guideTitle }}</h3>
 						</b-col>
-						<b-col>
-							<p v-if="showGuide">^</p>
-							<p v-else>V</p>
+						<b-col cols="4" style="text-align: right;">
+                            <p><i :class="showGuide ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i></p>
 						</b-col>
 					</b-row>
 					<div v-show="showGuide" id="GuideInfo">
@@ -480,6 +475,9 @@ export default {
 	},
 	watch: {
 		"questionType": function () {
+			if (this.$refs.graphdrawer !== undefined)
+				this.$refs.graphdrawer.destroyDrawer();
+
 			this.$nextTick(function () {
 				if (this.$refs.graphdrawer !== undefined) {
 					this.$refs.graphdrawer.createDrawer();
@@ -503,6 +501,7 @@ export default {
 	cursor: pointer;
 }
 .choice {
+	position: relative;
 	margin: 1em auto 1em auto;
 	min-height: 10em;
 	background-color: #337ab7;
@@ -512,24 +511,22 @@ export default {
 	text-align: center;
 }
 .selected {
-	border: 2px solid;
-	height: 1em;
-	width: 1em;
+	position: absolute;
+	top: 10%;
+	left: 10%;
 }
 .shellsortInput {
-	width: 60px;
-	text-align: center;
-}
-.shellsortCol {
-	width: 130px;
+	width: 80px;
 	text-align: center;
 }
 .shellsortColKValue {
-	width: 140px;
+	min-width: 100px;
+	max-width: 100px;
 	text-align: center;
 }
 .shellsortColArrayElement {
-	width: 130px;
+	min-width: 90px;
+	max-width: 90px;
 	text-align: center;
 }
 .shellsortTableRow {

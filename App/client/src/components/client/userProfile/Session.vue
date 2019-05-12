@@ -52,8 +52,7 @@
                             <h4 style="text-align: center;">{{getLocale.sessionStats}}</h4>
                         </b-col>
                         <b-col cols="2" style="text-align: right;">
-                            <p v-if="showSessionStat">^</p>
-                            <p v-else>V</p>
+                            <p><i :class="showSessionStat ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i></p>
                         </b-col>
                     </b-row>
                     <b-row v-show="showSessionStat">
@@ -89,8 +88,7 @@
                             <h4 style="text-align: center;">{{getLocale.questionStats}}</h4>
                         </b-col>
                         <b-col cols="2" style="text-align: right;">
-                            <p v-if="showQuestionStat">^</p>
-                            <p v-else>V</p>
+                            <p><i :class="showQuestionStat ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i></p>
                         </b-col>
                     </b-row>
                     <b-row v-show="showQuestionStat">

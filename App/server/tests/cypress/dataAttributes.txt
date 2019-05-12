@@ -1,0 +1,31 @@
+Elements containing data-attributes:
+
+Navbar.vue:
+data-cy="adminOptions" for easy access to all the options leading to the admin pages.
+data-cy="Language" to make it easier for changing locale
+data-cy="loginButton" on login button to making accessing the login page easier.
+
+JoinSession.vue:
+data-cy="joinSession" on the input form for making it easier to access the join session input field.
+
+AddNewCourse.vue:
+data-cy="addCourseCodeField" on a .col in the modal. to make it easier accessing the rest of the content in the modal.
+data-cy="NewCourseCodeBtn" placed to differentiate between the session and the course code button when making a new course.
+data-cy="addSemesterField" placed so there was easier access to the semester label, which made it easier opening the rest of the modal.
+data-cy="NewSemesterBtn" placed to differentiate between the session and the course code button when making a new course.
+
+Dashboard.vue:
+data-cy="addCourseButton" placed so there was easy access to the add new course button.
+
+Sessions.vue:
+data-cy="sessionList" i Sessions.vue lag  placed so there was easier access to the list with all the available sessions.
+
+EditQuestion.vue:
+data-cy="basicInformation" on EditQuestion.vue for easy access to BasicInformation label.
+data-cy="solutionType" on EditQuestion.vue for easy access to Solution Type label
+
+Questions.vue:
+data-cy="addQuestionButton" on Questions.vue easy access to create new question button.
+
+ShowQuestion.vue:
+data-cy="showModal" on the b-modal, so there was a decent attribute as base for accessing the rest of the html objects in the modal.

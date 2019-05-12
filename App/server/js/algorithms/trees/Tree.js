@@ -6,7 +6,8 @@ class Tree {
 		if (nodes !== undefined) {
 			this.nodes = nodes;
 		}else {
-			this.nodes = [rootNode];
+			if (rootNode !== undefined) this.nodes = [rootNode];
+			else this.nodes = [];
 		}
 	}
 
@@ -106,8 +107,10 @@ class Tree {
 	//make all parent references to values to avoid circular references in order to for the tree object to be JSON.stringify()-ed
 	makeTreeReadyForExport() {
 		let rootNode = this.root;
-		if(rootNode.children[0] !== undefined)	this.makeSelectedNodeReadyForExport(rootNode.children[0]);
-		if(rootNode.children[1] !== undefined) 	this.makeSelectedNodeReadyForExport(rootNode.children[1]);
+		if (rootNode !== undefined) {
+			if(rootNode.children[0] !== undefined)	this.makeSelectedNodeReadyForExport(rootNode.children[0]);
+			if(rootNode.children[1] !== undefined) 	this.makeSelectedNodeReadyForExport(rootNode.children[1]);
+		}
 	}
 	//recursive function used to change the parent references to the parents value,
 	makeSelectedNodeReadyForExport(currentNode)  {

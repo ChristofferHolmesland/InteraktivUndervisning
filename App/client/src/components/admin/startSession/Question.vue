@@ -3,9 +3,20 @@
 		<b-row>
 			<b-col>
 				<h1>{{ questionInfo.text }}</h1>
-				<p class="displayInline" v-if="timeLeft !== undefined">Time Left{{ getTimeUpdate }}</p>
-				<p class="displayInline">{{ getNumberOfAnswers }}</p>
-				<b-button @click="btnNextClick">Next</b-button>
+			</b-col>
+		</b-row>
+		<b-row class="text-center" align-h="around">
+			<b-col cols="2" v-if="timeLeft > 0">
+				<b v-if="timeLeft !== undefined" style="line-height: 100%">{{ getLocale.timeLeft }} {{ getTimeUpdate }}</b>
+			</b-col>
+			<b-col cols="2">
+				<b>{{ getLocale.sessionCode }} {{ sessionId }}</b>
+			</b-col>
+			<b-col cols="2">
+				<b>{{ getNumberOfAnswers }}</b>
+			</b-col>
+			<b-col cols="2">
+				<b-button @click="btnNextClick" variant="primary">{{ getLocale.nextquestionBtn }}</b-button>
 			</b-col>
 		</b-row>
 		<b-row>
@@ -15,53 +26,93 @@
 		</b-row>
 		<b-row>
 			<b-col>
-				<p>{{ questionInfo.description }}</p>
+				<p v-for="(line, index) in getDescription" :key="index">{{ line }}</p>
 			</b-col>
 		</b-row>
-		<b-row>
-			<b-col>
-				<div class="displayInline" v-for="(info,index) in getExtraDesc" :key="index">
-					<pre v-if="info.code">{{info.value}}</pre>
-					<p class="displayInline" v-else>{{info.value}}</p>
-					<br v-if="info.linebreak"/>
-				</div>
-			</b-col>
-		</b-row>
-		<b-row v-if="getImagesLength > 0">
-			<b-col cols="12">
-				<b-row>
-					<b-col>   
-						<img    :src="getImgSrc" width="500" height="500"
-								style="border: 3px solid black;"
-								/>
-					</b-col>
-				</b-row>
-				<b-row style="text-align: center;" v-if="getImagesLength > 1">
-					<b-col cols="4">
-						<b-button variant="primary" @click="changeSelectedImage(-1)">previous</b-button>
-					</b-col>
-					<b-col cols="4">
-						{{selectedImageIndex + 1}} / {{getImagesLength}}
-					</b-col>
-					<b-col cols="4">                                            
-						<b-button variant="primary" @click="changeSelectedImage(1)">next</b-button>
-					</b-col>
-				</b-row>
-			</b-col>
-		</b-row>
+		<b-container class="px-0" v-if="showMedia">
+			<b-row>
+				<b-col>
+					<b-card no-body>
+						<b-tabs card @input="setMediaTab($event)">
+							<b-tab :title="getLocale.tabExtraInfo" :disabled="getExtraDesc.length > 0 ? false : true">
+								<div class="displayInline" v-for="(info,index) in getExtraDesc" :key="index">
+									<pre v-if="info.code">{{info.value}}</pre>
+									<p class="displayInline" v-else>{{info.value}}</p>
+									<br v-if="info.linebreak"/>
+								</div>
+							</b-tab>
+							<b-tab :title="getLocale.tabImage" :disabled="getImagesLength > 0 ? false : true">
+								<b-container v-if="mediaTab === 1">
+									<b-row>
+										<b-col cols="12">
+											<b-row>
+												<b-col class="text-center">
+													<img    :src="getImgSrc"
+															style="border: 3px solid black; max-width: 100%;"
+													/>
+												</b-col>
+											</b-row>
+											<b-row style="text-align: center;" v-if="getImagesLength > 1">
+												<b-col cols="4">
+													<b-button variant="primary" @click="changeSelectedImage(-1)">{{ getLocale.previousBtn }}</b-button>
+												</b-col>
+												<b-col cols="4">
+													{{selectedImageIndex + 1}} / {{getImagesLength}}
+												</b-col>
+												<b-col cols="4">
+													<b-button variant="primary" @click="changeSelectedImage(1)">{{ getLocale.nextBtn }}</b-button>
+												</b-col>
+											</b-row>
+										</b-col>
+									</b-row>
+								</b-container>
+							</b-tab>
+							<b-tab :title="getLocale.tabTable" :disabled="getTablesLength > 0 ? false : true">
+								<b-container v-if="mediaTab === 2">
+									<b-row>
+										<b-col>
+											<b-container class="viewTableContainer">
+												<b-row v-for="(row, rowIndex) in getTableRow" :key="rowIndex" class="editTableRow">
+													<div v-for="(column, columnIndex) in getTableColumn" :key="columnIndex" class="editTableColumn">
+														<b-form-input :value="getTable[rowIndex][columnIndex]" maxlength="6" disabled></b-form-input>
+													</div>
+												</b-row>
+											</b-container>
+										</b-col>
+									</b-row>
+									<b-row style="text-align: center;" v-if="getTablesLength > 1">
+										<b-col cols="4">
+											<b-button variant="primary" @click="changeSelectedTable(-1)">{{ getLocale.previousBtn }}</b-button>
+										</b-col>
+										<b-col cols="4">
+											{{selectedTableIndex + 1}} / {{getTablesLength}}
+										</b-col>
+										<b-col cols="4">
+											<b-button variant="primary" @click="changeSelectedTable(1)">{{ getLocale.nextBtn }}</b-button>
+										</b-col>
+									</b-row>
+								</b-container>
+							</b-tab>
+						</b-tabs>
+					</b-card>
+				</b-col>
+			</b-row>
+		</b-container>
 	</b-container>
 </template>
 <script>
 export default {
 	name: "Question",
-	props: ["questionInfo"],
+	props: ["questionInfo", "sessionId"],
 	data() {
 		return {
 			interval: undefined,
 			timeLeft: undefined,
 			answered: 0,
 			participants: 0,
-			selectedImageIndex: 0
+			selectedImageIndex: 0,
+			selectedTableIndex: 0,
+			mediaTab: 0
 		};
 	},
 	created() {
@@ -81,6 +132,9 @@ export default {
 		if (this.interval !== undefined) clearInterval(this.interval);
 	},
 	computed: {
+		getDescription: function() {
+			return this.questionInfo.description.split("\n");
+		},
 		getLocale() {
 			let locale = this.$store.getters.getLocale("startSession");
 			if (locale) return locale;
@@ -135,6 +189,28 @@ export default {
 			}
 			return order;
 		},
+		getTableRow: function() {
+			return this.questionInfo.object.tables[this.selectedTableIndex].length;
+		},
+		getTableColumn: function() {
+			return this.questionInfo.object.tables[this.selectedTableIndex][0].length;
+		},
+		getTable: function() {
+			return this.questionInfo.object.tables[this.selectedTableIndex];
+		},
+		getTablesLength: function() {
+			return this.questionInfo.object.tables.length;
+		},
+		showMedia: function() {
+			if (
+				this.getImagesLength > 0 ||
+				this.getTablesLength > 0 ||
+				this.getExtraDesc.length > 0
+			){
+				return true;
+			}
+			return false;
+		}
 	},
 	sockets: {
 		updateNumberOfAnswers(data) {
@@ -153,17 +229,53 @@ export default {
                 ) {
                     this.selectedImageIndex += step;
                 }
+		},
+		changeSelectedTable: function(step) {
+			if (
+				this.selectedTableIndex + step >= 0 &&
+				this.selectedTableIndex + step < this.getTablesLength
+			) {
+				this.selectedTableIndex += step;
+			}
+		},
+		setMediaTab: function(event) {
+			this.mediaTab = event;
 		}
 	}
 };
 </script>
 <style scoped>
-	pre {
-		border-style: solid;
-		border-width: 1px;
-		padding: 3px;
-	}
-	.displayInline {
-		display: inline;
-	}
+pre {
+	border-style: solid;
+	border-width: 1px;
+	padding: 3px;
+}
+.displayInline {
+	display: inline;
+}
+.editTableRow {
+flex-wrap: nowrap;
+}
+.editTableColumn {
+	min-width: 90px;
+	max-width: 90px;
+	text-align: center;
+	float: left;
+	margin: 0;
+}
+.editTableColumn input {
+	width: 80px;
+	text-align: center;
+	margin: 0;
+	
+}
+.viewTableContainer {
+	overflow-x: scroll;
+	overflow-y: scroll;
+	min-height: 200px;
+	max-height: 200px;
+	text-align: center;
+	border: 1px solid black;
+	border-right-width: 2px;
+}
 </style>

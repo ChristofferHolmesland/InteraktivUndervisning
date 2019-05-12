@@ -220,13 +220,24 @@ export default class Graph0 {
 
 			if (node2 != undefined) {
 				if (node != node2) {
-					this.gd.edges.push({
-						n1: node,
-						n2: node2,
-						v: 0
-					});
+					let alreadyExist = false;
+					for (let i = 0; i < this.gd.edges.length; i++) {
+						let e = this.gd.edges[i];
+						if (e.n1 == node && e.n2 == node2) {
+							alreadyExist = true;
+							break;
+						}
+					}
 
-					this.gd.dirty = true;
+					if (!alreadyExist) {
+						this.gd.edges.push({
+							n1: node,
+							n2: node2,
+							v: 0
+						});
+
+						this.gd.dirty = true;
+					}
 				}
 			}
 
@@ -302,6 +313,16 @@ export default class Graph0 {
 		return false;
 	}
 
+	onCanvasResize() {
+		if (this.gd.operatingMode == "Interactive") {
+			this.drawStatic();
+		} else {
+			if (this.steppingButtons.length > 0) {
+				this.addTreeSteppingButtons();
+				this.gd.drawStatic();
+			}
+		}
+	}
 
 	/*
 		Checks if the event (click) happened on one of the buttons.
@@ -418,6 +439,11 @@ export default class Graph0 {
 	}
 
 	addTreeSteppingButtons(treeCount) {
+		// OnCanvasResize doesn't know how many trees there are in the 
+		// step, so the value has to be stored.
+		if (treeCount !== undefined) this.prevTreeCount = treeCount;
+		else treeCount = this.prevTreeCount;
+
 		this.steppingButtons = [];
 		let numOfSteps = treeCount;
 
@@ -558,6 +584,7 @@ export default class Graph0 {
 
 		let parseStep = (step) => {
 			let tree = getTree(step);
+			if (tree === undefined  || tree.root === undefined) return;
 			fixTree(tree);
 
 			// If there are more than one tree, there should be

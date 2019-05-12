@@ -1,6 +1,6 @@
 {
     "AdminQuestions": {
-        "emptyQuestionList": "Ingen spørsmål.",
+        "emptyQuestionList": "Ingen spørsmål ble funnet for det valgte faget. Legg til et spørsmål med å klikke på '+' knappen.",
         "addTitle": "Nytt spørsmål",
         "editTitle": "Endre spørsmål",
         "searchQuestion": "Søk etter spørsmål",
@@ -16,13 +16,15 @@
         "description": "Beskrivelse:",
         "mediaTypes": [
             {"text":"Bilder", "value": 0},
-            {"text":"Grafer", "value": 0},
-            {"text":"Tabeller", "value": 0}
+            {"text":"Grafer", "value": 1},
+            {"text":"Tabeller", "value": 2}
         ],
         "multipleChoiceHeader": "Alternativer:",
+        "multipleChoiceCorrect": "Riktig:",
         "addNewMultipleChoice": "Legg til nytt alternativ",
         "multipleChoiceDeleteBtn": "Slett",
-        "basicInfo": "Grunnleggende Informasjon",
+        "mediaLabel": "Media:",
+        "basicInfo": "Grunnleggende Informasjon:",
         "TitleIsEmptyError": "Spørsmålet mangler en tittel!",
         "DescriptionIsEmptyError": "Spørsmålet mangler en beskrivelse!",
         "EmptyTextSolutionError": "Fasiten kan ikke være tom!",
@@ -54,6 +56,7 @@
         "BSTAVLRemoveMissingElementError": "Elementet som skal fjernes finnes ikke i treet!",
         "BSTAVLRemoveInvalidResultBinarySearchTreeError": "Et av resultatene er ikke et godkjent Binært Søketre!",
         "BSTAVLRemoveInvalidResultAVLTreeError": "Et av resultatene er ikke et godkjent AVL tre!",
+        "BSTAVLRemoveMoreNodesThanPossibleError": "Du kan ikke slette alle nodene i treet!",
         "BSTAVLRootCountError": "Treet gitt har mer en en rot!",
         "BSTAVLInvalidBinaryTreeError": "Det gitte treet er ikke et godkjent Binærtre!",
         "BSTAVLInvalidBinarySearchTreeError": "Det gitte treet er ikke et godkjent Binært Søketre!",
@@ -92,26 +95,81 @@
             "Python": "Python"
         },
         "NoCode": "Du må skrive kode for å lage et Python spørsmål.",
-        "binaryTreeSolutionText": "Det ville blitt regnet som riktig svar hvis treet som ble gitt følger alle reglene til et Binear Tree og treet besto av følgende noder:"
+        "binaryTreeSolutionText": "Det ville blitt regnet som riktig svar hvis treet som ble gitt følger alle reglene til et Binear Tree og treet besto av følgende noder:",
+        "cancelBtn": "Avbryt",
+        "okBtn": "Legg til",
+        "noSessionText": "Ingen økter. Legg til ny økt",
+        "addEditTableRowBtn": "Legg til rad",
+        "addEditTableColumnBtn": "Legg til kolonne",
+        "removeEditTableRowBtn": "Fjern rad",
+        "removeEditTableColumnBtn": "Fjern kolonne",
+        "addTableBtn": "Legg til tabell",
+        "addTableSaveBtn": "Lagre tabell",
+        "addTableRowError": "Tabellen trenger minst en rad!",
+        "addTableColumnError": "Tabellen trenger minst en kolonne!",
+        "addTableValueSizeZeroError": "mangler verdi",
+        "addTableValueSizeToLargeError": "verdien er for stor",
+        "addTableValueCellError": "Disse cellene har en feil: ",
+        "tableViewTitle": "Tabell",
+        "viewBtn": "Vis",
+        "editBtn": "Endre",
+        "tableLabel": "Tabeller:",
+        "filesLabel": "Filer:",
+        "shellsortStartArray": "Start liste (elementer sepereres med ,)",
+        "shellsortStartKValue": "K start verdi",
+        "binaryTreeArray": "Skriv inn listen av noder som skal bli brukt i binærtreet. Elementene skal sepereres med bruk av ,",
+        "bstInfo": "Tegn treet, eller gi en liste for å generere løsningen",
+        "removeText": "Fjern",
+        "addLabel": "Skriv inn elementer som skal legges til treet. Elementene skal sepereres med bruk av ,",
+        "removeLabel": "Skriv inn elementer som skal fjernes fra treet. Elementene skal sepereres med bruk av ,",
+        "dijkstraLabel": "Tegn grafen, og marker start (grønn) og slutten (rød) noder",
+        "pythonPlaceholder": "Skriv Python kode her...",
+        "ready": "Klar",
+        "yes": "Ja",
+        "no": "Nei",
+        "questionStatusTooltip": "Spørsmål som har blitt lagt til en økt kan ikke endres eller slettes!",
+        "testBtnLabel": "Test",
+        "addCanvasAsImage": "Legg til lerretet som et bilde"
     },
     "AdminSessions": {
         "newSession": "Ny økt",
-        "newSessionTitle": "Tittel",
-        "selectCourse": "Velg kurs",
-        "selectQuestions": "Legg til spørsmål",
-        "selectedQuestions": "Spørsmål i økten"
+        "newSessionTitle": "Tittel:",
+        "selectCourse": "Velg kurs:",
+        "selectQuestions": "Legg til spørsmål:",
+        "selectedQuestions": "Spørsmål i økten:",
+        "removeBtn": "Fjern",
+        "cancelBtn": "Avbryt",
+        "okBtn": "Legg til",
+        "searchPlaceholder": "Søk",
+        "editTooltip": "Bare inaktive økter kan endres",
+        "deleteTooltip": "Bare inaktive økter kan slettes",
+        "noSessions": "Ingen økter",
+        "delSessionBody": "Vil du slette denne økten? Dette kan ikke reverseres!"
     },
     "AdminDashboard": {
         "courseAdministrator": "Fag adminstrator",
+        "administrator": "Administrator",
+        "studentAssistant": "Student assistent",
         "addBtnText": "Legg til",
         "courseAssistants": "Student assistenter",
         "startSession": "Start økt",
         "changeCourseTitle": "Endre fag",
         "newCourseBtnText": "Legg til",
         "addNewQuestionBtnText": "Legg til nytt spørsmål",
-        "newQuestion": "Nytt spørsmål",
+        "newQuestion": "Nytt    spørsmål",
         "viewLastSession": "Vis forrige økt",
-        "openLastSession": "Åpne"
+        "openLastSession": "Åpne",
+        "adminApplications": "Søknader",
+        "applyBtnText": "Søk",
+        "noList": "Ingen fag som du ikke har bruker rettigheter i eller som du har søkt til!",
+        "studAssLabel": "SA",
+        "adminLabel": "A",
+        "noAppliedList": "Du har ikke søkt etter bruker rettigheter i noen fag!",
+        "season": {
+            "spring": "Vår",
+            "autumn": "Høst"
+        },
+        "applicantsLabel": "Søkere: "
     },
     "DisplayQuestion": {
         "question": "Spørsmål",
@@ -131,12 +189,18 @@
             "Dijkstra": "Dijkstra",
             "Python": "Python"
         },
-        "binaryTreeDesc": "Tegn et binaer tree med følgende noder: ",
+        "binaryTreeDesc": "Tegn et binær tre med følgende noder: ",
         "bstavlOperationDesc": "Operasjon: ",
         "bstavlNodesDesc": "Noder: ",
         "pythonCodeDesc": "Kode: ",
         "Add": "Legg til",
-        "Remove": "Slett"
+        "Remove": "Slett",
+        "markAsCorrectBtn": "Marker som riktig",
+        "shellsortKValue": "K verdi",
+        "tabImage": "Bilder",
+        "tabTable": "Tabeller",
+        "previousBtn": "Forrige",
+        "nextBtn": "Neste"
     },
     "Navbar": {
         "lang": "Språk",
@@ -147,14 +211,117 @@
         "admin": "Admin",
         "startSession": "Start økt",
         "questions": "Spørsmål",
-        "sessions": "Økter"
+        "sessions": "Økter",
+        "anonymous": "Anonym",
+        "anonymousNames": {
+            "bird": "fugl",
+            "lion": "løve",
+            "elephant": "elefant",
+            "leopard": "leopard",
+            "snow leopard": "snø leopard",
+            "turtle": "skildpadde",
+            "shark": "hai",
+            "blue whale": "blå hval",
+            "rhinoceros": "neshorn",
+            "polar bear": "isbjørn",
+            "black bear": "svart bjørn",
+            "humpback whale": "knølhval",
+            "emperor penguin": "keiserpingvin",
+            "penguin": "pingvin",
+            "african elephant": "afrikansk elefant",
+            "whale shark": "hvalhei",
+            "red wolf": "rødulv",
+            "grass snake": "buorm",
+            "chimpanzee": "sjimpanse",
+            "tiger": "tiger",
+            "green turtle": "grønn havskildpadde",
+            "grey wolf": "grå ulv",
+            "basking shark": "brudge",
+            "red panda": "rød panda",
+            "american alligator": "amerikansk alligator",
+            "cheetah": "geopard",
+            "bald eagle": "hvithodehavørn",
+            "aye-aye": "fingerdyr",
+            "orca": "spekkhogger",
+            "asian elephant": "asiatisk elefant",
+            "royal penguin": "hvitkinnpingvin",
+            "house spider": "husedderkopp",
+            "komodo dragon": "komodovaran",
+            "bonobo": "dvergsjimpanse",
+            "bottlenose dolphin": "tumler",
+            "african wild dog": "afrikansk villhund",
+            "puma": "puma",
+            "red fox": "rød rev",
+            "sperm whale": "spermhval",
+            "jaguar": "jaguar",
+            "chinese giant salamander": "kinesisk kjempesalamander",
+            "alligator snapping turtle": "alligatorskildpadde",
+            "barn owl": "tårnugle",
+            "orangutan": "orangutang",
+            "giraffe": "sjiraff",
+            "western gorilla": "vestgorilla",
+            "koala": "koala",
+            "moose": "elg",
+            "ring-tailed lemur": "ringhalelemur",
+            "giant armadillo": "kjempebeltedyr",
+            "brown hyaena": "brynhyene",
+            "coyote": "prærieulv",
+            "zebra": "sebra",
+            "sloth": "dovendyr",
+            "wolverine": "jerv",
+            "black flying fox": "pteropus alecto",
+            "fishing cat": "fiskerkatt",
+            "african grey parrot": "jako",
+            "kakapo": "kakapo",
+            "andean flamingo": "andesflamingo",
+            "japanese crane": "japantrane",
+            "puffin": "lunder",
+            "ostrich": "struts",
+            "great spotted kiwi": "flekkivi",
+            "viper": "sandviper",
+            "black caiman": "svartkaiman",
+            "iguana": "iguana",
+            "chameleon": "kameleoner",
+            "lizard": "øgle",
+            "king cobra": "kongekobra",
+            "gecko": "gekko",
+            "salamander": "salamander",
+            "frog": "frosk",
+            "toad": "padde",
+            "seadragon": "nålefisk",
+            "queen triggerfish": "balistes vetula",
+            "bluefin tuna": "makrellstørje",
+            "frilled shark": "kragehai",
+            "eel": "ål",
+            "parrotfish": "papegøyefisk",
+            "manta ray": "manta",
+            "pike": "gjedde",
+            "great hammerhead": "hammerhai",
+            "salmon": "laks",
+            "seahorse": "sjøhest",
+            "swordfish": "sverdfisk",
+            "beluga": "hvithval",
+            "blacktip reef shark": "svarttippet revhai",
+            "butterfly": "sommerfugl",
+            "grasshopper": "gresshopper",
+            "snail": "snegle",
+            "ant": "maur",
+            "honey bee": "honningbie",
+            "bumblebee": "humle",
+            "ladybird": "marihøner",
+            "fly": "tovinger",
+            "jellyfish": "manet",
+            "squid": "blekksprut",
+            "crab": "krabbe",
+            "attack helicopter": "kamphelikopter"
+        }
     },
     "LoginForm": {
         "anonymousButton": "Anonym",
         "acceptCheckbox": "Jeg aksepterer disse betingelsene",
         "loginButton": "Logg inn",
         "feideList": [
-            "Denne nettsiden bruker cookies for å kunne lagre spørsmålene dine.",
+            "Denne nettsiden bruker cookies for å kunne lagre spørsmålene dine og språk preferansen din.",
             "Quizmaster vil ikke kunne se hvem som har svart hva, men vil kunne se feil svar.",
             "Denne nettsiden lagrer data linket til din bruker for at du skal kunne se på tidligere økter",
             "En kan slette all data som er lagret om deg ved å gå inn på profil og trykke på \"Slett data\"",
@@ -210,7 +377,15 @@
         "bstavlNodesDesc": "Noder: ",
         "pythonCodeDesc": "Kode: ",
         "Add": "Legg til",
-        "Remove": "Slett"
+        "Remove": "Slett",
+        "timeLeft": "Tid igjen:",
+        "sessionCode": "Økt kode:",
+        "tabExtraInfo": "Ekstra informasjon",
+        "tabImage": "Bilder",
+        "tabTable": "Tabeller",
+        "previousBtn": "Forrige",
+        "nextBtn": "Neste",
+        "nextquestionBtn": "Neste spørsmål"
     },
     "DeleteUserInfo": {
         "deleteInfoList": [
@@ -272,7 +447,12 @@
         "bstavlNodesDesc": "Noder: ",
         "pythonCodeDesc": "Kode: ",
         "Add": "Legg til",
-        "Remove": "Slett"
+        "Remove": "Slett",
+        "tabExtraInfo": "Ekstra informasjon",
+        "tabImage": "Bilder",
+        "tabTable": "Tabeller",
+        "previousBtn": "Forrige",
+        "nextBtn": "Neste"
     },
     "ClientSessionWaitingArea": {
         "title": "Venteområde",
@@ -280,7 +460,7 @@
         "leaveSession": "Forlat økt",
         "beforeSession": "Koblet til økt!\nVenter på at admin skal starte økten",
         "betweenQuestionsCorrect": "Du har svart og svaret ditt er riktig!\nVenter på at admin skal starte neste spørsmål",
-        "betweenQuestionsIncorrect": "Du har svart og svaret ditt er feil!\nDu kan sjekke svaret ditt mot fasiten etter økten er ferdig.\nVenter på at admin skal starte neste spørmsål",
+        "betweenQuestionsIncorrect": "Du har svart og svaret ditt er feil!\nDu kan sjekke svaret ditt mot fasiten etter økten er ferdig.\nVenter på at admin skal starte neste spørsmål",
         "betweenQuestionsNotAnswered": "Du svarte \"Vet ikke\"!\nDu vil kunne se fasiten når økten er over.\nVenter på at admin skal starte neste spørsmål",
         "sessionFinished": "Økten er nå over!\nAlle svarene dine er nå lagret og du kan sjekke dem mot løsningen på skrivebordet hvis du ikke har logget inn som anonym.",
         "waitingForAdmin": "Venter på at admin skal starte neste spørsmål"
@@ -305,7 +485,8 @@
         "addNewSemester": "Legg til nytt semester:",
         "AddNewSemesterSeason": "Velg sesong:",
         "AddNewSemesterYear": "Velg et år:",
-        "add": "Legg til",
+        "addCourseCode": "Legg til fag kode",
+        "addSemester": "Legg til semester",
         "errorMessage": {
             "courseCodeMissing": "Inndata feltet for fag koden er tomt.",
             "courseCodeWrongPattern": "Inndata feltet for fag koden har feil format.\nKoden skal ha 3 store bokstaver etterfulgt med 3 tall.",
@@ -320,7 +501,11 @@
             "courseCodeDoesnTExist": "Fag koden eksisterer ikke.",
             "nameMissing": "Faget mangler et navn.",
             "courseExists": "Faget finnes allerede."
-        }
+        },
+        "noCourseCodeText": "Ingen fag koder. Legg til ny fag kode",
+        "noSemesterText": "Ingen semester. Legg til nytt semester",
+        "cancelBtn": "Avbryt",
+        "okBtn": "Legg til"
     },
     "SelectCourse": {
         "noCourseText": "Ingen fag. Legg til nytt fag"
@@ -427,17 +612,26 @@
         },
         "settings": {
             "Shellsort": {
-                "kValueLabel": "Initial k value:",
-                "listLabel": "Initial list:"
+                "kValueLabel": "Start k verdi:",
+                "listLabel": "Start liste:"
             },
             "Quicksort": {
-                "listLabel": "Initial list:"
+                "listLabel": "Start liste:"
             },
             "Mergesort": {
-                "listLabel": "Initial list:"
+                "listLabel": "Start liste:"
+            },
+            "Python": {
+                "buttonLabel": "Tolk koden",
+                "textareaPlaceholder": "Skriv Python kode her..."
             }
         },
-        "textInputPlaceholder": "Test out the input field here"
+        "textInputPlaceholder": "Test ut inntastingsfeltet her",
+        "newRowBtn": "Legg til ny rad",
+        "removeRowBtn": "Fjern siste rad",
+        "backBtn": "Tilbake",
+        "settingsTitle": "Innstillinger",
+        "guideTitle": "Veiledning"
     },
     "ViewLastSession": {
         "goBtn": "Åpne",
@@ -470,14 +664,19 @@
         "code": "Kode:",
         "usersConnected": "Antall brukere som er koblet til:",
         "waitingtext": "Venter på at brukere skal koble seg til",
-        "start": "Start"
+        "start": "Start",
+        "noUsersConnceted": "Ingen brukere er koblet til! Vent med å starte til noen har koblet til."
     },
     "AdminSessionOver": {
         "header": "Økten er nå over!",
         "goBackBtn": "Gå tilbake til skrivebordet"
     },
     "AdminSessionOverview": {
-        "startBtn": "Start"
+        "startBtn": "Start",
+        "noSessionText": "Ingen økter. Legg til ny økt",
+        "errorActiveSessionRunning": "Du kjører en økt!\n Bli med eller fjern den.",
+        "rejoinBtn": "Bli med",
+        "clearBtn": "Fjern"
     },
     "GraphDrawer": {
         "editNodePrompt": "Skriv ny verdi:",
@@ -520,5 +719,35 @@
                 "joinToArray": "Koble til array"
             }
         }
+    },
+    "TestQuestion": {
+        "modalOkBtnText": "Sjekk svar",
+        "modalCancelBtnText": "Lukk",
+        "timeLeftLabelText": "Tid igjen",
+        "settingsStartTimerBtnText": "Start",
+        "settingsStartTimerLabelText": "Tid:",
+        "settingsLabelText": "Innstillinger",
+        "settingsResumeTimerBtnText": "Fortsett",
+        "settingsPauseTimerBtnText": "Pause",
+        "settingsResetTimerBtnText": "Reset",
+        "showQuestionType": "Spørsmål type:",
+        "binaryTreeDesc": "Tegn et binaer tree med følgende noder: ",
+        "bstavlOperationDesc": "Operasjon: ",
+        "bstavlNodesDesc": "Noder: ",
+        "pythonCodeDesc": "Kode: ",
+        "Add": "Legg til",
+        "Remove": "Slett",
+        "tabExtraInfo": "Ekstra informasjon",
+        "tabImage": "Bilder",
+        "tabTable": "Tabeller",
+        "previousBtn": "Forrige",
+        "nextBtn": "Neste",
+        "modalTitle": "Test ditt spørsmål!",
+        "resultCorrect": "Svaret ditt er nå rettet mot fasiten og svaret ditt er riktig!",
+        "resultIncorrect": "Svaret ditt er nå rettet mot fasiten og svaret ditt er ikke riktig! Du vil ha muligheten til å sammenligne svaret ditt mot fasiten under 'vis fasit'.",
+        "mainTabQuestion": "Vis spørsmål",
+        "mainTabSolution": "Vis fasit",
+        "subTabQuestion": "Spørsmål",
+        "subTabAnswer": "Svar"
     }
 }

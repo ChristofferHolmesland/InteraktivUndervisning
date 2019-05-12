@@ -1,13 +1,13 @@
 <template>
 <b-container id="Client">
-	<b-row>
-		<b-col cols="12" lg="4" class="margin">
+	<b-row align-h="around">
+		<b-col cols="12" lg="6" :xl="getCardSizeLg" class="margin">
 			<JoinSession/>
 		</b-col>
-		<b-col cols="12" lg="4">
+		<b-col cols="12" lg="6" :xl="getCardSizeLg">
 			<ShowSandbox/>
 		</b-col>
-		<b-col cols="12" lg="4">
+		<b-col cols="12" lg="6" :xl="getCardSizeLg" v-if="getUser.userRights > 1">
 			<ViewLastSession/>
 		</b-col>
 	</b-row>
@@ -28,6 +28,20 @@ export default {
 	},
 	created() {
 		this.$socket.emit("verifyUserLevel", 1);
+	},
+	computed: {
+		getUser() {
+			let user = this.$store.getters.getUser({
+				username: true,
+				userRights: true,
+				loggedIn: true
+			});
+			return user;
+		},
+		getCardSizeLg: function() {
+			let userRight = this.getUser.userRights;
+			return userRight > 1 ? 4 : 6;
+		}
 	}
 };
 </script>

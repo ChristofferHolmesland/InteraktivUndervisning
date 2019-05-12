@@ -8,6 +8,7 @@
                 size="lg"
                 :ok-only="true"
                 :ok-title="getLocale.closeBtn"
+			    :hide-header-close="true"
                 >
         <b-container class="px-0">
             <b-row @click="changeShowBasicInfo" class="cursor">
@@ -15,13 +16,13 @@
                     <h4>{{ getLocale.basicInfo }}</h4>
                 </b-col>
                 <b-col cols="1">
-                    <p>{{ showBasicInfo ? '^' : 'V' }}</p>
+                    <p><i :class="showBasicInfo ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i></p>
                 </b-col>
             </b-row>
             <b-row v-if="showBasicInfo">
                 <b-col>
                     <h5>{{ getLocale.description }}</h5>
-                    <p>{{ question.description }}</p>
+                    <p v-for="(line, index) in getDescription" :key="index">{{ line }}</p>
                     <h5>{{ getLocale.time }}</h5>
                     <p>{{ getTime }}</p>
                 </b-col>
@@ -30,15 +31,15 @@
         <b-container v-if="haveMedia" class="px-0">
             <b-row @click="changeShowMedia" class="cursor">
                 <b-col cols="11">
-                    <h4>Media:</h4>
+                    <h4>{{ getLocale.mediaLabel }}</h4>
                 </b-col>
                 <b-col cols="1">
-                    <p>{{ showMedia ? '^' : 'V' }}</p>
+                    <p><i :class="showMedia ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i></p>
                 </b-col> 
             </b-row>
             <b-row v-if="question.objects.files.length > 0 && showMedia">
                 <b-col>
-                    <label>Files:</label>
+                    <label>{{ getLocale.filesLabel }}</label>
                     <b-container>
                         <b-row v-for="(image, index) in question.objects.files" :key="index" class="mt-2">
                             <b-col>
@@ -65,6 +66,43 @@
                     </b-container>
                 </b-col>
             </b-row>
+            <b-row v-if="question.objects.tables.length > 0 && showMedia">
+                <b-col>
+                    <label>{{ getLocale.tableLabel }}</label>
+                    <b-container	v-for="(table, index) in question.objects.tables"
+                                    :key="index"
+                                    class="mb-2 border py-2"
+                                    >
+                        <b-row align-h="around">
+                            <b-col>
+                                <b-container>
+                                    <b-row class="mb-2">
+                                        <b-col>
+                                            {{ `${ getLocale.tableViewTitle } ${ index + 1 }` }}
+                                        </b-col>
+                                    </b-row>
+                                    <b-row>
+                                        <b-col>
+                                            <b-button variant="warning" v-b-toggle="'tableCollapse' + index">{{ getLocale.viewBtn }}</b-button>
+                                        </b-col>
+                                    </b-row>
+                                </b-container>
+                            </b-col>
+                        </b-row>
+                        <b-row>
+                            <b-collapse :id="'tableCollapse' + index" class="tableCollapse">
+                                <b-container class="viewTableContainer">
+                                    <b-row v-for="(row, rowIndex) in getTableRow(index)" :key="rowIndex" class="editTableRow">
+                                        <div v-for="(column, columnIndex) in getTableColumn(index)" :key="columnIndex" class="editTableColumn">
+                                            <b-form-input :value="getTable(index)[rowIndex][columnIndex]" maxlength="6" disabled></b-form-input>
+                                        </div>
+                                    </b-row>
+                                </b-container>
+                            </b-collapse>
+                        </b-row>
+                    </b-container>
+                </b-col>
+            </b-row>
         </b-container>
         <b-container class="px-0">
             <b-row @click="changeShowSolution" class="cursor">
@@ -72,7 +110,7 @@
                     <h4>{{ getLocale.solutionText }}</h4>
                 </b-col>
                 <b-col cols="1">
-                    <p>{{ showSolution ? '^' : 'V' }}</p>
+                    <p><i :class="showSolution ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i></p>
                 </b-col> 
             </b-row>
             <b-row v-if="showSolution">
@@ -82,10 +120,10 @@
                     <b-container v-if="question.solutionType === 2" class="px-0">
                         <b-row>
                             <b-col>
-                                <h6>Choice:</h6> 
+                                <h6>{{ getLocale.multipleChoiceHeader }}</h6> 
                             </b-col>
                             <b-col>
-                                <h6>Correct:</h6>
+                                <h6>{{ getLocale.multipleChoiceCorrect }}</h6>
                             </b-col>
                         </b-row>
                         <b-row v-for="(choice, index) in question.objects.multipleChoices" :key="index">
@@ -93,7 +131,7 @@
                                 <p>{{ choice }}</p>
                             </b-col>
                             <b-col>
-                                <p>{{ question.solution.findIndex(sol => sol == index) > -1 ? 'yes' : 'no' }}</p>
+                                <p>{{ question.solution.findIndex(sol => sol == index) > -1 ? getLocale.yes : getLocale.no }}</p>
                             </b-col>
                         </b-row>
                     </b-container>
@@ -220,16 +258,30 @@ export default {
             return `${min.padStart(2, "0")}:${sec.padStart(2, "0")}`;
         },
         haveMedia: function() {
-            if (this.question.objects.files === undefined) return false
-            if (this.question.objects.files.length > 0) return true;
-            // TODO add checks for graphs and table
-            return false;
+            let show = false;
+            if (this.question.objects.files !== undefined)
+                if (this.question.objects.files.length > 0) show = true;
+            if (this.question.objects.tables !== undefined)
+                if (this.question.objects.tables.length > 0) show = true;
+            return show;
         },
 		getImageSrc: function() {
 			return (index) => {
 				let file = this.question.objects.files[index];
 				return "data:" + file.type + ";base64," + file.buffer;
 			};
+        },
+        getDescription: function() {
+            return this.question.description.split("\n");
+        },
+		getTableRow: function() {
+			return (index) => this.question.objects.tables[index].length;
+		},
+		getTableColumn: function() {
+			return (index) => this.question.objects.tables[index][0].length;
+		},
+		getTable: function() {
+			return (index) => this.question.objects.tables[index];
 		}
     },
     methods: {
@@ -263,5 +315,35 @@ export default {
 <style scoped>
 .cursor {
     cursor: pointer;    
+}
+.editTableRow {
+	flex-wrap: nowrap;
+}
+.editTableColumn {
+	min-width: 90px;
+	max-width: 90px;
+	text-align: center;
+	float: left;
+	margin: 0;
+}
+.editTableColumn input {
+	width: 80px;
+	text-align: center;
+	margin: 0;
+	
+}
+.viewTableContainer {
+	overflow-x: scroll;
+	overflow-y: scroll;
+	min-height: 200px;
+	max-height: 200px;
+	text-align: center;
+	border: 1px solid black;
+	border-right-width: 2px;
+}
+.tableCollapse {
+	padding: 5% 5% 0 5%;
+	width: 100%;
+	height: 100%;
 }
 </style>

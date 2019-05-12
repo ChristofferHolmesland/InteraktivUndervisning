@@ -1,10 +1,8 @@
 <template>
-    <div>
-        <canvas id="canvas"
-                :width="width"
-                :height="height"
-                style="background-color: #fff; margin-left: auto; margin-right: auto; display: block; border: 2px solid black;"
-                />
+    <div id="canvasWrapper" ref="canvasWrapper" style="width: 100%; height: 100%;">
+        <canvas id="canvas" ref="canvasElement">
+            Your browser does not support the HTML5 Canvas element.
+        </canvas>
     </div>
 </template>
 
@@ -39,11 +37,9 @@
             // The graph to perform dijkstra on
             graph: Object,
             width: {
-                default: 600,
                 type: Number
             },
             height: {
-                default: 600,
                 type: Number
             },
 			displayEdgeValues: {
@@ -65,12 +61,22 @@
             this.locale = this.$store.getters.getLocale("GraphDrawer");
             this.createDrawer();
         },
+        beforeDestroy() {
+            this.destroyDrawer();
+        },
         methods: {
             destroyDrawer: function() {
+                // Stop the update loop
+                if (this.graphDrawer !== undefined) {
+                    clearInterval(this.graphDrawer.intervalId);
+                }
+
                 // Recreate the canvas to remove the event listeners
                 let el = document.getElementById("canvas");
-                let elClone = el.cloneNode(true);
-                el.parentNode.replaceChild(elClone, el);
+                if (el !== undefined && el !== null) {
+                    let elClone = el.cloneNode(true);
+                    el.parentNode.replaceChild(elClone, el);
+                }
 
                 // Remove top level references from the GraphDrawer object
                 for (let prop in this.graphDrawer) {
@@ -83,7 +89,7 @@
             createDrawer: function() {
                 // A locale is needed to create the drawer.
                 if (this.locale == undefined) {
-                    console.log("Locale is undefined");
+                    console.error("Locale is undefined");
                     return;
                 }
 
@@ -141,7 +147,7 @@
                     python: {
                         steps: this.steps
                     }
-                });
+                }, window);
             }
         }
     }
@@ -149,4 +155,13 @@
 </script>
 
 <style scoped>
+#canvas {
+    width: 100%;
+    overflow: hidden; 
+    background-color: #fff; 
+    margin-left: auto;
+    margin-right: auto; 
+    display: inline-block;
+    border: 2px solid black;
+}            
 </style>

@@ -38,7 +38,6 @@ class User {
 	static async getUser(db, users, socket){
 		// If the user have never connected to the website, it will not have any cookies
 		if(!socket.handshake.headers.cookie) return undefined;
-		
 		let sessionId = cookie.parse(socket.handshake.headers.cookie).sessionId;
 		let user = users.get(socket.id);
 
@@ -49,7 +48,6 @@ class User {
 			if(user){
 				return user;
 			}else{
-				// TODO: Try and reverify the user and either accept and add to active users or redirect to 401
 				await dbFunctions.get.userInformationBySessionToken(db, sessionId).then(async (row) => {
 					if (row === undefined) {
 						user = undefined;
@@ -58,7 +56,7 @@ class User {
 					user = new User(row.admin, row.name, row.sessionId, {
 						accessToken: row.accessToken, 
 						idNumber: row.id,
-						userId: ""
+						userId: row.userId
 					});
 					await dbFunctions.get.userRightByFeideId(db, user.feide.idNumber).then((rows) => {
 						if (rows.length > 0){

@@ -66,6 +66,24 @@ const insert = {
 						VALUES('${answer}', ${result}, ${sqId}, '${userId}')`;
 		return createPromise(db, statement, "storeAnswer");
 	},
+	storeAnswers: function(db, answerList, sqId) {
+		return new Promise((resolve, reject) => {
+			let statement = "BEGIN TRANSACTION;";
+			for (let i = 0; i < answerList.length; i++) {
+				let answer = answerList[i];
+				answer.answerObject = JSON.stringify(answer.answerObject);
+				answer.answerObject = answer.answerObject.replace("'", "\'\'");
+				statement += `INSERT INTO Answer(object, result, sessionHasQuestionId, userId)
+							Values('${answer.answerObject}', ${answer.result}, ${sqId}, '${answer.userId}');`;
+			}
+			statement += "COMMIT TRANSACTION;";
+	
+			db.exec(statement, (err) => {
+				if (err) reject(new Error(`Error in insert function: ${"storeAnswers"} \n\n ${err}`)	);
+				resolve();
+			});
+		});
+	},
 	addUserToSession: function(db, userId, sessionId) {
 		let statement = `INSERT INTO UserHasSession(userId,sessionId)
 						VALUES('${userId}', ${sessionId})`;
@@ -104,6 +122,11 @@ const insert = {
 	courseSemester: function(db, semester) {
 		let statement = `INSERT INTO CourseSemester(seasonId, yearId)
 						VALUES(${semester.season}, ${semester.year})`;
+		return createPromise(db, statement, "semester");
+	},
+	userRightRequest: function(db, data) {
+		let statement = `INSERT INTO AdminRequest(feideId, courseId, userRight)
+						VALUES('${data.feideId}', ${data.courseId}, ${data.userRight})`;
 		return createPromise(db, statement, "semester");
 	}
 };

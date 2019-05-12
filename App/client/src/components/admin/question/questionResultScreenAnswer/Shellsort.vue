@@ -3,7 +3,7 @@
 		<b-row class="shellsortRow">
 			<div 	class="shellsortColKvalue"
 					>
-				K Value
+				{{ getLocale.shellsortKValue }}
 			</div>
 			<div 	v-for="(value, index) in answer[0].List"
 					:key="index"
@@ -34,13 +34,20 @@ export default {
     name: "ShellsortAnswer",
     props: {
         answer: Array
+	},
+	computed: {
+		getLocale() {
+			let locale = this.$store.getters.getLocale("DisplayQuestion");
+			if (locale) return locale;
+			else return {};
+		}	
 	}
 }
 </script>
 
 <style scoped>
 input {
-	width: 30px;
+	width: 80px;
 	text-align: center;
 	margin: 0;
 }
@@ -52,15 +59,15 @@ input {
 	text-align: center;
 }
 .shellsortColKvalue {
-	min-width: 80px;
-	max-width: 80px;
+	min-width: 100px;
+	max-width: 100px;
 	text-align: center;
 	float: left;
 	margin: 0;
 }
 .shellsortColElement {
-	min-width: 40px;
-	max-width: 40px;
+	min-width: 90px;
+	max-width: 90px;
 	text-align: center;
 	float: left;
 	margin: 0;

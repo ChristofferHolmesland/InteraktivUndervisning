@@ -8,9 +8,7 @@
 					cols="12" lg="5"
 			>
 				<div class="selected">
-					<div v-if="choice.selected">
-						<p>X</p>
-					</div>
+                	<i :class="'far' + (choice.selected ? ' fa-check-square' : ' fa-square')"></i>
 				</div>
 				{{ choice.text }}
 			</b-col>
@@ -62,6 +60,7 @@ export default {
 
 <style scoped>
 .choice {
+	position: relative;
 	min-height: 10em;
 	margin: 3em auto 0 auto;
 	background-color: #337ab7;
@@ -71,8 +70,8 @@ export default {
 	text-align: center;
 }
 .selected {
-	border: 2px solid;
-	height: 1em;
-	width: 1em;
+	position: absolute;
+	top: 10%;
+	left: 10%;
 }
 </style>
