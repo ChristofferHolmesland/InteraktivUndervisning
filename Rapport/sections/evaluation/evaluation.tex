@@ -11,4 +11,37 @@ From before, we had experience using Express and knew it supported the use of mi
 In the web programming DAT310 course, we were taught AJAX requests. Even though this works well when the client needs information from the server, there is a limitation when the server needs to send a message to a client. During the software development DAT210 course, one of our group members worked with WebSockets. WebSockets allowed there to be a two-way connection between the server and clients. This seemed like a good solution for our project since the server needed to talk to clients when running a session. Socket.IO is the only well-developed WebSocket for a JavaScript-based server; therefore it was a natural choice. Despite being the only well-developed option, it fulfilled our needs and expectations.
 
 \subsection{SQLite}
-Our experience is that SQLite works as well as other database management systems. It was advantageous not to have to worry about a database server while developing the application. However, it surprised us to learn that foreign keys constraints were not enforced by default. Towards the end of development, we also discovered that SQLite only supports 60 transactions per second on an average HDD. If we had known this from the beginning, we would most likely have chosen a different database management system. Even after taking the last issue into consideration we still think that SQLite can handle the traffic that is produced at the scale it is going to be used at. 
+Our experience is that SQLite works as well as other database management systems. It was advantageous not to have to worry about a database server while developing the application. However, it surprised us to learn that foreign keys constraints were not enforced by default. Towards the end of development, we also discovered that SQLite only supports 60 transactions per second on an average HDD. If the limit is reached, the transactions build up in a queue and is ran once the database is free. After looking into the issue, we discovered our server requires following amount of transaction per action:
+\begin{center}
+    \begin{tabular}{|l|c|}
+        \hline
+        Action & Transactions \\
+        \hline
+        Login anonymous user & 0 \\
+        \hline
+        Login new Feide user & 2 \\
+        \hline
+        Login previous Feide user & 1 \\
+        \hline
+        Create/Edit question without images & 1 \\
+        \hline
+        Create/Edit question with images & 2 \\
+        \hline
+        Create session & 2 \\
+        \hline
+        Edit session & 3 \\
+        \hline
+        Add question to session & 1 \\
+        \hline
+        Delete user data & 6 \\
+        \hline
+        Starting/Ending session & 1 \\
+        \hline
+        End of question round & 1 \\
+        \hline
+    \end{tabular}
+    \captionof{table}{Transactions per action}
+    \label{table:transactionsPerAction}
+\end{center}
+\noindent
+Looking at the table\ref{table:transactionsPerAction}, one can see that the limit of 60 transactions can be reached quite quickly. If we had known this from the beginning, we would most likely have chosen a different database management system. Even after taking the last issue into consideration we still think that SQLite can handle the traffic that is produced at the scale it is going to be used at. 
