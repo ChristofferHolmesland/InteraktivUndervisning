@@ -112,10 +112,13 @@ app.get('/login/callback/feide', passport.authenticate('passport-openid-connect'
 
 		dbFunctions.get.userIdByFeideId(db, idNumber).then((id) => {
 			if (id === undefined) {
-				dbFunctions.insert.feide(db, idNumber, accessToken, userName, sessionId, admin).then(() => {
-					dbFunctions.insert.feideUser(db, userId, idNumber).catch((err) => {
-						console.error(err);
-					});
+				dbFunctions.transaction.newFeideUser(db, {
+					id: idNumber,
+					access: accessToken,
+					name: userName,
+					sessionToken: sessionId,
+					admin: admin,
+					userId: userId,
 				}).catch((err) => {
 					console.error(err);
 				});

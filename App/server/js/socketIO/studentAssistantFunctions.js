@@ -818,36 +818,18 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 	});
 
 	socket.on("editSession", async function(session) {
-		dbFunctions.get.sessionById(db, session.id).then((session) => {
-			if(session.status > 0) return;
-			dbFunctions.update.sessionText(db, {
-				sessionId: session.id,
-				text: session.title
-			}).then(async () => {
-				dbFunctions.del.sHQById(db, session.id).then(async () => {
-					let sessionInformation = {
-						sessionId: session.id,
-						questionList: []
-					};
+		let sessionInformation = {
+			sessionId: session.id,
+			sessionName: session.title,
+			questionList: []
+		};
 
-					for (let i = 0; i < session.questions.length; i++) {
-						sessionInformation.questionList.push(session.questions[i].id);
-					}
+		for (let i = 0; i < session.questions.length; i++) {
+			sessionInformation.questionList.push(session.questions[i].id);
+		}
 
-					dbFunctions.transaction.insertQuestionHasSessions(db, sessionInformation).catch((err) => {
-						console.error(err);
-						return;
-					});
-
-					socket.emit("addNewSessionDone");
-				}).catch((err) => {
-					console.error(err);
-					return;
-				})
-			}).catch((err) => {
-				console.error(err);
-				return;
-			});
+		dbFunctions.transaction.editQuestionHasSession(db, sessionInformation).then(() => {
+			socket.emit("addNewSessionDone");
 		}).catch((err) => {
 			console.error(err);
 			return;
