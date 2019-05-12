@@ -105,6 +105,7 @@ describe("Test admin content",function () {
 			cy.get('#editQuestionModal___BV_modal_footer_ > .btn-primary').click();
 
 			//show current question information
+			cy.wait(500);
 			cy.get(".list-group > :nth-child(1) > div:nth-child(1)").should("be.visible");
 			cy.get(".list-group > div > div:nth-child(1) > .container > .row > div").should("contain", title);
 			cy.get(".list-group > :nth-child(1) > div:nth-child(1)")
