@@ -9,7 +9,7 @@ function createPromise(db, statement, funcName) {
 
 const transaction = {
 	storeAnswers: function(db, answerList, sqId) {
-		let statement = "BEGIN TRANSACTION;\n";
+		let statement = `BEGIN TRANSACTION;\n`;
 		for (let i = 0; i < answerList.length; i++) {
 			let answer = answerList[i];
 			answer.answerObject = JSON.stringify(answer.answerObject);
@@ -17,11 +17,11 @@ const transaction = {
 			statement += `INSERT INTO Answer(object, result, sessionHasQuestionId, userId)\n`
 			statement += `Values('${answer.answerObject}', ${answer.result}, ${sqId}, '${answer.userId}');\n`;
 		}
-		statement += "COMMIT TRANSACTION;";
+		statement += `COMMIT TRANSACTION;`;
 		return createPromise(db, statement, "storeAnswers");
 	},
 	insertQuestionHasSessions: function(db, sessionInformation) {
-		let statement = "BEGIN TRANSACTION;\n";
+		let statement = `BEGIN TRANSACTION;\n`;
 		let sessionId = sessionInformation.sessionId;
 		for(let i = 0; i < sessionInformation.questionList.length; i++) {
 			let questionId = sessionInformation.questionList[i];
@@ -31,7 +31,7 @@ const transaction = {
 			statement += `SET status = ${1}\n`;
 			statement += `WHERE id = ${questionId};\n`;
 		}
-		statement += "COMMIT TRANSACTION;";
+		statement += `COMMIT TRANSACTION;`;
 		return createPromise(db, statement, "inserQuestionHasSession");
 	},
 	editQuestionHasSession: function(db, sessionInformation) {
@@ -86,11 +86,22 @@ const transaction = {
 		return createPromise(db, statement, "deleteUserData");
 	},
 	newFeideUser: function(db, feideInformation) {
-		let statement = `INSERT INTO Feide(id, accessToken, name, sessionId, admin)` +
+		let statement = `BEGIN TRANSACTION;` +
+			`INSERT INTO Feide(id, accessToken, name, sessionId, admin)` +
 			`VALUES('${feideInformation.id}','${feideInformation.access}','${feideInformation.name}', '${feideInformation.sessionToken}', ${feideInformation.admin});` +
 			`INSERT INTO User(id,feideId)` +
-			`VALUES ('${feideInformation.userId}','${feideInformation.id}');`;
+			`VALUES ('${feideInformation.userId}','${feideInformation.id}');` +
+			`COMMIT TRANSACTION;`;
 		return createPromise(db, statement, "newFeideUser");
+	},
+	deleteSession: function(db, sessionId) {
+		let statement = `BEGIN TRANSACTION;` + 
+			`DELETE FROM SessionHasQuestion\n` +
+			`WHERE sessionId = ${sessionId};\n` +
+			`DELETE FROM Session\n` +
+			`WHERE id = ${sessionId};\n` +
+			`COMMIT TRANSACTION;`;
+		return createPromise(db, statement, "deleteSession");
 	}
 };
 
