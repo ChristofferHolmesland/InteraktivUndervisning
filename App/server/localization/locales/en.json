@@ -668,6 +668,7 @@
     },
     "AdminSessionOver": {
         "header": "Session is now over!",
+        "headerNoUser": "No user still connected. Session is now over!",
         "goBackBtn": "Go back to admin dashboard"
     },
     "AdminSessionOverview": {

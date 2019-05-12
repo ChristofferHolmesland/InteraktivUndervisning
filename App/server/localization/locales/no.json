@@ -669,6 +669,7 @@
     },
     "AdminSessionOver": {
         "header": "Økten er nå over!",
+        "headerNoUser": "Ingen brukere er fremdeles koblet til. Økten er nå over!",
         "goBackBtn": "Gå tilbake til skrivebordet"
     },
     "AdminSessionOverview": {

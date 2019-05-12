@@ -387,6 +387,13 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 	socket.on("nextQuestionRequest", function() {
 		let session = currentSession.session;
 		let currentUsers = session.currentUsers;
+		if (currentUsers === 0) {
+			socket.emit("endSessionNoUsers");
+			socket.to(session.sessionCode).emit("answerResponse", "sessionFinished");
+
+			sessions.delete(session.sessionCode);
+			return;
+		}
 
 		session.currentQuestion++;
 		

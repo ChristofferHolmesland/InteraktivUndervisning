@@ -3,7 +3,7 @@
 		<WaitingRoom v-if="state === 1" :sessionId="sessionId"/>
 		<Question v-if="state === 2" :sessionId="sessionId" :questionInfo="questionInfo"/>
 		<QuestionResultScreen v-if="state === 3" :sessionId="sessionId" :resultInfo="resultInfo"/>
-		<SessionOverScreen v-if="state === 4" :sessionId="sessionId"/>
+		<SessionOverScreen v-if="state === 4" :sessionId="sessionId" :noUsers="noUsers"/>
 	</div>
 </template>
 
@@ -20,7 +20,8 @@ export default {
 		return {
 			state: 0,
 			questionInfo: undefined,
-			resultInfo: undefined
+			resultInfo: undefined,
+			noUsers: false
 		};
 	},
 	created() {
@@ -28,24 +29,28 @@ export default {
 		this.$socket.emit("startSessionWaitingRoom", this.sessionId);
 	},
 	sockets: {
-		startSessionWaitingRoomResponse() {
+		startSessionWaitingRoomResponse: function() {
 			this.state = 1;
 		},
-		nextQuestion(questionInfo) {
+		nextQuestion: function(questionInfo) {
 			this.questionInfo = questionInfo;
 			this.state = 2;
 		},
-		goToQuestionResultScreen(resultInfo) {
+		goToQuestionResultScreen: function(resultInfo) {
 			this.resultInfo = resultInfo;
 			this.state = 3;
 		},
-		endSessionScreen() {
+		endSessionScreen: function() {
 			this.state = 4;
 		},
-		startSessionError() {
+		startSessionError: function() {
 			this.$router.push("/admin");
 		},
-		adminEndSessionResponse() {
+		adminEndSessionResponse: function() {
+			this.state = 4;
+		},
+		endSessionNoUsers: function() {
+			this.noUsers = true;
 			this.state = 4;
 		}
 	},
