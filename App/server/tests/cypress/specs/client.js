@@ -9,7 +9,7 @@ describe("Client Tests",function () {
 	it("Login as an anonymous user",function () {
 		cy.url().should("include","/client");
 		cy.get('[data-cy=loginButton]').click();
-		cy.get('[data-cy=loginButton] > a > span').should("contain","Anonymous"); //does not work
+		cy.get('[data-cy=loginButton] > a > span').should("contain","Anonym");
 		cy.get('[data-cy=loginButton] > .dropdown-menu > .dropdown-item')
 			.should("be.visible")
 			.click();
