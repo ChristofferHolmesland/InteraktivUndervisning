@@ -13,7 +13,7 @@
 		</b-row>
 		<b-row class="thirdRow">
 			<b-col cols="12" class="text-center">
-				<b-button @click="homeRedirect">{{getLocale.homeButton}}</b-button>
+				<b-button @click="homeRedirect" variant="success">{{getLocale.homeButton}}</b-button>
 			</b-col>
 		</b-row>
 	</b-container>
