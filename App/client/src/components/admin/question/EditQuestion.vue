@@ -150,7 +150,7 @@
 										</b-col>
 										<b-col>
 											<b-form-select 	id="graphType"
-												:options="getGraphTypes"
+												:options="getGraphTypes()"
 												v-model="graphConfiguration.type"
 												@change="reloadGraphDrawer"
 												>
@@ -163,9 +163,9 @@
 										</b-col>
 										<b-col>
 											<b-form-select 	id="graphArrows"
-												:options="getGraphYesNo"
+												:options="getGraphYesNo()"
 												v-model="graphConfiguration.directed"
-												@change="reloadGraphDrawer"
+												@change="hotReloadGraphDrawer"
 												>
                   						  </b-form-select>
 										</b-col>
@@ -176,9 +176,9 @@
 										</b-col>
 										<b-col>
 											<b-form-select 	id="graphEdgeValues"
-												:options="getGraphYesNo"
+												:options="getGraphYesNo()"
 												v-model="graphConfiguration.edgeValues"
-												@change="reloadGraphDrawer"
+												@change="hotReloadGraphDrawer"
 												>
                   						  </b-form-select>
 										</b-col>
@@ -189,9 +189,10 @@
 										</b-col>
 										<b-col>
 											<b-form-select 	id="graphNodeShape"
-												:options="getGraphNodeShapes"
+												:options="getGraphNodeShapes()"
 												v-model="graphConfiguration.nodeShape"
-												@change="reloadGraphDrawer"
+												@change="hotReloadGraphDrawer"
+												:disabled="disableGraphDrawerMedia"
 												>
                   						  </b-form-select>
 										</b-col>
@@ -571,7 +572,9 @@ function initializeState() {
 			directed: true,
 			edgeValues: true,
 			nodeShape: "Circle"
-		}
+		},
+
+		disableGraphDrawerMedia: false
 	};
 }
 
@@ -606,8 +609,35 @@ export default {
 		});
 	},
 	methods: {
+		hotReloadGraphDrawer: function() {
+			let hot = {
+				directedEdges: this.graphConfiguration.directed,
+				displayEdgeValues: this.graphConfiguration.edgeValues,
+				nodeShape: this.graphConfiguration.nodeShape
+			};
+
+			this.$refs.graphDrawerMedia.hotReload(hot);
+			this.$forceUpdate();
+			this.$nextTick(function() {
+				this.$refs.graphDrawerMedia.hotReload(hot);
+				this.$forceUpdate();
+				this.$nextTick(function() {
+					this.$refs.graphDrawerMedia.hotReload(hot);
+					this.$forceUpdate();
+				});
+			});
+		},
 		reloadGraphDrawer: function() {
-			this.reload = !this.reload;
+			this.reload = true;
+			this.$nextTick(function() {
+				if (this.graphConfiguration.type == "Sort") {
+					this.graphConfiguration.nodeShape = "Rectangle";
+					this.disableGraphDrawerMedia = true;
+				} else {
+					this.disableGraphDrawerMedia = false;
+				}
+				this.reload = false;
+			});
 		},
 		getGraphTypes: function() {
 			return [

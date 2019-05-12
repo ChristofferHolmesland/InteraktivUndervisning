@@ -119,6 +119,9 @@ export default class GraphDrawer {
 		// by a button.
 		this.relSize = 0.7;
 
+		// These properties can be updated by the hotreload function
+		this.hotReloadAble = ["dirty", "displayEdgeValues", "directedEdges", "nodeShape"];
+
 		this._config(config);
 
 		/*
@@ -205,6 +208,19 @@ export default class GraphDrawer {
 		};
 
 		this.setController(this.controlType);
+	}
+
+	hotReload(properties) {
+		for (let prop in properties) {
+			if (!properties.hasOwnProperty(prop)) continue;
+			if (!this.hasOwnProperty(prop)) continue;
+			if (this.hotReloadAble.indexOf(prop) == -1) continue;
+
+			this[prop] = properties[prop];
+		}
+
+		if (properties.dirty == undefined)
+			this.dirty = true;
 	}
 
 	setController(controllerName) {
@@ -772,6 +788,8 @@ export default class GraphDrawer {
 		// is running at the same time.
 		//if (this.runningId == undefined) this.runningId = 10000 * Math.random();
 		//	console.error(this.runningId);
+
+		console.log(this.nodeShape);
 
 		if (this.canvas.width !== this.canvas.clientWidth) {
 			// When the page is loading, the width is sometimes 0.

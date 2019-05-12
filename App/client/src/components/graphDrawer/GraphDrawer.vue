@@ -71,6 +71,9 @@
             this.destroyDrawer();
         },
         methods: {
+            hotReload: function(props) {
+                this.graphDrawer.hotReload(props);
+            },
             destroyDrawer: function() {
                 // Stop the update loop
                 if (this.graphDrawer !== undefined) {
