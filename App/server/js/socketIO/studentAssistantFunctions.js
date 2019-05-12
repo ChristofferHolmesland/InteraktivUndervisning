@@ -804,17 +804,15 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 	socket.on("deleteSessionRequest", function(sessionId) {
 		dbFunctions.get.sessionStatusById(db, sessionId).then(async (session) => {
 			if(session && session.status === 0) {
-				await dbFunctions.del.sHQById(db, sessionId).catch((err) => {
+				await dbFunctions.transaction.deleteSession(db, sessionId).then(() => {
+					socket.emit("deleteSessionResponse");
+				}).catch((err) => {
 					console.error(err);
-				})
-				await dbFunctions.del.sessionById(db, sessionId).catch((err) => {
-					console.error(err);
-				})
-				socket.emit("deleteSessionResponse");
+				});
 			}
 		}).catch((err) => {
 			console.error(err);
-		})
+		});
 	});
 
 	socket.on("editSession", async function(session) {
