@@ -544,7 +544,6 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 		
 				try {
 					var oldmask = process.umask(0);
-					console.log("mask: ", oldmask);
 					mkdirp.sync(path.join(__dirname, filePath), '0777');
 					process.umask(oldmask);
 					for (let i = 0; i < files.length; i++) {
