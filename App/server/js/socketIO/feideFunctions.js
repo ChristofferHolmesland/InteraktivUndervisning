@@ -245,67 +245,11 @@ module.exports.feide = function(socket, db, user){
 	});
 
 	socket.on("deleteUserData", async function() {
-		let err = await dbFunctions.del.applicationByFeideId(db, user.feide.idNumber).catch(err => {
+		dbFunctions.transaction.deleteUserData(db, user.feide.idNumber).then(() => {
+			socket.emit("deleteUserDataResponse");
+		}).catch((err) => {
 			console.error(err);
-			socket.emit("deleteUserDataError", "dbError");
-			return;
 		});
-		if (err){
-			console.error(err)
-			return;
-		}
-
-		err = await dbFunctions.update.answerUserToAnonymous(db, user.feide.idNumber).catch(err => {
-			console.error(err);
-			socket.emit("deleteUserDataError", "dbError");
-			return;
-		});
-		if (err){
-			console.error(err)
-			return;
-		}
-
-		err = await dbFunctions.del.userHasSession(db, user.feide.idNumber).catch(err => {
-			console.error(err);
-			socket.emit("deleteUserDataError", "dbError");
-			return;
-		});
-		if (err){
-			console.error(err)
-			return;
-		}
-
-		err = await dbFunctions.del.userRightsFromFeideId(db, user.feide.idNumber).catch(err => {
-			console.error(err);
-			socket.emit("deleteUserDataError", "dbError");
-			return;
-		});
-		if (err){
-			console.error(err)
-			return;
-		}
-
-		err = await dbFunctions.del.feide(db, user.feide.idNumber).catch(err => {
-			console.error(err);
-			socket.emit("deleteUserDataError", "dbError");
-			return;
-		});
-		if (err){
-			console.error(err)
-			return;
-		}
-
-		err = await dbFunctions.del.userByFeideId(db, user.feide.idNumber).catch(err => {
-			console.error(err);
-			socket.emit("deleteUserDataError", "dbError");
-			return;
-		});
-		if (err){
-			console.error(err)
-			return;
-		}
-
-		socket.emit("deleteUserDataResponse");
 	});
 	
 	socket.on("userLastSessionRequest", async function() {
