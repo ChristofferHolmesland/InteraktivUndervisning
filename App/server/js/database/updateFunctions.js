@@ -19,15 +19,6 @@ const update = {
 						 WHERE id = ${id};`;
 		return createPromise(db, statement, "question");
 	},
-	session: function(db, sessionId, sessionInfo) {
-		let statement = "UPDATE Session SET\n";
-		if(sessionInfo.name != undefined) statement += `name = '${sessionInfo.name}',`;
-		if(sessionInfo.status != undefined) statement += `status = ${sessionInfo.status},`;
-		if(sessionInfo.participants != undefined) statement += `participants = ${sessionInfo.participants}\n`
-		statement += `WHERE id = ${sessionId}`;
-
-		return createPromise(db, statement, "session");
-	},
 	userRightsLevelByFeideId: function(db, data) {
 		let statement = `UPDATE UserRight
 						 SET level = ${data.level}
@@ -53,13 +44,6 @@ const update = {
 						WHERE id = ${sessionId};
 						`;
 		return createPromise(db, statement, "sessionStatus");
-	},
-	sessionText: function(db, data) {
-		let statement = `UPDATE Session
-						SET name = '${data.text}'
-						WHERE id = ${data.sessionId};
-						`;
-		return createPromise(db, statement, "sessionText");
 	}
 };
 
