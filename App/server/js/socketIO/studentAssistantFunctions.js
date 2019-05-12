@@ -63,11 +63,19 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 
 	socket.on("addNewSession", function(session) {
 		let courseId = session.course;
+		
 		dbFunctions.insert.session(db, session.title, courseId).then(async function (id) {
-			for (let i = 0; i < session.questions.length; i++) {
-				await dbFunctions.insert.addQuestionToSession(db, id, session.questions[i].id).catch(err => console.error(err));
-				await dbFunctions.update.questionStatusToActive(db, session.questions[i].id).catch(err => console.error(err));
+			let sessionInformation = {
+				sessionId: id,
+				questionList: []
 			}
+			
+			for (let i = 0; i < session.questions.length; i++) {
+				sessionInformation.questionList.push(session.questions[i].id);
+			}
+
+			await dbFunctions.transaction.insertQuestionHasSessions(db, sessionInformation);
+
 			socket.emit("addNewSessionDone");
 		}).catch(err => console.error(err));
 	});
@@ -433,8 +441,12 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 	});
 
 	socket.on("addQuestionToSession", function(data) {
-		dbFunctions.insert.addQuestionToSession(db, data.sessionId, data.questionId);
-		dbFunctions.update.questionStatusToActive(db, data.questionId);
+		dbFunctions.transaction.insertQuestionHasSessions(db, {
+			sessionId: data.sessionId,
+			questionList: [data.questionId]
+		}).catch((err) => {
+			console.error(err);
+		});
 	});
 
 	socket.on("getAllQuestionsWithinCourse", function(courseId) {
@@ -813,19 +825,32 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 				text: session.title
 			}).then(async () => {
 				dbFunctions.del.sHQById(db, session.id).then(async () => {
+					let sessionInformation = {
+						sessionId: session.id,
+						questionList: []
+					};
+
 					for (let i = 0; i < session.questions.length; i++) {
-						await dbFunctions.insert.addQuestionToSession(db, session.id, session.questions[i].id).catch(err => console.error(err));
-						await dbFunctions.update.questionStatusToActive(db, session.questions[i].id).catch(err => console.error(err));
+						sessionInformation.questionList.push(session.questions[i].id);
 					}
+
+					dbFunctions.transaction.insertQuestionHasSessions(db, sessionInformation).catch((err) => {
+						console.error(err);
+						return;
+					});
+
 					socket.emit("addNewSessionDone");
 				}).catch((err) => {
 					console.error(err);
+					return;
 				})
 			}).catch((err) => {
 				console.error(err);
+				return;
 			});
 		}).catch((err) => {
 			console.error(err);
+			return;
 		});
 	});
 
