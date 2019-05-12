@@ -15,7 +15,6 @@ const jsonParser = function (rows) {
 };
 
 const imageGetter = async function (rows) {
-	console.log("Parsing Image")
 	if (rows === undefined) return;
 	for (let i = 0; i < rows.length; i++) {
 		let row = rows[i];
@@ -32,7 +31,6 @@ const imageGetter = async function (rows) {
 			}
 		}
 	}
-	console.log("parsing ended")
 }
 
 const get = {
@@ -563,7 +561,7 @@ const get = {
 							FROM AdminRequest
 							WHERE id = ${applicationId};`;
 			db.get(statement, (err, rows) => {
-				if (err) reject(customReject(err, "userRightInCourseById"));
+				if (err) reject(customReject(err, "applicationById"));
 				resolve(rows);
 			});
     	});
