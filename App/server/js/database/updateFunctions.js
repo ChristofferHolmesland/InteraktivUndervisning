@@ -41,17 +41,6 @@ const update = {
 						WHERE id = '${id}'`;
 		return createPromise(db, statement, "feideSessionId");
 	},
-	answerUserToAnonymous: function(db, feideId) {
-		let statement = `UPDATE Answer
-						SET userId = 1
-						WHERE userId IN (
-							SELECT A.userId
-							From Answer AS A
-							INNER JOIN User AS U ON U.id = A.userId
-							WHERE U.feideId = ${feideId}
-						);`;
-		return createPromise(db, statement, "answerUserToAnonymous")
-	},
 	markAnswerAsCorrect: function(db, answerId) {
 		let statement = `UPDATE Answer
 						SET result = 1

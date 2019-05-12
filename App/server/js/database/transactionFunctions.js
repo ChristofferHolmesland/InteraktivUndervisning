@@ -36,7 +36,33 @@ const transaction = {
 		return createPromise(db, statement, "inserQuestionHasSession");
 	},
 	deleteUserData: function(db, feideId) {
-		
+		let statement = `BEGIN TRANSACTION;\n` +
+			`DELETE FROM AdminRequest\n` +
+			`WHERE feideId = ${feideId};\n` +
+			`UPDATE Answer\n` +
+			`SET userId = 1\n` +
+			`WHERE userId IN (\n` +
+			`	SELECT A.userId\n` +
+			`	FROM Answer AS A\n` +
+			`	INNER JOIN User AS U ON U.id = A.userId\n` +
+			`	WHERE U.feideId = ${feideId}\n` +
+			`);\n` +
+			`DELETE FROM UserHasSession\n` +
+			`WHERE userId in (\n` +
+			`	SELECT UHS.userId\n` +
+			`	FROM UserHasSession AS UHS\n` +
+			`	INNER JOIN User AS U ON U.id = UHS.userId\n` +
+			`	WHERE U.feideId = ${feideId}\n` +
+			`);\n` +
+			`DELETE FROM UserRight\n` +
+			`WHERE feideId = ${feideId};\n` +
+			`DELETE FROM Feide\n` +
+			`WHERE id = ${feideId};\n` +
+			`DELETE FROM User\n` +
+			`WHERE feideId = ${feideId};\n` +
+			`COMMIT TRANSACTION;`;
+
+		return createPromise(db, statement, "deleteUserData");
 	}
 };
 
