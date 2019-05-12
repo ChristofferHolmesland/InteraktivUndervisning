@@ -141,12 +141,72 @@
 								<b-container>
 									<b-row>
 										<b-col>
+											Settings:
+										</b-col>
+									</b-row>
+									<b-row>
+										<b-col>
+											Type:
+										</b-col>
+										<b-col>
+											<b-form-select 	id="graphType"
+												:options="getGraphTypes"
+												v-model="graphConfiguration.type"
+												@change="reloadGraphDrawer"
+												>
+                  						  </b-form-select>
+										</b-col>
+									</b-row>
+									<b-row>
+										<b-col>
+											Arrows:
+										</b-col>
+										<b-col>
+											<b-form-select 	id="graphArrows"
+												:options="getGraphYesNo"
+												v-model="graphConfiguration.directed"
+												@change="reloadGraphDrawer"
+												>
+                  						  </b-form-select>
+										</b-col>
+									</b-row>
+									<b-row>
+										<b-col>
+											Edge values:
+										</b-col>
+										<b-col>
+											<b-form-select 	id="graphEdgeValues"
+												:options="getGraphYesNo"
+												v-model="graphConfiguration.edgeValues"
+												@change="reloadGraphDrawer"
+												>
+                  						  </b-form-select>
+										</b-col>
+									</b-row>
+									<b-row>
+										<b-col>
+											Node shape:
+										</b-col>
+										<b-col>
+											<b-form-select 	id="graphNodeShape"
+												:options="getGraphNodeShapes"
+												v-model="graphConfiguration.nodeShape"
+												@change="reloadGraphDrawer"
+												>
+                  						  </b-form-select>
+										</b-col>
+									</b-row>
+									<b-row>
+										<b-col>
 											<GraphDrawer
-													controlType="Graph0"
+													:controlType="graphConfiguration.type"
 													subType="Dijkstra"
 													operatingMode="Interactive"
-													displayEdgeValues="true"
+													:displayEdgeValues="graphConfiguration.edgeValues"
+													:directedEdges="graphConfiguration.directed"
 													ref="graphDrawerMedia"
+													:requestImage="requestGraphDrawerImage"
+													@getCanvasImage="processGraphDrawerImage"
 													v-if="!reload"
 											/>
 										</b-col>
@@ -503,7 +563,15 @@ function initializeState() {
 		validationFailure: false,
 		validationErrors: [],
 
-		reload: false
+		reload: false,
+		requestGraphDrawerImage: false,
+
+		graphConfiguration: {
+			type: "Graph0",
+			directed: true,
+			edgeValues: true,
+			nodeShape: "Circle"
+		}
 	};
 }
 
@@ -538,6 +606,45 @@ export default {
 		});
 	},
 	methods: {
+		reloadGraphDrawer: function() {
+			this.reload = !this.reload;
+		},
+		getGraphTypes: function() {
+			return [
+				{
+					text: "Graph",
+					value: "Graph0"
+				},
+				{
+					text: "Array",
+					value: "Sort"
+				}
+			];
+		},
+		getGraphYesNo: function() {
+			return [
+				{
+					text: "Yes",
+					value: true
+				},
+				{
+					text: "No",
+					value: false
+				}
+			];
+		},
+		getGraphNodeShapes: function() {
+			return [
+				{
+					text: "Circle",
+					value: "Circle"
+				},
+				{
+					text: "Rectangle",
+					value: "Rectangle"
+				}
+			];
+		},
 		solutionTypeChanged: function() {
 			// If the old type used a graphdrawer, it should be destroyed.
 			if (this.$refs.graphdrawer !== undefined) {
@@ -874,9 +981,9 @@ export default {
 			this.editExistingTable = true;
 			this.editExistingTableIndex = index;
 		},
-		addCanvasAsImage: function() {
+		processGraphDrawerImage: function(dataUrl) {
 			let storedFiles = this.newQuestion.objects.files;
-			let img = this.$refs.graphDrawerMedia.$refs.canvasElement.toDataURL("image/png");
+			let img = dataUrl;
 			let arr = img.split(",");
 			let buffer = arr[1];
 			arr = arr[0].split(";");
@@ -913,6 +1020,9 @@ export default {
 					this.reload = false;
 				});
 			}
+		},
+		addCanvasAsImage: function() {
+			this.requestGraphDrawerImage = !this.requestGraphDrawerImage;
 		}
 	},
 	computed: {

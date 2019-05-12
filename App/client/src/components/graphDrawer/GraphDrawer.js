@@ -75,6 +75,11 @@ export default class GraphDrawer {
 		else this.directedEdges = false;
 	}
 
+	exportImage() {
+		this.switchBuffers(true);
+		return this.canvas.toDataURL("image/png");
+	}
+
 	export() {
 		return this.controllers[this.controlType].export();
 	}
@@ -219,7 +224,7 @@ export default class GraphDrawer {
 
 		ref: https://en.wikipedia.org/wiki/Multiple_buffering
 	*/
-	switchBuffers() {
+	switchBuffers(noStatic) {
 		let camera = this.camera.getFrustumFront();
 		let oldFill = this.canvasContext.fillStyle;
 		this.canvasContext.fillStyle = "#fff";
@@ -245,17 +250,19 @@ export default class GraphDrawer {
 			this.canvas.height
 		);
 
-		this.canvasContext.drawImage(
-			this.staticBuffer,
-			0,
-			0,
-			this.staticBuffer.width,
-			this.staticBuffer.height,
-			0,
-			0,
-			this.canvas.width,
-			this.canvas.height
-		);
+		if (!noStatic) {
+			this.canvasContext.drawImage(
+				this.staticBuffer,
+				0,
+				0,
+				this.staticBuffer.width,
+				this.staticBuffer.height,
+				0,
+				0,
+				this.canvas.width,
+				this.canvas.height
+			);
+		}
 	}
 
 	/*
