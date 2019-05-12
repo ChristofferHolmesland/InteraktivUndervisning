@@ -808,26 +808,35 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 					socket.emit("deleteSessionResponse");
 				}).catch((err) => {
 					console.error(err);
+					return;
 				});
 			}
 		}).catch((err) => {
 			console.error(err);
+			return;
 		});
 	});
 
 	socket.on("editSession", async function(session) {
-		let sessionInformation = {
-			sessionId: session.id,
-			sessionName: session.title,
-			questionList: []
-		};
-
-		for (let i = 0; i < session.questions.length; i++) {
-			sessionInformation.questionList.push(session.questions[i].id);
-		}
-
-		dbFunctions.transaction.editQuestionHasSession(db, sessionInformation).then(() => {
-			socket.emit("addNewSessionDone");
+		dbFunctions.get.sessionStatusById(db, session.id).then(async (sessionStatusInfo) => {
+			if (sessionStatusInfo && sessionStatusInfo.status === 0) {
+				let sessionInformation = {
+					sessionId: session.id,
+					sessionName: session.title,
+					questionList: []
+				};
+		
+				for (let i = 0; i < session.questions.length; i++) {
+					sessionInformation.questionList.push(session.questions[i].id);
+				}
+		
+				dbFunctions.transaction.editQuestionHasSession(db, sessionInformation).then(() => {
+					socket.emit("addNewSessionDone");
+				}).catch((err) => {
+					console.error(err);
+					return;
+				});
+			}
 		}).catch((err) => {
 			console.error(err);
 			return;
