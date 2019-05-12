@@ -23,6 +23,7 @@
         "multipleChoiceCorrect": "Riktig:",
         "addNewMultipleChoice": "Legg til nytt alternativ",
         "multipleChoiceDeleteBtn": "Slett",
+        "mediaLabel": "Media:",
         "basicInfo": "Grunnleggende Informasjon:",
         "TitleIsEmptyError": "Spørsmålet mangler en tittel!",
         "DescriptionIsEmptyError": "Spørsmålet mangler en beskrivelse!",

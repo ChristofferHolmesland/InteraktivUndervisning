@@ -31,7 +31,7 @@
         <b-container v-if="haveMedia" class="px-0">
             <b-row @click="changeShowMedia" class="cursor">
                 <b-col cols="11">
-                    <h4>Media:</h4>
+                    <h4>{{ getLocale.mediaLabel }}</h4>
                 </b-col>
                 <b-col cols="1">
                     <p><i :class="showMedia ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i></p>
