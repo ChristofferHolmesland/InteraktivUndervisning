@@ -459,7 +459,6 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 
 	socket.on("questionInfoByIdRequest", async function(questionId) {
 		await dbFunctions.get.questionsByQuestionId(db, [{id: questionId}]).then((rows) => {
-			if (rows[0].status === 1) return;
 			socket.emit("questionInfoByIdResponse", rows[0]);
 		}).catch((err) => {
 			console.error(err);

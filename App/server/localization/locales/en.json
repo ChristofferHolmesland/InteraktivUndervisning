@@ -23,7 +23,7 @@
         "multipleChoiceCorrect": "Correct:",
         "addNewMultipleChoice": "Add new choice",
         "multipleChoiceDeleteBtn": "Delete",
-        "basicInfo": "Basic Information",
+        "basicInfo": "Basic Information:",
         "TitleIsEmptyError": "The title of the question cannot be empty!",
         "DescriptionIsEmptyError": "The description of the question cannot be empty!",
         "EmptyTextSolutionError": "The solution for a text question cannot be empty!",
