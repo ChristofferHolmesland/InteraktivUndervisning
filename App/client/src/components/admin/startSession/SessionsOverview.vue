@@ -80,6 +80,9 @@ export default {
 			if (sessions.length !== 0) {
 				this.sessionList = sessions;
 				this.selectedSession = sessions[0].value;
+			} else {
+				this.sessionList = [];
+				this.selectedSession = "";
 			}
 		}
 	},

@@ -274,12 +274,12 @@ module.exports.admin = function(socket, db, user, users) {
 		if (
 			courseId === undefined ||
 			courseId === null ||
-			typeof courseId === "string" ||
+			typeof courseId !== "number" ||
 			courseId.length === 0 ||
 			applicationId === undefined ||
 			applicationId === null ||
-			typeof applicationId === "number" ||
-			applicationId >= 0
+			typeof applicationId !== "number" ||
+			applicationId === 0
 		) return;
 
 		dbFunctions.get.userRightInCourseById(db, {
@@ -301,13 +301,14 @@ module.exports.admin = function(socket, db, user, users) {
 		if (
 			courseId === undefined ||
 			courseId === null ||
-			typeof courseId === "string" ||
+			typeof courseId !== "number" ||
 			courseId.length === 0 ||
 			applicationId === undefined ||
 			applicationId === null ||
-			typeof applicationId === "number" ||
-			applicationId >= 0
+			typeof applicationId !== "number" ||
+			applicationId === 0
 		) return;
+		console.log("test");
 
 		dbFunctions.get.userRightInCourseById(db, {
 			courseId: courseId,
