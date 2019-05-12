@@ -28,6 +28,7 @@ describe("Test admin content",function () {
 		cy.get('[data-cy=addSemesterField] > h6')
 			.should("have.text", "Legg til nytt semester:")
 			.click();
+		cy.wait(500);
 		cy.get("#courseSemester > div > :nth-child(3) > .row:nth-child(2) > .container > .row > .col > h6 ").should("have.text", "Velg sesong:");
 		cy.get("#courseSemester > div > :nth-child(3) > .row:nth-child(3) > .container > .row > .col > h6 ").should("have.text", "Velg et år:");
 		cy.get("#courseNameInput")
@@ -47,6 +48,7 @@ describe("Test admin content",function () {
 		cy.get("[data-cy=NewCourseCodeBtn]")
 			.should("have.text", "Legg til fag kode")
 			.click();
+		cy.wait(500);
 		cy.get(".alert > p").should("have.text", "Inndata feltet for fag koden har feil format.\nKoden skal ha 3 store bokstaver etterfulgt med 3 tall.");
 		cy.get('#addCourseCodeInput')
 			.clear()
@@ -90,10 +92,15 @@ describe("Test admin content",function () {
 			cy.get('[data-cy=solutionType] > label')
 				.should("contain", "Løsnings type")
 				.click();
+			cy.wait(500);
 			cy.get("#questionTitleInput").type(title);
+			cy.wait(500);
 			cy.get("#questionTextInput").type(info);
+			cy.wait(500);
 			cy.get("#questionTimeInput").type(time);
+			cy.wait(500);
 			cy.get("#solutionTypeInput").select("Text");
+			cy.wait(500);
 			cy.get("#solutionInputText").type(solution);
 			cy.get('#editQuestionModal___BV_modal_footer_ > .btn-primary').click();
 
@@ -120,6 +127,7 @@ describe("Test admin content",function () {
 			cy.get(".list-group > :nth-child(1) > div:nth-child(1)")
 				.find(".btn-primary > i")
 				.click();
+			cy.wait(500);
 			cy.get('[data-cy=solutionType] > label').click();
 			cy.get('#questionTitleInput')
 				.should("have.value", title)
@@ -172,6 +180,7 @@ describe("Test admin content",function () {
 			let timeEdited = "00:00";
 
 			cy.get("[data-cy=addQuestionButton]").click();
+			cy.wait(500);
 
 			//create multi choice question
 			cy.get("#editQuestionModal___BV_modal_header_ > .modal-title").should("have.text", "Nytt spørsmål");
@@ -193,6 +202,7 @@ describe("Test admin content",function () {
 			cy.get('#multipleChoiceChoices > div > div > div:nth-child(2) > div > div > .row:nth-child(1) > .col-2 .btn')
 				.should("have.text", "Slett")
 				.click();
+			cy.wait(500);
 			cy.get("#multipleChoiceChoices").find("input#0.form-control").type(choice1);
 			cy.get("#multipleChoiceChoices").find("input#1.form-control").type(choice2);
 			cy.get("#multipleChoiceChoices").find("input#2.form-control").type(choice3);
@@ -238,6 +248,7 @@ describe("Test admin content",function () {
 				.find(".btn-primary > i")
 				.click();
 			cy.get('#solutionType > [role="group"] > .px-0 > .row > .col-10 > label').click();
+			cy.wait(500);
 			cy.get('#questionTitleInput')
 				.should("have.value", title)
 				.clear()
@@ -250,6 +261,7 @@ describe("Test admin content",function () {
 			cy.get("#multipleChoiceChoices > div > div > div:nth-child(2) > div > div > :nth-child(4) > .col-2 > .btn").click();
 			cy.get("#multipleChoiceChoices > div > div > div:nth-child(2) > div > div > :nth-child(3) > .col-2 > .btn").click();
 			cy.get('#addNewMultipleChoice').click();
+			cy.wait(500);
 			cy.get('#multipleChoiceChoices')
 				.find("input#0.form-control")
 				.clear()
@@ -303,6 +315,7 @@ describe("Test admin content",function () {
 			let arrayValues = "2,88,11,36,66,37,29,15,62,10";
 			let k = '5';
 			cy.get("[data-cy=addQuestionButton]").click();
+			cy.wait(500);
 
 			//create ShellSort
 			cy.get("#editQuestionModal___BV_modal_header_ > .modal-title").should("have.text", "Nytt spørsmål");
@@ -313,6 +326,7 @@ describe("Test admin content",function () {
 			cy.get('[data-cy=solutionType] > label')
 				.should("contain", "Løsnings type")
 				.click();
+			cy.wait(500);
 			cy.get("#solutionTypeInput").select("Shellsort");
 			cy.get('#sortingSolution__BV_label_').should("has.text", "Start liste (elementer sepereres med ,)");
 			cy.get('#kValue__BV_label_').should("has.text", "K start verdi");
@@ -346,6 +360,7 @@ describe("Test admin content",function () {
 			let time = "03:30";
 			let arrayValues = "12,78,55,28,40,62,81,57,51,25";
 			cy.get("[data-cy=addQuestionButton]").click();
+			cy.wait(500);
 
 			//create MergeSort
 			cy.get("#editQuestionModal___BV_modal_header_ > .modal-title").should("have.text", "Nytt spørsmål");
@@ -357,6 +372,7 @@ describe("Test admin content",function () {
 				.should("contain", "Løsnings type")
 				.click();
 			cy.get("#solutionTypeInput").select("MergeSort");
+			cy.wait(500);
 			cy.get('#sortingSolution__BV_label_').should("have.text", "Start liste (elementer sepereres med ,)");
 			cy.get('#sortingSolution > div > #solutionInput').type(arrayValues);
 			cy.get("#editQuestionModal___BV_modal_footer_ > .btn-primary").click();
@@ -388,6 +404,7 @@ describe("Test admin content",function () {
 			let time = "04:00";
 			let arrayValues = "14,98,91,21,14,68,18,25,47,88";
 			cy.get("[data-cy=addQuestionButton]").click();
+			cy.wait(500);
 
 			//create QuickSort
 			cy.get("#editQuestionModal___BV_modal_header_ > .modal-title").should("have.text", "Nytt spørsmål");
@@ -399,6 +416,7 @@ describe("Test admin content",function () {
 				.should("contain", "Løsnings type")
 				.click();
 			cy.get("#solutionTypeInput").select("QuickSort");
+			cy.wait(500);
 			cy.get('#sortingSolution__BV_label_').should("have.text", "Start liste (elementer sepereres med ,)");
 			cy.get('#sortingSolution > div > #solutionInput').type(arrayValues);
 			cy.get("#editQuestionModal___BV_modal_footer_ > .btn-primary").click();
@@ -432,6 +450,7 @@ describe("Test admin content",function () {
 			let treeElements = "45,48,50,6,3";
 			let solution = "Det ville blitt regnet som riktig svar hvis treet som ble gitt følger alle reglene til et Binear Tree og treet besto av følgende noder:";
 			cy.get("[data-cy=addQuestionButton]").click();
+			cy.wait(500);
 
 			//create Binary Tree
 			cy.get("#editQuestionModal___BV_modal_header_ > .modal-title").should("have.text", "Nytt spørsmål");
@@ -443,6 +462,7 @@ describe("Test admin content",function () {
 				.should("contain", "Løsnings type")
 				.click();
 			cy.get("#solutionTypeInput").select("BinaryTree");
+			cy.wait(500);
 			cy.get('#BinaryTree__BV_label_').should("have.text","Skriv inn listen av noder som skal bli brukt i binærtreet. Elementene skal sepereres med bruk av ,");
 			cy.get('#nodeElements').type(treeElements);
 			cy.get("#editQuestionModal___BV_modal_footer_ > .btn-primary").click();
@@ -475,6 +495,7 @@ describe("Test admin content",function () {
 			let time = "05:00";
 			let treeElements = "35,86,23,73,54";
 			cy.get("[data-cy=addQuestionButton]").click();
+			cy.wait(500);
 
 			//create Binary Search Tree
 			cy.get("#editQuestionModal___BV_modal_header_ > .modal-title").should("have.text", "Nytt spørsmål");
@@ -492,6 +513,7 @@ describe("Test admin content",function () {
 			cy.get("#Remove").click();
 			cy.get("label[for=\"solutionListElements\"]").should("have.text","Skriv inn elementer som skal fjernes fra treet. Elementene skal sepereres med bruk av ,");
 			cy.get("#Add").click();
+			cy.wait(500);
 			cy.get('#solutionListElements').type(treeElements);
 			cy.get("#canvas").should("visible");
 			cy.get("#canvas")
@@ -542,6 +564,7 @@ describe("Test admin content",function () {
 			let time = "05:30";
 			let treeElements = "4,56,71,12,93";
 			cy.get("[data-cy=addQuestionButton]").click();
+			cy.wait(500);
 
 			//create AVL Tree
 			cy.get("#editQuestionModal___BV_modal_header_ > .modal-title").should("have.text", "Nytt spørsmål");
@@ -559,6 +582,7 @@ describe("Test admin content",function () {
 			cy.get("#Remove").click();
 			cy.get("label[for=\"solutionListElements\"]").should("have.text","Skriv inn elementer som skal fjernes fra treet. Elementene skal sepereres med bruk av ,");
 			cy.get("#Add").click();
+			cy.wait(500);
 			cy.get('#solutionListElements').type(treeElements);
 			cy.get("#canvas")
 				.should("visible")
@@ -607,6 +631,7 @@ describe("Test admin content",function () {
 			let info = "Info Dijkstra Test";
 			let time = "06:00";
 			cy.get("[data-cy=addQuestionButton]").click();
+			cy.wait(500);
 
 			//create Dijkstra
 			cy.get("#editQuestionModal___BV_modal_header_ > .modal-title").should("have.text", "Nytt spørsmål");
@@ -729,6 +754,7 @@ describe("Test admin content",function () {
 				"\n" +
 				"l1.p2.x = 5";
 			cy.get("[data-cy=addQuestionButton]").click();
+			cy.wait(500);
 
 			//create Python
 			cy.get("#editQuestionModal___BV_modal_header_ > .modal-title").should("have.text", "Nytt spørsmål");
@@ -740,6 +766,7 @@ describe("Test admin content",function () {
 				.should("contain", "Løsnings type")
 				.click();
 			cy.get("#solutionTypeInput").select("Python");
+			cy.wait(500);
 			cy.get('#pythonCodeInput').type(python);
 			cy.get("#editQuestionModal___BV_modal_footer_ > .btn-primary").click();
 
@@ -770,6 +797,7 @@ describe("Test admin content",function () {
 				.find(".btn-primary > i")
 				.click();
 			cy.get('#solutionType > [role="group"] > .px-0 > .row > .col-10 > label').click();
+			cy.wait(500);
 			cy.get('#questionTitleInput')
 				.should("have.value", title)
 				.clear()
@@ -780,6 +808,7 @@ describe("Test admin content",function () {
 				.type(infoEdited);
 			cy.get("#questionTimeInput").type(timeEdited);
 			cy.get("#solutionTypeInput").select("Python");
+			cy.wait(500);
 			cy.get('#pythonCodeInput')
 				.clear()
 				.type(pythonEdited);
@@ -816,6 +845,7 @@ describe("Test admin content",function () {
 		it("Create a Session", function () {
 			cy.get("#courseSelect").select("TET100 Høst 2020");
 			cy.get("#AddNewSession").click();
+			cy.wait(500);
 			cy.get("#sessionTitleInput").type("Test Session");
 			cy.get("#questionsSelect").select("1");
 			cy.get("form").should("contain", "Spørsmål i økten");
