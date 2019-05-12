@@ -316,19 +316,17 @@ module.exports.admin = function(socket, db, user, users) {
 			if (userRight.length === 0) return;
 			dbFunctions.get.applicationById(db, applicationId).then((application) => {
 				if (application === undefined) return;
-				dbFunctions.insert.userRightsLevelByFeideId(db, {
+
+				dbFunctions.transaction.approveApplicants(db, {
 					feideId: application.feideId,
 					courseId: application.courseId,
-					level: application.userRight
+					level: application.userRight,
+					applicationId: applicationId
 				}).then(() => {
-					dbFunctions.del.applicationById(db, applicationId).then(() => {
-						socket.emit("applicantChangeResponse");
-					}).catch((err) => {
-						console.error(err);
-					})
+					socket.emit("applicantChangeResponse");
 				}).catch((err) => {
-					console.error(err);
-				})
+					console.log(err)
+				});
 			}).catch((err) => {
 				console.error(err);
 			})

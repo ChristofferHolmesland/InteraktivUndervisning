@@ -14,8 +14,8 @@ const transaction = {
 			let answer = answerList[i];
 			answer.answerObject = JSON.stringify(answer.answerObject);
 			answer.answerObject = answer.answerObject.replace("'", "\'\'");
-			statement += `INSERT INTO Answer(object, result, sessionHasQuestionId, userId)\n`
-			statement += `Values('${answer.answerObject}', ${answer.result}, ${sqId}, '${answer.userId}');\n`;
+			statement += `INSERT INTO Answer(object, result, sessionHasQuestionId, userId)\n` +
+				`Values('${answer.answerObject}', ${answer.result}, ${sqId}, '${answer.userId}');\n`;
 		}
 		statement += `COMMIT TRANSACTION;`;
 		return createPromise(db, statement, "storeAnswers");
@@ -86,22 +86,31 @@ const transaction = {
 		return createPromise(db, statement, "deleteUserData");
 	},
 	newFeideUser: function(db, feideInformation) {
-		let statement = `BEGIN TRANSACTION;` +
-			`INSERT INTO Feide(id, accessToken, name, sessionId, admin)` +
-			`VALUES('${feideInformation.id}','${feideInformation.access}','${feideInformation.name}', '${feideInformation.sessionToken}', ${feideInformation.admin});` +
-			`INSERT INTO User(id,feideId)` +
-			`VALUES ('${feideInformation.userId}','${feideInformation.id}');` +
+		let statement = `BEGIN TRANSACTION;\n` +
+			`INSERT INTO Feide(id, accessToken, name, sessionId, admin)\n` +
+			`VALUES('${feideInformation.id}','${feideInformation.access}','${feideInformation.name}', '${feideInformation.sessionToken}', ${feideInformation.admin});\n` +
+			`INSERT INTO User(id,feideId)\n` +
+			`VALUES ('${feideInformation.userId}','${feideInformation.id}');\n` +
 			`COMMIT TRANSACTION;`;
 		return createPromise(db, statement, "newFeideUser");
 	},
 	deleteSession: function(db, sessionId) {
-		let statement = `BEGIN TRANSACTION;` + 
+		let statement = `BEGIN TRANSACTION;\n` + 
 			`DELETE FROM SessionHasQuestion\n` +
 			`WHERE sessionId = ${sessionId};\n` +
 			`DELETE FROM Session\n` +
 			`WHERE id = ${sessionId};\n` +
 			`COMMIT TRANSACTION;`;
 		return createPromise(db, statement, "deleteSession");
+	},
+	approveApplicants: function(db, applicationData) {
+		let statement = `BEGIN TRANSACTION;\n` +
+			`INSERT INTO UserRight(feideId, courseId, level)\n` +
+			`VALUES ('${applicationData.feideId}', ${applicationData.courseId}, ${applicationData.level});\n` +
+			`DELETE FROM AdminRequest\n` +
+			`WHERE id = ${applicationData.applicationId};\n` +
+			`COMMIT TRANSACTION;`
+		return createPromise(db, statement, "approveApplicants");
 	}
 };
 

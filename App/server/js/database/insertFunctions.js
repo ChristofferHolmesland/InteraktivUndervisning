@@ -64,11 +64,6 @@ const insert = {
 						VALUES('${userId}', ${sessionId})`;
 		return createPromise(db, statement, "addUserToSession");
 	},
-	addQuestionToSession: function(db, sessionId, questionId) {
-		let statement = `INSERT INTO SessionHasQuestion(sessionId, questionId)
-						VALUES(${sessionId}, ${questionId})`;
-		return createPromise(db, statement, "addQuestionToSession");
-	},
 	userRightsLevelByFeideId: function(db, data) {
 		let statement = `INSERT INTO UserRight(feideId, courseId, level) 
 						 VALUES ('${data.feideId}', ${data.courseId}, ${data.level})`;
