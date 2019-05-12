@@ -19,16 +19,6 @@ const del = {
 						WHERE id = ${questionId}`;
 		return createPromise(db, statement, "questionById");
 	},
-	sHQById: function(db, sessionId) {
-		let statement = `DELETE FROM SessionHasQuestion
-						WHERE sessionId = ${sessionId};`;
-		return createPromise(db, statement, "sHQById");
-	},
-	sessionById: function(db, sessionId) {
-		let statement = `DELETE FROM Session
-						WHERE id = ${sessionId};`;
-		return createPromise(db, statement, "sessionById");
-	},
 	applicationById: function(db, applicationId) {
 		let statement = `DELETE FROM AdminRequest
 						WHERE id = ${applicationId};`;
