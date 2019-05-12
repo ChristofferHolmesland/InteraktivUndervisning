@@ -59,31 +59,6 @@ const insert = {
 						VALUES('${questionText}', '${questionDescription}', '${questionObject}', '${JSON.stringify(questionSolution)}', ${time}, ${type}, ${courseId}, 0)`;
 		return createPromise(db, statement, "questionWithObject");
 	},
-	storeAnswer: function(db, answer, result, sqId, userId) {
-		answer = JSON.stringify(answer);
-		answer = answer.replace("'", "\'\'");
-		let statement = `INSERT INTO Answer(object, result, sessionHasQuestionId, userId)
-						VALUES('${answer}', ${result}, ${sqId}, '${userId}')`;
-		return createPromise(db, statement, "storeAnswer");
-	},
-	storeAnswers: function(db, answerList, sqId) {
-		return new Promise((resolve, reject) => {
-			let statement = "BEGIN TRANSACTION;";
-			for (let i = 0; i < answerList.length; i++) {
-				let answer = answerList[i];
-				answer.answerObject = JSON.stringify(answer.answerObject);
-				answer.answerObject = answer.answerObject.replace("'", "\'\'");
-				statement += `INSERT INTO Answer(object, result, sessionHasQuestionId, userId)
-							Values('${answer.answerObject}', ${answer.result}, ${sqId}, '${answer.userId}');`;
-			}
-			statement += "COMMIT TRANSACTION;";
-	
-			db.exec(statement, (err) => {
-				if (err) reject(new Error(`Error in insert function: ${"storeAnswers"} \n\n ${err}`)	);
-				resolve();
-			});
-		});
-	},
 	addUserToSession: function(db, userId, sessionId) {
 		let statement = `INSERT INTO UserHasSession(userId,sessionId)
 						VALUES('${userId}', ${sessionId})`;

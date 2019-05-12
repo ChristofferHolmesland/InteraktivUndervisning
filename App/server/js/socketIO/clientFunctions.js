@@ -361,7 +361,7 @@ module.exports.client = function(socket, db, user, sessions, currentClientSessio
 		adminSocket.emit("updateNumberOfAnswers", numAnswers, participants);
 
 		if(numAnswers === participants) {
-			dbFunctions.insert.storeAnswers(db, question.answerList, question.sqId).catch((err) => {
+			dbFunctions.transaction.storeAnswers(db, question.answerList, question.sqId).catch((err) => {
 				console.error(err);
 			});
 			let answerList = [];
