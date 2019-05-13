@@ -1,5 +1,5 @@
 <template>
-<div id="app">
+<div id="app" class="mb-5">
 	<div v-if="localeLoaded">
 		<Navbar/>
 		<router-view/>
