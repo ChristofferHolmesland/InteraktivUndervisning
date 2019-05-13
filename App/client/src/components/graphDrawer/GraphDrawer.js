@@ -75,6 +75,11 @@ export default class GraphDrawer {
 		else this.directedEdges = false;
 	}
 
+	exportImage() {
+		this.switchBuffers(true);
+		return this.canvas.toDataURL("image/png");
+	}
+
 	export() {
 		return this.controllers[this.controlType].export();
 	}
@@ -113,6 +118,9 @@ export default class GraphDrawer {
 		// Decides how much of the assigned button space should be used
 		// by a button.
 		this.relSize = 0.7;
+
+		// These properties can be updated by the hotreload function
+		this.hotReloadAble = ["dirty", "displayEdgeValues", "directedEdges", "nodeShape"];
 
 		this._config(config);
 
@@ -202,6 +210,19 @@ export default class GraphDrawer {
 		this.setController(this.controlType);
 	}
 
+	hotReload(properties) {
+		for (let prop in properties) {
+			if (!properties.hasOwnProperty(prop)) continue;
+			if (!this.hasOwnProperty(prop)) continue;
+			if (this.hotReloadAble.indexOf(prop) == -1) continue;
+
+			this[prop] = properties[prop];
+		}
+
+		if (properties.dirty == undefined)
+			this.dirty = true;
+	}
+
 	setController(controllerName) {
 		this.controlType = controllerName;
 		this.nodes = [];
@@ -219,7 +240,7 @@ export default class GraphDrawer {
 
 		ref: https://en.wikipedia.org/wiki/Multiple_buffering
 	*/
-	switchBuffers() {
+	switchBuffers(noStatic) {
 		let camera = this.camera.getFrustumFront();
 		let oldFill = this.canvasContext.fillStyle;
 		this.canvasContext.fillStyle = "#fff";
@@ -245,17 +266,19 @@ export default class GraphDrawer {
 			this.canvas.height
 		);
 
-		this.canvasContext.drawImage(
-			this.staticBuffer,
-			0,
-			0,
-			this.staticBuffer.width,
-			this.staticBuffer.height,
-			0,
-			0,
-			this.canvas.width,
-			this.canvas.height
-		);
+		if (!noStatic) {
+			this.canvasContext.drawImage(
+				this.staticBuffer,
+				0,
+				0,
+				this.staticBuffer.width,
+				this.staticBuffer.height,
+				0,
+				0,
+				this.canvas.width,
+				this.canvas.height
+			);
+		}
 	}
 
 	/*
@@ -765,6 +788,8 @@ export default class GraphDrawer {
 		// is running at the same time.
 		//if (this.runningId == undefined) this.runningId = 10000 * Math.random();
 		//	console.error(this.runningId);
+
+		console.log(this.nodeShape);
 
 		if (this.canvas.width !== this.canvas.clientWidth) {
 			// When the page is loading, the width is sometimes 0.

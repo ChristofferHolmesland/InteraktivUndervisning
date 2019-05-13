@@ -3,6 +3,15 @@
         "emptyQuestionList": "No questions found for the selected course. Please add a new question by clicking the '+' button.",
         "addTitle": "New question",
         "editTitle": "Edit question",
+        "reloadWarning": "Changing this reloads the drawer",
+        "graphText": "Graph",
+        "arrayText": "Array",
+        "circleText": "Circle",
+        "rectangleText": "Rectangle",
+        "settingsText": "Settings:",
+        "nodeShape": "Node shape:",
+        "edgeValues": "Edge values:",
+        "arrowsText": "Arrows:",
         "searchQuestion": "Search for a question",
         "newQuestionTitle": "Question title:",
         "newQuestionText": "Question text:",
@@ -352,10 +361,8 @@
         "finished": "Finished",
         "questionsAsked": "Question asked: ",
         "participants": "Participants: ",
-        "correctAnswers": "Corrects answers: "
-    },
-    "Sessions": {
-
+        "correctAnswers": "Corrects answers: ",
+        "answer": "Incorrect answer "
     },
     "startSession": {
         "question": "Question",
@@ -657,7 +664,7 @@
         "users": "Users:",
         "correctAnswers": "Correct answers:",
         "didntKnow": "Didn't know:",
-        "wrong": "Wrong answers:"
+        "answer": "Incorrect answer "
     },
     "AdminWaitingRoom": {
         "code": "Code:",
@@ -668,6 +675,7 @@
     },
     "AdminSessionOver": {
         "header": "Session is now over!",
+        "headerNoUser": "No user still connected. Session is now over!",
         "goBackBtn": "Go back to admin dashboard"
     },
     "AdminSessionOverview": {

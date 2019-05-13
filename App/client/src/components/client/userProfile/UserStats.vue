@@ -96,7 +96,6 @@ export default {
 			return this.$store.getters.getLocale("UserStats");
 		},
 		getCourses() {
-			console.log(this.courseList)
 			return this.courseList;
 		},
 		getFilteredSessionList() {
@@ -107,11 +106,7 @@ export default {
 		courseSelected() {
 			let list = [];
 
-			console.log(this.sessionList)
-
 			for (let i = 0; i < this.sessionList.length; i++) {
-				console.log(this.sessionList[i].courseId)
-				console.log(this.courseSelected)
 				if (this.sessionList[i].courseId == this.courseSelected) {
 					list.push(this.sessionList[i]);
 				}

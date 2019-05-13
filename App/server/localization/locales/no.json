@@ -3,6 +3,15 @@
         "emptyQuestionList": "Ingen spørsmål ble funnet for det valgte faget. Legg til et spørsmål med å klikke på '+' knappen.",
         "addTitle": "Nytt spørsmål",
         "editTitle": "Endre spørsmål",
+        "reloadWarning": "Dette vil slette alt i tegneren",
+        "graphText": "Graf",
+        "arrayText": "Array",
+        "circleText": "Sirkel",
+        "rectangleText": "Rektangel",
+        "settingsText": "Innstillinger:",
+        "nodeShape": "Node form:",
+        "edgeValues": "Kant verdier:",
+        "arrowsText": "Piler:",
         "searchQuestion": "Søk etter spørsmål",
         "newQuestionTitle": "Spørsmål tittel:",
         "newQuestionText": "Spørsmål tekst:",
@@ -352,10 +361,8 @@
         "finished": "Ferdig",
         "questionsAsked": "Spørsmål: ",
         "participants": "Deltagere: ",
-        "correctAnswers": "Riktige svar: "
-    },
-    "Sessions": {
-
+        "correctAnswers": "Riktige svar: ",
+        "answer": "Galt svar "
     },
     "startSession": {
         "question": "Spørsmål",
@@ -658,7 +665,8 @@
         "users": "Brukere:",
         "correctAnswers": "Riktige svar:",
         "didntKnow": "Vet ikke:",
-        "wrong": "Feil svar:"
+        "wrong": "Feil svar:",
+        "answer": "Galt svar "
     },
     "AdminWaitingRoom": {
         "code": "Kode:",
@@ -669,6 +677,7 @@
     },
     "AdminSessionOver": {
         "header": "Økten er nå over!",
+        "headerNoUser": "Ingen brukere er fremdeles koblet til. Økten er nå over!",
         "goBackBtn": "Gå tilbake til skrivebordet"
     },
     "AdminSessionOverview": {

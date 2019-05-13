@@ -63,11 +63,19 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 
 	socket.on("addNewSession", function(session) {
 		let courseId = session.course;
+		
 		dbFunctions.insert.session(db, session.title, courseId).then(async function (id) {
-			for (let i = 0; i < session.questions.length; i++) {
-				await dbFunctions.insert.addQuestionToSession(db, id, session.questions[i].id).catch(err => console.error(err));
-				await dbFunctions.update.questionStatusToActive(db, session.questions[i].id).catch(err => console.error(err));
+			let sessionInformation = {
+				sessionId: id,
+				questionList: []
 			}
+			
+			for (let i = 0; i < session.questions.length; i++) {
+				sessionInformation.questionList.push(session.questions[i].id);
+			}
+
+			await dbFunctions.transaction.insertQuestionHasSessions(db, sessionInformation);
+
 			socket.emit("addNewSessionDone");
 		}).catch(err => console.error(err));
 	});
@@ -379,6 +387,13 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 	socket.on("nextQuestionRequest", function() {
 		let session = currentSession.session;
 		let currentUsers = session.currentUsers;
+		if (currentUsers === 0) {
+			socket.emit("endSessionNoUsers");
+			socket.to(session.sessionCode).emit("answerResponse", "sessionFinished");
+
+			sessions.delete(session.sessionCode);
+			return;
+		}
 
 		session.currentQuestion++;
 		
@@ -433,8 +448,12 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 	});
 
 	socket.on("addQuestionToSession", function(data) {
-		dbFunctions.insert.addQuestionToSession(db, data.sessionId, data.questionId);
-		dbFunctions.update.questionStatusToActive(db, data.questionId);
+		dbFunctions.transaction.insertQuestionHasSessions(db, {
+			sessionId: data.sessionId,
+			questionList: [data.questionId]
+		}).catch((err) => {
+			console.error(err);
+		});
 	});
 
 	socket.on("getAllQuestionsWithinCourse", function(courseId) {
@@ -792,40 +811,42 @@ module.exports.studentAssistant = function(socket, db, user, sessions) {
 	socket.on("deleteSessionRequest", function(sessionId) {
 		dbFunctions.get.sessionStatusById(db, sessionId).then(async (session) => {
 			if(session && session.status === 0) {
-				await dbFunctions.del.sHQById(db, sessionId).catch((err) => {
+				await dbFunctions.transaction.deleteSession(db, sessionId).then(() => {
+					socket.emit("deleteSessionResponse");
+				}).catch((err) => {
 					console.error(err);
-				})
-				await dbFunctions.del.sessionById(db, sessionId).catch((err) => {
-					console.error(err);
-				})
-				socket.emit("deleteSessionResponse");
+					return;
+				});
 			}
 		}).catch((err) => {
 			console.error(err);
-		})
+			return;
+		});
 	});
 
 	socket.on("editSession", async function(session) {
-		dbFunctions.get.sessionById(db, session.id).then((session) => {
-			if(session.status > 0) return;
-			dbFunctions.update.sessionText(db, {
-				sessionId: session.id,
-				text: session.title
-			}).then(async () => {
-				dbFunctions.del.sHQById(db, session.id).then(async () => {
-					for (let i = 0; i < session.questions.length; i++) {
-						await dbFunctions.insert.addQuestionToSession(db, session.id, session.questions[i].id).catch(err => console.error(err));
-						await dbFunctions.update.questionStatusToActive(db, session.questions[i].id).catch(err => console.error(err));
-					}
+		dbFunctions.get.sessionStatusById(db, session.id).then(async (sessionStatusInfo) => {
+			if (sessionStatusInfo && sessionStatusInfo.status === 0) {
+				let sessionInformation = {
+					sessionId: session.id,
+					sessionName: session.title,
+					questionList: []
+				};
+		
+				for (let i = 0; i < session.questions.length; i++) {
+					sessionInformation.questionList.push(session.questions[i].id);
+				}
+		
+				dbFunctions.transaction.editQuestionHasSession(db, sessionInformation).then(() => {
 					socket.emit("addNewSessionDone");
 				}).catch((err) => {
 					console.error(err);
-				})
-			}).catch((err) => {
-				console.error(err);
-			});
+					return;
+				});
+			}
 		}).catch((err) => {
 			console.error(err);
+			return;
 		});
 	});
 

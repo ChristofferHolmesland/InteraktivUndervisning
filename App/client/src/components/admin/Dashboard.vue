@@ -198,6 +198,10 @@ export default {
 	watch: {
 		selectedCourse: function() {
 			this.getUserRightsFromDatabase();
+			this.getApplicants();
+			let courseId = this.$store.getters.getSelectedCourse;
+			this.$socket.emit("sessionOverviewRequest", courseId);
+        	this.$socket.emit("requestAdminInfoRequest");
 		},
 		tabIndex: function() {
 			this.getUserRightsFromDatabase();

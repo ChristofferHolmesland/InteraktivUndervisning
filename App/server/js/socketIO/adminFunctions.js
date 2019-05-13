@@ -274,12 +274,12 @@ module.exports.admin = function(socket, db, user, users) {
 		if (
 			courseId === undefined ||
 			courseId === null ||
-			typeof courseId === "string" ||
+			typeof courseId !== "number" ||
 			courseId.length === 0 ||
 			applicationId === undefined ||
 			applicationId === null ||
-			typeof applicationId === "number" ||
-			applicationId >= 0
+			typeof applicationId !== "number" ||
+			applicationId === 0
 		) return;
 
 		dbFunctions.get.userRightInCourseById(db, {
@@ -301,13 +301,14 @@ module.exports.admin = function(socket, db, user, users) {
 		if (
 			courseId === undefined ||
 			courseId === null ||
-			typeof courseId === "string" ||
+			typeof courseId !== "number" ||
 			courseId.length === 0 ||
 			applicationId === undefined ||
 			applicationId === null ||
-			typeof applicationId === "number" ||
-			applicationId >= 0
+			typeof applicationId !== "number" ||
+			applicationId === 0
 		) return;
+		console.log("test");
 
 		dbFunctions.get.userRightInCourseById(db, {
 			courseId: courseId,
@@ -316,19 +317,17 @@ module.exports.admin = function(socket, db, user, users) {
 			if (userRight.length === 0) return;
 			dbFunctions.get.applicationById(db, applicationId).then((application) => {
 				if (application === undefined) return;
-				dbFunctions.insert.userRightsLevelByFeideId(db, {
+
+				dbFunctions.transaction.approveApplicants(db, {
 					feideId: application.feideId,
 					courseId: application.courseId,
-					level: application.userRight
+					level: application.userRight,
+					applicationId: applicationId
 				}).then(() => {
-					dbFunctions.del.applicationById(db, applicationId).then(() => {
-						socket.emit("applicantChangeResponse");
-					}).catch((err) => {
-						console.error(err);
-					})
+					socket.emit("applicantChangeResponse");
 				}).catch((err) => {
-					console.error(err);
-				})
+					console.log(err)
+				});
 			}).catch((err) => {
 				console.error(err);
 			})

@@ -21,6 +21,9 @@
             // When this changes, the parent wants to get the value from
             // the GraphDrawer.
             requestAnswer: Boolean,
+            // When this changes, the parent wants to get an image
+            // of the canvas from the GraphDrawer.
+            requestImage: Boolean,
             // Graph0 or Sort
             controlType: String,
             steps: Array,
@@ -54,6 +57,9 @@
         watch: {
             requestAnswer: function() {
                 this.$emit("getValueResponse", this.graphDrawer.export());
+            },
+            requestImage: function() {
+                this.$emit("getCanvasImage", this.graphDrawer.exportImage());
             }
         },
         mounted() {
@@ -65,6 +71,9 @@
             this.destroyDrawer();
         },
         methods: {
+            hotReload: function(props) {
+                this.graphDrawer.hotReload(props);
+            },
             destroyDrawer: function() {
                 // Stop the update loop
                 if (this.graphDrawer !== undefined) {

@@ -3,7 +3,7 @@
 		<b-container id="SessionOverScreen">
 			<b-row>
 				<b-col class="text-center">
-					<h1>{{getLocale.header}}</h1>
+					<h1>{{ noUsers ? getLocale.headerNoUser : getLocale.header}}</h1>
 				</b-col>
 			</b-row>
 			<b-row class="mt-3">
@@ -18,6 +18,7 @@
 <script>
 export default {
 	name: "SessionOverScreen",
+	props: ["noUsers"],
 	beforeDestroy() {
 		this.$socket.emit("closeSession");
 	},
