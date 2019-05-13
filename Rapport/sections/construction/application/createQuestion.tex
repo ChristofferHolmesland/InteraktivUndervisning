@@ -5,7 +5,7 @@ The NavBar component changes the URL route to load the Questions component. This
 The area in the middle of the Questions component is where the current questions for the selected course are going to be listed. The Questions component sends a request to the server whenever the component is loaded, the course changes, a question is edited, or a question is created. The request asks the server for all the current questions linked to the selected course. The server then calls the appropriate get function from the database script and returns the result. The result contains question titles, ids, and statuses. The result is then used by the Questions component to update the list of questions. In this way, the list should always be up to date with the contents in the database. A v-if statement is used to check whether the list containing questions is empty or not. If the question list is empty a list item containing a message is displayed. A v-if statement is a Vue feature allowing the use of a conditional statement on a HTML element. In this use case, the HTML element is only included on the page if the question list is empty.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.80\linewidth]{/createQuestion/questionvueEnglish}
+    \includegraphics[width=0.80\linewidth]{/userManual/admin/QuestionDashboardWithQuestions}
     \caption{The figure displays an image of the Questions component. It is primarily used for allowing users to create new questions for a selected course. }
     \label{fig:questionVue}
 \end{figure}
