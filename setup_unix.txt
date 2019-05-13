@@ -18,7 +18,7 @@ First time setup:
 4. Build client page
 	cd ~/InteraktivUndervisning/App/client/
 	npm install
-	NODE_ENV=unix-production npm run build
+	NODE_ENV=production npm run build
 5. Create environment file and enter values
 	cd ~/InteraktivUndervisning/App/server
 	cp env/default.env env/production.env
