@@ -28,12 +28,16 @@ export default class Graph1 {
 	}
 
 	drawUIPanel(node) {
-		this.gd.staticContext.clearRect(0, 0, 
-			this.gd.staticBuffer.width, this.gd.staticBuffer.height);
+		this.gd.staticContext.clearRect(
+			0,
+			0,
+			this.gd.staticBuffer.width,
+			this.gd.staticBuffer.height
+		);
 
 		let nodeOnCanvas = this.gd.camera.unproject(node.x, node.y);
 		let borderX = nodeOnCanvas.x + node.r;
-		let borderY = nodeOnCanvas.y - (1.5 * node.r);
+		let borderY = nodeOnCanvas.y - 1.5 * node.r;
 		// Divide the panel into a 2x3 grid.
 		let borderWidth = node.r * 4;
 		let borderHeight = node.r * 4;

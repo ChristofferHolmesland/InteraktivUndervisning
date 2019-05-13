@@ -5,73 +5,142 @@
 				<b-container>
 					<b-row class="mb-3">
 						<b-col lg="6" class="pr-0">
-							<b-form-input v-model="searchText" type="text" :placeholder="getLocale.searchPlaceholder"/>
+							<b-form-input
+								v-model="searchText"
+								type="text"
+								:placeholder="getLocale.searchPlaceholder"
+							/>
 						</b-col>
 						<b-col lg="4" class="px-0">
-							<SelectCourse :changeHandler="courseChanged"/>
+							<SelectCourse :changeHandler="courseChanged" />
 						</b-col>
 						<b-col lg="2" class="pl-0">
-							<b-button block @click="AddNewSession" variant="primary" id="AddNewSession">
+							<b-button
+								block
+								@click="AddNewSession"
+								variant="primary"
+								id="AddNewSession"
+							>
 								<i class="fas fa-plus-square"></i>
 							</b-button>
-							<EditSession ref="newSessionModal" :okHandler="addNewSessionHandler" elementId="newSessionModal" elementRef="innerModal" v-if="showNewSession"/>
+							<EditSession
+								ref="newSessionModal"
+								:okHandler="addNewSessionHandler"
+								elementId="newSessionModal"
+								elementRef="innerModal"
+								v-if="showNewSession"
+							/>
 						</b-col>
 					</b-row>
 					<b-row v-if="showError" style="text-align: center;">
 						<b-col cols="12">
-							<b-alert	:show="showError"
-										@dismissed="showError = false"
-										variant="danger"
-										dismissible>
+							<b-alert
+								:show="showError"
+								@dismissed="showError = false"
+								variant="danger"
+								dismissible
+							>
 								<p>{{ getLocale[errorText] }}</p>
 							</b-alert>
 						</b-col>
 					</b-row>
 					<b-row>
 						<b-col>
-							<b-list-group style="overflow-y: scroll; max-height: 750px;" data-cy="sessionList">
-								<b-list-group-item v-for="session in getSessionsList" :key="session.id"
-								@click="changeSelected(session.id)"
-								style="cursor: pointer;"
-								:class="selectedSession == session.id ? 'selected' : ''">
+							<b-list-group
+								style="overflow-y: scroll; max-height: 750px;"
+								data-cy="sessionList"
+							>
+								<b-list-group-item
+									v-for="session in getSessionsList"
+									:key="session.id"
+									@click="changeSelected(session.id)"
+									style="cursor: pointer;"
+									:class="
+										selectedSession == session.id
+											? 'selected'
+											: ''
+									"
+								>
 									<b-container>
 										<b-row>
 											<b-col class="my-auto">
 												{{ session.name }}
 											</b-col>
-											<b-col 	cols="2"
-													:disabled="session.status === 0 ? true : false"
-													v-b-tooltip.hover
-													:title="getLocale.editTooltip"
-													>
-												<b-button	:variant="session.status === 0 ? 'primary' : ''"
-															@click="editSession(session.id)"
-															:disabled="session.status === 0 ? false : true"
-															>
+											<b-col
+												cols="2"
+												:disabled="
+													session.status === 0
+														? true
+														: false
+												"
+												v-b-tooltip.hover
+												:title="getLocale.editTooltip"
+											>
+												<b-button
+													:variant="
+														session.status === 0
+															? 'primary'
+															: ''
+													"
+													@click="
+														editSession(session.id)
+													"
+													:disabled="
+														session.status === 0
+															? false
+															: true
+													"
+												>
 													<i class="fas fa-edit"></i>
 												</b-button>
 											</b-col>
-											<b-col 	cols="2"
-													:disabled="session.status === 0 ? true : false"
-													v-b-tooltip.hover
-													:title="getLocale.deleteTooltip"
-													>
-												<b-button	:variant="session.status === 0 ? 'danger' : ''"
-															@click="removeSession(session.id)"
-															:disabled="session.status === 0 ? false : true"
-															>
-													<i class="far fa-trash-alt"></i>
+											<b-col
+												cols="2"
+												:disabled="
+													session.status === 0
+														? true
+														: false
+												"
+												v-b-tooltip.hover
+												:title="getLocale.deleteTooltip"
+											>
+												<b-button
+													:variant="
+														session.status === 0
+															? 'danger'
+															: ''
+													"
+													@click="
+														removeSession(
+															session.id
+														)
+													"
+													:disabled="
+														session.status === 0
+															? false
+															: true
+													"
+												>
+													<i
+														class="far fa-trash-alt"
+													></i>
 												</b-button>
 											</b-col>
 										</b-row>
 									</b-container>
 								</b-list-group-item>
-								<b-list-group-item class="border-0" v-show="showNoSessions">
+								<b-list-group-item
+									class="border-0"
+									v-show="showNoSessions"
+								>
 									{{ getLocale.noSessions }}
 								</b-list-group-item>
 								<div v-if="sessionsListLength < 10">
-									<b-list-group-item v-for="index in (10 - sessionsListLength)" :key="index + sessionsListLength">
-										<p> </p>
+									<b-list-group-item
+										v-for="index in 10 - sessionsListLength"
+										:key="index + sessionsListLength"
+									>
+										<p></p>
 									</b-list-group-item>
 								</div>
 							</b-list-group>
@@ -80,7 +149,11 @@
 				</b-container>
 			</b-col>
 			<b-col lg="8">
-				<Session :session="session" v-if="showSession" @MarkAnswerAsCorrectResponse="removeAnswer"/>
+				<Session
+					:session="session"
+					v-if="showSession"
+					@MarkAnswerAsCorrectResponse="removeAnswer"
+				/>
 			</b-col>
 		</b-row>
 	</b-container>
@@ -92,7 +165,7 @@ import EditSession from "./EditSession.vue";
 import SelectCourse from "../SelectCourse.vue";
 
 export default {
-	name: 'Sessions',
+	name: "Sessions",
 	data() {
 		return {
 			sessionsList: [],
@@ -104,31 +177,29 @@ export default {
 			errorText: "",
 			showNewSession: false,
 			newEditSession: ""
-		}
+		};
 	},
 	created() {
 		let courseId = this.$store.getters.getSelectedCourse;
-		
+
 		this.$socket.emit("getSessions", courseId);
 	},
 	mounted() {
-		this.$root.$on('bv::modal::hidden', (bvEvent, modalId) => {
+		this.$root.$on("bv::modal::hidden", (bvEvent) => {
 			let id = bvEvent.target.id;
 
 			if (id.includes("newSessionModal")) {
 				this.showNewSession = false;
-
 			}
 		});
 	},
 	sockets: {
 		getSessionsResponse: function(data) {
-			if(data.length != 0){
+			if (data.length != 0) {
 				this.sessionsList = data;
 				this.selectedSession = data[0].id;
-				this.$socket.emit("getSession", this.selectedSession)
-			}
-			else {
+				this.$socket.emit("getSession", this.selectedSession);
+			} else {
 				this.sessionsList = [];
 				this.selectedSession = 0;
 				this.session = {};
@@ -143,7 +214,7 @@ export default {
 		},
 		deleteSessionResponse: function() {
 			let courseId = this.$store.getters.getSelectedCourse;
-			
+
 			this.$socket.emit("getSessions", courseId);
 		},
 		editSessionResponse: function(data) {
@@ -152,11 +223,14 @@ export default {
 			this.$nextTick(function() {
 				this.$refs.newSessionModal._data.newSession.id = data.id;
 				this.$refs.newSessionModal._data.newSession.title = data.name;
-				this.$refs.newSessionModal._data.newSession.course = data.courseId;
-				this.$refs.newSessionModal._data.newSession.questions = data.selectedQuestions;
-				this.$refs.newSessionModal._data.possibleQuestions = data.questionOptions;
+				this.$refs.newSessionModal._data.newSession.course =
+					data.courseId;
+				this.$refs.newSessionModal._data.newSession.questions =
+					data.selectedQuestions;
+				this.$refs.newSessionModal._data.possibleQuestions =
+					data.questionOptions;
 				this.$refs.newSessionModal._data.selectedQuestion = [];
-							
+
 				this.$nextTick(function() {
 					this.$refs.newSessionModal.$refs.innerModal.show();
 				});
@@ -171,10 +245,10 @@ export default {
 	methods: {
 		changeSelected(sessionId) {
 			this.selectedSession = sessionId;
-			this.$socket.emit("getSession", this.selectedSession)
+			this.$socket.emit("getSession", this.selectedSession);
 		},
 		addNewSessionHandler: function(newSession) {
-			if (this.newEditSession === "new"){
+			if (this.newEditSession === "new") {
 				this.$socket.emit("addNewSession", newSession);
 			} else if (this.newEditSession === "edit") {
 				this.$socket.emit("editSession", newSession);
@@ -199,23 +273,21 @@ export default {
 			});
 		},
 		removeAnswer: function(data) {
-			let answerList = this.session.questions[data.selectedQuestion].answerList;
-      
-			let index = answerList.findIndex(answer => {
-				return answer.id == data.answerId
+			let answerList = this.session.questions[data.selectedQuestion]
+				.answerList;
+
+			let index = answerList.findIndex((answer) => {
+				return answer.id == data.answerId;
 			});
-      
+
 			if (index > -1) answerList.splice(index, 1);
 		},
 		editSession: function(sessionId) {
 			this.$socket.emit("editSessionRequest", sessionId);
 		},
 		removeSession: function(sessionId) {
-			if (
-				confirm(
-					this.getLocale.delSessionBody
-				)
-			) this.$socket.emit("deleteSessionRequest", sessionId);
+			if (confirm(this.getLocale.delSessionBody))
+				this.$socket.emit("deleteSessionRequest", sessionId);
 		}
 	},
 	computed: {
@@ -227,7 +299,11 @@ export default {
 
 			let result = [];
 			for (let i = 0; i < this.sessionsList.length; i++) {
-				if (this.sessionsList[i].name.toLowerCase().includes(this.searchText.toLowerCase())) {
+				if (
+					this.sessionsList[i].name
+						.toLowerCase()
+						.includes(this.searchText.toLowerCase())
+				) {
 					result.push(this.sessionsList[i]);
 				}
 			}
@@ -246,7 +322,7 @@ export default {
 		},
 		getLocale() {
 			let locale = this.$store.getters.getLocale("AdminSessions");
-			if(locale) return locale;
+			if (locale) return locale;
 			else return {};
 		}
 	}

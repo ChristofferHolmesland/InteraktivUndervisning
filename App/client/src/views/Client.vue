@@ -1,17 +1,22 @@
 <template>
-<b-container id="Client">
-	<b-row align-h="around">
-		<b-col cols="12" lg="6" :xl="getCardSizeLg" class="margin">
-			<JoinSession/>
-		</b-col>
-		<b-col cols="12" lg="6" :xl="getCardSizeLg">
-			<ShowSandbox/>
-		</b-col>
-		<b-col cols="12" lg="6" :xl="getCardSizeLg" v-if="getUser.userRights > 1">
-			<ViewLastSession/>
-		</b-col>
-	</b-row>
-</b-container>
+	<b-container id="Client">
+		<b-row align-h="around">
+			<b-col cols="12" lg="6" :xl="getCardSizeLg" class="margin">
+				<JoinSession />
+			</b-col>
+			<b-col cols="12" lg="6" :xl="getCardSizeLg">
+				<ShowSandbox />
+			</b-col>
+			<b-col
+				cols="12"
+				lg="6"
+				:xl="getCardSizeLg"
+				v-if="getUser.userRights > 1"
+			>
+				<ViewLastSession />
+			</b-col>
+		</b-row>
+	</b-container>
 </template>
 
 <script>

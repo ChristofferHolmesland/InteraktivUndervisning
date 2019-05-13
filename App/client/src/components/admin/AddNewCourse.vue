@@ -1,123 +1,173 @@
 <template>
-<b-modal    id="newCourseModal"
-			:ref="elementRef"
-			:no-close-on-backdrop="true"
-			:title="getLocale.title"
-			@ok="addCourse"
-			style="text-align: left;"
-			cancel-variant="danger"
-			:hide-header-close="true"
-			:cancel-title="getLocale.cancelBtn"
-			:ok-title="getLocale.okBtn"
+	<b-modal
+		id="newCourseModal"
+		:ref="elementRef"
+		:no-close-on-backdrop="true"
+		:title="getLocale.title"
+		@ok="addCourse"
+		style="text-align: left;"
+		cancel-variant="danger"
+		:hide-header-close="true"
+		:cancel-title="getLocale.cancelBtn"
+		:ok-title="getLocale.okBtn"
+	>
+		<b-alert :show="showError" variant="danger" dismissible>
+			<p>{{ getLocale.errorMessage[errorText] }}</p>
+		</b-alert>
+		<b-form-group id="courseName">
+			<h4>{{ getLocale.name }}</h4>
+			<b-form-input
+				id="courseNameInput"
+				type="text"
+				v-model="newCourse.name"
 			>
-	
-	<b-alert :show="showError" variant="danger" dismissible>
-		<p>{{getLocale.errorMessage[errorText]}}</p>
-	</b-alert>
-	<b-form-group 	id="courseName">
-		<h4>{{ getLocale.name }}</h4>
-		<b-form-input 	id="courseNameInput"
-						type="text"
-						v-model="newCourse.name">
-		</b-form-input>
-	</b-form-group>
-	<b-form-group 	id="courseCode">
-		<h4>{{ getLocale.code }}</h4>
-		<b-form-select  :options="getCourseCodes"
-						v-model="newCourse.code"
-						id="courseCodeSelect">
-			<template slot="first" v-if="getCourseCodes.length === 0">
-				<option value="" disabled>{{ getLocale.noCourseCodeText }}</option>
-			</template>
-		</b-form-select>
-		&nbsp;
-		<b-container class="px-0">
-			<b-row @click="changeShowAddNewCourseCode" style="cursor: pointer;">
-				<b-col cols="8" data-cy="addCourseCodeField">
-					<h6>{{ getLocale.addNewCourseCode }}</h6>
-				</b-col>
-				<b-col cols="4" style="text-align: right;">
-                    <p><i :class="showAddNewCourseCode ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i></p>
-				</b-col>
-			</b-row>
-			<b-row v-if="showAddNewCourseCode">
-				<b-container>
-					<b-row>
-						<b-col cols="12">                   
-							<b-form-input 	id="addCourseCodeInput"
-											type="text"
-											v-model="newCourseCode">
-							</b-form-input>
-						</b-col>
-					</b-row>
-					&nbsp;
-					<b-row>
-						<b-col cols="12" style="text-align: center;">
-							<b-button @click="addNewCourseCode" class="addSemesterBtn" variant="success" data-cy="NewCourseCodeBtn">{{getLocale.addCourseCode}}</b-button>
-						</b-col>
-					</b-row>
-				</b-container>
-			</b-row>
-		</b-container>
-	</b-form-group>									
-	<b-form-group 	id="courseSemester">
-		<h4>{{ getLocale.semester }}</h4>
-		<b-form-select  :options="getSemesters"
-						v-model="newCourse.semester"
-						id="courseSemesterSelect">
-			<template slot="first" v-if="getSemesters.length === 0">
-				<option value="" disabled>{{ getLocale.noSemesterText }}</option>
-			</template>
-		</b-form-select>
-		&nbsp;
-		<b-container class="px-0">
-			<b-row @click="changeShowAddNewSemester" style="cursor: pointer;">
-				<b-col cols="8" data-cy="addSemesterField">
-					<h6>{{ getLocale.addNewSemester }}</h6>
-				</b-col>
-				<b-col cols="4" style="text-align: right;">
-                    <p><i :class="showAddNewCourseCode ? 'fas fa-angle-up' : 'fas fa-angle-down'"></i></p>
-				</b-col>
-			</b-row>
-			<b-row v-if="showAddNewSemester">
-				<b-container>
-					<b-row>
-						<b-col>
-							<h6>{{ getLocale.AddNewSemesterSeason }}</h6>
-						</b-col>
-					</b-row>
-				</b-container>
-				<b-col cols="12">                   
-					<b-form-select  :options="getSeasons"
-									v-model="selectedSeason"
-									id="courseSeasonSelect">
-					</b-form-select>
-				</b-col>
-			</b-row>
-			<b-row v-if="showAddNewSemester">
-				<b-container>
-					<b-row>
-						<b-col>
-							<h6>{{ getLocale.AddNewSemesterYear }}</h6>
-						</b-col>
-					</b-row>
-				</b-container>
-				<b-col cols="12">                   
-					<b-form-select  :options="getYears"
-									v-model="selectedYear"
-									id="courseYearSelect">
-					</b-form-select>
-				</b-col>
-			</b-row>
+			</b-form-input>
+		</b-form-group>
+		<b-form-group id="courseCode">
+			<h4>{{ getLocale.code }}</h4>
+			<b-form-select
+				:options="getCourseCodes"
+				v-model="newCourse.code"
+				id="courseCodeSelect"
+			>
+				<template slot="first" v-if="getCourseCodes.length === 0">
+					<option value="" disabled>{{
+						getLocale.noCourseCodeText
+					}}</option>
+				</template>
+			</b-form-select>
 			&nbsp;
-			<b-row v-if="showAddNewSemester">
-				<b-col cols="12" style="text-align: center;">
-					<b-button @click="addNewSemester" class="addSemesterBtn" variant="success" data-cy="NewSemesterBtn">{{getLocale.addSemester}}</b-button>
-				</b-col>
-			</b-row>
-		</b-container>
-	</b-form-group>
-</b-modal>
+			<b-container class="px-0">
+				<b-row
+					@click="changeShowAddNewCourseCode"
+					style="cursor: pointer;"
+				>
+					<b-col cols="8" data-cy="addCourseCodeField">
+						<h6>{{ getLocale.addNewCourseCode }}</h6>
+					</b-col>
+					<b-col cols="4" style="text-align: right;">
+						<p>
+							<i
+								:class="
+									showAddNewCourseCode
+										? 'fas fa-angle-up'
+										: 'fas fa-angle-down'
+								"
+							></i>
+						</p>
+					</b-col>
+				</b-row>
+				<b-row v-if="showAddNewCourseCode">
+					<b-container>
+						<b-row>
+							<b-col cols="12">
+								<b-form-input
+									id="addCourseCodeInput"
+									type="text"
+									v-model="newCourseCode"
+								>
+								</b-form-input>
+							</b-col>
+						</b-row>
+						&nbsp;
+						<b-row>
+							<b-col cols="12" style="text-align: center;">
+								<b-button
+									@click="addNewCourseCode"
+									class="addSemesterBtn"
+									variant="success"
+									data-cy="NewCourseCodeBtn"
+									>{{ getLocale.addCourseCode }}</b-button
+								>
+							</b-col>
+						</b-row>
+					</b-container>
+				</b-row>
+			</b-container>
+		</b-form-group>
+		<b-form-group id="courseSemester">
+			<h4>{{ getLocale.semester }}</h4>
+			<b-form-select
+				:options="getSemesters"
+				v-model="newCourse.semester"
+				id="courseSemesterSelect"
+			>
+				<template slot="first" v-if="getSemesters.length === 0">
+					<option value="" disabled>{{
+						getLocale.noSemesterText
+					}}</option>
+				</template>
+			</b-form-select>
+			&nbsp;
+			<b-container class="px-0">
+				<b-row
+					@click="changeShowAddNewSemester"
+					style="cursor: pointer;"
+				>
+					<b-col cols="8" data-cy="addSemesterField">
+						<h6>{{ getLocale.addNewSemester }}</h6>
+					</b-col>
+					<b-col cols="4" style="text-align: right;">
+						<p>
+							<i
+								:class="
+									showAddNewCourseCode
+										? 'fas fa-angle-up'
+										: 'fas fa-angle-down'
+								"
+							></i>
+						</p>
+					</b-col>
+				</b-row>
+				<b-row v-if="showAddNewSemester">
+					<b-container>
+						<b-row>
+							<b-col>
+								<h6>{{ getLocale.AddNewSemesterSeason }}</h6>
+							</b-col>
+						</b-row>
+					</b-container>
+					<b-col cols="12">
+						<b-form-select
+							:options="getSeasons"
+							v-model="selectedSeason"
+							id="courseSeasonSelect"
+						>
+						</b-form-select>
+					</b-col>
+				</b-row>
+				<b-row v-if="showAddNewSemester">
+					<b-container>
+						<b-row>
+							<b-col>
+								<h6>{{ getLocale.AddNewSemesterYear }}</h6>
+							</b-col>
+						</b-row>
+					</b-container>
+					<b-col cols="12">
+						<b-form-select
+							:options="getYears"
+							v-model="selectedYear"
+							id="courseYearSelect"
+						>
+						</b-form-select>
+					</b-col>
+				</b-row>
+				&nbsp;
+				<b-row v-if="showAddNewSemester">
+					<b-col cols="12" style="text-align: center;">
+						<b-button
+							@click="addNewSemester"
+							class="addSemesterBtn"
+							variant="success"
+							data-cy="NewSemesterBtn"
+							>{{ getLocale.addSemester }}</b-button
+						>
+					</b-col>
+				</b-row>
+			</b-container>
+		</b-form-group>
+	</b-modal>
 </template>
 
 <script>
@@ -125,7 +175,7 @@ let initializeState = function() {
 	return {
 		newCourse: {
 			code: "",
-			semester:"" ,
+			semester: "",
 			name: ""
 		},
 		seasons: [],
@@ -140,7 +190,7 @@ let initializeState = function() {
 		courseCodeAdded: false,
 		selectedSeason: "",
 		selectedYear: ""
-	}
+	};
 };
 
 export default {
@@ -166,7 +216,7 @@ export default {
 		},
 		getCourseCodes() {
 			let list = [];
-			for(let i = 0; i < this.courseCodes.length; i++) {
+			for (let i = 0; i < this.courseCodes.length; i++) {
 				let courseCode = this.courseCodes[i];
 				list.push({
 					value: courseCode.id,
@@ -174,16 +224,14 @@ export default {
 				});
 			}
 
-			if (
-				this.newCourse.code === "" &&
-				this.courseCodes.length > 0
-			) this.newCourse.code = list[0].value;
+			if (this.newCourse.code === "" && this.courseCodes.length > 0)
+				this.newCourse.code = list[0].value;
 
 			return list;
 		},
 		getSemesters() {
 			let list = [];
-			for(let i = 0; i < this.semesters.length; i++) {
+			for (let i = 0; i < this.semesters.length; i++) {
 				let semester = this.semesters[i];
 				list.push({
 					value: semester.id,
@@ -191,16 +239,14 @@ export default {
 				});
 			}
 
-			if (
-				this.newCourse.semester === "" &&
-				this.semesters.length > 0
-			) this.newCourse.semester = list[0].value;
+			if (this.newCourse.semester === "" && this.semesters.length > 0)
+				this.newCourse.semester = list[0].value;
 
 			return list;
 		},
 		getSeasons() {
 			let list = [];
-			for(let i = 0; i < this.seasons.length; i++) {
+			for (let i = 0; i < this.seasons.length; i++) {
 				let season = this.seasons[i];
 				list.push({
 					value: season.id,
@@ -214,7 +260,7 @@ export default {
 		},
 		getYears() {
 			let list = [];
-			for(let i = 0; i < this.years.length; i++) {
+			for (let i = 0; i < this.years.length; i++) {
 				let year = this.years[i];
 				list.push({
 					value: year.id,
@@ -230,20 +276,31 @@ export default {
 	methods: {
 		addCourse: function(e) {
 			e.preventDefault();
-			
-			if (this.newCourse.name === "" || this.newCourse.name === undefined) {
+
+			if (
+				this.newCourse.name === "" ||
+				this.newCourse.name === undefined
+			) {
 				this.errorText = "nameMissing";
 				this.showError = true;
 				return;
 			}
 
-			if (this.semesters.findIndex(semester => semester.id === this.newCourse.semester) === -1) {
+			if (
+				this.semesters.findIndex(
+					(semester) => semester.id === this.newCourse.semester
+				) === -1
+			) {
 				this.errorText = "semesterDoesnTExist";
 				this.showError = true;
 				return;
 			}
 
-			if (this.courseCodes.findIndex(courseCode => courseCode.id === this.newCourse.code) === -1) {
+			if (
+				this.courseCodes.findIndex(
+					(courseCode) => courseCode.id === this.newCourse.code
+				) === -1
+			) {
 				this.errorText = "courseCodeDoesnTExist";
 				this.showError = true;
 				return;
@@ -277,7 +334,11 @@ export default {
 				return;
 			}
 
-			if (this.courseCodes.findIndex(code => code.code === this.newCourseCode) > -1) {
+			if (
+				this.courseCodes.findIndex(
+					(code) => code.code === this.newCourseCode
+				) > -1
+			) {
 				this.errorText = "courseCodeExists";
 				this.showError = true;
 				return;
@@ -286,24 +347,33 @@ export default {
 			this.$socket.emit("addNewCourseCodeRequest", this.newCourseCode);
 		},
 		addNewSemester: function() {
-			if (this.semesters.findIndex(semester => 
-				(
-					semester.season === this.selectedSeason &&
-					semester.year === this.selectedYear
-				)
-			) > -1) {
+			if (
+				this.semesters.findIndex(
+					(semester) =>
+						semester.season === this.selectedSeason &&
+						semester.year === this.selectedYear
+				) > -1
+			) {
 				this.errorText = "semesterExists";
 				this.showError = true;
 				return;
 			}
 
-			if (this.seasons.findIndex(season => season.season === this.selectedSeason) > -1) {
+			if (
+				this.seasons.findIndex(
+					(season) => season.season === this.selectedSeason
+				) > -1
+			) {
 				this.errorText = "seasonDoesTExist";
 				this.showError = true;
 				return;
 			}
-					
-			if (this.years.findIndex(year => year.year === this.selectedYear) > -1) {
+
+			if (
+				this.years.findIndex(
+					(year) => year.year === this.selectedYear
+				) > -1
+			) {
 				this.errorText = "yearDoesTExist";
 				this.showError = true;
 				return;
@@ -318,48 +388,44 @@ export default {
 			let n = initializeState();
 			for (let p in n) {
 				if (n.hasOwnProperty(p)) {
-						this.$data[p] = n[p];
+					this.$data[p] = n[p];
 				}
 			}
 			this.$nextTick();
-		},
+		}
 	},
 	sockets: {
 		semestersResponse: function(data) {
 			this.semesters = data;
 			if (this.semesterAdded) {
-				this.newCourse.semester = this.semesters[this.semesters.length - 1].id;
+				this.newCourse.semester = this.semesters[
+					this.semesters.length - 1
+				].id;
 				this.semesterAdded = false;
 				this.showAddNewSemester = false;
 			}
 		},
-		semestersError: function() {
-
-		},
+		semestersError: function() {},
 		seasonsResponse: function(data) {
 			this.seasons = data;
 		},
-		seasonsError: function() {
-
-		},
+		seasonsError: function() {},
 		yearsResponse: function(data) {
 			this.years = data;
 		},
-		yearsError: function() {
-
-		},
+		yearsError: function() {},
 		courseCodesResponse: function(data) {
 			this.courseCodes = data;
 			if (this.courseCodeAdded) {
-				this.newCourse.code = this.courseCodes[this.courseCodes.length - 1].id;
+				this.newCourse.code = this.courseCodes[
+					this.courseCodes.length - 1
+				].id;
 				this.courseCodeAdded = false;
 				this.newCourseCode = "";
 				this.showAddNewCourseCode = false;
 			}
 		},
-		courseCodesError: function() {
-
-		},
+		courseCodesError: function() {},
 		addNewCourseCodeResponse: function() {
 			this.$socket.emit("courseCodesRequest");
 			this.courseCodeAdded = true;
@@ -383,9 +449,9 @@ export default {
 		createCourseError: function(error) {
 			this.errorText = error;
 			this.showError = true;
-		},
+		}
 	}
-}
+};
 </script>
 
 <style scoped>

@@ -1,15 +1,15 @@
 <template>
 	<div id="Python">
 		<b-container>
-			<GraphDrawer 
-					@getValueResponse="gotGraphDrawer" 
-					:requestAnswer="requestAnswerFromGraphDrawer" 
-					controlType="Python"
-					operatingMode="Interactive"
-					:steps="steps"
-					:displayEdgeValues="false"
-					:directedEdges="true"
-					/>
+			<GraphDrawer
+				@getValueResponse="gotGraphDrawer"
+				:requestAnswer="requestAnswerFromGraphDrawer"
+				controlType="Python"
+				operatingMode="Interactive"
+				:steps="steps"
+				:displayEdgeValues="false"
+				:directedEdges="true"
+			/>
 		</b-container>
 	</div>
 </template>
@@ -22,7 +22,7 @@ export default {
 	data() {
 		return {
 			requestAnswerFromGraphDrawer: false
-		}
+		};
 	},
 	methods: {
 		gotGraphDrawer: function(result) {
@@ -35,7 +35,8 @@ export default {
 	props: ["requestAnswer", "steps"],
 	watch: {
 		requestAnswer: function() {
-			this.requestAnswerFromGraphDrawer = !this.requestAnswerFromGraphDrawer;
+			this.requestAnswerFromGraphDrawer = !this
+				.requestAnswerFromGraphDrawer;
 		}
 	}
 };

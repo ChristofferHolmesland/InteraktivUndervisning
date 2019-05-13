@@ -1,11 +1,13 @@
 <template>
-	<b-form-select 	id="courseSelect"
-			:options="getCourseOptions"
-			v-model="selectedCourse"
-			@change="selectedCourseChanged($event)">
+	<b-form-select
+		id="courseSelect"
+		:options="getCourseOptions"
+		v-model="selectedCourse"
+		@change="selectedCourseChanged($event)"
+	>
 		<template slot="first" v-if="getCourseOptions.length === 0">
-        	<option value="" disabled>{{ getLocale.noCourseText }}</option>
-      	</template>
+			<option value="" disabled>{{ getLocale.noCourseText }}</option>
+		</template>
 	</b-form-select>
 </template>
 

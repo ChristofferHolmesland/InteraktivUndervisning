@@ -1,9 +1,21 @@
 <template>
 	<div id="session">
-		<WaitingRoom v-if="state === 1" :sessionId="sessionId"/>
-		<Question v-if="state === 2" :sessionId="sessionId" :questionInfo="questionInfo"/>
-		<QuestionResultScreen v-if="state === 3" :sessionId="sessionId" :resultInfo="resultInfo"/>
-		<SessionOverScreen v-if="state === 4" :sessionId="sessionId" :noUsers="noUsers"/>
+		<WaitingRoom v-if="state === 1" :sessionId="sessionId" />
+		<Question
+			v-if="state === 2"
+			:sessionId="sessionId"
+			:questionInfo="questionInfo"
+		/>
+		<QuestionResultScreen
+			v-if="state === 3"
+			:sessionId="sessionId"
+			:resultInfo="resultInfo"
+		/>
+		<SessionOverScreen
+			v-if="state === 4"
+			:sessionId="sessionId"
+			:noUsers="noUsers"
+		/>
 	</div>
 </template>
 
@@ -54,8 +66,7 @@ export default {
 			this.state = 4;
 		}
 	},
-	methods: {
-	},
+	methods: {},
 	components: {
 		WaitingRoom,
 		Question,
@@ -68,7 +79,7 @@ export default {
 				let locale = this.$store.getters.getLocale(localePage);
 				if (locale) return locale;
 				else return {};
-			}
+			};
 		}
 	},
 	beforeDestroy() {

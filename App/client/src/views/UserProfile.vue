@@ -1,16 +1,19 @@
 <template>
 	<b-container class="pt-3">
 		<b-row align-h="center" v-if="!showSession">
-			<b-col	cols="12" lg="5">
-				<UserInfo/>
+			<b-col cols="12" lg="5">
+				<UserInfo />
 			</b-col>
-			<b-col	cols="12" lg="5" offset-lg="1">
-				<UserStats/>
+			<b-col cols="12" lg="5" offset-lg="1">
+				<UserStats />
 			</b-col>
 		</b-row>
 		<b-row align-h="center" v-if="showSession">
 			<b-col cols="12">
-				<Session :sessionInformation="sessionInformation" @showUserStats="showUserStats"/>
+				<Session
+					:sessionInformation="sessionInformation"
+					@showUserStats="showUserStats"
+				/>
 			</b-col>
 		</b-row>
 	</b-container>
@@ -33,13 +36,13 @@ export default {
 		this.$socket.emit("verifyUserLevel", 2);
 	},
 	sockets: {
-		getSessionInformationResponse(data) {
+		getSessionInformationResponse: function(data) {
 			this.sessionInformation = data;
 			this.showSession = true;
 		}
 	},
 	methods: {
-		showUserStats() {
+		showUserStats: function() {
 			this.sessionInformation = {};
 			this.showSession = false;
 		}

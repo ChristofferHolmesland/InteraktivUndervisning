@@ -3,31 +3,44 @@
 		<b-container vertical-center>
 			<b-row align-h="center">
 				<b-col lg="8">
-					<h1>{{ getLocale.code }} {{getSessionId}}</h1>
+					<h1>{{ getLocale.code }} {{ getSessionId }}</h1>
 				</b-col>
 			</b-row>
 			<b-row align-h="center">
 				<b-col lg="8">
-					<h1>{{ getLocale.usersConnected}} {{getNumberOfUsersConnected}}</h1>
+					<h1>
+						{{ getLocale.usersConnected }}
+						{{ getNumberOfUsersConnected }}
+					</h1>
 				</b-col>
 			</b-row>
 			<b-row align-h="center">
 				<b-col lg="8">
-					<h1>{{ getLocale.waitingtext }}{{waitingForPlayersAnimation}}</h1>
+					<h1>
+						{{ getLocale.waitingtext
+						}}{{ waitingForPlayersAnimation }}
+					</h1>
 				</b-col>
 			</b-row>
 			<b-row align-h="center" class="mt-5">
 				<b-col cols="4">
-					<b-button block size="lg" @click="startSession" variant="success">{{ getLocale.start }}</b-button>
+					<b-button
+						block
+						size="lg"
+						@click="startSession"
+						variant="success"
+						>{{ getLocale.start }}</b-button
+					>
 				</b-col>
 			</b-row>
 			<b-row v-if="showNoUserError" align-h="center" class="mt-3">
 				<b-col cols="4">
-					<b-alert	show
-								variant="danger"
-								dismissible
-								@dismissed="showNoUserError = false"
-								>
+					<b-alert
+						show
+						variant="danger"
+						dismissible
+						@dismissed="showNoUserError = false"
+					>
 						{{ getLocale.noUsersConnceted }}
 					</b-alert>
 				</b-col>

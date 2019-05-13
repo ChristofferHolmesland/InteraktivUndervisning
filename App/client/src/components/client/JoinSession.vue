@@ -7,18 +7,24 @@
 		</b-row>
 		<b-row class="center middleRow">
 			<b-col cols="12" class="align-items-center">
-				<b-form-input 
-					v-model="sessionCode" 
-					type="text" 
-					:placeholder="getLocale.inputPlaceholder" 
-					maxlength="4" 
+				<b-form-input
+					v-model="sessionCode"
+					type="text"
+					:placeholder="getLocale.inputPlaceholder"
+					maxlength="4"
 					data-cy="joinSession"
 				/>
 			</b-col>
 		</b-row>
 		<b-row class="center lastRow">
 			<b-col cols="12">
-				<b-button size="lg" variant="primary" @click="quickJoin" class="btn">{{ getLocale.joinBtn }}</b-button>
+				<b-button
+					size="lg"
+					variant="primary"
+					@click="quickJoin"
+					class="btn"
+					>{{ getLocale.joinBtn }}</b-button
+				>
 			</b-col>
 		</b-row>
 	</b-container>

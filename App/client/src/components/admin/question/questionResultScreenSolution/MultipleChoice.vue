@@ -1,35 +1,39 @@
 <template>
-<b-container>
-    <b-row>
-        <b-col v-for="(choice, index) in choices" 
-                :key="index" 
-                :id="index"
-                cols="12" lg="6"
-                class="choice">
-            <div :class="getBackgroundColorSolution(index)">
-                <h3>{{ choice }}</h3>
-            </div>
-        </b-col>
-    </b-row>
-</b-container>
+	<b-container>
+		<b-row>
+			<b-col
+				v-for="(choice, index) in choices"
+				:key="index"
+				:id="index"
+				cols="12"
+				lg="6"
+				class="choice"
+			>
+				<div :class="getBackgroundColorSolution(index)">
+					<h3>{{ choice }}</h3>
+				</div>
+			</b-col>
+		</b-row>
+	</b-container>
 </template>
 
 <script>
 export default {
-    name: "MultipleChoiceSolution",
-    props: {
-        choices: Array,
-        solutions: Array
-    },
-    methods: {
-        getBackgroundColorSolution(id) {
-            let returnvalue = this.solutions.indexOf(id.toString()) > -1
-                ? "solution"
-                : "wrong"
-			return returnvalue
-        }
-    }
-}
+	name: "MultipleChoiceSolution",
+	props: {
+		choices: Array,
+		solutions: Array
+	},
+	methods: {
+		getBackgroundColorSolution(id) {
+			let returnvalue =
+				this.solutions.indexOf(id.toString()) > -1
+					? "solution"
+					: "wrong";
+			return returnvalue;
+		}
+	}
+};
 </script>
 
 <style scoped>
@@ -44,11 +48,11 @@ export default {
 	text-align: center;
 }
 .solution {
-    background-color: #6FEF8A;
-    border: 3px solid black;
+	background-color: #6fef8a;
+	border: 3px solid black;
 }
 .wrong {
-    background-color:#F74C5C; 
-    border: 3px solid rgba(0, 0, 0, 0);
+	background-color: #f74c5c;
+	border: 3px solid rgba(0, 0, 0, 0);
 }
 </style>

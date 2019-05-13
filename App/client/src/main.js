@@ -35,7 +35,7 @@ Vue.use(BootstrapVue);
 
 let debugStatus = true;
 let debugOptions = {
-	"production": false,
+	production: false,
 	"unix-production": false
 };
 
