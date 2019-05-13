@@ -2,7 +2,7 @@
 Since the web application requires a database to store information about users, questions, sessions, courses and more, a set of files were created to get, insert and update the information. The database is designed around features needed for the application. It was also created for scalability in mind with for example the possibility to add other OAuth/OpenID connect possibilities in the future. There are five scripts associated with the database, where get, insert and update functions have been separated into their own scripts. One script is connecting the get, insert and update scripts making it easier to import and use the database functions in other scripts. There is also a script which will run every time the server starts. This script makes sure that every table is created and have the correct column names. It is also the script that inserts default values such as question types and the anonymous user.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{diagrammer/databaseSchema}
+    \includegraphics[width=0.9\linewidth]{diagrammer/databaseSchema}
     \caption{This is the database schema used for the application.}
     \label{fig:dbSchema}
 \end{figure}

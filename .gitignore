@@ -117,6 +117,7 @@ Rapport/*.run.tex
 Rapport/*-blx.bib
 Rapport/*.run.xml
 Rapport/*.lof
+Rapport/*.pdf
 
 # PyCharm
 .idea
@@ -134,7 +135,6 @@ App/server/images
 # Latex
 *.aux
 *.out
-*.pdf
 *.gz
 *.toc
 *.dvi
