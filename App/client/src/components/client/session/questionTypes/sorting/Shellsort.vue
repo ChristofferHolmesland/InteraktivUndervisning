@@ -1,58 +1,82 @@
 <template>
-<div>
-	<b-container id="ShellsortMainContainer">
-		<b-row class="shellsortRow">
-			<div class="shellsortColKvalue">
-				K Value
-			</div>
-			<div v-for="(value, index) in initialList" :key="index" class="shellsortColElement">
-				{{ index }}
-			</div>
-		</b-row>
-		<b-row class="mb-2 shellsortRow">
-			<div class="shellsortColKvalue">
-				<input type="text" disabled :value="initialKValue">
-			</div>
-			<div v-for="(value, index) in initialList" :key="index" class="shellsortColElement">
-				<input type="text" disabled :value="value">
-			</div>
-		</b-row>
-		<b-row v-for="row in rows" :key="row" class="mb-1 shellsortRow">
-			<div class="shellsortColKvalue">
-				<input type="text" placeholder="Enter k value" v-model="kValues[row - 1]">
-			</div>
-			<div v-for="(value, index) in getRowValues(row - 1)" :key="index" @click="elementClicked(row - 1, index)" class="shellsortColElement">
-				<input type="text" disabled :value="value" :class="checkIfSelected((row - 1), (index)) ? 'selected' : ''">
-			</div>
-		</b-row>
-	</b-container>
-	<b-container>
-		<b-row class="text-center">
-			<b-col>
-				<b-btn variant="primary" @click="addNewLine">Add new row</b-btn>
-			</b-col>
-			<b-col>
-				<b-btn variant="danger" @click="removeLastLine">Remove last row</b-btn>
-			</b-col>
-		</b-row>
-	</b-container>
-</div>
+	<div>
+		<b-container id="ShellsortMainContainer">
+			<b-row class="shellsortRow">
+				<div class="shellsortColKvalue">
+					K Value
+				</div>
+				<div
+					v-for="(value, index) in initialList"
+					:key="index"
+					class="shellsortColElement"
+				>
+					{{ index }}
+				</div>
+			</b-row>
+			<b-row class="mb-2 shellsortRow">
+				<div class="shellsortColKvalue">
+					<input type="text" disabled :value="initialKValue" />
+				</div>
+				<div
+					v-for="(value, index) in initialList"
+					:key="index"
+					class="shellsortColElement"
+				>
+					<input type="text" disabled :value="value" />
+				</div>
+			</b-row>
+			<b-row v-for="row in rows" :key="row" class="mb-1 shellsortRow">
+				<div class="shellsortColKvalue">
+					<input
+						type="text"
+						placeholder="Enter k value"
+						v-model="kValues[row - 1]"
+					/>
+				</div>
+				<div
+					v-for="(value, index) in getRowValues(row - 1)"
+					:key="index"
+					@click="elementClicked(row - 1, index)"
+					class="shellsortColElement"
+				>
+					<input
+						type="text"
+						disabled
+						:value="value"
+						:class="
+							checkIfSelected(row - 1, index) ? 'selected' : ''
+						"
+					/>
+				</div>
+			</b-row>
+		</b-container>
+		<b-container>
+			<b-row class="text-center">
+				<b-col>
+					<b-btn variant="primary" @click="addNewLine"
+						>Add new row</b-btn
+					>
+				</b-col>
+				<b-col>
+					<b-btn variant="danger" @click="removeLastLine"
+						>Remove last row</b-btn
+					>
+				</b-col>
+			</b-row>
+		</b-container>
+	</div>
 </template>
 
 <script>
 export default {
-	props: [
-		"requestAnswer",
-		"initialList",
-		"initialKValue"
-	],
+	props: ["requestAnswer", "initialList", "initialKValue"],
 	data() {
 		return {
 			rows: 0,
 			rowValues: [],
 			kValues: [],
 			elementSelected: undefined
-		}
+		};
 	},
 	methods: {
 		addNewLine() {
@@ -76,7 +100,7 @@ export default {
 				this.elementSelected = {
 					row: row,
 					element: index
-				}
+				};
 			} else if (this.elementSelected.row === row) {
 				if (this.elementSelected.element != index) {
 					row = this.rowValues[row];
@@ -84,7 +108,7 @@ export default {
 
 					row[index] = row[this.elementSelected.element];
 					row[this.elementSelected.element] = temp;
-					
+
 					this.elementSelected = undefined;
 
 					this.$forceUpdate();
@@ -93,15 +117,15 @@ export default {
 				this.elementSelected = {
 					row: row,
 					element: index
-				}
+				};
 			}
 		}
 	},
 	computed: {
-		getRowValues: function(row) {
-			return row => {
+		getRowValues: function() {
+			return (row) => {
 				return this.rowValues[row];
-			}
+			};
 		},
 		checkIfSelected: function() {
 			return (row, element) => {
@@ -109,8 +133,9 @@ export default {
 				if (
 					this.elementSelected.row === row &&
 					this.elementSelected.element === element
-				) return true;
-			}
+				)
+					return true;
+			};
 		}
 	},
 	watch: {
@@ -121,7 +146,7 @@ export default {
 				Type: "Initial",
 				K: this.initialKValue,
 				List: this.initialList
-			})
+			});
 
 			for (let i = 0; i < this.rowValues.length; i++) {
 				response.push({

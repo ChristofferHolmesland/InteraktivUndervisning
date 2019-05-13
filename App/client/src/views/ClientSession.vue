@@ -1,10 +1,22 @@
+<!--
+	Component name: ClientSession
+	Use case:
+		- Controls the user experience while in a session.
+-->
+
 <template>
 	<div id="clientSession">
 		<b-container>
-			<WaitingArea v-if="getSessionState == 0" :sessionCode="sessionCode"
-								:localeElement="localeElement"/>
-			<Question v-else :sessionCode="sessionCode"
-									:questionInfo="questionInfo"/>
+			<WaitingArea
+				v-if="getSessionState == 0"
+				:sessionCode="sessionCode"
+				:localeElement="localeElement"
+			/>
+			<Question
+				v-else
+				:sessionCode="sessionCode"
+				:questionInfo="questionInfo"
+			/>
 		</b-container>
 	</div>
 </template>

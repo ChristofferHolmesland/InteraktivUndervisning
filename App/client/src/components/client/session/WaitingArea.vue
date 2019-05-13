@@ -1,3 +1,9 @@
+<!--
+	Component name: WaitingArea
+	Use case:
+		- Display text to the user while it is waiting for something to happen in a session.
+-->
+
 <template>
 	<div id="Waitingarea">
 		<b-container>
@@ -10,7 +16,9 @@
 					<p>{{ getWaitingAreaBody }}</p>
 				</b-col>
 				<b-col cols="12">
-					<b-button variant="danger" @click="leaveSession">{{ getLocale.leaveSession }}</b-button>
+					<b-button variant="danger" @click="leaveSession">{{
+						getLocale.leaveSession
+					}}</b-button>
 				</b-col>
 			</b-row>
 		</b-container>
@@ -49,11 +57,11 @@ export default {
 				confirm(this.getLeaveConfirmBody())
 			) {
 				this.$router.push("/client");
-			}	
+			}
 		},
 		getLeaveConfirmBody() {
 			let locale = this.$store.getters.getLocale("ClientSessionQuestion")
-					.leaveSessionBody;
+				.leaveSessionBody;
 			if (locale) return locale;
 			else return {};
 		}
@@ -73,7 +81,7 @@ export default {
 		}
 	},
 	watch: {
-		localeElement: function(newElement, oldElement) {	
+		localeElement: function(newElement) {
 			if (this.newElement !== "sessionFinished") {
 				if (this.interval !== undefined) clearInterval(this.interval);
 				this.interval = setInterval(() => {

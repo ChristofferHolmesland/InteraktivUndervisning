@@ -1,49 +1,50 @@
 <template>
-    <b-container id="ShellsortMainContainer">
+	<b-container id="ShellsortMainContainer">
 		<b-row class="shellsortRow">
-			<div 	class="shellsortColKvalue"
-					>
+			<div class="shellsortColKvalue">
 				{{ getLocale.shelsortKValue }}
 			</div>
-			<div 	v-for="(value, index) in solution[1].List"
-					:key="index"
-					class="shellsortColElement"
-					>
+			<div
+				v-for="(value, index) in solution[1].List"
+				:key="index"
+				class="shellsortColElement"
+			>
 				{{ index }}
 			</div>
 		</b-row>
-		<b-row 	v-for="(row, index) in solution"
+		<b-row
+			v-for="(row, index) in solution"
+			:key="index"
+			class="mb-1 shellsortRow"
+		>
+			<div class="shellsortColKvalue">
+				<input type="text" disabled :value="row.K" />
+			</div>
+			<div
+				v-for="(value, index) in row.List"
 				:key="index"
-				class="mb-1 shellsortRow"
-				>
-            <div	class="shellsortColKvalue"
-					>
-                <input type="text" disabled :value="row.K">
-            </div>
-            <div 	v-for="(value, index) in row.List"
-					:key="index"
-					class="shellsortColElement"
-					>
-                <input type="text" disabled :value="value">
-            </div>
+				class="shellsortColElement"
+			>
+				<input type="text" disabled :value="value" />
+			</div>
 		</b-row>
 	</b-container>
 </template>
 
 <script>
 export default {
-    name: "ShellsortSolution",
-    props: {
-        solution: Array
+	name: "ShellsortSolution",
+	props: {
+		solution: Array
 	},
 	computed: {
 		getLocale() {
 			let locale = this.$store.getters.getLocale("DisplayQuestion");
 			if (locale) return locale;
 			else return {};
-		}	
+		}
 	}
-}
+};
 </script>
 
 <style scoped>

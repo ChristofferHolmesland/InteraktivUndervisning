@@ -1,7 +1,12 @@
 <template>
 	<div id="TextInput">
 		<b-container>
-			<b-form-input v-model="inputText" type="text" :placeholder="getLocale.inputPlaceholder" size="lg">
+			<b-form-input
+				v-model="inputText"
+				type="text"
+				:placeholder="getLocale.inputPlaceholder"
+				size="lg"
+			>
 			</b-form-input>
 		</b-container>
 	</div>

@@ -1,106 +1,136 @@
+<!--
+	Component name: EditQuestion
+	Use case:
+		- Edit or add a new question.
+-->
+
 <template>
-    <!-- Check watchers when fixing bugs -->
-	
-	<b-modal 	:id="elementId"
-				:ref="elementRef"
-				:no-close-on-backdrop="true"
-				:title="getTitle"
-				@ok="callOkHandler"
-				style="text-align: left;"
-				size="lg"
-				cancel-variant="danger"
-				:hide-header-close="true"
-				:cancel-title="getLocale.cancelBtn"
-				:ok-title="getLocale.okBtn"
+	<!-- Check watchers when fixing bugs -->
+
+	<b-modal
+		:id="elementId"
+		:ref="elementRef"
+		:no-close-on-backdrop="true"
+		:title="getTitle"
+		@ok="callOkHandler"
+		style="text-align: left;"
+		size="lg"
+		cancel-variant="danger"
+		:hide-header-close="true"
+		:cancel-title="getLocale.cancelBtn"
+		:ok-title="getLocale.okBtn"
+	>
+		<b-form>
+			<b-alert
+				:show="validationFailure"
+				variant="danger"
+				dimissible
+				@dismissed="validationFailure = false"
+			>
+				<p v-for="(error, index) in validationErrors" :key="index">
+					{{ getLocale[error] }}
+				</p>
+			</b-alert>
+			<b-container
+				class="px-0"
+				@click="changeShowBasicInfo"
+				style="cursor: pointer;"
+			>
+				<b-row>
+					<b-col
+						cols="10"
+						style="text-align: left;"
+						data-cy="basicInformation"
+					>
+						<label for="mediaSelector" style="cursor: pointer;">
+							{{ getLocale.basicInfo }}
+						</label>
+					</b-col>
+					<b-col cols="2" style="text-align: right;">
+						<p v-if="showBasicInfo">
+							<i class="fas fa-angle-up"></i>
+						</p>
+						<p v-else><i class="fas fa-angle-down"></i></p>
+					</b-col>
+				</b-row>
+			</b-container>
+			<div v-show="showBasicInfo">
+				<b-form-group
+					id="questionTitle"
+					:label="getLocale.newQuestionTitle"
+					label-for="questionTitleInput"
 				>
-        <b-form>
-            <b-alert    :show="validationFailure"
-                        variant="danger"
-						dimissible
-						@dismissed="validationFailure = false">
-                <p v-for="(error, index) in validationErrors" :key="index">
-                    {{getLocale[error]}}
-                </p>
-            </b-alert>
-            <b-container   class="px-0"
-                            @click="changeShowBasicInfo"
-                            style="cursor: pointer;">
-                <b-row>
-                    <b-col cols="10" style="text-align: left;" data-cy="basicInformation">
-                        <label  for="mediaSelector"
-                                style="cursor: pointer;">
-                            {{getLocale.basicInfo}}
-                        </label>
-                    </b-col>
-                    <b-col cols="2" style="text-align: right;">
-                        <p v-if="showBasicInfo"><i class="fas fa-angle-up"></i></p>
-                        <p v-else><i class="fas fa-angle-down"></i></p>
-                    </b-col>
-                </b-row>
-            </b-container>
-            <div v-show="showBasicInfo">
-                <b-form-group 	id="questionTitle"
-                                :label="getLocale.newQuestionTitle"
-                                label-for="questionTitleInput">
-                    <b-form-input 	id="questionTitleInput"
-                                    type="text"
-                                    v-model="newQuestion.text">
-                    </b-form-input>
-                </b-form-group>
-                <b-form-group 	id="questionText"
-                                :label="getLocale.newQuestionText"
-                                label-for="questionTextInput">
-					<b-form-textarea	id="questionTextInput"
-										v-model="newQuestion.description"
-										max-rows="10"
-										>
+					<b-form-input
+						id="questionTitleInput"
+						type="text"
+						v-model="newQuestion.text"
+					>
+					</b-form-input>
+				</b-form-group>
+				<b-form-group
+					id="questionText"
+					:label="getLocale.newQuestionText"
+					label-for="questionTextInput"
+				>
+					<b-form-textarea
+						id="questionTextInput"
+						v-model="newQuestion.description"
+						max-rows="10"
+					>
 					</b-form-textarea>
-                </b-form-group>
-                <b-form-group id="questionTime">
-                    <b-col>
-                        <b-row>
-                            <b-col>
-                                <label>{{ getLocale.newQuestionTime }}</label>
-                            </b-col>
-                            <b-col>
-                                <b-form-input   id="questionTimeInput"
-                                                type="time"
-                                                v-model="timeInput"
-                                                min="00:00"
-                                                max="10:00">
-                                </b-form-input>
-                            </b-col>
-                        </b-row>
-                        <b-row>
-                            <b-col>
-                                <b-form-input   id="questionTimeInputSlider"
-                                                type="range"
-                                                v-model="time"
-                                                min="0"
-                                                max="600"
-                                                step="15">
-                                </b-form-input>
-                            </b-col>
-                        </b-row>
-                    </b-col>
-                </b-form-group>
-            </div>
+				</b-form-group>
+				<b-form-group id="questionTime">
+					<b-col>
+						<b-row>
+							<b-col>
+								<label>{{ getLocale.newQuestionTime }}</label>
+							</b-col>
+							<b-col>
+								<b-form-input
+									id="questionTimeInput"
+									type="time"
+									v-model="timeInput"
+									min="00:00"
+									max="10:00"
+								>
+								</b-form-input>
+							</b-col>
+						</b-row>
+						<b-row>
+							<b-col>
+								<b-form-input
+									id="questionTimeInputSlider"
+									type="range"
+									v-model="time"
+									min="0"
+									max="600"
+									step="15"
+								>
+								</b-form-input>
+							</b-col>
+						</b-row>
+					</b-col>
+				</b-form-group>
+			</div>
 
-			<hr>
+			<hr />
 
-			<b-form-group   id="Media">
-				<b-container   class="px-0"
-								@click="changeShowMedia"
-								style="cursor: pointer;">
+			<b-form-group id="Media">
+				<b-container
+					class="px-0"
+					@click="changeShowMedia"
+					style="cursor: pointer;"
+				>
 					<b-row>
 						<b-col cols="10" style="text-align: left;">
-							<label  for="mediaSelector"
-									style="cursor: pointer;">
+							<label for="mediaSelector" style="cursor: pointer;">
 								{{ getLocale.mediaLabel }}
 							</label>
 						</b-col>
 						<b-col cols="2" style="text-align: right;">
-							<p v-if="showMedia"><i class="fas fa-angle-up"></i></p>
+							<p v-if="showMedia">
+								<i class="fas fa-angle-up"></i>
+							</p>
 							<p v-else><i class="fas fa-angle-down"></i></p>
 						</b-col>
 					</b-row>
@@ -108,34 +138,44 @@
 				<b-container v-show="showMedia" class="px-0">
 					<b-row>
 						<b-col>
-							<b-form-select  v-model="selectedMediaType"
-											:options="mediaTypes"
-											>
+							<b-form-select
+								v-model="selectedMediaType"
+								:options="mediaTypes"
+							>
 							</b-form-select>
 						</b-col>
 					</b-row>
 					<b-row style="text-align: center;" class="mt-4">
 						<b-col>
-							<b-alert	:show="showMediaWarning"
-										variant="warning"
-										dismissible
-										@dismissed="showMediaWarning = false"
-										>
-								{{mediaWarningText}}
+							<b-alert
+								:show="showMediaWarning"
+								variant="warning"
+								dismissible
+								@dismissed="showMediaWarning = false"
+							>
+								{{ mediaWarningText }}
 							</b-alert>
-							<b-alert	:show="showMediaError"
-										variant="danger"
-										dismissible
-										@dismissed="showMediaError = false"
-										>
-								{{mediaErrorText}}
+							<b-alert
+								:show="showMediaError"
+								variant="danger"
+								dismissible
+								@dismissed="showMediaError = false"
+							>
+								{{ mediaErrorText }}
 							</b-alert>
 							<div v-if="selectedMediaType === 0">
-								<input  type="file" @change="newFile" accept="image/*" 
-										multiple name="imageInput" class="imageInput"
-										id="imageInput"
-										/>
-								<label for="imageInput">{{getLocale.imageInputLabel}}</label>
+								<input
+									type="file"
+									@change="newFile"
+									accept="image/*"
+									multiple
+									name="imageInput"
+									class="imageInput"
+									id="imageInput"
+								/>
+								<label for="imageInput">{{
+									getLocale.imageInputLabel
+								}}</label>
 							</div>
 							<div v-if="selectedMediaType === 1">
 								<b-container>
@@ -149,13 +189,17 @@
 											Type:
 										</b-col>
 										<b-col>
-											<b-form-select 	id="graphType"
-												v.b-tooltip.hover :title="getLocale.reloadWarning"
+											<b-form-select
+												id="graphType"
+												v.b-tooltip.hover
+												:title="getLocale.reloadWarning"
 												:options="getGraphTypes()"
-												v-model="graphConfiguration.type"
+												v-model="
+													graphConfiguration.type
+												"
 												@change="reloadGraphDrawer"
-												>
-                  						  </b-form-select>
+											>
+											</b-form-select>
 										</b-col>
 									</b-row>
 									<b-row>
@@ -163,12 +207,15 @@
 											{{ getLocale.arrowsText }}
 										</b-col>
 										<b-col>
-											<b-form-select 	id="graphArrows"
+											<b-form-select
+												id="graphArrows"
 												:options="getGraphYesNo()"
-												v-model="graphConfiguration.directed"
+												v-model="
+													graphConfiguration.directed
+												"
 												@change="hotReloadGraphDrawer"
-												>
-                  						  </b-form-select>
+											>
+											</b-form-select>
 										</b-col>
 									</b-row>
 									<b-row>
@@ -176,12 +223,15 @@
 											{{ getLocale.edgeValues }}
 										</b-col>
 										<b-col>
-											<b-form-select 	id="graphEdgeValues"
+											<b-form-select
+												id="graphEdgeValues"
 												:options="getGraphYesNo()"
-												v-model="graphConfiguration.edgeValues"
+												v-model="
+													graphConfiguration.edgeValues
+												"
 												@change="hotReloadGraphDrawer"
-												>
-                  						  </b-form-select>
+											>
+											</b-form-select>
 										</b-col>
 									</b-row>
 									<b-row>
@@ -189,36 +239,52 @@
 											{{ getLocale.nodeShape }}
 										</b-col>
 										<b-col>
-											<b-form-select 	id="graphNodeShape"
+											<b-form-select
+												id="graphNodeShape"
 												:options="getGraphNodeShapes()"
-												v-model="graphConfiguration.nodeShape"
+												v-model="
+													graphConfiguration.nodeShape
+												"
 												@change="hotReloadGraphDrawer"
-												:disabled="disableGraphDrawerMedia"
-												>
-                  						  </b-form-select>
+												:disabled="
+													disableGraphDrawerMedia
+												"
+											>
+											</b-form-select>
 										</b-col>
 									</b-row>
 									<b-row>
 										<b-col>
 											<GraphDrawer
-													:controlType="graphConfiguration.type"
-													subType="Dijkstra"
-													operatingMode="Interactive"
-													:displayEdgeValues="graphConfiguration.edgeValues"
-													:directedEdges="graphConfiguration.directed"
-													ref="graphDrawerMedia"
-													:requestImage="requestGraphDrawerImage"
-													@getCanvasImage="processGraphDrawerImage"
-													v-if="!reload"
+												:controlType="
+													graphConfiguration.type
+												"
+												subType="Dijkstra"
+												operatingMode="Interactive"
+												:displayEdgeValues="
+													graphConfiguration.edgeValues
+												"
+												:directedEdges="
+													graphConfiguration.directed
+												"
+												ref="graphDrawerMedia"
+												:requestImage="
+													requestGraphDrawerImage
+												"
+												@getCanvasImage="
+													processGraphDrawerImage
+												"
+												v-if="!reload"
 											/>
 										</b-col>
 									</b-row>
 									<b-row align-h="center">
 										<b-col cols="6">
-											<b-button 	block
-														variant="primary"
-														@click="addCanvasAsImage"
-														>
+											<b-button
+												block
+												variant="primary"
+												@click="addCanvasAsImage"
+											>
 												{{ getLocale.addCanvasAsImage }}
 											</b-button>
 										</b-col>
@@ -227,32 +293,94 @@
 							</div>
 							<div v-if="selectedMediaType === 2">
 								<b-container class="editTableContainer">
-									<b-row v-for="(row, rowIndex) in editTableRows" :key="rowIndex" class="editTableRow">
-										<div v-for="(column, columnIndex) in editTableColumns" :key="columnIndex" class="editTableColumn">
-											<b-form-input v-model="editTableValues[row - 1][column - 1]" maxlength="6"></b-form-input>
+									<b-row
+										v-for="(row, rowIndex) in editTableRows"
+										:key="rowIndex"
+										class="editTableRow"
+									>
+										<div
+											v-for="(column,
+											columnIndex) in editTableColumns"
+											:key="columnIndex"
+											class="editTableColumn"
+										>
+											<b-form-input
+												v-model="
+													editTableValues[row - 1][
+														column - 1
+													]
+												"
+												maxlength="6"
+											></b-form-input>
 										</div>
 									</b-row>
 								</b-container>
 								<b-container>
-									<b-row class="text-align-center mt-2" align-h="around">
+									<b-row
+										class="text-align-center mt-2"
+										align-h="around"
+									>
 										<b-col cols="5">
-											<b-button block variant="success" @click="addTableRow">{{ getLocale.addEditTableRowBtn }}</b-button>
+											<b-button
+												block
+												variant="success"
+												@click="addTableRow"
+												>{{
+													getLocale.addEditTableRowBtn
+												}}</b-button
+											>
 										</b-col>
 										<b-col cols="5">
-											<b-button block variant="success" @click="addTableColumn">{{ getLocale.addEditTableColumnBtn }}</b-button>
+											<b-button
+												block
+												variant="success"
+												@click="addTableColumn"
+												>{{
+													getLocale.addEditTableColumnBtn
+												}}</b-button
+											>
 										</b-col>
 									</b-row>
-									<b-row class="text-align-center mt-2" align-h="around">
+									<b-row
+										class="text-align-center mt-2"
+										align-h="around"
+									>
 										<b-col cols="5">
-											<b-button block variant="danger" @click="removeTableRow">{{ getLocale.removeEditTableRowBtn }}</b-button>
+											<b-button
+												block
+												variant="danger"
+												@click="removeTableRow"
+												>{{
+													getLocale.removeEditTableRowBtn
+												}}</b-button
+											>
 										</b-col>
 										<b-col cols="5">
-											<b-button block variant="danger" @click="removeTableColumn">{{ getLocale.removeEditTableColumnBtn }}</b-button>
+											<b-button
+												block
+												variant="danger"
+												@click="removeTableColumn"
+												>{{
+													getLocale.removeEditTableColumnBtn
+												}}</b-button
+											>
 										</b-col>
 									</b-row>
-									<b-row class="text-align-center mt-3" align-h="around">
+									<b-row
+										class="text-align-center mt-3"
+										align-h="around"
+									>
 										<b-col cols="9">
-											<b-button block variant="primary" @click="addTable">{{ editExistingTable ? getLocale.addTableSaveBtn : getLocale.addTableBtn }}</b-button>
+											<b-button
+												block
+												variant="primary"
+												@click="addTable"
+												>{{
+													editExistingTable
+														? getLocale.addTableSaveBtn
+														: getLocale.addTableBtn
+												}}</b-button
+											>
 										</b-col>
 									</b-row>
 								</b-container>
@@ -263,32 +391,55 @@
 						<b-col>
 							<label>{{ getLocale.filesLabel }}</label>
 							<b-container>
-								<b-row v-for="(image, index) in newQuestion.objects.files" :key="index" class="mt-2">
+								<b-row
+									v-for="(image, index) in newQuestion.objects
+										.files"
+									:key="index"
+									class="mt-2"
+								>
 									<b-col>
 										<b-row>
 											<b-col>
-												{{getLocale.filename}}: {{image.name}}
+												{{ getLocale.filename }}:
+												{{ image.name }}
 											</b-col>
 										</b-row>
 										<b-row>
 											<b-col>
-												{{getLocale.filesize}}: {{Math.round(((image.size / 1000000) + 0.00001) * 100) / 100}} MB
+												{{ getLocale.filesize }}:
+												{{
+													Math.round(
+														(image.size / 1000000 +
+															0.00001) *
+															100
+													) / 100
+												}}
+												MB
 											</b-col>
 										</b-row>
 										<b-row>
 											<b-col>
-												{{getLocale.filetype}}: {{image.type}}
+												{{ getLocale.filetype }}:
+												{{ image.type }}
 											</b-col>
 										</b-row>
 									</b-col>
 									<b-col>
-										<b-button @click="deleteImage(index)" variant="danger"
-													style="width: 100px; height: 50px; text-align:center;">
-											{{getLocale.deleteBtn}}
+										<b-button
+											@click="deleteImage(index)"
+											variant="danger"
+											style="width: 100px; height: 50px; text-align:center;"
+										>
+											{{ getLocale.deleteBtn }}
 										</b-button>
 									</b-col>
 									<b-col>
-										<img :src="getImageSrc(index)" width="200" height="200" style="border: 3px solid black;"/>
+										<img
+											:src="getImageSrc(index)"
+											width="200"
+											height="200"
+											style="border: 3px solid black;"
+										/>
 									</b-col>
 								</b-row>
 							</b-container>
@@ -297,21 +448,36 @@
 					<b-row v-if="getQuestionObjects.tables.length > 0">
 						<b-col>
 							<label>{{ getLocale.tableLabel }}</label>
-							<b-container	v-for="(table, index) in getQuestionObjects.tables"
-											:key="index"
-											class="mb-2 border py-2"
-											>
+							<b-container
+								v-for="(table,
+								index) in getQuestionObjects.tables"
+								:key="index"
+								class="mb-2 border py-2"
+							>
 								<b-row align-h="around">
 									<b-col cols="8">
 										<b-container>
 											<b-row class="mb-2">
 												<b-col>
-													{{ `${ getLocale.tableViewTitle } ${ index + 1 }` }}
+													{{
+														`${
+															getLocale.tableViewTitle
+														} ${index + 1}`
+													}}
 												</b-col>
 											</b-row>
 											<b-row>
 												<b-col>
-													<b-button variant="warning" v-b-toggle="'tableCollapse' + index">{{ getLocale.viewBtn }}</b-button>
+													<b-button
+														variant="warning"
+														v-b-toggle="
+															'tableCollapse' +
+																index
+														"
+														>{{
+															getLocale.viewBtn
+														}}</b-button
+													>
 												</b-col>
 											</b-row>
 										</b-container>
@@ -320,23 +486,62 @@
 										<b-container>
 											<b-row class="mb-2 text-center">
 												<b-col align-self="center">
-													<b-button variant="danger" @click="deleteTable(index)">{{ getLocale.deleteBtn }}</b-button>
+													<b-button
+														variant="danger"
+														@click="
+															deleteTable(index)
+														"
+														>{{
+															getLocale.deleteBtn
+														}}</b-button
+													>
 												</b-col>
 											</b-row>
 											<b-row class="text-center">
 												<b-col align-self="center">
-													<b-button variant="primary" @click="editTable(index)">{{ getLocale.editBtn }}</b-button>
+													<b-button
+														variant="primary"
+														@click="
+															editTable(index)
+														"
+														>{{
+															getLocale.editBtn
+														}}</b-button
+													>
 												</b-col>
 											</b-row>
 										</b-container>
 									</b-col>
 								</b-row>
 								<b-row>
-									<b-collapse :id="'tableCollapse' + index" class="tableCollapse">
+									<b-collapse
+										:id="'tableCollapse' + index"
+										class="tableCollapse"
+									>
 										<b-container class="viewTableContainer">
-											<b-row v-for="(row, rowIndex) in getTableRow(index)" :key="rowIndex" class="editTableRow">
-												<div v-for="(column, columnIndex) in getTableColumn(index)" :key="columnIndex" class="editTableColumn">
-													<b-form-input :value="getTable(index)[rowIndex][columnIndex]" maxlength="6" disabled></b-form-input>
+											<b-row
+												v-for="(row,
+												rowIndex) in getTableRow(index)"
+												:key="rowIndex"
+												class="editTableRow"
+											>
+												<div
+													v-for="(column,
+													columnIndex) in getTableColumn(
+														index
+													)"
+													:key="columnIndex"
+													class="editTableColumn"
+												>
+													<b-form-input
+														:value="
+															getTable(index)[
+																rowIndex
+															][columnIndex]
+														"
+														maxlength="6"
+														disabled
+													></b-form-input>
 												</div>
 											</b-row>
 										</b-container>
@@ -348,122 +553,206 @@
 				</b-container>
 			</b-form-group>
 
-            <hr>
-            
-            <b-form-group 	id="solutionType">
-                <b-container   class="px-0"
-                                @click="changeShowSolution"
-                                style="cursor: pointer;">
-                    <b-row>
-                        <b-col cols="10" style="text-align: left;" data-cy="solutionType">
-                            <label  for="solutionTypeInput"
-                                    style="cursor: pointer;">
-                                {{getLocale.newQuestionSolutionType}}
-                            </label>
-                        </b-col>
-                        <b-col cols="2" style="text-align: right;">
-                            <p v-if="showSolution"><i class="fas fa-angle-up"></i></p>
-                            <p v-else><i class="fas fa-angle-down"></i></p>
-                        </b-col>
-                    </b-row>
-                </b-container>
-                <div v-show="showSolution">
-                    <b-form-select 	id="solutionTypeInput"
-                                    :options="getSolutionTypes"
-                                    v-model="newQuestion.solutionType"
-									@change="solutionTypeChanged"
-									>
-                    </b-form-select>
-                </div>
-            </b-form-group>
-            <div v-show="showSolution">
-                <b-form-group 	id="textSolution"
-                                :label="getLocale.newQuestionSolution"
-                                label-for="solutionInputText"
-                                v-if="newQuestion.solutionType === 1">
-                    <b-form-input 	id="solutionInputText"
-                                    type="text"
-                                    v-model="newQuestion.solution">
-                    </b-form-input>
-                </b-form-group>
-                <b-form-group   id="multipleChoiceChoices"
-                                v-if="newQuestion.solutionType === 2">
-                    <b-col cols="12">
-                        <b-row>
-                            <b-col cols="8" class="px-0">
-                                <label>{{getLocale.multipleChoiceHeader}}</label>
-                            </b-col>
-                            <b-col cols="4" class="px-0">
-                                <b-button @click="addNewMultipleChoice" id="addNewMultipleChoice" class="float-right" variant="success" block>
-                                    {{getLocale.addNewMultipleChoice}}
-                                </b-button>
-                            </b-col>
-                        </b-row>
-                        <b-row>
-                            <b-col cols="12" class="px-0 mt-2">
-                                <b-form-checkbox-group v-model="newQuestion.solution">
-                                    <b-row  v-for="(choice, index) in newQuestion.objects.multipleChoices"
-                                            :key="index"
-                                            class="mb-2">
-                                        <b-col cols="9">
-                                            <b-form-input   :id="index.toString()"
-                                                            v-model="newQuestion.objects.multipleChoices[index]"
-                                                            >          
-                                            </b-form-input>
-                                        </b-col>
-                                        <b-col cols="1">
-                                            <b-form-checkbox :value="index.toString()"/>
-                                        </b-col>
-                                        <b-col cols="2">
-                                            <b-button @click="deleteMultiChoice(index)" variant="danger" block>{{getLocale.multipleChoiceDeleteBtn}}</b-button>
-                                        </b-col>
-                                    </b-row>
-                                </b-form-checkbox-group>
-                            </b-col>
-                        </b-row>
-                    </b-col>
-                </b-form-group>
-                <b-form-group 	id="sortingSolution"
-                                :label="getLocale.shellsortStartArray"
-                                label-for="solutionInput"
-                                v-if="newQuestion.solutionType < 6 && newQuestion.solutionType > 2">
-                    <b-form-input 	id="solutionInput"
-                                    type="text"
-                                    v-model="newQuestion.objects.startingArray">
-                    </b-form-input>
-                    <b-form-group   id="kValue"
-                                    :label="getLocale.shellsortStartKValue"
-                                    label-for="kValueInput"
-                                    v-if="newQuestion.solutionType === 3">
-                        <b-form-input   id="kValueInput"
-                                        type="text"
-                                        v-model="newQuestion.objects.kValue">
-                        </b-form-input>
-                    </b-form-group>
-                </b-form-group>
-                <b-form-group
-                    id="BinaryTree"
-                    :label="getLocale.binaryTreeArray"
-                    v-if="newQuestion.solutionType === 6"
-                    >
-                <b-form-input   id="nodeElements"
-                                type="text"
-                                v-model="newQuestion.objects.treeElements"
-                                >
-                </b-form-input>
+			<hr />
+
+			<b-form-group id="solutionType">
+				<b-container
+					class="px-0"
+					@click="changeShowSolution"
+					style="cursor: pointer;"
+				>
+					<b-row>
+						<b-col
+							cols="10"
+							style="text-align: left;"
+							data-cy="solutionType"
+						>
+							<label
+								for="solutionTypeInput"
+								style="cursor: pointer;"
+							>
+								{{ getLocale.newQuestionSolutionType }}
+							</label>
+						</b-col>
+						<b-col cols="2" style="text-align: right;">
+							<p v-if="showSolution">
+								<i class="fas fa-angle-up"></i>
+							</p>
+							<p v-else><i class="fas fa-angle-down"></i></p>
+						</b-col>
+					</b-row>
+				</b-container>
+				<div v-show="showSolution">
+					<b-form-select
+						id="solutionTypeInput"
+						:options="getSolutionTypes"
+						v-model="newQuestion.solutionType"
+						@change="solutionTypeChanged"
+					>
+					</b-form-select>
+				</div>
+			</b-form-group>
+			<div v-show="showSolution">
+				<b-form-group
+					id="textSolution"
+					:label="getLocale.newQuestionSolution"
+					label-for="solutionInputText"
+					v-if="newQuestion.solutionType === 1"
+				>
+					<b-form-input
+						id="solutionInputText"
+						type="text"
+						v-model="newQuestion.solution"
+					>
+					</b-form-input>
 				</b-form-group>
 				<b-form-group
-						id="BinarySearchTrees"
-						:label="getLocale.bstInfo"
-						v-if="newQuestion.solutionType === 7 || newQuestion.solutionType === 8"
-						> 	
-					<label for="Add">{{getLocale.okBtn}}</label><input type="radio" id="Add" v-model="newQuestion.objects.solutionTreeType" value="Add" /><br/>
-					<label for="Remove">{{getLocale.removeText}}</label><input type="radio" id="Remove" v-model="newQuestion.objects.solutionTreeType" value="Remove"/>
-					<label v-if="newQuestion.objects.solutionTreeType === 'Add'" for="solutionListElements">{{ getLocale.addLabel }}</label>
-					<label v-else-if="newQuestion.objects.solutionTreeType === 'Remove'" for="solutionListElements">{{ getLocale.removeLabel }}</label>
-					<b-form-input 	id="solutionListElements"
-									type="text"
-									v-model="newQuestion.objects.treeElements">
+					id="multipleChoiceChoices"
+					v-if="newQuestion.solutionType === 2"
+				>
+					<b-col cols="12">
+						<b-row>
+							<b-col cols="8" class="px-0">
+								<label>{{
+									getLocale.multipleChoiceHeader
+								}}</label>
+							</b-col>
+							<b-col cols="4" class="px-0">
+								<b-button
+									@click="addNewMultipleChoice"
+									id="addNewMultipleChoice"
+									class="float-right"
+									variant="success"
+									block
+								>
+									{{ getLocale.addNewMultipleChoice }}
+								</b-button>
+							</b-col>
+						</b-row>
+						<b-row>
+							<b-col cols="12" class="px-0 mt-2">
+								<b-form-checkbox-group
+									v-model="newQuestion.solution"
+								>
+									<b-row
+										v-for="(choice, index) in newQuestion
+											.objects.multipleChoices"
+										:key="index"
+										class="mb-2"
+									>
+										<b-col cols="9">
+											<b-form-input
+												:id="index.toString()"
+												v-model="
+													newQuestion.objects
+														.multipleChoices[index]
+												"
+											>
+											</b-form-input>
+										</b-col>
+										<b-col cols="1">
+											<b-form-checkbox
+												:value="index.toString()"
+											/>
+										</b-col>
+										<b-col cols="2">
+											<b-button
+												@click="
+													deleteMultiChoice(index)
+												"
+												variant="danger"
+												block
+												>{{
+													getLocale.multipleChoiceDeleteBtn
+												}}</b-button
+											>
+										</b-col>
+									</b-row>
+								</b-form-checkbox-group>
+							</b-col>
+						</b-row>
+					</b-col>
+				</b-form-group>
+				<b-form-group
+					id="sortingSolution"
+					:label="getLocale.shellsortStartArray"
+					label-for="solutionInput"
+					v-if="
+						newQuestion.solutionType < 6 &&
+							newQuestion.solutionType > 2
+					"
+				>
+					<b-form-input
+						id="solutionInput"
+						type="text"
+						v-model="newQuestion.objects.startingArray"
+					>
+					</b-form-input>
+					<b-form-group
+						id="kValue"
+						:label="getLocale.shellsortStartKValue"
+						label-for="kValueInput"
+						v-if="newQuestion.solutionType === 3"
+					>
+						<b-form-input
+							id="kValueInput"
+							type="text"
+							v-model="newQuestion.objects.kValue"
+						>
+						</b-form-input>
+					</b-form-group>
+				</b-form-group>
+				<b-form-group
+					id="BinaryTree"
+					:label="getLocale.binaryTreeArray"
+					v-if="newQuestion.solutionType === 6"
+				>
+					<b-form-input
+						id="nodeElements"
+						type="text"
+						v-model="newQuestion.objects.treeElements"
+					>
+					</b-form-input>
+				</b-form-group>
+				<b-form-group
+					id="BinarySearchTrees"
+					:label="getLocale.bstInfo"
+					v-if="
+						newQuestion.solutionType === 7 ||
+							newQuestion.solutionType === 8
+					"
+				>
+					<label for="Add">{{ getLocale.okBtn }}</label
+					><input
+						type="radio"
+						id="Add"
+						v-model="newQuestion.objects.solutionTreeType"
+						value="Add"
+					/><br />
+					<label for="Remove">{{ getLocale.removeText }}</label
+					><input
+						type="radio"
+						id="Remove"
+						v-model="newQuestion.objects.solutionTreeType"
+						value="Remove"
+					/>
+					<label
+						v-if="newQuestion.objects.solutionTreeType === 'Add'"
+						for="solutionListElements"
+						>{{ getLocale.addLabel }}</label
+					>
+					<label
+						v-else-if="
+							newQuestion.objects.solutionTreeType === 'Remove'
+						"
+						for="solutionListElements"
+						>{{ getLocale.removeLabel }}</label
+					>
+					<b-form-input
+						id="solutionListElements"
+						type="text"
+						v-model="newQuestion.objects.treeElements"
+					>
 					</b-form-input>
 					<GraphDrawer
 						ref="graphdrawer"
@@ -476,14 +765,15 @@
 						:steps="this.newQuestion.objects._graphdrawerGraph"
 					/>
 				</b-form-group>
-				<b-form-group 	
-						id="dijkstraSolution"
-						:label="getLocale.dijkstraLabel"
-						v-if="newQuestion.solutionType === 9">
+				<b-form-group
+					id="dijkstraSolution"
+					:label="getLocale.dijkstraLabel"
+					v-if="newQuestion.solutionType === 9"
+				>
 					<GraphDrawer
 						ref="graphdrawer"
-						@getValueResponse="gotGraphDrawerObject" 
-						:requestAnswer="requestGraphDrawerObject" 
+						@getValueResponse="gotGraphDrawerObject"
+						:requestAnswer="requestGraphDrawerObject"
 						controlType="Graph0"
 						importType="Graph"
 						subType="Dijkstra"
@@ -491,23 +781,27 @@
 						:displayEdgeValues="true"
 						operatingMode="Interactive"
 						:steps="this.newQuestion.objects._graphdrawerGraph"
-						/>
+					/>
 				</b-form-group>
-				<b-form-group 	id="pythonSolution"
-								:label="getLocale.newQuestionSolution"
-								label-for="solutionInput"
-								v-if="newQuestion.solutionType === 10">
+				<b-form-group
+					id="pythonSolution"
+					:label="getLocale.newQuestionSolution"
+					label-for="solutionInput"
+					v-if="newQuestion.solutionType === 10"
+				>
 					<div v-show="checkRef">{{ getLocale.ready }}</div>
-						<b-form-textarea 	id="pythonCodeInput"
-											:placeholder="getLocale.pythonPlaceholder"
-											v-model="newQuestion.objects.code"
-											ref="codeInput"
-											@keydown.native.tab="keyDownInTextarea">
-						</b-form-textarea>
+					<b-form-textarea
+						id="pythonCodeInput"
+						:placeholder="getLocale.pythonPlaceholder"
+						v-model="newQuestion.objects.code"
+						ref="codeInput"
+						@keydown.native.tab="keyDownInTextarea"
+					>
+					</b-form-textarea>
 				</b-form-group>
-            </div>
-        </b-form>
-    </b-modal>
+			</div>
+		</b-form>
+	</b-modal>
 </template>
 
 <script>
@@ -535,10 +829,10 @@ function initializeState() {
 				graphs: [],
 				tables: [],
 				_graphdrawerGraph: undefined,
-                questionTypeDesc: {
+				questionTypeDesc: {
 					locale: Object,
-                    text: Object
-                }
+					text: Object
+				}
 			}
 		},
 		solutionTypes: [],
@@ -692,8 +986,7 @@ export default {
 				this.newQuestion.objects._graphdrawerGraph = undefined;
 				if (newSolutionType === 1 || newSolutionType === 10)
 					this.newQuestion.solution = "";
-				else
-					this.newQuestion.solution = [];
+				else this.newQuestion.solution = [];
 
 				// Render the modal with solutionType = -1 to clear any
 				// components which are still on the page.
@@ -702,7 +995,7 @@ export default {
 				// Wait for Vue to detect the changes
 				this.$nextTick(function() {
 					this.newQuestion.solutionType = newSolutionType;
-					
+
 					// Wait for the new page to render with the new values, and
 					// create the GraphDrawer if it is needed.
 					this.$nextTick(function() {
@@ -721,7 +1014,7 @@ export default {
 
 			// Prevent shifting focus from the element
 			e.preventDefault();
-			
+
 			let codeInput = this.$refs.codeInput.$refs.input;
 
 			// Add 4 spaces
@@ -773,7 +1066,8 @@ export default {
 			let totalFilesSize = 0;
 			let errorFileSize = 1500000;
 			let warningFileSize = 500000;
-			for(let i = 0; i < storedFiles.length; i++) totalFilesSize += storedFiles[i].size;
+			for (let i = 0; i < storedFiles.length; i++)
+				totalFilesSize += storedFiles[i].size;
 			let fileTypeErr = 0;
 			for (let i = 0; i < files.length; i++) {
 				let file = files[i];
@@ -781,30 +1075,33 @@ export default {
 					name: file.name,
 					size: file.size,
 					type: file.type
-				}
-				
+				};
+
 				let fileType = file.type.split("/");
 				if (fileType[0] !== "image") {
 					files.splice(i, 1);
 					i--;
 					fileTypeErr++;
 					this.showMediaError = true;
-					this.mediaErrorText = fileTypeErr.toString() + this.getLocale.mediaErrorFileType;
+					this.mediaErrorText =
+						fileTypeErr.toString() +
+						this.getLocale.mediaErrorFileType;
 					continue;
 				}
 				totalFilesSize += file.size;
 				if (totalFilesSize > errorFileSize) {
 					event.target.value = "";
 					this.showMediaError = true;
-					if (fileTypeErr > 0) this.mediaErrorText += "\n\n" + this.getLocale.mediaErrorFileSize;
-					else this.mediaErrorText = this.getLocale.mediaErrorFileSize;
-				}
-				else if (totalFilesSize > warningFileSize) {
+					if (fileTypeErr > 0)
+						this.mediaErrorText +=
+							"\n\n" + this.getLocale.mediaErrorFileSize;
+					else
+						this.mediaErrorText = this.getLocale.mediaErrorFileSize;
+				} else if (totalFilesSize > warningFileSize) {
 					this.showMediaWarning = true;
 					this.mediaWarningText = this.getLocale.mediaWarningFileSize;
-				}
-				else {
-					if (fileTypeErr === 0) {      
+				} else {
+					if (fileTypeErr === 0) {
 						this.showMediaError = false;
 					}
 					this.showMediaWarning = false;
@@ -813,7 +1110,7 @@ export default {
 					let callbackFunction = function(e) {
 						fileObject.buffer = btoa(e.target.result);
 						storedFiles.push(fileObject);
-					}
+					};
 					let reader = new FileReader();
 					reader.onload = callbackFunction;
 					reader.readAsBinaryString(file);
@@ -965,15 +1262,25 @@ export default {
 			for (let row = 0; row < this.editTableRows; row++) {
 				for (let column = 0; column < this.editTableColumns; column++) {
 					if (this.editTableValues[row][column].length === 0) {
-						wrongValue.push(`[${row}, ${column}] ${this.getLocale.addTableValueSizeZeroError}`);
+						wrongValue.push(
+							`[${row}, ${column}] ${
+								this.getLocale.addTableValueSizeZeroError
+							}`
+						);
 					}
 					if (this.editTableValues[row][column].length > 6) {
-						wrongValue.push(`[${row}, ${column}] ${this.getLocale.addTableValueSizeToLargeError}`);
+						wrongValue.push(
+							`[${row}, ${column}] ${
+								this.getLocale.addTableValueSizeToLargeError
+							}`
+						);
 					}
 				}
 			}
 			if (wrongValue.length > 0) {
-				this.mediaErrorText = `${this.getLocale.addTableValueCellError}`;
+				this.mediaErrorText = `${
+					this.getLocale.addTableValueCellError
+				}`;
 				for (let i = 0; i < wrongValue.length; i++) {
 					this.mediaErrorText += wrongValue[i];
 					if (i < wrongValue.length - 1) this.mediaErrorText += ", ";
@@ -982,14 +1289,14 @@ export default {
 				return;
 			}
 
-			if (this.editExistingTable){
+			if (this.editExistingTable) {
 				this.getQuestionObjects.tables[
 					this.editExistingTableIndex
 				] = this.editTableValues;
-			}else {
+			} else {
 				this.newQuestion.objects.tables.push(this.editTableValues);
 			}
-			
+
 			this.editTableRows = 0;
 			this.editTableColumns = 0;
 			this.editTableValues = [];
@@ -998,14 +1305,16 @@ export default {
 		},
 		deleteTable: function(index) {
 			this.getQuestionObjects.tables.splice(index, 1);
-			
+
 			if (index === this.editExistingTableIndex) {
 				this.editExistingTable = false;
 				this.editExistingTableIndex = 0;
 			}
 		},
 		editTable: function(index) {
-			let table = JSON.parse(JSON.stringify(this.getQuestionObjects.tables[index]));
+			let table = JSON.parse(
+				JSON.stringify(this.getQuestionObjects.tables[index])
+			);
 			this.editTableRows = table.length;
 			this.editTableColumns = table[0].length;
 			this.editTableValues = table;
@@ -1022,23 +1331,25 @@ export default {
 			let type = arr[1];
 
 			let size = 4 * Math.ceil(buffer.length / 3);
-			
+
 			let totalFilesSize = 0;
 			let errorFileSize = 1500000;
 			let warningFileSize = 500000;
-			for(let i = 0; i < storedFiles.length; i++) totalFilesSize += storedFiles[i].size;
+			for (let i = 0; i < storedFiles.length; i++)
+				totalFilesSize += storedFiles[i].size;
 
 			totalFilesSize += size;
 			if (totalFilesSize > errorFileSize) {
 				this.showMediaError = true;
-				if (fileTypeErr > 0) this.mediaErrorText += "\n\n" + this.getLocale.mediaErrorFileSize;
+				if (fileTypeErr > 0)
+					this.mediaErrorText +=
+						"\n\n" + this.getLocale.mediaErrorFileSize;
 				else this.mediaErrorText = this.getLocale.mediaErrorFileSize;
-			}
-			else if (totalFilesSize > warningFileSize) {
+			} else if (totalFilesSize > warningFileSize) {
 				this.showMediaWarning = true;
 				this.mediaWarningText = this.getLocale.mediaWarningFileSize;
 			}
-			if (totalFilesSize < errorFileSize) {			
+			if (totalFilesSize < errorFileSize) {
 				storedFiles.push({
 					name: `Graph ${storedFiles.length}`,
 					size: size,
@@ -1166,10 +1477,8 @@ export default {
 		"newQuestion.solutionType": function(newType, oldType) {
 			if (oldType === "") return;
 
-			if (newType === 1 || newType === 10)
-				this.newQuestion.solution = "";
-			else
-				this.newQuestion.solution = [];
+			if (newType === 1 || newType === 10) this.newQuestion.solution = "";
+			else this.newQuestion.solution = [];
 		}
 	}
 };
@@ -1217,7 +1526,6 @@ export default {
 	width: 80px;
 	text-align: center;
 	margin: 0;
-	
 }
 .editTableContainer {
 	overflow-x: scroll;
