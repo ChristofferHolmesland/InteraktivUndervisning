@@ -37,7 +37,7 @@ export default class Sort {
 
 	constructor(graphDrawer, config) {
 		this.gd = graphDrawer;
-		
+
 		this.locale = this.gd.locale.Sort;
 
 		/*
@@ -152,10 +152,19 @@ export default class Sort {
 			newE.preventDefault();
 			this.gd.setEventOffset(newE);
 			this.gd.canvas.removeEventListener("mouseup", checkNodesMouseUp);
-			this.gd.canvas.removeEventListener("mousemove", checkNodesMouseMove);
+			this.gd.canvas.removeEventListener(
+				"mousemove",
+				checkNodesMouseMove
+			);
 			this.gd.canvas.removeEventListener("touchend", checkNodesMouseUp);
-			this.gd.canvas.removeEventListener("touchcancel", checkNodesMouseUp);
-			this.gd.canvas.removeEventListener("touchmove", checkNodesMouseMove);
+			this.gd.canvas.removeEventListener(
+				"touchcancel",
+				checkNodesMouseUp
+			);
+			this.gd.canvas.removeEventListener(
+				"touchmove",
+				checkNodesMouseMove
+			);
 
 			// If there is just one selected node,
 			// it's value can be edited, it can be removed
@@ -169,10 +178,10 @@ export default class Sort {
 				// Edit value
 				this.clickedButtons.push({
 					data: {
-						text:  this.locale.buttons.editValue,
+						text: this.locale.buttons.editValue,
 						relSize: relSize
 					},
-					handler: e =>  this.mobileSelectedButtons().edit(e)
+					handler: (e) => this.mobileSelectedButtons().edit(e)
 				});
 				// Set pivot
 				if (this.sortType == "Quicksort") {
@@ -181,7 +190,7 @@ export default class Sort {
 							text: this.locale.buttons.setPivot,
 							relSize: relSize
 						},
-						handler: e => this.mobileSelectedButtons().pivot(e)
+						handler: (e) => this.mobileSelectedButtons().pivot(e)
 					});
 				}
 				// Delete
@@ -190,7 +199,7 @@ export default class Sort {
 						text: this.locale.buttons.delete,
 						relSize: relSize
 					},
-					handler: e => this.mobileSelectedButtons().del(e)
+					handler: (e) => this.mobileSelectedButtons().del(e)
 				});
 			}
 
@@ -210,26 +219,26 @@ export default class Sort {
 				this.clickedButtons.push({
 					data: {
 						text: this.locale.buttons.moveArray,
-						relSize: relSize,
+						relSize: relSize
 					},
-					handler: e =>  this.mobileSelectedButtons().move(e, ai)
+					handler: (e) => this.mobileSelectedButtons().move(e, ai)
 				});
 
 				this.clickedButtons.push({
 					data: {
 						text: this.locale.buttons.extractArray,
-						relSize: relSize,
+						relSize: relSize
 					},
-					handler: e =>  this.mobileSelectedButtons().extract(e, ai)
+					handler: (e) => this.mobileSelectedButtons().extract(e, ai)
 				});
 			} else {
 				if (this.sortType == "Mergesort") {
 					this.clickedButtons.push({
 						data: {
 							text: this.locale.buttons.joinToArray,
-							relSize: relSize,
+							relSize: relSize
 						},
-						handler: e => this.mobileSelectedButtons().join(e)
+						handler: (e) => this.mobileSelectedButtons().join(e)
 					});
 				}
 			}
@@ -242,7 +251,10 @@ export default class Sort {
 			this.gd.setEventOffset(newE);
 			let nodeAtCursor = this.gd.getNodeAtCursor(newE).node;
 			// Checks if no node is under the cursor, or it's already in the list
-			if (nodeAtCursor == undefined || this.selectedNodes.indexOf(nodeAtCursor) != -1)
+			if (
+				nodeAtCursor == undefined ||
+				this.selectedNodes.indexOf(nodeAtCursor) != -1
+			)
 				return;
 
 			this.gd.dirty = true;
@@ -262,8 +274,7 @@ export default class Sort {
 		this.clickedButtons = [];
 		// Checks if the same node was clicked again
 		if (node == this.clickedNode) {
-			if (node != undefined)
-				node.strokeColor = undefined;
+			if (node != undefined) node.strokeColor = undefined;
 			this.clickedNode = undefined;
 			return;
 		}
@@ -271,8 +282,7 @@ export default class Sort {
 		// Resets the old clicked node
 		if (this.clickedNode != undefined)
 			this.clickedNode.strokeColor = undefined;
-		if (node != undefined)
-			node.strokeColor = this.selectedColor;
+		if (node != undefined) node.strokeColor = this.selectedColor;
 
 		// Sets the clicked node to a new value
 		// All checks should happen before this if they depend
@@ -314,7 +324,7 @@ export default class Sort {
 			// Centers the button inside the allocated space
 			let xPadding = (maxButtonWidth - btnWidth) / 2;
 			let yPadding = (maxButtonHeight - btnHeight) / 2;
-			
+
 			btn.position = {
 				x: i * maxButtonWidth + xPadding,
 				y: this.gd.staticBuffer.height - maxButtonHeight + yPadding,
@@ -332,7 +342,7 @@ export default class Sort {
 		newArr.position = {
 			x: x,
 			y: y
-		}
+		};
 		return newArr;
 	}
 
@@ -385,7 +395,7 @@ export default class Sort {
 				let newArr = initializeNewArray(this.joinType);
 
 				let ais = [];
-				// Link all the arrays containing a selected node to 
+				// Link all the arrays containing a selected node to
 				// the new array
 				for (let i = 0; i < this.selectedNodes.length; i++) {
 					let ai = this._findArrayPosition(this.selectedNodes[i]).ai;
@@ -436,13 +446,16 @@ export default class Sort {
 							i--;
 							arrayRemoved = true;
 						}
-						break
+						break;
 					}
 				}
 
 				// Remove node from GraphDrawer
-				this.gd.nodes.splice(this.gd.nodes.indexOf(this.clickedNode), 1);
-				
+				this.gd.nodes.splice(
+					this.gd.nodes.indexOf(this.clickedNode),
+					1
+				);
+
 				// If the array wasn't removed, the nodes need to be moved to
 				// fill the open space left after the node was removed
 				if (!arrayRemoved) {
@@ -452,20 +465,28 @@ export default class Sort {
 					// because the removed array might have a link to/from it.
 					this._recalculateEdges();
 				}
-				
+
 				this.gd.dirty = true;
 				this.clickedNode = undefined;
 				this.clickedButtons = [];
 			}.bind(this)
-		}
+		};
 	}
 
 	checkUI(e) {
 		// Checks the + buttons between nodes
 		for (let i = 0; i < this.buttons.length; i++) {
 			let btn = this.buttons[i];
-			if (this.gd.isPointInRectangle(e.offsetX, e.offsetY, btn.position.x, btn.position.y, 
-				btn.position.width, btn.position.height)) {
+			if (
+				this.gd.isPointInRectangle(
+					e.offsetX,
+					e.offsetY,
+					btn.position.x,
+					btn.position.y,
+					btn.position.width,
+					btn.position.height
+				)
+			) {
 				btn.handler(btn);
 				return true;
 			}
@@ -475,8 +496,16 @@ export default class Sort {
 		if (this.gd.DEVICE == "Mobile") {
 			for (let i = 0; i < this.clickedButtons.length; i++) {
 				let btn = this.clickedButtons[i];
-				if (this.gd.isPointInRectangle(e.offsetX, e.offsetY, btn.position.x,
-					btn.position.y, btn.position.width, btn.position.height)) {
+				if (
+					this.gd.isPointInRectangle(
+						e.offsetX,
+						e.offsetY,
+						btn.position.x,
+						btn.position.y,
+						btn.position.width,
+						btn.position.height
+					)
+				) {
 					btn.handler(e);
 					return true;
 				}
@@ -499,7 +528,9 @@ export default class Sort {
 	addNewNodeToArray(event) {
 		let clickedNode = this.arrays[event.data.ai].nodes[event.data.ni];
 		let node = {
-			x: clickedNode.x + (event.data.side == "left" ? -clickedNode.w : clickedNode.w),
+			x:
+				clickedNode.x +
+				(event.data.side == "left" ? -clickedNode.w : clickedNode.w),
 			y: clickedNode.y,
 			w: clickedNode.w,
 			h: clickedNode.h,
@@ -514,7 +545,7 @@ export default class Sort {
 		);
 
 		// Recalculate node position inside the array
-		if (event.data.side == "left") 
+		if (event.data.side == "left")
 			this.arrays[event.data.ai].position.x -= clickedNode.w;
 		this._repositionNodes(event.data.ai);
 
@@ -556,25 +587,28 @@ export default class Sort {
 					continue;
 				}
 
-				// If the link is above or under, then the 
+				// If the link is above or under, then the
 				// link should be between the center nodes.
-				let topUnder = link.position.y > arr.position.y + arr.nodes[0].h;
+				let topUnder =
+					link.position.y > arr.position.y + arr.nodes[0].h;
 				let topAbove = link.position.y < arr.position.y;
 				let topNotInside = topUnder || topAbove;
-				let botUnder = 
-					link.position.y + link.nodes[0].h > arr.position.y + arr.nodes[0].h;
-				let botAbove = link.position.y + link.nodes[0].h < arr.position.y;
+				let botUnder =
+					link.position.y + link.nodes[0].h >
+					arr.position.y + arr.nodes[0].h;
+				let botAbove =
+					link.position.y + link.nodes[0].h < arr.position.y;
 				let botNotInside = botUnder || botAbove;
 
 				let arrNode;
 				let linkNode;
 
 				if (topNotInside && botNotInside) {
-						arrNode = arr.nodes[Math.floor(arr.nodes.length / 2)];
-						linkNode = link.nodes[Math.floor(link.nodes.length / 2)];
+					arrNode = arr.nodes[Math.floor(arr.nodes.length / 2)];
+					linkNode = link.nodes[Math.floor(link.nodes.length / 2)];
 
-						if (link.nodes.length % 2 == 0)
-							linkNode.doNotCenterX = true;
+					if (link.nodes.length % 2 == 0)
+						linkNode.doNotCenterX = true;
 				} else {
 					// If it is not above/under then it has to be
 					// on one of the sides.
@@ -598,8 +632,12 @@ export default class Sort {
 	}
 
 	drawUI() {
-		this.gd.staticContext.clearRect(0, 0,
-			this.gd.staticBuffer.width, this.gd.staticBuffer.height);
+		this.gd.staticContext.clearRect(
+			0,
+			0,
+			this.gd.staticBuffer.width,
+			this.gd.staticBuffer.height
+		);
 
 		// Draw + buttons between every element of the arrays
 		this.gd.staticContext.fillStyle = "white";
@@ -611,7 +649,8 @@ export default class Sort {
 				if (this.gd.DEVICE == "Desktop") {
 					// Every node should draw a + between them and the next node.
 					// The first node should draw a + at the start of the array.
-					if (ni == 0) this._renderAddNodeButton(node, "left", ai, ni);
+					if (ni == 0)
+						this._renderAddNodeButton(node, "left", ai, ni);
 					this._renderAddNodeButton(node, "right", ai, ni);
 				} else if (this.gd.DEVICE == "Mobile") {
 					// Only render + buttons on the clicked node
@@ -648,7 +687,6 @@ export default class Sort {
 
 		// Render selected buttons (Mobile)
 		for (let i = 0; i < this.clickedButtons.length; i++) {
-			
 			let btn = this.clickedButtons[i];
 			this.gd.staticContext.beginPath();
 
@@ -664,7 +702,8 @@ export default class Sort {
 
 			// Text
 			this.gd.staticContext.fillStyle = "black";
-			let textWidth = this.gd.staticContext.measureText(btn.data.text).width;
+			let textWidth = this.gd.staticContext.measureText(btn.data.text)
+				.width;
 			let xPadding = (btn.position.width - textWidth) / 2;
 			let yPadding = (btn.position.height + this.gd.fontHeight) / 2;
 			this.gd.staticContext.fillText(
@@ -688,22 +727,31 @@ export default class Sort {
 			bX -= node.w;
 		}
 
-		let point = this.gd.camera.unproject(
-			bX,
-			node.y + bSize / 2
-		);
-		
+		let point = this.gd.camera.unproject(bX, node.y + bSize / 2);
+
 		let plussSize = bSize / 2;
 		let plussPadding = (bSize - plussSize) / 2;
 		// Button
 		this.gd.staticContext.rect(point.x, point.y, bSize, bSize);
 		// Vertical
-		this.gd.staticContext.moveTo(point.x + bSize / 2, point.y + plussPadding);
-		this.gd.staticContext.lineTo(point.x + bSize / 2, point.y + bSize - plussPadding);
+		this.gd.staticContext.moveTo(
+			point.x + bSize / 2,
+			point.y + plussPadding
+		);
+		this.gd.staticContext.lineTo(
+			point.x + bSize / 2,
+			point.y + bSize - plussPadding
+		);
 		// Horizontal
-		this.gd.staticContext.moveTo(point.x + plussPadding, point.y + bSize / 2);
-		this.gd.staticContext.lineTo(point.x + bSize - plussPadding, point.y + bSize / 2);
-		
+		this.gd.staticContext.moveTo(
+			point.x + plussPadding,
+			point.y + bSize / 2
+		);
+		this.gd.staticContext.lineTo(
+			point.x + bSize - plussPadding,
+			point.y + bSize / 2
+		);
+
 		this.gd.staticContext.fill();
 		this.gd.staticContext.stroke();
 
@@ -711,7 +759,7 @@ export default class Sort {
 			position: {
 				x: point.x,
 				y: point.y,
-				width: bSize,   
+				width: bSize,
 				height: bSize
 			},
 			handler: this.addNewNodeToArray.bind(this),
@@ -933,7 +981,7 @@ export default class Sort {
 		});
 
 		// 1. The lower/higher order of array splitting shouldn't matter.
-		// 2. If the pivot is smaller than all the other nodes, then the 
+		// 2. If the pivot is smaller than all the other nodes, then the
 		// left array will contain the nodes, when they should be in the
 		// right array. This fixes both problems.
 		for (let i = 0; i < steps.length; i++) {
@@ -956,7 +1004,7 @@ export default class Sort {
 					delete step.left;
 					step.left = [];
 				}
-			// Move right to left if all the values are below the pivot.
+				// Move right to left if all the values are below the pivot.
 			} else if (step.left == undefined && step.right !== undefined) {
 				let maxValue = step.right[0];
 				for (let j = 0; j < step.right.length; j++) {
@@ -968,11 +1016,11 @@ export default class Sort {
 					delete step.right;
 					step.right = [];
 				}
-			// Switch left/right if left is above pivot and right is below pivot.
+				// Switch left/right if left is above pivot and right is below pivot.
 			} else if (step.left !== undefined && step.right !== undefined) {
 				let allLeftAbove = true;
 				let allRightBelow = true;
-				
+
 				for (let j = 0; j < step.left.length; j++) {
 					if (step.left[j] < pivot) {
 						allLeftAbove = false;
@@ -1013,7 +1061,7 @@ export default class Sort {
 		this.gd.dirty = true;
 
 		// If the steps were generated by a user, the position of the arrays
-		// should match what the user made. If not the arrays should be placed in 
+		// should match what the user made. If not the arrays should be placed in
 		// a nice way.
 		let user = this.steps[0].position != undefined;
 		let yPadding = 95;
@@ -1037,7 +1085,7 @@ export default class Sort {
 		};
 
 		// The inital array is placed centered
-		// at the top of the canvas relative 
+		// at the top of the canvas relative
 		// to the current camera position.
 		// If this is not the first time parseInitial is ran,
 		// it will be placed at the position of the first run instead.
@@ -1054,8 +1102,8 @@ export default class Sort {
 			if (this._initialArrayPosition == undefined) {
 				this._initialArrayPosition = { x: p.x, y: p.y };
 			} else {
-				p.x -= (p.x - this._initialArrayPosition.x);
-				p.y -= (p.y - this._initialArrayPosition.y);
+				p.x -= p.x - this._initialArrayPosition.x;
+				p.y -= p.y - this._initialArrayPosition.y;
 			}
 
 			let newArr = this.getNewArray(p.x, p.y);
@@ -1188,7 +1236,7 @@ export default class Sort {
 						pos.left.x = step.position.left.x + offset.dx;
 						pos.left.y = step.position.left.y + offset.dy;
 					}
-					if (step.position.right) {;
+					if (step.position.right) {
 						pos.right.x = step.position.right.x + offset.dx;
 						pos.right.y = step.position.right.y + offset.dy;
 					}
@@ -1230,7 +1278,10 @@ export default class Sort {
 							let nodes = this.arrays[i].nodes;
 							let found = false;
 							for (let j = 0; j < nodes.length; j++) {
-								if (nodes[j].pivot && nodes[j].v == step.pivot) {
+								if (
+									nodes[j].pivot &&
+									nodes[j].v == step.pivot
+								) {
 									ps.push(this.arrays[i]);
 									found = true;
 									break;
@@ -1291,10 +1342,9 @@ export default class Sort {
 				arraysWithNoLinks++;
 			}
 		}
-		
+
 		let assignSide = function(arr, side) {
-			if (arr.links.length == 0 &&
-				linkCount.get(arr) !== 1) {
+			if (arr.links.length == 0 && linkCount.get(arr) !== 1) {
 				arr.side = -1;
 				return;
 			}
@@ -1318,7 +1368,7 @@ export default class Sort {
 
 		let leftest = undefined;
 		let rightest = undefined;
-		
+
 		// Find the node on the left side of the root which is the furthest to the right,
 		// and the node on the right side of the root which is the furthest to the left.
 		for (let i = 0; i < this.arrays.length; i++) {
@@ -1347,8 +1397,8 @@ export default class Sort {
 		// the left or right of the parent array.
 		for (let i = 0; i < this.arrays.length; i++) {
 			let arr = this.arrays[i];
-			
-			// directChildren are the children which are 
+
+			// directChildren are the children which are
 			// closest to the array
 			let directChildren = [];
 			let closestY = 1000000;
@@ -1393,9 +1443,10 @@ export default class Sort {
 			// First array
 			if (linkCount.get(arr) == undefined) return;
 			// Last array
-			if (arraysWithNoLinks == 1 && 
+			if (
+				arraysWithNoLinks == 1 &&
 				(arr.links == undefined || arr.links.length == 0)
-				) {
+			) {
 				return;
 			}
 
@@ -1410,9 +1461,9 @@ export default class Sort {
 			let nodeWidth = relativeArray.nodes[0].w;
 
 			if (linkCount.get(arr) == 1) {
-				let centerX = 
-					relativeArray.position.x + 
-					relativeArray.nodes.length * nodeWidth / 2;
+				let centerX =
+					relativeArray.position.x +
+					(relativeArray.nodes.length * nodeWidth) / 2;
 
 				// Move array
 				let side = overrideSide == undefined ? arr.side : overrideSide;
@@ -1421,8 +1472,7 @@ export default class Sort {
 
 				// If the array is on the left, the width of the array means
 				// that it needs to be even further to the left
-				if (side == 0)
-					newX -= arr.nodes.length * nodeWidth;
+				if (side == 0) newX -= arr.nodes.length * nodeWidth;
 			} else {
 				let parentCount = 0;
 				let totalParentCenterX = 0;
@@ -1431,10 +1481,10 @@ export default class Sort {
 					if (parent.links.indexOf(arr) > -1) {
 						parentCount++;
 
-						let parentCenterX = 
+						let parentCenterX =
 							parent.position.x +
-							parent.nodes.length * nodeWidth / 2;
-						
+							(parent.nodes.length * nodeWidth) / 2;
+
 						totalParentCenterX += parentCenterX;
 					}
 				}
@@ -1466,8 +1516,7 @@ export default class Sort {
 		moveArray(rightest, start, 0);
 		moveArray(leftest, start, 1);
 
-		for (let i = 0; i < this.arrays.length; i++)
-			this._repositionNodes(i);
+		for (let i = 0; i < this.arrays.length; i++) this._repositionNodes(i);
 	}
 
 	_getLinkIndexesOnSameY(array) {
@@ -1514,7 +1563,7 @@ export default class Sort {
 	_fixYPadding(startingArray, padding) {
 		for (let i = 0; i < startingArray.links.length; i++) {
 			let array = startingArray.links[i];
-			
+
 			if (array.position.y < startingArray + padding) {
 				array.position.y = startingArray + padding;
 			}
@@ -1563,7 +1612,7 @@ export default class Sort {
 				width: bSize,
 				height: bSize
 			},
-			handler: (() => console.log("Delete clicked")),
+			handler: () => console.log("Delete clicked"),
 			data: {
 				type: "Delete"
 			}
@@ -1572,8 +1621,7 @@ export default class Sort {
 
 	getNodeValuesAsString(nodes) {
 		let vals = [];
-		for (let i = 0; i < nodes.length; i++)
-			vals.push(nodes[i].v);
+		for (let i = 0; i < nodes.length; i++) vals.push(nodes[i].v);
 		return vals.join(", ");
 	}
 }

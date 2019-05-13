@@ -14,7 +14,10 @@ export default class Graph0 {
 		// and put into the world.
 		if (config.steps) {
 			if (config.importType) this.importType = config.importType;
-			else console.error("Got configuration steps, but importType is undefined");
+			else
+				console.error(
+					"Got configuration steps, but importType is undefined"
+				);
 
 			// If a tree is imported, it can either come from an algorithm,
 			// which is an array of steps. Or it can come from an student which
@@ -49,7 +52,9 @@ export default class Graph0 {
 			if (this.subType == "Dijkstra") {
 				this.nextNodeMarking = undefined;
 				this.buttons.push(this.locale.buttons.Mark);
-				this.stateHandlers[this.locale.buttons.Mark] = this.markNode.bind(this);
+				this.stateHandlers[
+					this.locale.buttons.Mark
+				] = this.markNode.bind(this);
 				this.drawStatic();
 			}
 		}
@@ -291,7 +296,8 @@ export default class Graph0 {
 
 	/*
 		Lets the user edit the value on a clicked node.
-	*/  
+	*/
+
 	editNode(e) {
 		let node = this.gd.getNodeAtCursor(e).node;
 		if (node !== undefined) {
@@ -330,7 +336,9 @@ export default class Graph0 {
 	detectUIInput(e) {
 		if (e.offsetY < this.gd.canvas.height * 0.9) return false;
 
-		let buttonIndex = Math.floor(e.offsetX / (this.gd.canvas.width / this.buttons.length));
+		let buttonIndex = Math.floor(
+			e.offsetX / (this.gd.canvas.width / this.buttons.length)
+		);
 		this.currentState = this.buttons[buttonIndex];
 		this.drawStatic();
 		this.gd.dirty = true;
@@ -384,7 +392,8 @@ export default class Graph0 {
 
 				// Text
 				this.gd.staticContext.fillStyle = "black";
-				let textWidth = this.gd.staticContext.measureText(btn.data.text).width;
+				let textWidth = this.gd.staticContext.measureText(btn.data.text)
+					.width;
 				let xPadding = (btn.position.width - textWidth) / 2;
 				let yPadding = (btn.position.height + this.gd.fontHeight) / 2;
 				this.gd.staticContext.fillText(
@@ -402,8 +411,12 @@ export default class Graph0 {
 		Draws the UI to the staticBuffer.
 	*/
 	drawStatic() {
-		this.gd.staticContext.clearRect(0, 0, 
-			this.gd.staticBuffer.width, this.gd.staticBuffer.height);
+		this.gd.staticContext.clearRect(
+			0,
+			0,
+			this.gd.staticBuffer.width,
+			this.gd.staticBuffer.height
+		);
 
 		let buttonWidth = this.gd.staticBuffer.width / this.buttons.length;
 		let buttonHeight = this.gd.staticBuffer.height / 10;
@@ -428,18 +441,22 @@ export default class Graph0 {
 				buttonHeight
 			);
 			this.gd.staticContext.fillStyle = "black";
-			let textWidth = this.gd.staticContext.measureText(this.buttons[i]).width;
+			let textWidth = this.gd.staticContext.measureText(this.buttons[i])
+				.width;
 			this.gd.staticContext.fillText(
 				this.buttons[i],
-				i * buttonWidth - (textWidth / 2) + buttonWidth / 2,
-				this.gd.canvas.height - buttonHeight / 2 + (this.gd.fontHeight / 2));
+				i * buttonWidth - textWidth / 2 + buttonWidth / 2,
+				this.gd.canvas.height -
+					buttonHeight / 2 +
+					this.gd.fontHeight / 2
+			);
 		}
 		this.gd.staticContext.stroke();
 		this.gd.staticContext.closePath();
 	}
 
 	addTreeSteppingButtons(treeCount) {
-		// OnCanvasResize doesn't know how many trees there are in the 
+		// OnCanvasResize doesn't know how many trees there are in the
 		// step, so the value has to be stored.
 		if (treeCount !== undefined) this.prevTreeCount = treeCount;
 		else treeCount = this.prevTreeCount;
@@ -472,7 +489,7 @@ export default class Graph0 {
 		});
 		this.steppingButtons.push({
 			data: {
-				text: (this.treeIndex + 1) + " / " + numOfSteps,
+				text: this.treeIndex + 1 + " / " + numOfSteps,
 				relSize: this.gd.relSize
 			},
 			handler: () => {}
@@ -584,7 +601,7 @@ export default class Graph0 {
 
 		let parseStep = (step) => {
 			let tree = getTree(step);
-			if (tree === undefined  || tree.root === undefined) return;
+			if (tree === undefined || tree.root === undefined) return;
 			fixTree(tree);
 
 			// If there are more than one tree, there should be

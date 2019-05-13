@@ -60,26 +60,30 @@ export default class Camera {
 	*/
 	_cullNode(node) {
 		if (node.culled != undefined) return node.culled;
-		
+
 		// cameraRect and nodeRect objects can be removed if they're too slow.
 		let cameraRect = this.getFrustumFront();
 		let nodeRect = this.getNodeRect(node);
 
 		// ref: (modified for our coordinate system)
 		// https://stackoverflow.com/questions/306316/determine-if-two-rectangles-overlap-each-other
-		node.culled = !(cameraRect.left < nodeRect.right && cameraRect.right > nodeRect.left &&
-			cameraRect.top < nodeRect.bottom && cameraRect.bottom > nodeRect.top);
+		node.culled = !(
+			cameraRect.left < nodeRect.right &&
+			cameraRect.right > nodeRect.left &&
+			cameraRect.top < nodeRect.bottom &&
+			cameraRect.bottom > nodeRect.top
+		);
 		return node.culled;
 	}
 
 	getNodeRect(node) {
 		let nodeRect = {};
-		
+
 		if (node.shape == "Circle") {
-			nodeRect.left = node.x - (node.w / 2);
-			nodeRect.right = node.x + (node.w / 2);
-			nodeRect.top = node.y - (node.h / 2);
-			nodeRect.bottom = node.y + (node.h / 2);
+			nodeRect.left = node.x - node.w / 2;
+			nodeRect.right = node.x + node.w / 2;
+			nodeRect.top = node.y - node.h / 2;
+			nodeRect.bottom = node.y + node.h / 2;
 		} else if (node.shape == "Rectangle") {
 			nodeRect.left = node.x;
 			nodeRect.right = node.x + node.w;
@@ -97,10 +101,14 @@ export default class Camera {
 	*/
 	getFrustumFront() {
 		let cameraRect = {};
-		cameraRect.left = this.centerX - this.zoomLevel * (this.viewportWidth / 2);
-		cameraRect.right = this.centerX + this.zoomLevel * (this.viewportWidth / 2);
-		cameraRect.top = this.centerY - this.zoomLevel * (this.viewportHeight / 2);
-		cameraRect.bottom = this.centerY + this.zoomLevel * (this.viewportHeight / 2);
+		cameraRect.left =
+			this.centerX - this.zoomLevel * (this.viewportWidth / 2);
+		cameraRect.right =
+			this.centerX + this.zoomLevel * (this.viewportWidth / 2);
+		cameraRect.top =
+			this.centerY - this.zoomLevel * (this.viewportHeight / 2);
+		cameraRect.bottom =
+			this.centerY + this.zoomLevel * (this.viewportHeight / 2);
 		cameraRect.width = cameraRect.right - cameraRect.left;
 		cameraRect.height = cameraRect.bottom - cameraRect.top;
 		return cameraRect;
@@ -145,9 +153,9 @@ export default class Camera {
 		Changes which y coordinate the camera looks at.
 		Bound in range (0, drawBuffer height).
 	*/
-   translateY(y, min, max) {
+	translateY(y, min, max) {
 		this.centerY += y;
 		if (this.centerY < min) this.centerY = min;
 		else if (this.centerY > max) this.centerY = max;
-   }
+	}
 }
