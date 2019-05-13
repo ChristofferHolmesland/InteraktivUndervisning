@@ -1,3 +1,10 @@
+<!--
+	Component name: Questions
+	Use case:
+		- Displays a list of the current questions.
+		- Let the user create new questions.
+-->
+
 <template>
 	<b-container class="jumbotron vertical-center mt-2 px-5">
 		<!-- 

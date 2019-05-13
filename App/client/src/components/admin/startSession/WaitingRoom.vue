@@ -1,3 +1,9 @@
+<!--
+	Component name: WaitingRoom
+	Use case:
+		- Displayed to the admin while waiting for users to connect.
+-->
+
 <template>
 	<div id="adminWaitingRoom">
 		<b-container vertical-center>

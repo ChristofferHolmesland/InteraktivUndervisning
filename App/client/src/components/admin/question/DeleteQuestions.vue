@@ -1,3 +1,10 @@
+<!--
+	Component name: DeleteQuestions
+	Use case:
+		- Let the user delete questions
+-->
+
+
 <template>
 	<b-modal
 		id="deleteQuestions"

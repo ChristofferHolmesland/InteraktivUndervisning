@@ -1,3 +1,9 @@
+<!--
+	Component name: Client
+	Use case:
+		- Lets a client navigate between the other client pages.
+-->
+
 <template>
 	<b-container id="Client">
 		<b-row align-h="around">

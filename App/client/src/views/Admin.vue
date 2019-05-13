@@ -1,3 +1,9 @@
+<!--
+	Component name: Admin.
+	Use case:
+		- Display one of the other admin components.
+-->
+
 <template>
 	<div class="admin" fluid>
 		<component :is="shownComponent"></component>

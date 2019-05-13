@@ -1,3 +1,11 @@
+<!--
+	Component name: UserProfile
+	Use case:
+		- Display information about the user.
+		- Display statistics about sessions.
+		- Let the user delete their information.
+-->
+
 <template>
 	<b-container class="pt-3">
 		<b-row align-h="center" v-if="!showSession">

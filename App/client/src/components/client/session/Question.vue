@@ -1,3 +1,10 @@
+<!--
+	Component name: Question
+	Use case:
+		- Let the user answer a question in a session.
+		- Let the user view information about a question in a session.
+-->
+
 <template>
 	<div id="textquestion">
 		<b-container>

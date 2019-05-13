@@ -1,3 +1,9 @@
+<!--
+	Component name: SelectCourse
+	Use case:
+		- Let the user change the displayed course.
+-->
+
 <template>
 	<b-form-select
 		id="courseSelect"

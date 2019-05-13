@@ -1,3 +1,10 @@
+<!--
+    Component name: GraphDrawer
+    Use case:
+        - Display an algorithm or data structure on a page.
+        - Let the user draw algorithms and data structures.
+-->
+
 <template>
 	<div
 		id="canvasWrapper"

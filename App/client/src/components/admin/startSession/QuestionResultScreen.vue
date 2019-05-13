@@ -1,3 +1,9 @@
+<!--
+	Component name: QuestionResultScreen
+	Use case:
+		- Display information about the answers to a question while running a session.
+-->
+
 <template>
 	<b-container id="mainWrapper">
 		<b-row class="mb-3">

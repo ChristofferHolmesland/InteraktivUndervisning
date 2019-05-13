@@ -1,3 +1,9 @@
+<!--
+	Component name: ShowQuestion
+	Use case:
+		- Displays a question
+-->
+
 <template>
 	<b-modal
 		:id="elementId"

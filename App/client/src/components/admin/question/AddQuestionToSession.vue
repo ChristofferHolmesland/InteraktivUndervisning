@@ -1,3 +1,9 @@
+<!--
+	Component name: AddQuestionToSession
+	Use case:
+		- Let the user add a question to a session
+-->
+
 <template>
 	<b-modal
 		@shown="onShown"

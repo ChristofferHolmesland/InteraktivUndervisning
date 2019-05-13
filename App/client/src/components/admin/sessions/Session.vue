@@ -1,3 +1,9 @@
+<!--
+	Component name: Session
+	Use case:
+		- Displays information about a session
+-->
+
 <template>
 	<b-container fluid>
 		<b-row class="border-bottom mb-3">
