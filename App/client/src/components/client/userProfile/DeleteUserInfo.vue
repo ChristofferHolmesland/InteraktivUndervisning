@@ -1,3 +1,9 @@
+<!--
+	Component name: DeleteUserInfo
+	Use case:
+		- Let the user delete the stored information.
+-->
+
 <template>
 	<b-modal
 		id="deleteUserInfo"

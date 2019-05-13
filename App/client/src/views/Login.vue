@@ -1,3 +1,9 @@
+<!-- 
+	Component name: Login
+	Use case: 
+		- Lets the user login anonymously or with their Feide account.
+-->
+
 <template>
 	<b-container>
 		<b-container id="LoginForm" class="vertical-center jumbotron">

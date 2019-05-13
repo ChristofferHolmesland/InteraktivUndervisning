@@ -1,3 +1,9 @@
+<!--
+	Component name: Dashboard
+	Use case:
+		- Dashboard page for admin users.
+-->
+
 <template>
 	<b-container>
 		<b-row class="mb-5" align-h="around">

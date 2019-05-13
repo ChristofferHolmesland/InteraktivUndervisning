@@ -1,3 +1,9 @@
+<!--
+	Component name: Home
+	Use case:
+		- Displays the "Homepage" text to the user.
+-->
+
 <template>
 	<div class="home">
 		<h1>Homepage</h1>

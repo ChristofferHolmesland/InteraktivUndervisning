@@ -1,3 +1,11 @@
+<!--
+	Component name: SessionOverScreen
+	Use case:
+		- Display text stating that the session is done.
+		- Let the user navigate back to the dashboard.
+-->
+
+
 <template>
 	<div>
 		<b-container id="SessionOverScreen">

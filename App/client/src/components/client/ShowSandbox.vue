@@ -1,3 +1,9 @@
+<!--
+	Component name: ShowSandbox
+	Use case:
+		- Let the user navigate to the sandbox page.
+-->
+
 <template>
 	<b-container id="SandBox" class="jumbotron">
 		<b-row class="center firstRow row">

@@ -1,3 +1,9 @@
+<!--
+	Component name: TestQuestion
+	Use case:
+		- Let the user test a question.
+-->
+
 <template>
 	<div>
 		<b-modal

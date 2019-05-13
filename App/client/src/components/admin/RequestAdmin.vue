@@ -1,3 +1,9 @@
+<!--
+	Component name: RequestAdmin
+	Use case:
+		- Let the user request user rights for a course.
+-->
+
 <template>
 	<b-container>
 		<b-row>

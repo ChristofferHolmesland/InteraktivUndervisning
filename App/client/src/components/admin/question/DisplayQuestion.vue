@@ -1,3 +1,9 @@
+<!--
+	Component name: DisplayQuestion
+	Use case:
+		- Displayed a question.
+-->
+
 <template>
 	<b-container>
 		<b-row>

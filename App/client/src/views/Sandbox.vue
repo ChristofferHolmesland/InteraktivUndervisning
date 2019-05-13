@@ -1,3 +1,9 @@
+<!--
+	Component name: Sandbox
+	Use case:
+		- Let the user learn how to answer different question types.
+-->
+
 <template>
 	<b-container>
 		<b-row>

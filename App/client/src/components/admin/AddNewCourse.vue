@@ -1,3 +1,9 @@
+<!--
+	Component name: AddNewCourse
+	Use case:
+		- Let the user create a new course.
+-->
+
 <template>
 	<b-modal
 		id="newCourseModal"

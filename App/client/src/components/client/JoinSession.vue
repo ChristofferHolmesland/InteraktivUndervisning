@@ -1,3 +1,9 @@
+<!-- 
+	Component name: JoinSession
+	Use case:
+		- Let the user join a session.
+-->
+
 <template>
 	<b-container id="JoinRoom" class="jumbotron">
 		<b-row class="center firstRow">
