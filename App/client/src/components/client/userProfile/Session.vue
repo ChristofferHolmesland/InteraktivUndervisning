@@ -1,3 +1,9 @@
+<!--
+    Component name: Session
+    Use case:
+        - Display information about a session a user has participated in.
+-->
+
 <template>
     <b-container>
         <b-row>

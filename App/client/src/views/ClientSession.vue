@@ -1,3 +1,9 @@
+<!--
+	Component name: ClientSession
+	Use case:
+		- Controls the user experience while in a session.
+-->
+
 <template>
 	<div id="clientSession">
 		<b-container>

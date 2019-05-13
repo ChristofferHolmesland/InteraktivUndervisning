@@ -1,3 +1,9 @@
+<!--
+	Component name: WaitingArea
+	Use case:
+		- Display text to the user while it is waiting for something to happen in a session.
+-->
+
 <template>
 	<div id="Waitingarea">
 		<b-container>

@@ -1,3 +1,11 @@
+<!-- 
+	Component name: fourZeroOne
+	Use case:
+		- Display a message when an user tries to access an page they are
+			not allowed to access.
+		- Lets the user navigate to the main client page.
+-->
+
 <template>
 <div>
 	<b-container id="FourZeroOne">

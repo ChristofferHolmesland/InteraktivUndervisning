@@ -1,3 +1,11 @@
+<!--
+	Component name: fourzeroFour
+	Use case:
+		- Display an error message to the user when they are trying to access
+			non-existing page.
+		- Lets the user navigate back to the main client page. 
+-->
+
 <template>
 <div>
 	<b-container id="FourZeroFour">

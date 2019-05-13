@@ -1,3 +1,9 @@
+<!--
+	Component name: EditQuestion
+	Use case:
+		- Edit or add a new question.
+-->
+
 <template>
     <!-- Check watchers when fixing bugs -->
 	

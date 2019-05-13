@@ -1,3 +1,9 @@
+<!--
+	Component name: Question
+	Use case:
+		- Display information about a question.
+-->
+
 <template>
 	<b-container>
 		<b-row>

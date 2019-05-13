@@ -1,3 +1,9 @@
+<!--
+	Component name: Navbar
+	Use case:
+		- Lets a user navigate between the other views.
+-->
+
 <template>
 	<div id="navbar">
 		<b-navbar toggleable="md" type="dark" variant="info">

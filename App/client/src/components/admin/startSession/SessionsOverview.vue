@@ -1,3 +1,10 @@
+<!--
+	Component name: SessionsOverview
+	Use case:
+		- Let the user stop/rejoin a session
+		- Let the user start a new session
+-->
+
 <template>
 	<b-container class="session px-0">
 		<b-row>

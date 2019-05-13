@@ -1,3 +1,9 @@
+<!--
+	Component name: Session
+	Use case:
+		- Used by an admin to run a session.
+-->
+
 <template>
 	<div id="session">
 		<WaitingRoom v-if="state === 1" :sessionId="sessionId"/>

@@ -1,3 +1,9 @@
+<!-- 
+	Component name: UserInfo
+	Use case:
+		- Display information about a user's account.
+-->
+
 <template>
 	<b-container class="jumbotron">
 		<b-row>

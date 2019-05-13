@@ -1,3 +1,9 @@
+<!--
+	Component name: Sessions
+	Use case:
+		- Let the user select which session to view more information about.
+-->
+
 <template>
 	<b-container id="sessions" class="mx-0 mt-3" fluid>
 		<b-row>

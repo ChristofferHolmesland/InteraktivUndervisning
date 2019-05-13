@@ -1,3 +1,9 @@
+<!-- 
+	Component name: UserStats
+	Use case:
+		- Display statistics about a user
+-->
+
 <template>
 	<b-container class="jumbotron">
 		<b-row>

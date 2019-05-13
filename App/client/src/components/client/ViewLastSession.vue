@@ -1,3 +1,10 @@
+<!--
+	Component name: ViewLastSession
+	Use case:
+		- Display basic information about the user's previous session.
+		- Let them navigate to a page showing more information.
+-->
+
 <template>
 <b-container id="ViewLastSession" class="jumbotron">
 	<b-row class="center firstRow row">

@@ -1,3 +1,9 @@
+<!--
+	Component name: EditSession
+	Use case:
+		- Let the user edit session information.
+-->
+
 <template>
     <b-modal    @show="show"
                 :id="elementId"

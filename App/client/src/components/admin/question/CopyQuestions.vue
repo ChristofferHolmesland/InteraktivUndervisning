@@ -1,3 +1,9 @@
+<!--
+	Component name: CopyQuestions
+	Use case:
+		- Let the user copy questions to another course.
+-->
+
 <template>
 <b-modal    id="copyQuestions"
             :title="getLocale.title"
