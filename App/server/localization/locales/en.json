@@ -361,10 +361,8 @@
         "finished": "Finished",
         "questionsAsked": "Question asked: ",
         "participants": "Participants: ",
-        "correctAnswers": "Corrects answers: "
-    },
-    "Sessions": {
-
+        "correctAnswers": "Corrects answers: ",
+        "answer": "Incorrect answer "
     },
     "startSession": {
         "question": "Question",
@@ -666,7 +664,7 @@
         "users": "Users:",
         "correctAnswers": "Correct answers:",
         "didntKnow": "Didn't know:",
-        "wrong": "Wrong answers:"
+        "answer": "Incorrect answer "
     },
     "AdminWaitingRoom": {
         "code": "Code:",

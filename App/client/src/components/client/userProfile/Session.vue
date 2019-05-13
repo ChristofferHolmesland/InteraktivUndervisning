@@ -116,7 +116,7 @@
                         </b-col>
                     </b-row>
                     <hr>
-                    <b-row>
+                    <b-row class="mb-3">
                         <b-col lg="12">
                             <DisplayQuestion :resultInfo="getResultInformation" :selectedAnswer="selectedAnswer"/>
                         </b-col>
@@ -129,15 +129,23 @@
                                         :key="index"
                                         class="list-inline-item"
                                         >
-                                        <b-card style="cursor: pointer; min-width: 100px; min-height: 100px;"
+                                        <b-card style="cursor: pointer;
+                                                    min-width: 100px;
+                                                    min-height: 100px;
+                                                    padding: 5px;
+                                                    margin: 5px;
+                                                    text-align: center;
+                                                    display: table;"
                                                 @click="changeAnswer($event)"
                                                 :id="index"
                                                 no-body
                                                 :class="selectedAnswer == index ? 'selected' : ''">
-                                            <p :id="index">{{getLocale.answer}} {{index}}</p>
-                                            <p :id="index" v-if="checkResult(index) === 1">{{getLocale.correctCard}}</p>
-                                            <p :id="index" v-if="checkResult(index) === 0">{{getLocale.incorrectCard}}</p>    
-                                            <p :id="index" v-if="checkResult(index) === -1">{{getLocale.didntKnow}}</p>
+                                            <span   :id="index"
+                                                    class="align-middle"
+                                                    style="display: table-cell"
+                                                    >
+                                                {{ getCardText(index) }}
+                                            </span>
                                         </b-card>
                                     </li>
                                 </ul>
@@ -219,6 +227,15 @@ export default {
 			let locale = this.$store.getters.getLocale("SessionStat");
 			if (locale) return locale;
 			else return {};
+        },
+        getCardText: function() {
+            return (index) => {
+                return `${this.getLocale.answer} ${index} - ${this.checkResult(index) === 1 ?
+                    this.getLocale.correctCard :
+                    this.checkResult(index) === 0 ?
+                    this.getLocale.incorrectCard :
+                    this.getLocale.didntKnow}`;
+            }
         }
     },
     components: {
