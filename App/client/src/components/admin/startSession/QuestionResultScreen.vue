@@ -36,12 +36,18 @@
 							class="list-inline-item"
 							>
 							<b-card 
-									style="cursor: pointer; min-width: 100px; min-height: 100px;"
+									style="cursor: pointer;
+										min-width: 100px;
+										min-height: 100px;
+										padding: 5px;
+										margin: 5px;
+										text-align: center;
+										display: table;"
 									v-on:click="changeAnswer($event)"
 									:id="index"
 									no-body
 									:class="selectedAnswer == index ? 'selected' : ''">
-								Incorrect answer {{index}}
+								<span class="align-middle" style="display: table-cell">{{ getLocale.answer }} {{index}}</span>
 							</b-card>
 						</li>
 					</ul>

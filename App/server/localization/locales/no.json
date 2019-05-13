@@ -361,10 +361,8 @@
         "finished": "Ferdig",
         "questionsAsked": "Spørsmål: ",
         "participants": "Deltagere: ",
-        "correctAnswers": "Riktige svar: "
-    },
-    "Sessions": {
-
+        "correctAnswers": "Riktige svar: ",
+        "answer": "Galt svar "
     },
     "startSession": {
         "question": "Spørsmål",
@@ -667,7 +665,8 @@
         "users": "Brukere:",
         "correctAnswers": "Riktige svar:",
         "didntKnow": "Vet ikke:",
-        "wrong": "Feil svar:"
+        "wrong": "Feil svar:",
+        "answer": "Galt svar "
     },
     "AdminWaitingRoom": {
         "code": "Kode:",
