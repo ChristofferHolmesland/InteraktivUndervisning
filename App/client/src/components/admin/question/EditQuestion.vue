@@ -141,12 +141,74 @@
 								<b-container>
 									<b-row>
 										<b-col>
+											{{ getLocale.settingsText }}
+										</b-col>
+									</b-row>
+									<b-row>
+										<b-col>
+											Type:
+										</b-col>
+										<b-col>
+											<b-form-select 	id="graphType"
+												v.b-tooltip.hover :title="getLocale.reloadWarning"
+												:options="getGraphTypes()"
+												v-model="graphConfiguration.type"
+												@change="reloadGraphDrawer"
+												>
+                  						  </b-form-select>
+										</b-col>
+									</b-row>
+									<b-row>
+										<b-col>
+											{{ getLocale.arrowsText }}
+										</b-col>
+										<b-col>
+											<b-form-select 	id="graphArrows"
+												:options="getGraphYesNo()"
+												v-model="graphConfiguration.directed"
+												@change="hotReloadGraphDrawer"
+												>
+                  						  </b-form-select>
+										</b-col>
+									</b-row>
+									<b-row>
+										<b-col>
+											{{ getLocale.edgeValues }}
+										</b-col>
+										<b-col>
+											<b-form-select 	id="graphEdgeValues"
+												:options="getGraphYesNo()"
+												v-model="graphConfiguration.edgeValues"
+												@change="hotReloadGraphDrawer"
+												>
+                  						  </b-form-select>
+										</b-col>
+									</b-row>
+									<b-row>
+										<b-col>
+											{{ getLocale.nodeShape }}
+										</b-col>
+										<b-col>
+											<b-form-select 	id="graphNodeShape"
+												:options="getGraphNodeShapes()"
+												v-model="graphConfiguration.nodeShape"
+												@change="hotReloadGraphDrawer"
+												:disabled="disableGraphDrawerMedia"
+												>
+                  						  </b-form-select>
+										</b-col>
+									</b-row>
+									<b-row>
+										<b-col>
 											<GraphDrawer
-													controlType="Graph0"
+													:controlType="graphConfiguration.type"
 													subType="Dijkstra"
 													operatingMode="Interactive"
-													displayEdgeValues="true"
+													:displayEdgeValues="graphConfiguration.edgeValues"
+													:directedEdges="graphConfiguration.directed"
 													ref="graphDrawerMedia"
+													:requestImage="requestGraphDrawerImage"
+													@getCanvasImage="processGraphDrawerImage"
 													v-if="!reload"
 											/>
 										</b-col>
@@ -503,7 +565,17 @@ function initializeState() {
 		validationFailure: false,
 		validationErrors: [],
 
-		reload: false
+		reload: false,
+		requestGraphDrawerImage: false,
+
+		graphConfiguration: {
+			type: "Graph0",
+			directed: true,
+			edgeValues: true,
+			nodeShape: "Circle"
+		},
+
+		disableGraphDrawerMedia: false
 	};
 }
 
@@ -538,6 +610,72 @@ export default {
 		});
 	},
 	methods: {
+		hotReloadGraphDrawer: function() {
+			let hot = {
+				directedEdges: this.graphConfiguration.directed,
+				displayEdgeValues: this.graphConfiguration.edgeValues,
+				nodeShape: this.graphConfiguration.nodeShape
+			};
+
+			this.$refs.graphDrawerMedia.hotReload(hot);
+			this.$forceUpdate();
+			this.$nextTick(function() {
+				this.$refs.graphDrawerMedia.hotReload(hot);
+				this.$forceUpdate();
+				this.$nextTick(function() {
+					this.$refs.graphDrawerMedia.hotReload(hot);
+					this.$forceUpdate();
+				});
+			});
+		},
+		reloadGraphDrawer: function() {
+			this.reload = true;
+			this.$nextTick(function() {
+				if (this.graphConfiguration.type == "Sort") {
+					this.graphConfiguration.nodeShape = "Rectangle";
+					this.disableGraphDrawerMedia = true;
+				} else {
+					this.disableGraphDrawerMedia = false;
+				}
+				this.reload = false;
+			});
+		},
+		getGraphTypes: function() {
+			return [
+				{
+					text: this.getLocale.graphText,
+					value: "Graph0"
+				},
+				{
+					text: this.getLocale.arrayText,
+					value: "Sort"
+				}
+			];
+		},
+		getGraphYesNo: function() {
+			return [
+				{
+					text: this.getLocale.yes,
+					value: true
+				},
+				{
+					text: this.getLocale.no,
+					value: false
+				}
+			];
+		},
+		getGraphNodeShapes: function() {
+			return [
+				{
+					text: this.getLocale.circleText,
+					value: "Circle"
+				},
+				{
+					text: this.getLocale.rectangleText,
+					value: "Rectangle"
+				}
+			];
+		},
 		solutionTypeChanged: function() {
 			// If the old type used a graphdrawer, it should be destroyed.
 			if (this.$refs.graphdrawer !== undefined) {
@@ -874,9 +1012,9 @@ export default {
 			this.editExistingTable = true;
 			this.editExistingTableIndex = index;
 		},
-		addCanvasAsImage: function() {
+		processGraphDrawerImage: function(dataUrl) {
 			let storedFiles = this.newQuestion.objects.files;
-			let img = this.$refs.graphDrawerMedia.$refs.canvasElement.toDataURL("image/png");
+			let img = dataUrl;
 			let arr = img.split(",");
 			let buffer = arr[1];
 			arr = arr[0].split(";");
@@ -913,6 +1051,9 @@ export default {
 					this.reload = false;
 				});
 			}
+		},
+		addCanvasAsImage: function() {
+			this.requestGraphDrawerImage = !this.requestGraphDrawerImage;
 		}
 	},
 	computed: {
