@@ -23,9 +23,22 @@ Tables are added using 2-D lists where each element is a row. Each cell uses a H
 \\[11pt]
 The solution type part focuses on determining the question type of the new question and for creating the question's solution. The type decides what format the question has for both the solution and for the client during a session. The solution to questions revolving data structures and algorithms is created on the server in the solution generator. The user only needs to give the necessary information for the question so that it is possible for the student to solve it, and for the server to be able to create the solution. There are two reasons for having the server handle the solution generation. The first reason is to keep it away from clients participating in a session. The second reason is that forcing the user to write the entire solution for every question would be rather tedious. Not to mention reducing the chances of having the solution being written incorrectly.
 \begin{figure}[H]
-        \includegraphics{/createQuestion/editQuestionCombined}
-        \caption{This figure displays an image of the EditQuestion component}
-        \label{fig:editquestion}
+\centering
+	\begin{subfigure}{0.45\linewidth}
+        \includegraphics[width=\linewidth]{/userManual/admin/EditQuestionBasicInfo}
+        \label{fig:editQuestionBasic}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.45\linewidth}
+		\includegraphics[width=\linewidth]{/userManual/admin/EditQuestionImageMediaPNG}	
+		\label{fig:editQuestionMedia}
+	\end{subfigure}
+	\begin{subfigure}{0.45\linewidth}
+		\includegraphics[width=\linewidth]{/userManual/admin/EditQuestionSolution}
+		\label{fig:editQuestionSolution}
+	\end{subfigure}
+	\caption{These images display sections of the EditQuestion component.}
+	\label{fig:editQuestion}
 \end{figure}
 \noindent
 When a user is finished creating a question, the question information is sent to the server through a socket request. The data sent to the server is the \code{newQuestion} object defined in the function \code{initializeState} in the component. Since all the properties in the \code{newQuestion} object are linked to the component, the server should have all the information it needs to generate the question solution. However, to avoid any problems regarding storing faulty questions on the server, the question information will first need to be validated by the server's validation checker. The user must at minimum fill in the information in a title, and the solution type with the solution properties for the wanted question to be valid. If the question information passes the validation checker, the question information and solution are inserted into the question table in the database. After the question is stored, socket messages are sent updating the question list on the client.
