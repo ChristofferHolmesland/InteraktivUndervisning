@@ -164,7 +164,7 @@ module.exports.listen = function(server, users, db) {
 			});
 			
 			require("./anonymousFunctions.js").anonymous(socket, db, sessions);
-			require("./clientFunctions.js").client(socket, db, user, sessions);
+			require("./clientFunctions.js").client(socket, db, user, sessions, currentClientSession);
 		});
 	});
 }
