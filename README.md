@@ -79,3 +79,4 @@ This project uses [Prettier/ESLint](https://prettier.io/docs/en/eslint.html).
 SQLite3, with the [sqlite3](https://www.npmjs.com/package/sqlite3) package.
 
 ## Licensing
+LGPL-3.0
