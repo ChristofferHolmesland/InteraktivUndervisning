@@ -141,7 +141,7 @@
 								<b-container>
 									<b-row>
 										<b-col>
-											Settings:
+											{{ getLocale.settingsText }}
 										</b-col>
 									</b-row>
 									<b-row>
@@ -150,6 +150,7 @@
 										</b-col>
 										<b-col>
 											<b-form-select 	id="graphType"
+												v.b-tooltip.hover :title="getLocale.reloadWarning"
 												:options="getGraphTypes()"
 												v-model="graphConfiguration.type"
 												@change="reloadGraphDrawer"
@@ -159,7 +160,7 @@
 									</b-row>
 									<b-row>
 										<b-col>
-											Arrows:
+											{{ getLocale.arrowsText }}
 										</b-col>
 										<b-col>
 											<b-form-select 	id="graphArrows"
@@ -172,7 +173,7 @@
 									</b-row>
 									<b-row>
 										<b-col>
-											Edge values:
+											{{ getLocale.edgeValues }}
 										</b-col>
 										<b-col>
 											<b-form-select 	id="graphEdgeValues"
@@ -185,7 +186,7 @@
 									</b-row>
 									<b-row>
 										<b-col>
-											Node shape:
+											{{ getLocale.nodeShape }}
 										</b-col>
 										<b-col>
 											<b-form-select 	id="graphNodeShape"
@@ -642,11 +643,11 @@ export default {
 		getGraphTypes: function() {
 			return [
 				{
-					text: "Graph",
+					text: this.getLocale.graphText,
 					value: "Graph0"
 				},
 				{
-					text: "Array",
+					text: this.getLocale.arrayText,
 					value: "Sort"
 				}
 			];
@@ -654,11 +655,11 @@ export default {
 		getGraphYesNo: function() {
 			return [
 				{
-					text: "Yes",
+					text: this.getLocale.yes,
 					value: true
 				},
 				{
-					text: "No",
+					text: this.getLocale.no,
 					value: false
 				}
 			];
@@ -666,11 +667,11 @@ export default {
 		getGraphNodeShapes: function() {
 			return [
 				{
-					text: "Circle",
+					text: this.getLocale.circleText,
 					value: "Circle"
 				},
 				{
-					text: "Rectangle",
+					text: this.getLocale.rectangleText,
 					value: "Rectangle"
 				}
 			];
