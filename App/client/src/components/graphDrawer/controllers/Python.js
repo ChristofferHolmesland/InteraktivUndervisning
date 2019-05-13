@@ -59,19 +59,23 @@ export default class Python {
 
 		this.currentState = this.locale.buttons.Add_Variable;
 		this.buttons = [
-			this.locale.buttons.Join, 
-			this.locale.buttons.Remove, 
-			this.locale.buttons.Move, 
-			this.locale.buttons.Add_Variable, 
+			this.locale.buttons.Join,
+			this.locale.buttons.Remove,
+			this.locale.buttons.Move,
+			this.locale.buttons.Add_Variable,
 			this.locale.buttons.Add_Object
 		];
-		
+
 		this.stateHandlers = {};
 		this.stateHandlers[this.locale.buttons.Join] = this.joinHandler;
 		this.stateHandlers[this.locale.buttons.Remove] = this.removeHandler;
 		this.stateHandlers[this.locale.buttons.Move] = this.moveHandler;
-		this.stateHandlers[this.locale.buttons.Add_Variable] = this.addVariableHandler;
-		this.stateHandlers[this.locale.buttons.Add_Object] = this.addObjectHandler;
+		this.stateHandlers[
+			this.locale.buttons.Add_Variable
+		] = this.addVariableHandler;
+		this.stateHandlers[
+			this.locale.buttons.Add_Object
+		] = this.addObjectHandler;
 
 		this.objectTypes = [
 			{
@@ -111,8 +115,7 @@ export default class Python {
 	}
 
 	onCanvasResize() {
-		if (this.gd.operatingMode == "Interactive")
-			this.drawStatic();	
+		if (this.gd.operatingMode == "Interactive") this.drawStatic();
 	}
 
 	mouseDownHandler(e) {
@@ -158,7 +161,9 @@ export default class Python {
 							let ok = false;
 							let field = undefined;
 							for (let i = 0; i < n2.object.fields.length; i++) {
-								if (n2.object.fields[i].name.startsWith(input)) {
+								if (
+									n2.object.fields[i].name.startsWith(input)
+								) {
 									if (ok) {
 										ok = false;
 										break;
@@ -214,9 +219,11 @@ export default class Python {
 				// Checks if the node is connected to anything with edges.
 				for (let j = 0; j < this.gd.edges.length; j++) {
 					// Removes the edges.
-					if (this.gd.edges[j].n1 == this.gd.nodes[i] 
-						|| this.gd.edges[j].n2 == this.gd.nodes[i]) {
-							this.gd.edges.splice(j, 1);
+					if (
+						this.gd.edges[j].n1 == this.gd.nodes[i] ||
+						this.gd.edges[j].n2 == this.gd.nodes[i]
+					) {
+						this.gd.edges.splice(j, 1);
 						j--;
 					}
 				}
@@ -388,7 +395,8 @@ export default class Python {
 
 			// Convert the first letter to uppercase, because the user might not
 			// write it correctly
-			objectType = objectType.charAt(0).toUpperCase() + objectType.slice(1);
+			objectType =
+				objectType.charAt(0).toUpperCase() + objectType.slice(1);
 
 			// Checks if it's a valid type
 			let ok = false;
@@ -490,7 +498,9 @@ export default class Python {
 	detectUIInput(e) {
 		if (e.offsetY < this.gd.canvas.height * 0.9) return false;
 
-		let buttonIndex = Math.floor(e.offsetX / (this.gd.canvas.width / this.buttons.length));
+		let buttonIndex = Math.floor(
+			e.offsetX / (this.gd.canvas.width / this.buttons.length)
+		);
 		this.setCurrentState(this.buttons[buttonIndex]);
 		return true;
 	}
@@ -502,8 +512,12 @@ export default class Python {
 	}
 
 	drawStatic() {
-		this.gd.staticContext.clearRect(0, 0, 
-			this.gd.staticBuffer.width, this.gd.staticBuffer.height);
+		this.gd.staticContext.clearRect(
+			0,
+			0,
+			this.gd.staticBuffer.width,
+			this.gd.staticBuffer.height
+		);
 
 		let buttonWidth = this.gd.staticBuffer.width / this.buttons.length;
 		let buttonHeight = this.gd.staticBuffer.height / 10;
@@ -528,11 +542,15 @@ export default class Python {
 				buttonHeight
 			);
 			this.gd.staticContext.fillStyle = "black";
-			let textWidth = this.gd.staticContext.measureText(this.buttons[i]).width;
+			let textWidth = this.gd.staticContext.measureText(this.buttons[i])
+				.width;
 			this.gd.staticContext.fillText(
 				this.buttons[i],
-				i * buttonWidth - (textWidth / 2) + buttonWidth / 2,
-				this.gd.canvas.height - buttonHeight / 2 + (this.gd.fontHeight / 2));
+				i * buttonWidth - textWidth / 2 + buttonWidth / 2,
+				this.gd.canvas.height -
+					buttonHeight / 2 +
+					this.gd.fontHeight / 2
+			);
 		}
 		this.gd.staticContext.stroke();
 		this.gd.staticContext.closePath();
@@ -614,8 +632,8 @@ export default class Python {
 			if (!obj.hasOwnProperty("_uniqueId")) {
 				console.error(
 					"The python code you are trying to render, " +
-					"was parsed by an older version which didn't support the GraphDrawer. " +
-					"Please parse the code again using the newest version."
+						"was parsed by an older version which didn't support the GraphDrawer. " +
+						"Please parse the code again using the newest version."
 				);
 				return;
 			}
@@ -805,7 +823,7 @@ export default class Python {
 		return {
 			type: undefined,
 			object: undefined
-		}
+		};
 	}
 
 	generateNodeText(id) {
@@ -825,8 +843,10 @@ export default class Python {
 			for (let i = 0; i < info.object.fields.length; i++) {
 				let field = info.object.fields[i];
 				dataText += field.name + ": ";
-				dataText += field.value == undefined ? 
-					this.locale.undefinedFieldValue : field.value;
+				dataText +=
+					field.value == undefined
+						? this.locale.undefinedFieldValue
+						: field.value;
 				if (i !== info.object.fields.length - 1) dataText += "\n";
 			}
 		} else dataText = "Data: " + info.object.value;

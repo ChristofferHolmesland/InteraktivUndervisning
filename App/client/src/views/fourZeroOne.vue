@@ -1,23 +1,35 @@
+<!-- 
+	Component name: fourZeroOne
+	Use case:
+		- Display a message when an user tries to access an page they are
+			not allowed to access.
+		- Lets the user navigate to the main client page.
+-->
+
 <template>
-<div>
-	<b-container id="FourZeroOne">
-		<b-row class="firstRow">
-			<b-col cols="12" class="text-center">
-				<h1>{{getLocale.unauthorized}}</h1>
-			</b-col>
-		</b-row>
-		<b-row class="secondRow">
-			<b-col cols="12" class="text-center">
-				<p v-for="item in getLocale.textList" :key="item">{{item}}</p>
-			</b-col>
-		</b-row>
-		<b-row class="thirdRow">
-			<b-col cols="12" class="text-center">
-				<b-button @click="homeRedirect" variant="success">{{getLocale.homeButton}}</b-button>
-			</b-col>
-		</b-row>
-	</b-container>
-</div>
+	<div>
+		<b-container id="FourZeroOne">
+			<b-row class="firstRow">
+				<b-col cols="12" class="text-center">
+					<h1>{{ getLocale.unauthorized }}</h1>
+				</b-col>
+			</b-row>
+			<b-row class="secondRow">
+				<b-col cols="12" class="text-center">
+					<p v-for="item in getLocale.textList" :key="item">
+						{{ item }}
+					</p>
+				</b-col>
+			</b-row>
+			<b-row class="thirdRow">
+				<b-col cols="12" class="text-center">
+					<b-button @click="homeRedirect" variant="success">{{
+						getLocale.homeButton
+					}}</b-button>
+				</b-col>
+			</b-row>
+		</b-container>
+	</div>
 </template>
 
 <script>
@@ -41,7 +53,7 @@ export default {
 <style scoped>
 #FourZeroOne {
 	min-width: 500px;
-	max-width: 500px;;
+	max-width: 500px;
 	min-height: 400px;
 	min-height: 400px;
 	margin: 0 auto;

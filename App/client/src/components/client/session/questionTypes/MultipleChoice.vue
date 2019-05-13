@@ -1,14 +1,24 @@
 <template>
 	<b-container id="multipleChoiceMainContainer">
 		<b-row>
-			<b-col v-for="choice in getChoices" 
-					:key="choice.id" 
-					class="choice" :id="choice.id"
-					@click="selectChoice($event)"
-					cols="12" lg="5"
+			<b-col
+				v-for="choice in getChoices"
+				:key="choice.id"
+				class="choice"
+				:id="choice.id"
+				@click="selectChoice($event)"
+				cols="12"
+				lg="5"
 			>
 				<div class="selected">
-                	<i :class="'far' + (choice.selected ? ' fa-check-square' : ' fa-square')"></i>
+					<i
+						:class="
+							'far' +
+								(choice.selected
+									? ' fa-check-square'
+									: ' fa-square')
+						"
+					></i>
 				</div>
 				{{ choice.text }}
 			</b-col>

@@ -1,29 +1,36 @@
+<!--
+	Component name: ShowSandbox
+	Use case:
+		- Let the user navigate to the sandbox page.
+-->
+
 <template>
-<b-container id="SandBox" class="jumbotron">
-	<b-row class="center firstRow row">
-		<b-col cols="12">
-			<h1>{{ getLocale.title }}</h1>
-		</b-col>
-	</b-row>
-	<b-row class="middleRow row align-items-center">
-		<b-col cols="12">
-			<p v-for="(line, index) in getLocale.text" :key="index">
-				{{ line }}
-			</p>
-		</b-col>
-	</b-row>
-	<b-row class="center lastRow row">
-		<b-col cols="12">
-			<b-button 	@click="goToSandbox"
-						variant="primary"
-						size="lg"
-						class="btn"
-						>
-				{{ getLocale.goBtn }}
-			</b-button>
-		</b-col>
-	</b-row>
-</b-container>
+	<b-container id="SandBox" class="jumbotron">
+		<b-row class="center firstRow row">
+			<b-col cols="12">
+				<h1>{{ getLocale.title }}</h1>
+			</b-col>
+		</b-row>
+		<b-row class="middleRow row align-items-center">
+			<b-col cols="12">
+				<p v-for="(line, index) in getLocale.text" :key="index">
+					{{ line }}
+				</p>
+			</b-col>
+		</b-row>
+		<b-row class="center lastRow row">
+			<b-col cols="12">
+				<b-button
+					@click="goToSandbox"
+					variant="primary"
+					size="lg"
+					class="btn"
+				>
+					{{ getLocale.goBtn }}
+				</b-button>
+			</b-col>
+		</b-row>
+	</b-container>
 </template>
 
 <script>
@@ -39,7 +46,7 @@ export default {
 			let locale = this.$store.getters.getLocale("ShowSandbox");
 			if (locale) return locale;
 			return {};
-		}	
+		}
 	}
 };
 </script>

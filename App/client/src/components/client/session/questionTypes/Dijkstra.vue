@@ -2,14 +2,14 @@
 	<div id="Dijkstra">
 		test tekst
 		<b-container>
-			<GraphDrawer 
-					@getValueResponse="gotGraphDrawer" 
-					:requestAnswer="requestAnswerFromGraphDrawer" 
-					controlType="Dijkstra"
-					operatingMode="Interactive"
-					:graph="getGraphFromSteps"
-					:displayEdgeValues="true"
-					/>
+			<GraphDrawer
+				@getValueResponse="gotGraphDrawer"
+				:requestAnswer="requestAnswerFromGraphDrawer"
+				controlType="Dijkstra"
+				operatingMode="Interactive"
+				:graph="getGraphFromSteps"
+				:displayEdgeValues="true"
+			/>
 		</b-container>
 	</div>
 </template>
@@ -22,7 +22,7 @@ export default {
 	data() {
 		return {
 			requestAnswerFromGraphDrawer: false
-		}
+		};
 	},
 	methods: {
 		gotGraphDrawer: function(result) {
@@ -40,7 +40,8 @@ export default {
 	},
 	watch: {
 		requestAnswer: function() {
-			this.requestAnswerFromGraphDrawer = !this.requestAnswerFromGraphDrawer;
+			this.requestAnswerFromGraphDrawer = !this
+				.requestAnswerFromGraphDrawer;
 		}
 	}
 };

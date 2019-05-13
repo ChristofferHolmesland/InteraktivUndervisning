@@ -1,42 +1,72 @@
+<!-- 
+	Component name: UserStats
+	Use case:
+		- Display statistics about a user
+-->
+
 <template>
 	<b-container class="jumbotron">
 		<b-row>
 			<b-col>
-				<h1>{{getLocale.title}}</h1>
+				<h1>{{ getLocale.title }}</h1>
 				<div>
 					<b-row>
-						<b-col cols="8"><h6>{{getLocale.totalSessions}}</h6></b-col>
-						<b-col cols="4"><p>{{totalSessions}}</p></b-col>
+						<b-col cols="8"
+							><h6>{{ getLocale.totalSessions }}</h6></b-col
+						>
+						<b-col cols="4"
+							><p>{{ totalSessions }}</p></b-col
+						>
 					</b-row>
 					<b-row>
-						<b-col cols="8"><h6>{{getLocale.correctAnswers}}</h6></b-col>
-						<b-col cols="4"><p>{{totalCorrectAnswers}}</p></b-col>
+						<b-col cols="8"
+							><h6>{{ getLocale.correctAnswers }}</h6></b-col
+						>
+						<b-col cols="4"
+							><p>{{ totalCorrectAnswers }}</p></b-col
+						>
 					</b-row>
 					<b-row>
-						<b-col cols="8"><h6>{{getLocale.incorrectAnswers}}</h6></b-col>
-						<b-col cols="4"><p>{{totalIncorrectAnswers}}</p></b-col>
+						<b-col cols="8"
+							><h6>{{ getLocale.incorrectAnswers }}</h6></b-col
+						>
+						<b-col cols="4"
+							><p>{{ totalIncorrectAnswers }}</p></b-col
+						>
 					</b-row>
 					<b-row>
-						<b-col cols="8"><h6>{{getLocale.didntKnowAnswers}}</h6></b-col>
-						<b-col cols="4"><p>{{totalDidntKnowAnswers}}</p></b-col>
+						<b-col cols="8"
+							><h6>{{ getLocale.didntKnowAnswers }}</h6></b-col
+						>
+						<b-col cols="4"
+							><p>{{ totalDidntKnowAnswers }}</p></b-col
+						>
 					</b-row>
 					<b-row>
 						<b-container>
-							<b-form-group	label="Course List:"
-											label-for="courseList"
-											v-if="courseList.length > 0">
-								<b-form-select 	id="courseList"
-												:options="getCourses"
-												v-model="courseSelected">
+							<b-form-group
+								label="Course List:"
+								label-for="courseList"
+								v-if="courseList.length > 0"
+							>
+								<b-form-select
+									id="courseList"
+									:options="getCourses"
+									v-model="courseSelected"
+								>
 								</b-form-select>
 							</b-form-group>
-							<b-list-group 	style="overflow-y: scroll; max-height: 300px"
-											v-if="getFilteredSessionList.length !== 0">
-								<b-list-group-item 	v-for="item in getFilteredSessionList" 
-													:key="item.id"
-													@click="showSession(item.id)"
-													style="cursor: pointer;">
-									{{item.name}}
+							<b-list-group
+								style="overflow-y: scroll; max-height: 300px"
+								v-if="getFilteredSessionList.length !== 0"
+							>
+								<b-list-group-item
+									v-for="item in getFilteredSessionList"
+									:key="item.id"
+									@click="showSession(item.id)"
+									style="cursor: pointer;"
+								>
+									{{ item.name }}
 								</b-list-group-item>
 							</b-list-group>
 						</b-container>

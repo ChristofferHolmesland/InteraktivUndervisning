@@ -120,7 +120,12 @@ export default class GraphDrawer {
 		this.relSize = 0.7;
 
 		// These properties can be updated by the hotreload function
-		this.hotReloadAble = ["dirty", "displayEdgeValues", "directedEdges", "nodeShape"];
+		this.hotReloadAble = [
+			"dirty",
+			"displayEdgeValues",
+			"directedEdges",
+			"nodeShape"
+		];
 
 		this._config(config);
 
@@ -155,7 +160,7 @@ export default class GraphDrawer {
 		this.dirty = true;
 
 		// Flag which determines if the dirty flag should remain
-		// true after a draw operation. This can not stay true 
+		// true after a draw operation. This can not stay true
 		// after being used.
 		this.stillDirty = false;
 
@@ -193,9 +198,12 @@ export default class GraphDrawer {
 		this.canvas.addEventListener("wheel", this.detectZoomWheel.bind(this));
 
 		// Updates the GraphDrawer every <MS_PER_FRAME> milliseconds.
-		this.intervalId = setInterval((function() {
-			this.update.call(this);
-		}).bind(this), this.MS_PER_FRAME);
+		this.intervalId = setInterval(
+			function() {
+				this.update.call(this);
+			}.bind(this),
+			this.MS_PER_FRAME
+		);
 
 		this.camera = new Camera(this);
 
@@ -219,8 +227,7 @@ export default class GraphDrawer {
 			this[prop] = properties[prop];
 		}
 
-		if (properties.dirty == undefined)
-			this.dirty = true;
+		if (properties.dirty == undefined) this.dirty = true;
 	}
 
 	setController(controllerName) {
@@ -298,7 +305,7 @@ export default class GraphDrawer {
 	}
 
 	createStaticBuffer() {
-		this.staticBuffer = document.createElement("CANVAS")
+		this.staticBuffer = document.createElement("CANVAS");
 		this.setBufferDimension(this.staticBuffer, this.STATIC_BUFFER_FACTOR);
 		this.staticContext = this.staticBuffer.getContext("2d");
 	}
@@ -317,8 +324,10 @@ export default class GraphDrawer {
 		buffer.width = this.canvas.width * factor;
 		buffer.height = this.canvas.height * factor;
 
-		if (buffer.width > this.MAX_BUFFER_SIZE) buffer.width = this.MAX_BUFFER_SIZE;
-		if (buffer.height > this.MAX_BUFFER_SIZE) buffer.height = this.MAX_BUFFER_SIZE;
+		if (buffer.width > this.MAX_BUFFER_SIZE)
+			buffer.width = this.MAX_BUFFER_SIZE;
+		if (buffer.height > this.MAX_BUFFER_SIZE)
+			buffer.height = this.MAX_BUFFER_SIZE;
 	}
 
 	/*
@@ -391,8 +400,8 @@ export default class GraphDrawer {
 			let center1 = this.getCenter(n1);
 			let center2 = this.getCenter(n2);
 
-			let d = 
-				this.edges[i].directed == undefined || 
+			let d =
+				this.edges[i].directed == undefined ||
 				this.edges[i].directed == true;
 			let drawArrow = this.directedEdges && d;
 
@@ -409,14 +418,11 @@ export default class GraphDrawer {
 				let wantedPos1 = { x: 0, y: 0 };
 				let wantedPos2 = { x: 0, y: 0 };
 
-				let n2TopInside = 
-					n2.y > n1.y &&
-					n2.y < n1.y + n1.h;
-				let n2BotInside = 
-					n2.y + n2.h > n1.y &&
-					n2.y + n2.h < n1.y + n1.h;
+				let n2TopInside = n2.y > n1.y && n2.y < n1.y + n1.h;
+				let n2BotInside =
+					n2.y + n2.h > n1.y && n2.y + n2.h < n1.y + n1.h;
 
-				let n2Inside = n2TopInside || n2BotInside; 
+				let n2Inside = n2TopInside || n2BotInside;
 
 				if (!n2Inside) {
 					let n2Above = n2.y < n1.y;
@@ -447,25 +453,29 @@ export default class GraphDrawer {
 					}
 				}
 
-				if (n1.shape == "Rectangle")
-					linePoint1 = wantedPos1;
-				if (n2.shape == "Rectangle")
-					linePoint2 = wantedPos2;
+				if (n1.shape == "Rectangle") linePoint1 = wantedPos1;
+				if (n2.shape == "Rectangle") linePoint2 = wantedPos2;
 			} else if (drawArrow) {
 				let wantedPos1 = { x: 0, y: 0 };
 				let wantedPos2 = { x: 0, y: 0 };
 
 				// The y coordinates are subtracted in the opposite direction,
 				// because the canvas uses the top left corner as (0,0)
-				let angleToN1 = Math.atan2(center2.y - center1.y, center1.x - center2.x);
-				let angleToN2 = Math.atan2(center1.y - center2.y, center2.x - center1.x);
+				let angleToN1 = Math.atan2(
+					center2.y - center1.y,
+					center1.x - center2.x
+				);
+				let angleToN2 = Math.atan2(
+					center1.y - center2.y,
+					center2.x - center1.x
+				);
 
 				// The area is in radians, but the areas are defined using area numbers.
 				let area1 = angleToN2 / Math.PI;
 				let area2 = angleToN1 / Math.PI;
 				if (area1 < 0) area1 += 2;
 				if (area2 < 0) area2 += 2;
-				
+
 				let n1Area = -1;
 				let n2Area = -1;
 
@@ -512,7 +522,7 @@ export default class GraphDrawer {
 					wantedPos1.x = center1.x;
 					wantedPos1.y = n1.y + n1.h;
 				}
-				
+
 				if (n2Area == 1) {
 					wantedPos2.x = n2.x + n2.w;
 					wantedPos2.y = center2.y;
@@ -527,10 +537,8 @@ export default class GraphDrawer {
 					wantedPos2.y = n2.y + n2.h;
 				}
 
-				if (n1.shape == "Rectangle")
-					linePoint1 = wantedPos1;
-				if (n2.shape == "Rectangle")
-					linePoint2 = wantedPos2;
+				if (n1.shape == "Rectangle") linePoint1 = wantedPos1;
+				if (n2.shape == "Rectangle") linePoint2 = wantedPos2;
 			}
 
 			if (linePoint1 && linePoint2) {
@@ -593,7 +601,9 @@ export default class GraphDrawer {
 						a.y - headlen * Math.sin(angle + Math.PI / 6)
 					);
 					if (this.edges[i].strokeColor) {
-						this.drawContext.strokeStyle = this.edges[i].strokeColor;
+						this.drawContext.strokeStyle = this.edges[
+							i
+						].strokeColor;
 					}
 					this.drawContext.stroke();
 					this.drawContext.strokeStyle = "black";
@@ -664,19 +674,24 @@ export default class GraphDrawer {
 				this.drawContext.fillText(
 					lines[l],
 					center.x - textWidth / 2,
-					center.y + this.fontHeight / 2 + this.fontHeight * firstY + this.fontHeight * l
+					center.y +
+						this.fontHeight / 2 +
+						this.fontHeight * firstY +
+						this.fontHeight * l
 				);
 			}
 
 			if (this.fixNodeSize) {
 				// If a node is wider than needed, it will be assigned a smaller
 				// width, bounded by this.R.
-				let minSize = this.nodes[i].shape == "Circle" ? this.R : this.R * 2;
+				let minSize =
+					this.nodes[i].shape == "Circle" ? this.R : this.R * 2;
 
 				if (maxTextWidth < this.nodes[i].w) {
 					if (this.nodes[i].w !== minSize) {
-						this.nodes[i].w = maxTextWidth;	
-						if (this.nodes[i].w < minSize) this.nodes[i].w = minSize;
+						this.nodes[i].w = maxTextWidth;
+						if (this.nodes[i].w < minSize)
+							this.nodes[i].w = minSize;
 						this.stillDirty = true;
 					}
 				}
@@ -765,11 +780,11 @@ export default class GraphDrawer {
 		this.canvas.width = this.canvas.clientWidth;
 		let ratio = this.window.innerHeight / this.window.innerWidth;
 		this.canvas.height = this.canvas.width * ratio;
-		
+
 		this.setBufferDimension(this.staticBuffer, this.STATIC_BUFFER_FACTOR);
 		this.setBufferDimension(this.drawBuffer, this.DRAW_BUFFER_FACTOR);
 		this.camera.updateToNewCanvasSize();
-		
+
 		if (this.operatingMode == "Presentation") {
 			this.addSteppingButtons();
 		}
@@ -829,15 +844,23 @@ export default class GraphDrawer {
 				// because the GraphDrawer is being run on a slow machine.
 				if (this.pauseCount > 10) {
 					let newFps = Math.ceil(0.75 * this.FPS);
-					console.error("GraphDrawer FPS was lowered from: " + this.FPS + ", to: " + newFps);
+					console.error(
+						"GraphDrawer FPS was lowered from: " +
+							this.FPS +
+							", to: " +
+							newFps
+					);
 					this.FPS = Math.ceil(0.75 * this.FPS);
 					this.MS_PER_FRAME = 1000 / this.FPS;
 
 					clearInterval(this.intervalId);
 
-					this.intervalId = setInterval((function() {
-						this.update.call(this);
-					}).bind(this), this.MS_PER_FRAME);
+					this.intervalId = setInterval(
+						function() {
+							this.update.call(this);
+						}.bind(this),
+						this.MS_PER_FRAME
+					);
 
 					this.pauseCount = 0;
 				}
@@ -937,9 +960,12 @@ export default class GraphDrawer {
 		}.bind(this);
 
 		let zoomStopHandler = function() {
-			setTimeout((function() {
-				this.isZooming = false;
-			}).bind(this), this.FPS / 4 * this.MS_PER_FRAME);
+			setTimeout(
+				function() {
+					this.isZooming = false;
+				}.bind(this),
+				(this.FPS / 4) * this.MS_PER_FRAME
+			);
 			this.canvas.removeEventListener("touchmove", zoomHandler);
 			this.canvas.removeEventListener("touchend", zoomStopHandler);
 			this.canvas.removeEventListener("touchcancel", zoomStopHandler);
@@ -1189,7 +1215,10 @@ export default class GraphDrawer {
 		if (e.targetTouches !== undefined && e.targetTouches.length > 0) {
 			e.offsetX = e.targetTouches[0].clientX - rect.left;
 			e.offsetY = e.targetTouches[0].clientY - rect.top;
-		} else if (e.changedTouches !== undefined && e.changedTouches.length > 0) {
+		} else if (
+			e.changedTouches !== undefined &&
+			e.changedTouches.length > 0
+		) {
 			e.offsetX = e.changedTouches[0].clientX - rect.left;
 			e.offsetY = e.changedTouches[0].clientY - rect.top;
 		} else {
@@ -1314,7 +1343,7 @@ export default class GraphDrawer {
 		});
 		this.steppingButtons.push({
 			data: {
-				text: (this.currentStep + 1) + " / " + numOfSteps,
+				text: this.currentStep + 1 + " / " + numOfSteps,
 				relSize: this.relSize
 			},
 			handler: () => {}
@@ -1442,9 +1471,13 @@ export default class GraphDrawer {
 		let b = ellipse.h;
 
 		// Calculate the quadratic parameters.
-		let A = (pt2.x - pt1.x) * (pt2.x - pt1.x) / a / a + (pt2.y - pt1.y) * (pt2.y - pt1.y) / b / b;
-		let B = 2 * pt1.x * (pt2.x - pt1.x) / a / a + 2 * pt1.y * (pt2.y - pt1.y) / b / b;
-		let C = pt1.x * pt1.x / a / a + pt1.y * pt1.y / b / b - 1;
+		let A =
+			((pt2.x - pt1.x) * (pt2.x - pt1.x)) / a / a +
+			((pt2.y - pt1.y) * (pt2.y - pt1.y)) / b / b;
+		let B =
+			(2 * pt1.x * (pt2.x - pt1.x)) / a / a +
+			(2 * pt1.y * (pt2.y - pt1.y)) / b / b;
+		let C = (pt1.x * pt1.x) / a / a + (pt1.y * pt1.y) / b / b - 1;
 
 		// Make a list of t values.
 		let t_values = [];
@@ -1496,14 +1529,18 @@ export default class GraphDrawer {
 		s2_y = l2.y2 - l2.y1;
 
 		let s, t;
-		s = (-s1_y * (l1.x1 - l2.x1) + s1_x * (l1.y1 - l2.y1)) / (-s2_x * s1_y + s1_x * s2_y);
-		t = ( s2_x * (l1.y1 - l2.y1) - s2_y * (l1.x1 - l2.x1)) / (-s2_x * s1_y + s1_x * s2_y);
+		s =
+			(-s1_y * (l1.x1 - l2.x1) + s1_x * (l1.y1 - l2.y1)) /
+			(-s2_x * s1_y + s1_x * s2_y);
+		t =
+			(s2_x * (l1.y1 - l2.y1) - s2_y * (l1.x1 - l2.x1)) /
+			(-s2_x * s1_y + s1_x * s2_y);
 
 		if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
 			// Collision detected
 			return {
-				x: l1.x1 + (t * s1_x),
-				y: l1.y1 + (t * s1_y)
+				x: l1.x1 + t * s1_x,
+				y: l1.y1 + t * s1_y
 			};
 		}
 
