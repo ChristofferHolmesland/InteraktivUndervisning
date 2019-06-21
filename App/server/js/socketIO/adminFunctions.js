@@ -308,7 +308,6 @@ module.exports.admin = function(socket, db, user, users) {
 			typeof applicationId !== "number" ||
 			applicationId === 0
 		) return;
-		console.log("test");
 
 		dbFunctions.get.userRightInCourseById(db, {
 			courseId: courseId,
