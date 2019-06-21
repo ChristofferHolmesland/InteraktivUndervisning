@@ -100,8 +100,6 @@ class Quicksort {
         buttons.
     */
     mouseDownHandler(e) {
-        console.log("Click");
-
         if (this.gd.operatingMode == "Interactive") {
             // If there are no arrays, the first click creates the first node.
             if (this.arrays.length == 0) {
@@ -146,7 +144,6 @@ class Quicksort {
     checkNodes(e) {
         // These need to be defined inside this function, so .bind(this) can be used
         let checkNodesMouseUp = function(newE) {
-            console.log("up");
             this.gd.canvas.removeEventListener("mouseup", checkNodesMouseUp);
             this.gd.canvas.removeEventListener("mousemove", checkNodesMouseMove);
 
@@ -160,7 +157,6 @@ class Quicksort {
                 this.clickedNode = node;
                 if (this.clickedNode == undefined) return;
 
-                console.log("adding buttons");
                 // Edit value
                 this.clickedButtons.push({
                     data: {
@@ -227,7 +223,6 @@ class Quicksort {
                     });
                 */
             }
-            console.log("Setting dirty flag at mouse up");
             this._calculatePositionForClickedButtons();
             this.gd.dirty = true;
         }.bind(this);
@@ -549,7 +544,6 @@ class Quicksort {
     }
 
     drawUI() {
-        console.log("drawing ui");
         this.gd.staticContext.clearRect(0, 0,
             this.gd.staticBuffer.width, this.gd.staticBuffer.height);
 
@@ -592,11 +586,8 @@ class Quicksort {
             this.gd.staticContext.closePath();
         }
 
-        console.log("selected buttons");
-        console.log(this.clickedButtons.length);
         // Render selected buttons (Mobile)
         for (let i = 0; i < this.clickedButtons.length; i++) {
-            console.log(i);
             let btn = this.clickedButtons[i];
             this.gd.staticContext.beginPath();
 

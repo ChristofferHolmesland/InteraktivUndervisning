@@ -803,9 +803,6 @@ export default class GraphDrawer {
 		// is running at the same time.
 		//if (this.runningId == undefined) this.runningId = 10000 * Math.random();
 		//	console.error(this.runningId);
-
-		console.log(this.nodeShape);
-
 		if (this.canvas.width !== this.canvas.clientWidth) {
 			// When the page is loading, the width is sometimes 0.
 			if (this.canvas.clientWidth > 0) {
